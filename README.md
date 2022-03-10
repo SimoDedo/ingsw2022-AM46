@@ -56,9 +56,6 @@ WIP
 - [x] ~~Set up the structure of README.md~~
 - [ ] WIP
   - [ ] WIP
-- [ ] Multi-language support for low-development countries
-    - [ ] Swahili
-    - [ ] Neapolitan
 ## Changelog
 + **0.1.0**: WIP
   + **0.1.1**: WIP
