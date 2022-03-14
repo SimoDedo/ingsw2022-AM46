@@ -82,7 +82,7 @@ The project will include:
 # Miscellaneous
 ## Contacts
 - Pietro Beghetto
-  - Personal code: ???
+  - Personal code: 10672945
   - Email: pietro.beghetto@mail.polimi.it
 - Simone de Donato:
   - Personal code: ???
