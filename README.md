@@ -85,7 +85,7 @@ The project will include:
   - Personal code: 10672945
   - Email: pietro.beghetto@mail.polimi.it
 - Simone de Donato:
-  - Personal code: ???
+  - Personal code: 10677578
   - Email: simone.dedonato@mail.polimi.it
 - Gregorio Dimaglie:
   - Personal code: 10705277
