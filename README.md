@@ -47,16 +47,22 @@ The project will include:
 
 # Active development
 ## Roadmap
-- [x] ~~Create this GitHub repo~~
+- **Setup**
+  - [x] ~~Create this GitHub repo~~
   - [x] ~~Set up the structure of README.md~~
-- [ ] Game design
+
+
+- **Game design**
   - [ ] Initial UML draft
-    - [ ] Game rules diagram
+    - [x] ~~Game rules diagram~~
+    - [ ] MVC diagram
     - [ ] Communication protocol diagram
   - [ ] Complete UML diagram
   - [ ] Final UML diagram, automatically generated from code
   - [ ] GUI design
-- [ ] Implementation
+
+
+- **Implementation**
   - [ ] Game rules
     - [ ] base game: 2 players
     - [ ] 3 players
@@ -68,14 +74,20 @@ The project will include:
   - [ ] Communication protocol
   - [ ] CLI
   - [ ] GUI
-- [ ] Polishing
-- [ ] Publishing
+
+
+- **Finalization**
+  - [ ] Polishing
+  - [ ] Publishing
 
 ## Changelog
-+ **0.1.0**: *WIP*
-  + **0.1.1**: *WIP*
-+ **0.2.0**: *WIP*
-  + **0.2.1**: *WIP*
++ **0.1.0**: initial draft of the UML diagram of the Model
+  + **0.1.1**: specifications for various classes, creation of the Pawn class
+  + **0.1.2**: draft of Characters implementation using Decorator pattern
+  + **0.1.3**: added ProfessorSet, refined main functions of the game, refined island merge function
++ **0.2.0**: heavy rewriting and polishing of the UML Model diagram, Character redefinition
+  + **0.2.1**: Game and Character factory, complete check-up
+  + **0.2.2**: *WIP*
 
 ---
 
