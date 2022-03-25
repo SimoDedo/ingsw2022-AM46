@@ -63,13 +63,15 @@ The project will include:
 
 
 - **Implementation**
-  - [ ] Game rules
-    - [ ] base game: 2 players
-    - [ ] 3 players
-    - [ ] 4 players
-    - [ ] Hard mode
-    - [ ] Advanced features
-      - [ ] *WIP*
+  - [ ] Game rules 
+  - [ ] Board elements and pawns
+  - [ ] Archipelago
+  - [ ] Players and teams
+  - [ ] Expert mode: characters
+  - [ ] Advanced features
+    - [ ] AF1: 4-players game
+    - [ ] AF2: *WIP*
+    - [ ] AF3: *WIP*
   - [ ] Unit testing
   - [ ] Communication protocol
   - [ ] CLI
@@ -87,7 +89,8 @@ The project will include:
   + **0.1.3**: added ProfessorSet, refined main functions of the game, refined island merge function
 + **0.2.0**: heavy rewriting and polishing of the UML Model diagram, Character redefinition
   + **0.2.1**: Game and Character factory, complete check-up
-  + **0.2.2**: *WIP*
+  + **0.2.2**: minor changes and fixes
++ **0.3.0**: started implementation of pawns and base elements, rewrote Characters entirely *(once again)*
 
 ---
 
@@ -104,6 +107,6 @@ The project will include:
   - Email: gregorio.dimaglie@mail.polimi.it
 
 ## License
-*WIP*
+This repository is **proprietary** and may not be used, forked or otherwise exploited by anyone, except the previously appointed supervisors of the project to which this repository pertains.
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
