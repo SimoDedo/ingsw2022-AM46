@@ -1,5 +1,5 @@
 package it.polimi.ingsw.GameModel.BoardElements;
-import it.polimi.ingsw.GameModel.Board.Player.*;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 
 /**
  * Abstract class that extends BoardPiece with added owner (Player) parameter
@@ -15,7 +15,7 @@ public abstract class BoardPieceWithOwner extends BoardPiece {
 
     /**
      * Gives ID and owner
-     * @param owner The owner
+     * @param owner the initial owner of the piece
      */
     public BoardPieceWithOwner(Player owner) {
         super();
@@ -24,7 +24,7 @@ public abstract class BoardPieceWithOwner extends BoardPiece {
 
     /**
      * Owner getter
-     * @return Owner
+     * @return the current owner of the piece
      */
     public Player getOwner() {
         return owner;

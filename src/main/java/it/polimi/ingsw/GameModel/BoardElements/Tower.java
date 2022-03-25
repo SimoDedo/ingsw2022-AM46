@@ -4,7 +4,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 /**
- * Models the Student piece as a BoardPiece. Each tower has a owner
+ * Models the Student piece as a BoardPiece. Each tower has an owner and a color
  */
 public class Tower extends BoardPieceWithOwner{
     /**
@@ -15,7 +15,7 @@ public class Tower extends BoardPieceWithOwner{
     /**
      * Creates Tower with Color and gives ID and owner
      *
-     * @param owner The owner
+     * @param owner the initial owner of this tower
      */
     public Tower(TowerColor towerColor,Player owner) {
         super(owner);
@@ -24,7 +24,7 @@ public class Tower extends BoardPieceWithOwner{
 
     /**
      * Getter for the TowerColor
-     * @return
+     * @return the current owner of this tower
      */
     public TowerColor getTowerColor() {
         return towerColor;
