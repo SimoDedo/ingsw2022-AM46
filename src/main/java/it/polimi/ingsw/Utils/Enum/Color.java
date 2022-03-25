@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Utils.Enum;
 
 /**
- * Enum to model different Student,Professor and Table colors
+ * Enum used for the different Student, Professor and Table colors.
  */
 public enum Color {
     YELLOW,
