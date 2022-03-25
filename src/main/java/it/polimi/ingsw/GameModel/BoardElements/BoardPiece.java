@@ -1,7 +1,7 @@
 package it.polimi.ingsw.GameModel.BoardElements;
 
 /**
- * Abstract class from which most game elements derives. Offers IDs.
+ * Abstract class from which most game elements derive. Offers unique IDs.
  */
 
 public abstract class BoardPiece {
@@ -16,7 +16,7 @@ public abstract class BoardPiece {
     private int boardPieceID;
 
     /**
-     * Creates BoardPiece assigning an ID
+     * Creates BoardPiece, assigning it an ID
      */
     public BoardPiece(){
         boardPieceID = getMaxID();
@@ -24,7 +24,7 @@ public abstract class BoardPiece {
 
     /**
      * Increments maxID
-     * @return The maxID before it is incremented
+     * @return the maximum ID, incrementing it afterwards
      */
     private static int getMaxID(){
         int temp = maxID;
