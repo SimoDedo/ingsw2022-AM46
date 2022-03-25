@@ -1,10 +1,10 @@
 package it.polimi.ingsw.Utils.Enum;
 
 /**
- * Enum to model different Tower colors
+ * Enum used for the different Tower colors.
  */
 public enum TowerColor {
-    BLACK,
     WHITE,
+    BLACK,
     GREY
 }
