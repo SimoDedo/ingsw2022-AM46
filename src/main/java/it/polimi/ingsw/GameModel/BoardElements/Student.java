@@ -30,6 +30,13 @@ public class Student extends BoardPiece{
         this.studentContainer = studentContainer;
     }
 
+    /**
+     * Getter for the Color
+     * @return
+     */
+    public Color getColor() {
+        return color;
+    }
 
     /**
      * Getter for the StudentContainer

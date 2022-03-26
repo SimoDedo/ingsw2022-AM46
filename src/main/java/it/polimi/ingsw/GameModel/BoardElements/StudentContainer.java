@@ -23,7 +23,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
      */
     @Override //FIXME: why merge placePawn and removePawn in a single function?
     public void placePawn(Student student) {
-        Student temp = student.getStudentContainer().removePawn(student); //TODO: should throw an exception if temp is null
+        Student temp = student.getStudentContainer().removePawn(student); //TODO: should throw an exception if temp is null? it should never be
         super.placePawn(student);
         student.setStudentContainer(this);
     }

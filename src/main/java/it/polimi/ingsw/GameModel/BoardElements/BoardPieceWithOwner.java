@@ -9,9 +9,7 @@ public abstract class BoardPieceWithOwner extends BoardPiece {
     /**
      * Holds player who owns the BoardPiece
      */
-    Player owner;   //TODO: consider this implementation: to let access to BoardPieceWithOwner mutable it's "friendly"
-                    //this also means that student and professor have access, while subclasses in other packages won't have it
-                    //to avoid having more permissions than needed, we can opt to have BoardPieceWithOwnerMutable extend BoardPiece, this way it will hold the owner itself that can be private
+    Player owner;
 
     /**
      * Gives ID and owner
