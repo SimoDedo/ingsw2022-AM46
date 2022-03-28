@@ -20,7 +20,7 @@ public class IslandGroup {
     //TODO: int for NoEntryTiles
 
     public IslandGroup(boolean isStarting){
-        islandTiles.add(new IslandTile(null, -1, isStarting, this)); //TODO: player null replace with "neutral"?
+        islandTiles.add(new IslandTile(null, -1, isStarting, this)); //CHECKME: player null replace with "neutral"?
     }
 
     public boolean hasMotherNature(){
@@ -40,7 +40,7 @@ public class IslandGroup {
             if(islandTile.hasMotherNature())
                 temp = islandTile;
         }
-        return temp; //TODO: consider throwing exception; right now whoever calls this method needs to check before if islandGroup has MotherNature
+        return temp; //CHECKME: consider throwing exception; right now whoever calls this method needs to check before if islandGroup has MotherNature
     }
 
     /**
@@ -57,8 +57,8 @@ public class IslandGroup {
      * If the Towers on the IslandTiles aren't of the given Team, replaces the Towers with theirs
      * @param team The team who owns the towers on the IslandTile, once Conquer has finished
      */
-    public void conquer(Team team){
-        //TODO: Implement when player gets pushed/create stuff to implement
+    public void conquer(Team team){//TODO: Implement when player gets pushed/create stuff to implement
+
     }
 
     /**

@@ -4,6 +4,8 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.*;
 import it.polimi.ingsw.Utils.Enum.Color;
 
+import java.util.List;
+
 public class IslandTile extends StudentContainer{
     /**
      * Holds MotherNature if IslandTile is current holder, otherwise it's null
@@ -73,7 +75,7 @@ public class IslandTile extends StudentContainer{
      * @param tower
      * @return
      */
-    public Tower swapTower(Tower tower) { //TODO: unified place and remove, seems reasonable (once a tower is placed, there can no longer be no Tower), check later
+    public Tower swapTower(Tower tower) { //CHECKME: unified place and remove, seems reasonable (once a tower is placed, there can no longer be no Tower), check later
         Tower temp = this.tower;
         this.tower = tower;
         return temp;
@@ -101,7 +103,13 @@ public class IslandTile extends StudentContainer{
      * @return
      */
     public int count(Color color){
-        return 0; //TODO: complete function. To complete it, now PawnContainer has protected Getter method
+        List<Student> contained = this.getPawns();
+        int score = 0;
+        for(Student student : contained){
+            if(student.getColor() == color)
+                score++;
+        }
+        return score;
     }
 
 
