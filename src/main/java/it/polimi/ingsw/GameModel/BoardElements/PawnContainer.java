@@ -29,6 +29,7 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
+        this.pawns = new ArrayList<T>();
         this.maxPawns = maxPawns;
     }
 
@@ -70,7 +71,4 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         copy.addAll(pawns);
         return copy;
     }
-
-
-
 }
