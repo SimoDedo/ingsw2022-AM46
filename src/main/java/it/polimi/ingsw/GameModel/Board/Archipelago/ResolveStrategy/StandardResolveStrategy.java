@@ -7,7 +7,7 @@ import java.util.List;
 
 public class StandardResolveStrategy implements ResolveStrategy{
     @Override
-    public Team resolveIslandGroup(IslandGroup islandGroupToResolve, List<Team> teams) {
-        return null; //TODO: implement
+    public Team resolveIslandGroup(IslandGroup islandGroupToResolve, List<Team> teams) {//TODO: implement
+        return null;
     }
 }

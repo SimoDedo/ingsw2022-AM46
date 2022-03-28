@@ -1,10 +1,10 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy;
 
-import com.sun.tools.javac.main.Option;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Archipelago.MotherNature;
 
+import java.io.InvalidObjectException;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ public class StandardMotherNatureStrategy implements MotherNatureStrategy{
      * @param islandGroups List containing all the IslandGroups to check legal movement
      */
     @Override
-    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws Option.InvalidValueException {
+    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException {
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
         int moveCountNeeded = 0;
@@ -31,7 +31,7 @@ public class StandardMotherNatureStrategy implements MotherNatureStrategy{
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
         if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
-            throw new Option.InvalidValueException(islandTileDestination.toString()); //TODO: either another exception/define toString/return ID
+            throw new InvalidObjectException(islandTileDestination.toString()); //TODO: either another exception/define toString/return ID
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
             islandTileDestination.placeMotherNature(motherNature);

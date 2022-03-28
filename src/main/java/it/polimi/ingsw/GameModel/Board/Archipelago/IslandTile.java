@@ -20,7 +20,7 @@ public class IslandTile extends StudentContainer{
     /**
      * Holds the IslandGroup of which the IslandTile is part
      */
-    private IslandGroup islandGroup;
+    private IslandGroup islandGroup; //CHECKME: is it useless?
 
     /**
      * Creates IslandTile with owner and maxPawns. If it's a starting island, also instantiates MotherNature

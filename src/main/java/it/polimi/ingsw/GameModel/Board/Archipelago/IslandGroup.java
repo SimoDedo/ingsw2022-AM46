@@ -20,7 +20,8 @@ public class IslandGroup {
     //TODO: int for NoEntryTiles
 
     public IslandGroup(boolean isStarting){
-        islandTiles.add(new IslandTile(null, -1, isStarting, this)); //CHECKME: player null replace with "neutral"?
+        this.islandTiles = new ArrayList<IslandTile>();
+        this.islandTiles.add(new IslandTile(null, -1, isStarting, this)); //CHECKME: player null replace with "neutral"?
     }
 
     public boolean hasMotherNature(){
@@ -63,12 +64,14 @@ public class IslandGroup {
 
     /**
      * Empties the islandTiles list
-     * @return A copy of the islandTiles list before it was emptied
+     * @return A copy of the islandTiles list before it was emptied, where each IslandTile has IslandGroup set to null
      */
     public List<IslandTile> removeIslandTiles(){
         ArrayList<IslandTile> temp = new ArrayList<IslandTile>();
         temp.addAll(islandTiles);
         islandTiles.removeAll(islandTiles);
+        for(IslandTile islandTile : temp)
+            islandTile.setIslandGroup(null);
         return temp;
     }
 
@@ -81,7 +84,10 @@ public class IslandGroup {
      * @param islandTilesToAdd IslandTiles to be added
      */
     public void addIslandTilesBefore(List<IslandTile> islandTilesToAdd){
-            islandTiles.addAll(0, islandTilesToAdd);
+        for(IslandTile islandTile : islandTilesToAdd){
+            islandTile.setIslandGroup(this);
+        }
+        islandTiles.addAll(0, islandTilesToAdd);
     }
 
     /**
@@ -89,7 +95,10 @@ public class IslandGroup {
      * @param islandTilesToAdd IslandTiles to be added
      */
     public void addIslandTilesAfter(List<IslandTile> islandTilesToAdd){
-            islandTiles.addAll(islandTilesToAdd);
+        for(IslandTile islandTile : islandTilesToAdd){
+            islandTile.setIslandGroup(this);
+        }
+        islandTiles.addAll(islandTilesToAdd);
     }
 
     /**
@@ -112,7 +121,7 @@ public class IslandGroup {
      */
     public void placeStudent(Student student, IslandTile islandTile){
         if(hasIslandTile(islandTile)) //this should be true, already checked in Archipelago.placeStudent
-            islandTile.placePawn(student); //FIXME: we will probably implement moveStudent, this will change
+            islandTile.moveStudent(student);
     }
 
     /**

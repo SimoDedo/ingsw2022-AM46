@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
-import com.sun.tools.javac.main.Option;
 import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MotherNatureStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.StandardMotherNatureStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy;
@@ -11,6 +10,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -63,7 +63,7 @@ public class Archipelago {
      * @param islandTileDestination Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws Option.InvalidValueException {
+    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws InvalidObjectException {
         motherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 
