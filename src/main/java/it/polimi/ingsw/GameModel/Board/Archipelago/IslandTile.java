@@ -95,6 +95,11 @@ public class IslandTile extends StudentContainer{
         this.islandGroup = islandGroup;
     }
 
+    /**
+     * Counts number of student with given Color
+     * @param color
+     * @return
+     */
     public int count(Color color){
         return 0; //TODO: complete function. To complete it, now PawnContainer has protected Getter method
     }
