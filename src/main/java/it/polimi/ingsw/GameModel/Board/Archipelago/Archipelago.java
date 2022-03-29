@@ -103,17 +103,15 @@ public class Archipelago {
             return;
         else{
             if(towerColorOfIslandToMerge == towerColorOfLeftIslandGroup) {
-                List<IslandTile> leftIslandGroupTiles = islandGroups.get(indexOfLeftIslandGroup).removeIslandTiles();
-                islandGroupToMerge.addIslandTilesBefore(leftIslandGroupTiles);
+                islandGroupToMerge.addIslandTilesBefore(islandGroups.get(indexOfLeftIslandGroup).removeIslandTiles());
                 islandGroups.remove(islandGroups.get(indexOfLeftIslandGroup));
             }
             if(towerColorOfIslandToMerge == towerColorOfRightIslandGroup){
-                List<IslandTile> rightIslandGroupTiles = islandGroups.get(indexOfRightIslandGroup).removeIslandTiles();
-                islandGroupToMerge.addIslandTilesAfter(rightIslandGroupTiles);
+                islandGroupToMerge.addIslandTilesAfter(islandGroups.get(indexOfRightIslandGroup).removeIslandTiles());
                 islandGroups.remove(islandGroups.get(indexOfRightIslandGroup));
             }
         }
-        mergeIslandGroup(islandGroupToMerge); //FIXME: checks alwas right and left, even if useless to check left
+        mergeIslandGroup(islandGroupToMerge); //FIXME: checks always right and left, even if useless to check left. Could divide in mergeLeft and mergeRight (probably not worth it)
     }
 
     /**
