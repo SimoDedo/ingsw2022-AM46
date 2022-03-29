@@ -50,6 +50,14 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         int index = pawns.indexOf(pawnToRemove);
         return pawns.remove(index);
     }
+    /**
+     * Alternative version of removePawn using list index
+     * @param index index of the pawn to be removed
+     * @return the pawn, removed from the container
+     */
+    public T removePawnByIndex(int index) {
+        return pawns.remove(index);
+    }
 
     /**
      * @return the number of pawns currently contained
@@ -57,5 +65,7 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
     public int pawnCount(){
         return pawns.size();
     }
+
+    public int getMaxPawns() {return maxPawns; }
 
 }
