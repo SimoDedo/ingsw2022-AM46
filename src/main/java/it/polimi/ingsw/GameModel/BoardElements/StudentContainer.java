@@ -18,14 +18,36 @@ public abstract class StudentContainer extends PawnContainer<Student>{
     }
 
     /**
-     * Removes student from previous container, changes its container to this one and places it inside
+     * Places student inside the container, then sets itself as its container
      * @param student student to be placed inside this container
      */
-    @Override //FIXME: why merge placePawn and removePawn in a single function?
+    @Override
     public void placePawn(Student student) {
-        Student temp = student.getStudentContainer().removePawn(student); //TODO: should throw an exception if temp is null
         super.placePawn(student);
         student.setStudentContainer(this);
     }
 
+    /**
+     * Sets the StudentContainer to null, then removes the student from itself
+     * @param pawnToRemove Student to be removed
+     * @return The Student removed (the same given)
+     */
+    @Override
+    public Student removePawn(Student pawnToRemove) {
+        pawnToRemove.setStudentContainer(null);
+        return super.removePawn(pawnToRemove);
+    }
+
+    /**
+     * Removes the student from its former container (if it has one, but it should) then places it in this container.
+     * @param studentToPlace Student to place in this container
+     * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
+     */
+    public Student moveStudent(Student studentToPlace){
+        Student studentToReturn = null;
+        if(studentToPlace.getStudentContainer() != null)
+            studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);
+        placePawn(studentToPlace);
+        return studentToReturn;
+    }
 }

@@ -15,10 +15,11 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
      * The list containing the pawns
      */
     private List<T> pawns;
+
     /**
-     * Maximum number of pawns that the container can hold
+     * Maximum number of pawns that the container can hold. If set at -1, no limit is set
      */
-    private int maxPawns;
+    private int maxPawns; //if -1 -> no limit
 
 
     /**
@@ -28,6 +29,7 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
+        this.pawns = new ArrayList<T>();
         this.maxPawns = maxPawns;
     }
 
@@ -36,7 +38,9 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
      * @param pawn the pawn to be placed
      */
     public void placePawn(T pawn){
-        //TODO: should throw exception if object is already contained and if maxPawns is surpassed
+        if(maxPawns>=0 && this.pawnCount() == maxPawns){
+            //TODO: should throw exception if object is already contained and if maxPawns is surpassed
+        }
         pawns.add(pawn);
     }
 
@@ -66,6 +70,19 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         return pawns.size();
     }
 
+    /**
+    * Getter for the max number of pawns this container can hold
+    */
     public int getMaxPawns() {return maxPawns; }
+
+    /**
+     * Getter for the list, given through a copy; grants subclasses access to the list to perform operations through a copy. Modification is restricted to the public Place and Remove operations
+     * @return
+     */
+    protected List<T> getPawns() {
+        List<T> copy = new ArrayList<>();
+        copy.addAll(pawns);
+        return copy;
+    }
 
 }

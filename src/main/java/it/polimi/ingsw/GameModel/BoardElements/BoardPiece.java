@@ -8,7 +8,7 @@ public abstract class BoardPiece {
     /**
      * Static attribute shared among all BoardPieces. Stores highest ID that has not been used yet
      */
-    private static int maxID;
+    private static int maxID = 0;
 
     /**
      * ID of the concrete BoardPiece
