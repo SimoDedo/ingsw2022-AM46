@@ -6,5 +6,6 @@ package it.polimi.ingsw.Utils.Enum;
 public enum TowerColor {
     WHITE,
     BLACK,
-    GREY
+    GREY,
+    NEUTRAL
 }
