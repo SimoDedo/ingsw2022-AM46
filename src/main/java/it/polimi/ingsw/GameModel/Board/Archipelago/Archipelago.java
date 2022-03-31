@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.Moth
 import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.StandardMotherNatureStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.StandardResolveStrategy;
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Professor;
@@ -59,6 +60,22 @@ public class Archipelago {
     }
 
     /**
+     * Places students on the IslandTile at the start of the game. Places given students on each IslandTile skipping the one with MotherNature and its opposite
+     * @param students 10 random students, 2 of each color
+     */
+    public void initialStudentPlacement(List<Student> students){
+        int idxStudent = 0;
+        IslandGroup islandGroup = getMotherNatureIslandGroup();
+        int idxStarting = islandGroups.indexOf(islandGroup);
+        for (int i = 1; i < 12; i++) {
+            if(i != 6){
+                int idx = idxStarting + i < 12 ? idxStarting + i : idxStarting + i - 12;
+                islandGroups.get(idx).placeStudent(students.get(idxStudent));
+                idxStudent++;
+            }
+        }
+    }
+    /**
      * Calls the motherNatureStrategy method to handle moving MotherNature
      * @param islandTileDestination Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
@@ -67,6 +84,17 @@ public class Archipelago {
         motherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 
+    /**
+     * Finds which IslandGroups contains  MotherNature
+     * @return The IslandGroup containing MotherNature. Should never return null
+     */
+    private  IslandGroup getMotherNatureIslandGroup(){
+        for(IslandGroup islandGroup : islandGroups){
+            if(islandGroup.hasMotherNature())
+                return islandGroup;
+        }
+        return  null;
+    }
     /**
      * Finds which IslandGroups contains the IslandTile containing MotherNature
      * @return The IslandTile containing MotherNature. Should never return null
@@ -81,7 +109,7 @@ public class Archipelago {
     }
 
     public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet){
-        Team winner = resolveStrategy.resolveIslandGroup(islandGroup,teams);
+        Team winner = resolveStrategy.resolveIslandGroup(islandGroup,teams, professorSet);
         conquerIslandGroup(islandGroup, winner);
         mergeIslandGroup(islandGroup);
     }
@@ -90,25 +118,29 @@ public class Archipelago {
         islandGroup.conquer(team);
     }
 
+    /**
+     * Merges given IslandGroup with nearby IslandGroups
+     * @param islandGroupToMerge The IslandGroup to merge
+     */
     private void mergeIslandGroup(IslandGroup islandGroupToMerge){
-        int indexOfIslandGroupToMerge = islandGroups.indexOf(islandGroupToMerge);
-        int indexOfLeftIslandGroup = indexOfIslandGroupToMerge == 0 ?
-                islandGroups.size() - 1 : indexOfIslandGroupToMerge - 1;
-        int indexOfRightIslandGroup = indexOfIslandGroupToMerge == islandGroups.size() - 1 ?
-                0 : indexOfIslandGroupToMerge + 1;
-        TowerColor towerColorOfIslandToMerge = islandGroupToMerge.getTowerColor();
-        TowerColor towerColorOfLeftIslandGroup = islandGroups.get(indexOfLeftIslandGroup).getTowerColor();
-        TowerColor towerColorOfRightIslandGroup = islandGroups.get(indexOfRightIslandGroup).getTowerColor();
-        if(towerColorOfIslandToMerge != towerColorOfLeftIslandGroup && towerColorOfIslandToMerge != towerColorOfRightIslandGroup)
+        int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
+        int idxLeft = idxToMerge == 0 ?
+                islandGroups.size() - 1 : idxToMerge - 1;
+        int idxRight = idxToMerge == islandGroups.size() - 1 ?
+                0 : idxToMerge + 1;
+        TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
+        TowerColor tcLeft = islandGroups.get(idxLeft).getTowerColor();
+        TowerColor tcRight = islandGroups.get(idxRight).getTowerColor();
+        if(tcToMerge != tcLeft && tcToMerge != tcRight)
             return;
         else{
-            if(towerColorOfIslandToMerge == towerColorOfLeftIslandGroup) {
-                islandGroupToMerge.addIslandTilesBefore(islandGroups.get(indexOfLeftIslandGroup).removeIslandTiles());
-                islandGroups.remove(islandGroups.get(indexOfLeftIslandGroup));
+            if(tcToMerge == tcLeft) {
+                islandGroupToMerge.addIslandTilesBefore(islandGroups.get(idxLeft).removeIslandTiles());
+                islandGroups.remove(islandGroups.get(idxLeft));
             }
-            if(towerColorOfIslandToMerge == towerColorOfRightIslandGroup){
-                islandGroupToMerge.addIslandTilesAfter(islandGroups.get(indexOfRightIslandGroup).removeIslandTiles());
-                islandGroups.remove(islandGroups.get(indexOfRightIslandGroup));
+            if(tcToMerge == tcRight){
+                islandGroupToMerge.addIslandTilesAfter(islandGroups.get(idxRight).removeIslandTiles());
+                islandGroups.remove(islandGroups.get(idxRight));
             }
         }
         mergeIslandGroup(islandGroupToMerge); //FIXME: checks always right and left, even if useless to check left. Could divide in mergeLeft and mergeRight (probably not worth it)

@@ -87,7 +87,7 @@ class IslandTileTest {
         students.add(new Student(Color.BLUE, islandTile));
         for(Student student : students)
             islandTile.placePawn(student);
-        assertTrue(islandTile.count(Color.BLUE) == 3);
+        assertTrue(islandTile.countInfluence(Color.BLUE) == 3);
     }
 
 }

@@ -49,6 +49,6 @@ class StudentContainerTest {
         Student studentToMove = new Student(Color.PINK, null);
         islandTile2.moveStudent(studentToMove);
         islandTile1.moveStudent(studentToMove);
-        assertTrue(studentToMove.getStudentContainer().equals(islandTile1) && islandTile1.count(Color.PINK) == 1 && islandTile2.count(Color.PINK) == 0);
+        assertTrue(studentToMove.getStudentContainer().equals(islandTile1) && islandTile1.countInfluence(Color.PINK) == 1 && islandTile2.countInfluence(Color.PINK) == 0);
     }
 }

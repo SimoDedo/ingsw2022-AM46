@@ -102,7 +102,7 @@ public class IslandTile extends StudentContainer{
      * @param color
      * @return
      */
-    public int count(Color color){
+    public int countInfluence(Color color){
         List<Student> contained = this.getPawns();
         int score = 0;
         for(Student student : contained){

@@ -1,8 +1,10 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
+import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -33,8 +35,27 @@ class IslandGroupTest {
         assertTrue(islandGroup.getMotherNatureTile().hasMotherNature());
     }
 
+    /**
+     * Test that counting influence works when IslandGroup contains multiple IslandTiles
+     */
     @Test
-    void resolveWinner() {
+    void countInfluence() {
+        IslandGroup islandGroup = new IslandGroup(true);
+        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        islandTiles.add(new IslandTile(null, -1, false, null));
+        islandTiles.add(new IslandTile(null, -1, false, null));
+        islandTiles.get(0).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(0).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(0).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(0).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(0).placePawn(new Student(Color.RED, null));
+        islandTiles.get(0).placePawn(new Student(Color.RED, null));
+        islandTiles.get(0).placePawn(new Student(Color.RED, null));
+        islandTiles.get(1).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(1).placePawn(new Student(Color.PINK, null));
+        islandTiles.get(1).placePawn(new Student(Color.PINK, null));
+        islandGroup.addIslandTilesAfter(islandTiles);
+        assertTrue(islandGroup.countInfluence(Color.PINK) == 7 && islandGroup.countInfluence(Color.RED) == 3 && islandGroup.countInfluence(Color.BLUE) == 0);
     }
 
     @Test

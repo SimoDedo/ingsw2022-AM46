@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ArchipelagoTest {
 
     @Test
+    void initialStudentPlacement(){
+
+    }
+    @Test
     void moveMotherNature() { //calls method of strategy, need to test that
     }
 

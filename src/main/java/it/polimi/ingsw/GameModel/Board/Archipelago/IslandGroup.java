@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.ArrayList;
@@ -45,13 +46,16 @@ public class IslandGroup {
     }
 
     /**
-     * Computes the Team which holds the most influence over the IslandGroup
-     * @param teams List to iterate to compute which team holds more influence
-     * @param professorSet Needed to know which team holds the professor
-     * @return The winning team, which will hold the towers of the tiles
+     * Counts the influence of a color in the whole island group, checking each IslandTile
+     * @param color The color of which we compute the influence
+     * @return The influence of that color
      */
-    public Team resolveWinner(List<Team> teams, ProfessorSet professorSet){
-        return null;
+    public int countInfluence(Color color){
+        int score = 0;
+        for(IslandTile islandTile : islandTiles){
+            score += islandTile.countInfluence(color);
+        }
+        return score;
     }
 
     /**
@@ -125,10 +129,32 @@ public class IslandGroup {
     }
 
     /**
+     * Places the student in the first tile, using the method of StudentContainer. Puts it in the first IslandTile
+     * @param student The student to place
+     */
+    public void placeStudent(Student student){
+            islandTiles.get(0).moveStudent(student);
+    }
+
+    /**
      * Returns the Color of the towers on the IslandGroup.
-     * @return
+     * @return Color of the tower
      */
     public TowerColor getTowerColor(){
-        return islandTiles.get(0).getTower().getTowerColor();
+        if(islandTiles.get(0).getTower() == null)
+            return null;
+        else
+            return islandTiles.get(0).getTower().getTowerColor();
+    }
+
+    /**
+     * Returns teh number of towers
+     * @return Either 0 (first island has no tower, so there are 0 towers) or equal to number of IslandTiles (first island has a tower, so all do)
+     */
+    public int getTowerCount(){
+        if(islandTiles.get(0).getTower() == null)
+            return 0;
+        else
+            return islandTiles.size();
     }
 }
