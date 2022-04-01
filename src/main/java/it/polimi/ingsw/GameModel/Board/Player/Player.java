@@ -56,11 +56,12 @@ public class Player {
     }
 
     public void awardCoin(){
-        coins ++;
+        coins++;
     }
 
     public int getScore(Color color){
-        return 0;
+        // assert board != null;
+        return board.getScore(color);
     }
 
     public int getCoins() {

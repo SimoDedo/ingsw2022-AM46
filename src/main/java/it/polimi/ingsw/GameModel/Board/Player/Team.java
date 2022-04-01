@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Team {
+
     private List<Player> members;
     private final TowerColor color;
     private int max_players;

@@ -5,8 +5,6 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 public class TowerSpace extends PawnContainer<Tower> {
 
-
-
     private final TowerColor color;
 
     /**
@@ -15,10 +13,10 @@ public class TowerSpace extends PawnContainer<Tower> {
      * @param player   the owner of the container
      * @param maxPawns the maximum number of pawns the container can hold
      */
-    public TowerSpace(Player player, int maxPawns, TowerColor c) {
+    public TowerSpace(Player player, int maxPawns, TowerColor color) {
         super(player, maxPawns);
         fillInitial(maxPawns);
-        color = c;
+        this.color = color;
     }
 
     /**
@@ -26,8 +24,8 @@ public class TowerSpace extends PawnContainer<Tower> {
      *
      * @param maxPawns the maximum number of pawns the container can hold
      */
-    private void fillInitial(int maxPawns){
-        for(int i = 0; i < maxPawns; i ++){
+    private void fillInitial(int maxPawns) {
+        for(int i = 0; i < maxPawns; i ++) {
             placePawn(new Tower(getColor(),getOwner()));
         }
     }

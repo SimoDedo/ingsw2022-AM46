@@ -6,7 +6,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 /**
  * Models the Student piece as a BoardPiece. Each tower has an owner and a color
  */
-public class Tower extends BoardPieceWithOwner{
+public class Tower extends BoardPieceWithOwner {
     /**
      * Color of the tower. Can't change, thus it's final
      */
@@ -17,7 +17,7 @@ public class Tower extends BoardPieceWithOwner{
      *
      * @param owner the initial owner of this tower
      */
-    public Tower(TowerColor towerColor,Player owner) {
+    public Tower(TowerColor towerColor, Player owner) {
         super(owner);
         this.towerColor = towerColor;
     }
