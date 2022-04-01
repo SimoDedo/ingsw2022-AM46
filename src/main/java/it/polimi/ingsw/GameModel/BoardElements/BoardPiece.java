@@ -13,7 +13,7 @@ public abstract class BoardPiece {
     /**
      * ID of the concrete BoardPiece
      */
-    private int boardPieceID;
+    public int boardPieceID;
 
     /**
      * Creates BoardPiece, assigning it an ID

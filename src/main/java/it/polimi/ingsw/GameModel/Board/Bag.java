@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Board;
 
+
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
