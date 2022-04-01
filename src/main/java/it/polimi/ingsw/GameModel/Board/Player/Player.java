@@ -84,7 +84,4 @@ public class Player {
         //assert board != null;
         return board.moveStudentsFromEntranceToDN(studentDestinations);
     }
-
-
-
 }

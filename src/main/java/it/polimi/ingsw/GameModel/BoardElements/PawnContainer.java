@@ -29,6 +29,7 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
+        this.pawns = new ArrayList<T>();
         this.maxPawns = maxPawns;
     }
 
@@ -53,6 +54,14 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         int index = pawns.indexOf(pawnToRemove);
         return pawns.remove(index);
     }
+    /**
+     * Alternative version of removePawn using list index
+     * @param index index of the pawn to be removed
+     * @return the pawn, removed from the container
+     */
+    public T removePawnByIndex(int index) {
+        return pawns.remove(index);
+    }
 
     /**
      * @return the number of pawns currently contained
@@ -60,6 +69,11 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
     public int pawnCount(){
         return pawns.size();
     }
+
+    /**
+    * Getter for the max number of pawns this container can hold
+    */
+    public int getMaxPawns() {return maxPawns; }
 
     /**
      * Getter for the list, given through a copy; grants subclasses access to the list to perform operations through a copy. Modification is restricted to the public Place and Remove operations
@@ -70,7 +84,5 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         copy.addAll(pawns);
         return copy;
     }
-
-
 
 }

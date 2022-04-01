@@ -18,14 +18,11 @@ public class Student extends BoardPiece{
     private StudentContainer studentContainer;
 
     /**
-     * Creates a Student contained in a given StudentContainer, with an unique ID and a given color
+     * Creates a Student contained in a given StudentContainer, with a unique ID and a given color
      * @param studentContainer the initial container of this student
      */
     public Student(Color color, StudentContainer studentContainer){
         super();
-        //TODO: check it isn't null? technically only bag creates the students and it always gives
-        // itself as the owner, so it should never be null. Should we check anyway?
-        // (Greg says no :) )
         this.color = color;
         this.studentContainer = studentContainer;
     }
