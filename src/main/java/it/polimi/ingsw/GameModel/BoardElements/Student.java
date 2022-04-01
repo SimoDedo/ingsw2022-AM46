@@ -28,15 +28,15 @@ public class Student extends BoardPiece{
     }
 
     /**
-     * Getter for the Color
-     * @return
+     * Getter for Color
+     * @return the color of this student
      */
     public Color getColor() {
         return color;
     }
 
     /**
-     * Getter for the StudentContainer
+     * Getter for StudentContainer
      * @return the current container of this student
      */
     public StudentContainer getStudentContainer() {
@@ -44,7 +44,7 @@ public class Student extends BoardPiece{
     }
 
     /**
-     * Setter for the StudentContainer
+     * Setter for StudentContainer
      * @param studentContainer the future container of this student
      */
     public void setStudentContainer(StudentContainer studentContainer) {

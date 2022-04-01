@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Element of the board that serves as a student "buffer". The player's Entrance is filled using
@@ -27,11 +28,11 @@ public class CloudTile extends StudentContainer {
     }
 
     public void fill() {
-        bag.drawN(getMaxPawns());
+        placePawns(bag.drawN(this.getMaxPawns()));
     }
 
-    public ArrayList<Student> removeAll() {
-        ArrayList<Student> drawnStudents = new ArrayList<>();
+    public List<Student> removeAll() {
+        List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {
             drawnStudents.add(removePawnByIndex(0));
         }

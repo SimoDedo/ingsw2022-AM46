@@ -12,8 +12,11 @@ public class CoinBag {
         coins--;
     }
 
-    public void removeCoins(int numOfCoins) {
-        coins -= numOfCoins; // will throw exception
+    public void removeCoins(int numOfCoins) throws ArithmeticException {
+        if (coins - numOfCoins < 0) {
+            throw new ArithmeticException("Amount of coins taken exceeds current amount of coins");
+        }
+        coins -= numOfCoins;
     }
 
     public void addCoin() {
@@ -24,7 +27,7 @@ public class CoinBag {
         coins += numOfCoins;
     }
 
-    public int getCoins() {
+    public int getNumOfCoins() {
         return coins;
     }
 }

@@ -9,17 +9,17 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
  */
 public class Professor extends BoardPieceWithOwnerMutable{
     /**
-     * Color of the professor. Can't possibly change, thus it's final
+     * Color of the professor. Can't change, thus it's final
      */
     private final Color color;
 
     /**
      * Creates a Professor with owner and color
-     * @param player the initial owner of the professor
      * @param color the professor's color
+     * @param owner the initial owner of the professor
      */
-    public Professor(Player player, Color color){
-        super(player);
+    public Professor(Color color, Player owner){
+        super(owner);
         this.color = color;
     }
 

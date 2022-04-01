@@ -15,7 +15,7 @@ class BoardPieceTest {
         Student student0 = new Student(Color.PINK, null);
         Student student1 = new Student(Color.PINK, null);
         Student student2 = new Student(Color.PINK, null);
-        Professor professor = new Professor(null, Color.PINK);
+        Professor professor = new Professor(Color.PINK, null);
         assertTrue(student0.getID() == 0 && professor.getID() == 3);
     }
 

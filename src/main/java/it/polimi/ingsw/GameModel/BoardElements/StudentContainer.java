@@ -27,6 +27,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
         student.setStudentContainer(this);
     }
 
+
     /**
      * Sets the StudentContainer to null, then removes the student from itself
      * @param pawnToRemove Student to be removed
@@ -43,7 +44,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
      * @param studentToPlace Student to place in this container
      * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
      */
-    public Student moveStudent(Student studentToPlace){
+    public Student moveStudent(Student studentToPlace) {
         Student studentToReturn = null;
         if(studentToPlace.getStudentContainer() != null)
             studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);
