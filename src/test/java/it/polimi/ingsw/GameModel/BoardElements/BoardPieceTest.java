@@ -1,9 +1,9 @@
 package it.polimi.ingsw.GameModel.BoardElements;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class BoardPieceTest {
 

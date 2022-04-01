@@ -1,12 +1,15 @@
 package it.polimi.ingsw.GameModel.Board;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public class CloudTileTest extends TestCase {
+public class CloudTileTest{
 
+    @Test
     public void testFill() {
     }
 
+    @Test
     public void testRemoveAll() {
     }
 }
