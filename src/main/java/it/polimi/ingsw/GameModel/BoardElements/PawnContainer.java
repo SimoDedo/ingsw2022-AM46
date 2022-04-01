@@ -5,12 +5,13 @@ import it.polimi.ingsw.GameModel.Board.Player.*;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Abstract class to model a section of the board which contains students or towers
- * @param <T> the type of the pawns contained
+ * @param <T> the type of the pawns contained, extends BoardPiece
  */
-public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
+public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWithOwnerMutable{
     /**
      * The list containing the pawns
      */
@@ -83,6 +84,11 @@ public abstract class PawnContainer<T> extends BoardPieceWithOwnerMutable{
         List<T> copy = new ArrayList<>();
         copy.addAll(pawns);
         return copy;
+    }
+
+    public T getPawnByID(int ID){
+        Predicate<T> test = pawn -> pawn.getID() == ID;
+        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
     }
 
 }

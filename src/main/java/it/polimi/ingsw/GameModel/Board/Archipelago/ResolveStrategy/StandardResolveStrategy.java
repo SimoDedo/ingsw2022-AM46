@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -28,16 +29,16 @@ public class StandardResolveStrategy implements ResolveStrategy{
             scores.put(team, 0);
         }
         for(Color color : Color.values()){ // Checks each color and gives to the right team the influence counted, based on the ownership of the professor
-            TowerColor tcOwner = professorSet.getProfessor(color).getOwner().getTowerColor(); //CHECKME: check which methods pietro gave, if there is getTeam, thats better avoids some loops
+            Player professorOwner = professorSet.getProfessor(color).getOwner(); //CHECKME: check which methods pietro gave, if there is getTeam, thats better avoids some loops
             for(Team team : teams){
-                if(team.getTowerColor() == tcOwner){
+                if(team.getMembers().contains(professorOwner)){
                     int temp = scores.get(team);
                     scores.put(team, temp + islandGroupToResolve.countInfluence(color));
                 }
             }
         }
         for(Team team : teams) { //Checks each team to see who should get the tower points
-            if(team.getTowerColor() == islandGroupToResolve.getTowerColor()){
+            if(team.getColor() == islandGroupToResolve.getTowerColor()){
                 int temp = scores.get(team);
                 scores.put(team, temp + islandGroupToResolve.getTowerCount());
             }

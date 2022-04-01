@@ -75,6 +75,7 @@ public class Archipelago {
             }
         }
     }
+
     /**
      * Calls the motherNatureStrategy method to handle moving MotherNature
      * @param islandTileDestination Island group selected by the user
@@ -100,7 +101,6 @@ public class Archipelago {
      * @return The IslandTile containing MotherNature. Should never return null
      */
     private IslandTile getMotherNatureIslandTile(){
-        IslandTile temp;
         for(IslandGroup islandGroup : islandGroups){
             if(islandGroup.hasMotherNature())
                 return islandGroup.getMotherNatureTile();
@@ -108,14 +108,26 @@ public class Archipelago {
         return null; //should never reach here
     }
 
+    /**
+     * Resolves IslandGroup
+     * @param islandGroup IslandGroup to resolve
+     * @param teams Teams in play who could get ownership of the islandGroup
+     * @param professorSet The set to manage professor ownership and calculate influence
+     */
     public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet){
         Team winner = resolveStrategy.resolveIslandGroup(islandGroup,teams, professorSet);
-        conquerIslandGroup(islandGroup, winner);
-        mergeIslandGroup(islandGroup);
+        boolean swapped = conquerIslandGroup(islandGroup, winner);
+        if(swapped)
+            mergeIslandGroup(islandGroup);
     }
 
-    private void conquerIslandGroup(IslandGroup islandGroup, Team team){
-        islandGroup.conquer(team);
+    /**
+     * Conquers the IslandGroup, replacing (if existing) towers with those of team
+     * @param islandGroup The IslandGroup to conquer
+     * @param team The team who conquers the IslandGroup
+     */
+    private boolean conquerIslandGroup(IslandGroup islandGroup, Team team){
+        return islandGroup.conquer(team);
     }
 
     /**

@@ -34,7 +34,7 @@ public class Game {
                 throw new IllegalStateException("Too many players: " + players);
         }
 
-        teams.get(currentPlayerNumber % players + 1).addMember(nick, players, bag.draw(studentsToDraw));
+        teams.get(currentPlayerNumber % players + 1).addMember(nick, players, bag.drawN(studentsToDraw));
 
         currentPlayerNumber ++;
     }

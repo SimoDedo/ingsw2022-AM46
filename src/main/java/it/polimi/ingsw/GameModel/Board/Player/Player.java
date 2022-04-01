@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.GameModel.BoardElements.BoardPiece;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
@@ -83,5 +84,12 @@ public class Player {
             throws IllegalArgumentException, NoSuchElementException{
         //assert board != null;
         return board.moveStudentsFromEntranceToDN(studentDestinations);
+    }
+
+    public Tower takeTower() {
+        return  null;
+    }
+
+    public void putTower(Tower towerRemoved) {
     }
 }

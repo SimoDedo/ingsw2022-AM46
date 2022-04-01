@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
@@ -61,9 +62,22 @@ public class IslandGroup {
     /**
      * If the Towers on the IslandTiles aren't of the given Team, replaces the Towers with theirs
      * @param team The team who owns the towers on the IslandTile, once Conquer has finished
+     * @return Returns true if towers had to be swapped, false if not
      */
-    public void conquer(Team team){//TODO: Implement when player gets pushed/create stuff to implement
-
+    public boolean conquer(Team team){
+        if(team != null && team.getColor() != this.getTowerColor()){
+            for(IslandTile islandTile : islandTiles){
+                Tower towerToPut = team.getPlayerWithTowers().takeTower();
+                if(towerToPut == null){
+                    //CHECKME: se fintie le torri, vinta partita => andrà qui il notify o in towerspace? nel dubbio lascio questo commento piangetene a rigaurdo
+                }
+                Tower towerRemoved = islandTile.swapTower(towerToPut);
+                if(towerRemoved != null)
+                    towerRemoved.getOwner().putTower(towerRemoved);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

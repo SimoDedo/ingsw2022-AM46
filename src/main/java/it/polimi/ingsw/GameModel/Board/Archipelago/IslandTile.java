@@ -75,9 +75,10 @@ public class IslandTile extends StudentContainer{
      * @param tower
      * @return
      */
-    public Tower swapTower(Tower tower) { //CHECKME: unified place and remove, seems reasonable (once a tower is placed, there can no longer be no Tower), check later
+    public Tower swapTower(Tower tower) {
         Tower temp = this.tower;
         this.tower = tower;
+        this.setOwner(tower.getOwner());
         return temp;
     }
 

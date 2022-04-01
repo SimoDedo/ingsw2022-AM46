@@ -28,7 +28,7 @@ public class ProfessorSet {
     public int getNumberOfProfessors(Team team) {
         int score = 0;
         for (Professor prof : professors.values()) {
-            if (team.getTeammates().contains(prof.getOwner())) score++;
+            if (team.getMembers().contains(prof.getOwner())) score++;
         }
         return score;
 
