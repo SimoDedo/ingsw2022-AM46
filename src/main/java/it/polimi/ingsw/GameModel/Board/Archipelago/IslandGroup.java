@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Board.Player.*;
-import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -158,7 +157,7 @@ public class IslandGroup {
         if(islandTiles.get(0).getTower() == null)
             return null;
         else
-            return islandTiles.get(0).getTower().getTowerColor();
+            return islandTiles.get(0).getTower().getColor();
     }
 
     /**

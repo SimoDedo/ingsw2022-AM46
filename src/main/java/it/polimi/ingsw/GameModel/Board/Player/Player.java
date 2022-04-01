@@ -69,6 +69,13 @@ public class Player {
 
     public int getTowersPlaced() throws NullPointerException { return board.getTowersPlaced(); }
 
+    public Tower takeTower(){
+        return board.takeTower();
+    }
+    public void placeTower(Tower tower){
+        board.placeTower(tower);
+    }
+
     public WizardType getWizardType(){ return wizard.getType(); }
 
     public Student getStudentByID(int ID) throws NoSuchElementException { return board.getStudentByID(ID); }

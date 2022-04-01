@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
@@ -66,6 +67,14 @@ public class PlayerBoard {
 
     public int getTowersPlaced(){
         return towerSpace.getTowersPlaced();
+    }
+
+    public Tower takeTower(){
+        return towerSpace.takeTower();
+    }
+
+    public void placeTower(Tower tower){
+        towerSpace.placeTower(tower);
     }
 
     /**
