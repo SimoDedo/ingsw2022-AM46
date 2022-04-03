@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -20,20 +21,20 @@ public class PlayerBoard {
     /**
      * Creates a new Entrance, TowerSpace and DiningRoom. The maximum amount of students the entrance can hold and the
      * maximum amount of students that can be moved from it every turn are decided based on the amount of players.
-     *
      * @param player the owner of the board
      * @param towerColor color of the player's towers
      * @param players number of players in the game
      * @param maxTowers maximum towers the towerSpace can hold. Can be 0 in the case of 4 players.
+     * @param bag reference to Bag from which to draw students for the entrance
      */
-    public PlayerBoard(Player player, TowerColor towerColor, int players, int maxTowers, List<Student> initialEntranceStudents){
+    public PlayerBoard(Player player, TowerColor towerColor, int players, int maxTowers, Bag bag){
         switch (players){
             case 2: case 4:
-                this.entrance = new Entrance(player, 7, 3, initialEntranceStudents);
+                this.entrance = new Entrance(player, 7, 3, bag);
                 this.studentsToPick = 3;
                 break;
             case 3:
-                this.entrance = new Entrance(player, 9, 4, initialEntranceStudents);
+                this.entrance = new Entrance(player, 9, 4, bag);
                 this.studentsToPick = 4;
                 break;
         }

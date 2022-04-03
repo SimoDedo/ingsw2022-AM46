@@ -19,6 +19,8 @@ public class Game {
 
     private Bag bag;
 
+    public Game() {} //todo
+
     public void initializeTeams(int players){
         teams = TeamsFactory.create(players);
     }
@@ -34,7 +36,7 @@ public class Game {
                 throw new IllegalStateException("Too many players: " + players);
         }
 
-        teams.get(currentPlayerNumber % players + 1).addMember(nick, players, bag.drawN(studentsToDraw));
+        teams.get(currentPlayerNumber % players + 1).addMember(nick, players, bag);
 
         currentPlayerNumber ++;
     }

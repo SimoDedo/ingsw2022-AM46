@@ -1,4 +1,5 @@
 package it.polimi.ingsw.GameModel.Board.Player;
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 
@@ -9,25 +10,25 @@ import java.util.NoSuchElementException;
 public class Entrance extends StudentContainer{
 
     private final int movableStudents;
+    private final Bag bag;
 
     /**
      * @param player the owner of the board (is it necessary?)
      * @param maxPawns number of students that are initially placed in the entrance
      * @param movableStudents number of students to move during each action phase
      */
-    public Entrance(Player player, int maxPawns, int movableStudents, List<Student> initialStudents) {
+    public Entrance(Player player, int maxPawns, int movableStudents, Bag bag) {
         super(player, maxPawns);
         this.movableStudents = movableStudents;
-        fillInitial(initialStudents);
+        this.bag = bag;
+        fillInitial();
     }
 
     /**
      * Fills pawns List with students at the start of the game
-     *
-     * @param students List of Students
      */
-    public void fillInitial(List<Student> students) {
-        for (int s = 0; s < getMaxPawns(); s++) { placePawn(students.get(s));}
+    public void fillInitial() {
+        placePawns(bag.drawN(this.getMaxPawns()));
     }
 
 

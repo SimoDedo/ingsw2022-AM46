@@ -1,6 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-import it.polimi.ingsw.GameModel.BoardElements.BoardPiece;
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -21,12 +21,12 @@ public class Player {
     private int coins;
 
 
-    public Player(String nickname, int maxTowers, TowerColor towerColor, int players, List<Student> initialEntranceStudents){
+    public Player(String nickname, int maxTowers, TowerColor towerColor, int players, Bag bag){
         this.nickname = nickname;
         this.isTowerHolder = (maxTowers != 0);
         this.isNeutral = false;
 
-        board = new PlayerBoard(this, towerColor, players, maxTowers, initialEntranceStudents);
+        board = new PlayerBoard(this, towerColor, players, maxTowers, bag);
 
 
 

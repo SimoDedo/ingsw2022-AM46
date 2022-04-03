@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -38,7 +39,7 @@ public class Team {
      * @param nick name of the candidate to add to the team
      * @throws FullTeamException if the team is already full (size = max_players)
      */
-    public void addMember(String nick, int game_players, List<Student> initialEntranceStudents) throws FullTeamException {
+    public void addMember(String nick, int game_players, Bag bag) throws FullTeamException {
         if(members.size() < max_players){
             int maxTowers = 0;
             if(members.size() == 0){
@@ -47,7 +48,7 @@ public class Team {
                     case 3: maxTowers = 6; break;
                 }
             }
-            members.add(new Player(nick, maxTowers, color, game_players, initialEntranceStudents));
+            members.add(new Player(nick, maxTowers, color, game_players, bag));
 
         } else throw new FullTeamException();
     }
