@@ -8,14 +8,14 @@ import java.io.InvalidObjectException;
 import java.util.List;
 
 /**
- * Strategy to move MotherNature when no character is activated
+ * Strategy to move MotherNature when C4 is activated
  */
-public class StandardMotherNatureStrategy implements MotherNatureStrategy{
+public class MoveMotherNatureStrategyC4 implements  MoveMotherNatureStrategy{
     /**
      * Moves motherNature to the destination, throws exception if movement is not allowed
      * @param islandTileStarting IslandTile where MotherNature is now
      * @param islandTileDestination IslandTile where MotherNature should end
-     * @param moveCount Number of moves allowed
+     * @param moveCount Number of moves allowed without counting the bonus
      * @param islandGroups List containing all the IslandGroups to check legal movement
      */
     @Override
@@ -30,7 +30,7 @@ public class StandardMotherNatureStrategy implements MotherNatureStrategy{
                 endingIslandGroupNumber = islandGroups.indexOf(islandGroup);
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
-        if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
+        if(moveCountNeeded == 0 || moveCountNeeded > moveCount + 2)
             throw new InvalidObjectException(islandTileDestination.toString()); //TODO: either another exception/define toString/return ID
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();

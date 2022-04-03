@@ -9,14 +9,10 @@ class ArchipelagoTest {
 
     @Test
     void initialStudentPlacement(){ //TODO: test once you have player using resolveIslandGroup (needs takeTower/putTower)
-        Archipelago archipelago = new Archipelago();
-        Bag bag = new Bag();
-        archipelago.initialStudentPlacement(bag.drawN(10));
     }
     @Test
     void moveMotherNature() { //calls method of strategy, already tested
     }
-
     @Test
     void resolveIslandGroup() { //TODO: Test once resolve is written. Also tests conquer and merge (needs takeTower/putTower)
     }

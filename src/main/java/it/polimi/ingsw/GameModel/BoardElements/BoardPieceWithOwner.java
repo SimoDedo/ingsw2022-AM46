@@ -21,7 +21,7 @@ public abstract class BoardPieceWithOwner extends BoardPiece {
     }
 
     /**
-     * Owner getter
+     * Getter for the owner of this piece.
      * @return the current owner of the piece
      */
     public Player getOwner() {

@@ -16,7 +16,7 @@ class StudentContainerTest {
      */
     @Test
     void placePawn() {
-        IslandTile islandTile1 = new IslandTile(null, -1, true, null);
+        IslandTile islandTile1 = new IslandTile(null, true, null);
         islandTile1.placePawn(new Student(Color.GREEN, null));
         islandTile1.placePawn(new Student(Color.RED, null));
         islandTile1.placePawn(new Student(Color.BLUE, null));
@@ -28,14 +28,14 @@ class StudentContainerTest {
      */
     @Test
     void removePawn() {
-        IslandTile islandTile1 = new IslandTile(null, -1, true, null);
+        IslandTile islandTile1 = new IslandTile(null, true, null);
         Student studentToRemove = new Student(Color.GREEN, null);
         islandTile1.placePawn(studentToRemove);
         islandTile1.placePawn(new Student(Color.RED, null));
         islandTile1.placePawn(new Student(Color.BLUE, null));
         assertTrue(islandTile1.getPawns().size() == 3 && studentToRemove.getStudentContainer().equals(islandTile1));
         islandTile1.removePawn(studentToRemove);
-        assertTrue(islandTile1.getPawns().size() == 2 && studentToRemove.getStudentContainer().equals(null));
+        assertTrue(islandTile1.getPawns().size() == 2 && studentToRemove.getStudentContainer() == null);
     }
 
     /**
@@ -43,8 +43,8 @@ class StudentContainerTest {
      */
     @Test
     void moveStudent(){
-        IslandTile islandTile1 = new IslandTile(null, -1, true, null);
-        IslandTile islandTile2 = new IslandTile(null, -1, true, null);
+        IslandTile islandTile1 = new IslandTile(null, true, null);
+        IslandTile islandTile2 = new IslandTile(null, true, null);
         islandTile1.moveStudent(new Student(Color.GREEN, null));
         Student studentToMove = new Student(Color.PINK, null);
         islandTile2.moveStudent(studentToMove);
@@ -57,12 +57,13 @@ class StudentContainerTest {
      */
     @Test
     void getPawnByID(){
-        IslandTile islandTile = new IslandTile(null, -1, true, null);
+        IslandTile islandTile = new IslandTile(null, true, null);
         islandTile.moveStudent(new Student(Color.GREEN, null));
         islandTile.moveStudent(new Student(Color.PINK, null));
         islandTile.moveStudent(new Student(Color.RED, null));
         islandTile.moveStudent(new Student(Color.BLUE, null));
-        islandTile.moveStudent(new Student(Color.YELLOW, null));
-        assertTrue(islandTile.getPawnByID(0) == null && islandTile.getPawnByID(5).getColor().equals(Color.YELLOW));
+        Student studentToTest = new Student(Color.YELLOW, null);
+        islandTile.moveStudent(studentToTest);
+        assertTrue(islandTile.getPawnByID(0) == null && islandTile.getPawnByID(studentToTest.getID()).getColor().equals(Color.YELLOW));
     }
 }

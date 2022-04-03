@@ -20,7 +20,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * Maximum number of pawns that the container can hold. If set at -1, no limit is set
      */
-    private int maxPawns; //if -1 -> no limit
+    private int maxPawns;
 
 
     /**
@@ -30,19 +30,34 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
-        this.pawns = new ArrayList<T>();
+        this.pawns = new ArrayList<>();
         this.maxPawns = maxPawns;
     }
 
     /**
-     * Places pawn in container
+     * Places pawn in container. Throws exception if the container is already full, or if the pawn
+     * is already inside the container.
      * @param pawn the pawn to be placed
      */
-    public void placePawn(T pawn){
-        if(maxPawns>=0 && this.pawnCount() == maxPawns){
-            //TODO: should throw exception if object is already contained and if maxPawns is surpassed
+    public void placePawn(T pawn) throws IllegalArgumentException {
+        if (maxPawns >=0 && pawnCount() == maxPawns) {
+            throw new IllegalArgumentException("The container is already full");
+        }
+        if (pawns.contains(pawn)) {
+            throw new IllegalArgumentException("The pawn is already inside this container");
         }
         pawns.add(pawn);
+    }
+
+    /**
+     * Wrapper that calls placePawn() over all the pawns in the given list.
+     * @param pawns list of pawns to be placed inside this container
+     */
+    public void placePawns(List<T> pawns) {
+        for (T pawn : pawns) {
+            placePawn(pawn);
+        }
+
     }
 
     /**
@@ -50,17 +65,20 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * @param pawnToRemove pawn to be removed
      * @return the pawn, removed from the container
      */
-    public T removePawn(T pawnToRemove){
-        //TODO: should throw exception if object is not in list
+    public T removePawn(T pawnToRemove) {
         int index = pawns.indexOf(pawnToRemove);
-        return pawns.remove(index);
+        return removePawnByIndex(index);
     }
+
     /**
      * Alternative version of removePawn using list index
      * @param index index of the pawn to be removed
      * @return the pawn, removed from the container
      */
-    public T removePawnByIndex(int index) {
+    public T removePawnByIndex(int index) throws IllegalArgumentException {
+        if (index < 0 || index >= getMaxPawns()) {
+            throw new IndexOutOfBoundsException("Index not inside this container's range");
+        }
         return pawns.remove(index);
     }
 
@@ -77,18 +95,20 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     public int getMaxPawns() {return maxPawns; }
 
     /**
-     * Getter for the list, given through a copy; grants subclasses access to the list to perform operations through a copy. Modification is restricted to the public Place and Remove operations
-     * @return
+     * Getter for the list, given through a copy; grants subclasses access to the list to perform
+     * operations through a copy. Modification is restricted to the public PlaceAndRemove operations
+     * @return A new list, containing references to the pawns inside the container
      */
     protected List<T> getPawns() {
-        List<T> copy = new ArrayList<>();
-        copy.addAll(pawns);
-        return copy;
+        return new ArrayList<>(pawns);
     }
 
     public T getPawnByID(int ID){
-        Predicate<T> test = pawn -> pawn.getID() == ID;
-        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
+        for(T pawn : pawns){
+            if (pawn.getID() == ID)
+                return pawn;
+        }
+        return null;
     }
 
 }

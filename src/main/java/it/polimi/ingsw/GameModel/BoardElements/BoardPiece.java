@@ -6,7 +6,7 @@ package it.polimi.ingsw.GameModel.BoardElements;
 
 public abstract class BoardPiece {
     /**
-     * Static attribute shared among all BoardPieces. Stores highest ID that has not been used yet
+     * Static attribute shared among all BoardPieces. Stores highest ID that hasn't been used yet
      */
     private static int maxID = 0;
 

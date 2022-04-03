@@ -44,8 +44,8 @@ class IslandGroupTest {
     void countInfluence() {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<IslandTile>();
-        islandTiles.add(new IslandTile(null, -1, false, null));
-        islandTiles.add(new IslandTile(null, -1, false, null));
+        islandTiles.add(new IslandTile(null, false, null));
+        islandTiles.add(new IslandTile(null, false, null));
         islandTiles.get(0).placePawn(new Student(Color.PINK, null));
         islandTiles.get(0).placePawn(new Student(Color.PINK, null));
         islandTiles.get(0).placePawn(new Student(Color.PINK, null));
@@ -116,7 +116,7 @@ class IslandGroupTest {
     void hasIslandTile() {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<IslandTile>();
-        islandTiles.add(new IslandTile(null, -1, false,null ));
+        islandTiles.add(new IslandTile(null, false,null ));
         islandGroup.addIslandTilesBefore(islandTiles);
         assertTrue(islandGroup.hasIslandTile(islandTiles.get(0)));
     }
@@ -133,7 +133,7 @@ class IslandGroupTest {
     void getTowerColor() {//TODO: modify and add javadoc description once conquer is done. Right now just inserts a tower of TowerColor at start and checks, will have to use conquer (as would a real game)
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<IslandTile>();
-        islandTiles.add(new IslandTile(null, -1, false,null ));
+        islandTiles.add(new IslandTile(null, false,null ));
         islandTiles.get(0).swapTower(new Tower(TowerColor.BLACK, null));
         islandGroup.addIslandTilesBefore(islandTiles);
         assertTrue(islandGroup.getTowerColor() == TowerColor.BLACK);

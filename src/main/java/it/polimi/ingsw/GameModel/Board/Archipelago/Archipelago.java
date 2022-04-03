@@ -1,13 +1,11 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
-import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MotherNatureStrategy;
-import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.StandardMotherNatureStrategy;
+import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategy;
+import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy;
-import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.StandardResolveStrategy;
-import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
-import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
@@ -35,7 +33,7 @@ public class Archipelago {
     /**
      * Strategy to apply when moving MotherNature
      */
-    private MotherNatureStrategy motherNatureStrategy;
+    private MoveMotherNatureStrategyStandard moveMotherNatureStrategyStandard;
 
     /**
      * Creates the Archipelago and creates 12 IslandGroups,
@@ -46,8 +44,8 @@ public class Archipelago {
         for (int i = 0; i < 12; i++) {
             islandGroups.add(new IslandGroup(i==startingIsland));
         }
-        motherNatureStrategy = new StandardMotherNatureStrategy();
-        resolveStrategy = new StandardResolveStrategy();
+        moveMotherNatureStrategyStandard = new MoveMotherNatureStrategyStandard();
+        resolveStrategy = new ResolveStrategyStandard();
     }
 
     /**
@@ -82,7 +80,7 @@ public class Archipelago {
      * @param moveCount Allowed island that MotherNature can move
      */
     public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws InvalidObjectException {
-        motherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
+        moveMotherNatureStrategyStandard.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 
     /**
@@ -115,10 +113,13 @@ public class Archipelago {
      * @param professorSet The set to manage professor ownership and calculate influence
      */
     public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet){
-        Team winner = resolveStrategy.resolveIslandGroup(islandGroup,teams, professorSet);
-        boolean swapped = conquerIslandGroup(islandGroup, winner);
-        if(swapped)
-            mergeIslandGroup(islandGroup);
+        if(!islandGroup.isNoEntryTilePlaced()) {
+            Team winner = resolveStrategy.resolveIslandGroup(islandGroup, teams, professorSet);
+            boolean swapped = conquerIslandGroup(islandGroup, winner);
+            if (swapped)
+                mergeIslandGroup(islandGroup);
+        }
+        else return;
     }
 
     /**
@@ -168,6 +169,22 @@ public class Archipelago {
             if(islandGroup.hasIslandTile(islandTile))
                 islandGroup.placeStudent(student, islandTile);
         }
+    }
+
+    /**
+     * Setter for the strategy used to resolve an island
+     * @param resolveStrategy The strategy to apply
+     */
+    public void setResolveStrategy(ResolveStrategy resolveStrategy) {
+        this.resolveStrategy = resolveStrategy;
+    }
+
+    /**
+     * Setter for the strategy used to move MotherNature
+     * @param motherNatureStrategy The strategy to apply
+     */
+    public void setMotherNatureStrategy(MoveMotherNatureStrategy motherNatureStrategy) {
+        this.moveMotherNatureStrategyStandard = moveMotherNatureStrategyStandard;
     }
 
     //TODO: add search by IDs

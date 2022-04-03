@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy;
 
-import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,9 @@ class MotherNatureStrategyTest {
     @Test
     public void standardStrategyTest(){ //because (rightfully so) IslandTiles and IslandGroups are hidden in Archipelago
                                         // and there are no getters, to test this method we need to create various stuff
-        MotherNatureStrategy motherNatureStrategy = new StandardMotherNatureStrategy();
+        MoveMotherNatureStrategy motherNatureStrategy = new MoveMotherNatureStrategyStandard();
         List<IslandGroup> islandGroups = new ArrayList<IslandGroup>(); //Simulates the IslandGroups in archipelago
-        IslandTile islandTileDestination = new IslandTile(null, -1, false, null); //Declared here to have reference to insert in method
+        IslandTile islandTileDestination = new IslandTile(null, false, null); //Declared here to have reference to insert in method
         List<IslandTile> islandTiles = new ArrayList<IslandTile>();
         islandTiles.add(islandTileDestination);
         int indexOfStartingIslandGroup = 9;
@@ -45,9 +44,9 @@ class MotherNatureStrategyTest {
      */
     @Test
     public void standardStrategyTestException(){
-        MotherNatureStrategy motherNatureStrategy = new StandardMotherNatureStrategy();
+        MoveMotherNatureStrategy motherNatureStrategy = new MoveMotherNatureStrategyStandard();
         List<IslandGroup> islandGroups = new ArrayList<IslandGroup>();
-        IslandTile islandTileDestination = new IslandTile(null, -1, false, null);
+        IslandTile islandTileDestination = new IslandTile(null, false, null);
         List<IslandTile> islandTiles = new ArrayList<IslandTile>();
         islandTiles.add(islandTileDestination);
         int indexOfStartingIslandGroup = 9;

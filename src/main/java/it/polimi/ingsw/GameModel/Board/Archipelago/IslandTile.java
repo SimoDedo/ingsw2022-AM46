@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.*;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.List;
 
@@ -20,17 +21,16 @@ public class IslandTile extends StudentContainer{
     /**
      * Holds the IslandGroup of which the IslandTile is part
      */
-    private IslandGroup islandGroup; //CHECKME: is it useless?
+    private IslandGroup islandGroup;
 
     /**
      * Creates IslandTile with owner and maxPawns. If it's a starting island, also instantiates MotherNature
      *
      * @param player   the player who owns the container
-     * @param maxPawns the max number of pawns the container can hold
      * @param isStarting whether this IslandTile should instantiate (and hold) MotherNature
      */
-    public IslandTile(Player player, int maxPawns, boolean isStarting, IslandGroup islandGroup) {
-        super(player, maxPawns);
+    public IslandTile(Player player, boolean isStarting, IslandGroup islandGroup) {
+        super(player, 130);
         this.islandGroup = islandGroup;
         if (isStarting)
             motherNature = new MotherNature(this);
@@ -66,10 +66,13 @@ public class IslandTile extends StudentContainer{
      * Getter for the Tower
      * @return
      */
-    public Tower getTower() {
-        return tower;
+    public TowerColor getTowerColor() {
+        return tower == null ? null : tower.getTowerColor();
     }
 
+    public Integer getTowerID(){
+        return tower == null ? null : tower.getID();
+    }
     /**
      * Swaps and return current Tower with given tower. Returns null if no tower was placed beforehand
      * @param tower

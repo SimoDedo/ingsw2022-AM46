@@ -15,7 +15,7 @@ public abstract class BoardPieceWithOwnerMutable extends BoardPieceWithOwner{
     }
 
     /**
-     * Setter for the owner
+     * Setter for the owner of this piece.
      * @param owner the future owner of the piece
      */
     public void setOwner(Player owner){

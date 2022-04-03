@@ -1,9 +1,9 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Board.Player.*;
-import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.Characters.NoEntryTileCharacter;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
@@ -19,11 +19,14 @@ public class IslandGroup {
      */
     private List<IslandTile> islandTiles;
 
-    //TODO: int for NoEntryTiles
+    /**
+     * Model NoEntryTiles present on given IslandGroup
+     */
+    private int noEntryTiles = 0;
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<IslandTile>();
-        this.islandTiles.add(new IslandTile(null, -1, isStarting, this)); //CHECKME: player null replace with "neutral"?
+        this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
     }
 
     public boolean hasMotherNature(){
@@ -155,10 +158,10 @@ public class IslandGroup {
      * @return Color of the tower
      */
     public TowerColor getTowerColor(){
-        if(islandTiles.get(0).getTower() == null)
+        if(islandTiles.get(0).getTowerColor() == null)
             return null;
         else
-            return islandTiles.get(0).getTower().getTowerColor();
+            return islandTiles.get(0).getTowerColor();
     }
 
     /**
@@ -166,9 +169,23 @@ public class IslandGroup {
      * @return Either 0 (first island has no tower, so there are 0 towers) or equal to number of IslandTiles (first island has a tower, so all do)
      */
     public int getTowerCount(){
-        if(islandTiles.get(0).getTower() == null)
+        if(islandTiles.get(0).getTowerColor() == null)
             return 0;
         else
             return islandTiles.size();
+    }
+
+    public void addNoEntryTile(){
+        noEntryTiles++;
+    }
+
+    public boolean isNoEntryTilePlaced(){
+        if(noEntryTiles>0){
+            noEntryTiles--;
+            NoEntryTileCharacter.putBackNoEntryTile();
+            return true;
+        }
+        else
+            return false;
     }
 }
