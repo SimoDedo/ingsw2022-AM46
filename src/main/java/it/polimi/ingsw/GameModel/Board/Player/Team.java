@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Team {
+
     private List<Player> members;
     private final TowerColor color;
     private int max_players;
 
-    public Team(TowerColor color, int game_players){
+    public Team(TowerColor color, int numOfPlayers){
         this.color = color;
-        switch (game_players){
+        switch (numOfPlayers){
             case 2: case 3:
                 this.max_players = 1;
                 break;

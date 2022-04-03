@@ -5,7 +5,9 @@ import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProfessorSet {
 
@@ -13,7 +15,7 @@ public class ProfessorSet {
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
-            professors.put(color, new Professor(null, color));
+            professors.put(color, new Professor(color, null));
         }
     }
 
@@ -27,8 +29,9 @@ public class ProfessorSet {
 
     public int getNumberOfProfessors(Team team) {
         int score = 0;
+        List<Player> teamMembers = new ArrayList<>(team.getMembers());
         for (Professor prof : professors.values()) {
-            if (team.getMembers().contains(prof.getOwner())) score++;
+            if (teamMembers.contains(prof.getOwner())) score++;
         }
         return score;
 
