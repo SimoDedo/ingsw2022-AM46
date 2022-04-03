@@ -12,6 +12,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -187,6 +188,45 @@ public class Archipelago {
         this.moveMotherNatureStrategyStandard = moveMotherNatureStrategyStandard;
     }
 
-    //TODO: add search by IDs
+    /**
+     * Finds a Student with a given ID
+     * @param ID The ID of the student
+     * @return The Student
+     * @throws NoSuchElementException When no IslandGroup contains Student with such ID
+     */
+    public Student findStudentByID(int ID) throws NoSuchElementException {
+        Student studentToReturn = null;
+        for (IslandGroup islandGroup : islandGroups){
+            Student temp = islandGroup.findStudentByID(ID);
+            if(temp != null)
+                studentToReturn = temp;
+        }
+        if(studentToReturn == null)
+            throw new NoSuchElementException("No Student with such ID in IslandGroups");
+        else
+            return studentToReturn;
+    }
+
+    /**
+     * Finds a IslandTile with a given ID
+     * @param ID The ID of the IslandTile
+     * @return The IslandTile
+     * @throws NoSuchElementException When no IslandGroup contains IslandTile with such ID
+     */
+    public IslandTile findIslandTileByID(int ID) throws NoSuchElementException{
+        IslandTile islandTileToReturn = null;
+        for (IslandGroup islandGroup : islandGroups){
+            IslandTile temp = islandGroup.findIslandTileByID(ID);
+            if(temp != null)
+                islandTileToReturn = temp;
+        }
+        if(islandTileToReturn == null)
+            throw  new NoSuchElementException("No IslandTile with such ID in IslandGroups");
+        else
+            return islandTileToReturn;
+    }
+
+
+    //TODO: add search by IDs and get by IDs (useful for view i think)
 
 }

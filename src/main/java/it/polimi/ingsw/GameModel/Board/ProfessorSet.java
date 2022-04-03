@@ -15,7 +15,7 @@ public class ProfessorSet {
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
-            professors.put(color, new Professor(color, null));
+            professors.put(color, new Professor(null, color));
         }
     }
 

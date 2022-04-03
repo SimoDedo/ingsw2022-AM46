@@ -138,4 +138,32 @@ class IslandGroupTest {
         islandGroup.addIslandTilesBefore(islandTiles);
         assertTrue(islandGroup.getTowerColor() == TowerColor.BLACK);
     }
+
+    @Test
+    void findStudentByID(){
+        IslandGroup islandGroup = new IslandGroup(true);
+        List<IslandTile> islandTiles = new ArrayList<>();
+        IslandTile islandTile = new IslandTile(null, true, null);
+        islandTile.moveStudent(new Student(Color.GREEN, null));
+        islandTile.moveStudent(new Student(Color.PINK, null));
+        islandTile.moveStudent(new Student(Color.RED, null));
+        islandTile.moveStudent(new Student(Color.BLUE, null));
+        Student studentToFind = new Student(Color.YELLOW, null);
+        islandTile.moveStudent(studentToFind);
+        islandTiles.add(islandTile);
+        islandGroup.addIslandTilesBefore(islandTiles);
+        assertTrue(studentToFind.equals(islandGroup.findStudentByID(studentToFind.getID())));
+    }
+
+    @Test
+    void findIslandTileByID(){
+        IslandGroup islandGroup = new IslandGroup(true);
+        List<IslandTile> islandTiles = new ArrayList<>();
+        IslandTile islandTileToFind = new IslandTile(null, true, null);
+        IslandTile islandTile1 = new IslandTile(null, true, null);
+        islandTiles.add(islandTileToFind);
+        islandTiles.add(islandTile1);
+        islandGroup.addIslandTilesBefore(islandTiles);
+        assertTrue(islandTileToFind.equals(islandGroup.findIslandTileByID(islandTileToFind.getID())));
+    }
 }

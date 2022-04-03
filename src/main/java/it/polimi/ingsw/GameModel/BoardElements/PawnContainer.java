@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Player.*;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 /**
@@ -103,12 +104,13 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         return new ArrayList<>(pawns);
     }
 
+
     public T getPawnByID(int ID){
         for(T pawn : pawns){
             if (pawn.getID() == ID)
                 return pawn;
         }
-        return null;
+       return null;
     }
 
 }

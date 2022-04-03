@@ -9,6 +9,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Model a group of island tiles
@@ -175,10 +176,17 @@ public class IslandGroup {
             return islandTiles.size();
     }
 
+    /**
+     * Adds a NoEntryTile to this IslandGroup
+     */
     public void addNoEntryTile(){
         noEntryTiles++;
     }
 
+    /**
+     * Checks if there is a NoEntryTile placed. If there is, it removes one
+     * @return True if there is at least one NoEntryTile
+     */
     public boolean isNoEntryTilePlaced(){
         if(noEntryTiles>0){
             noEntryTiles--;
@@ -187,5 +195,28 @@ public class IslandGroup {
         }
         else
             return false;
+    }
+
+    /**
+     * Finds a Student with a given ID
+     * @param ID The ID of the student
+     * @return The Student if found, null otherwise
+     */
+    public Student findStudentByID(int ID){
+        Student studentToReturn = null;
+        for (IslandTile islandTile : islandTiles){
+            Student temp = islandTile.getPawnByID(ID);
+            if (temp != null)
+                studentToReturn = temp;
+        }
+        return studentToReturn;
+    }
+
+    public IslandTile findIslandTileByID(int ID){
+        for (IslandTile islandTile : islandTiles){
+            if(islandTile.getID() == ID)
+                return islandTile;
+        }
+        return null;
     }
 }
