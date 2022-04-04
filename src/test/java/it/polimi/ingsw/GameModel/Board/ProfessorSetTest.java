@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
@@ -21,9 +22,13 @@ class ProfessorSetTest {
      */
     @Test
     void setOwner() {
+        Bag bag = new Bag();
+        bag.fillRemaining();
+        PlayerConfig playerConfig = new PlayerConfig(4);
+        playerConfig.setBag(bag);
         ProfessorSet professorSet = new ProfessorSet();
-        Player player1 = new Player("tizio", 8, TowerColor.BLACK, 2, new Bag().drawN(7));
-        Player player2 = new Player("caio", 8, TowerColor.BLACK, 2, new Bag().drawN(7));
+        Player player1 = new Player("tizio", TowerColor.BLACK, true, playerConfig);
+        Player player2 = new Player("caio", TowerColor.BLACK, true, playerConfig);
         professorSet.setOwner(Color.RED, player1);
         professorSet.setOwner(Color.PINK, player2);
         assertTrue(professorSet.getProfessor(Color.RED).getOwner().equals(player1));
@@ -37,12 +42,16 @@ class ProfessorSetTest {
      */
     @Test
     void getNumberOfProfessors() throws FullTeamException {
-        Team team1 = new Team(TowerColor.BLACK, 4);
-        team1.addMember("tizio",4, new Bag().drawN(7));
-        team1.addMember("caio",4, new Bag().drawN(7));
-        Team team2 = new Team(TowerColor.WHITE, 4);
-        team2.addMember("caio",4, new Bag().drawN(7));
-        team2.addMember("caio",4, new Bag().drawN(7));
+        Bag bag = new Bag();
+        bag.fillRemaining();
+        PlayerConfig playerConfig = new PlayerConfig(4);
+        playerConfig.setBag(bag);
+        Team team1 = new Team(TowerColor.BLACK, 2);
+        team1.addMember("tizio", playerConfig);
+        team1.addMember("caio", playerConfig);
+        Team team2 = new Team(TowerColor.WHITE, 2);
+        team2.addMember("caio", playerConfig);
+        team2.addMember("caio", playerConfig);
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, team1.getMembers().get(0));
         professorSet.setOwner(Color.RED, team1.getMembers().get(1));
