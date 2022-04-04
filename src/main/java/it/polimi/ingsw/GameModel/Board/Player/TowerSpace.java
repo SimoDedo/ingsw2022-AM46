@@ -16,8 +16,8 @@ public class TowerSpace extends PawnContainer<Tower> {
      */
     public TowerSpace(Player player, int maxPawns, TowerColor color) {
         super(player, maxPawns);
-        fillInitial(maxPawns);
         this.color = color;
+        fillInitial(maxPawns);
     }
 
     /**
