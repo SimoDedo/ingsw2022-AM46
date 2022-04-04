@@ -54,6 +54,18 @@ class StudentContainerTest {
         assertTrue(studentToMove.getStudentContainer().equals(islandTile1) && islandTile1.countInfluence(Color.PINK) == 1 && islandTile2.countInfluence(Color.PINK) == 0);
     }
 
+    @Test
+    void  getPawnsIDs(){
+        IslandTile islandTile = new IslandTile(null, true, null);
+        islandTile.moveStudent(new Student(Color.GREEN, null));
+        islandTile.moveStudent(new Student(Color.PINK, null));
+        islandTile.moveStudent(new Student(Color.RED, null));
+        islandTile.moveStudent(new Student(Color.BLUE, null));
+        Student studentToTest = new Student(Color.YELLOW, null);
+        islandTile.moveStudent(studentToTest);
+        assertTrue(islandTile.getPawnsIDs().contains(studentToTest.getID()) && islandTile.getPawnsIDs().size() == 5);
+    }
+
     /**
      * Tests that a PawnContainer either returns null if it does not contain a Pawn with such ID or the correct student
      */

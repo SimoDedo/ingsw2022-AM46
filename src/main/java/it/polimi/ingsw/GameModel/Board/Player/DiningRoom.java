@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -10,6 +11,7 @@ public class DiningRoom {
     private List<Table> tables;
 
     public DiningRoom(Player player){
+        tables = new ArrayList<>();
         for(Color c : Color.values()){tables.add(new Table(player, 10, c));}
     }
 

@@ -34,6 +34,5 @@ public class ProfessorSet {
             if (teamMembers.contains(prof.getOwner())) score++;
         }
         return score;
-
     }
 }

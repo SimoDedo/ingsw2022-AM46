@@ -128,7 +128,7 @@ public class MoveCharacter extends StudentContainer implements Character {
             throw new IllegalStateException("Already activated");
         else{
             this.playerUsing = player;
-            if(!isFirstUse)
+            if(isFirstUse)
                 isFirstUse = false;
             usedThisTurn = true;
             //no need to reset uses, should be done before call (or else it won't even reach here)
@@ -190,7 +190,7 @@ public class MoveCharacter extends StudentContainer implements Character {
     public void useAbilityC1(Student student, IslandTile islandTile) throws IllegalAccessException {
         if(uses < maxUses){
             islandTile.moveStudent(student);
-            islandTile.moveStudent(bag.drawN(1).get(0));
+            this.moveStudent(bag.drawN(1).get(0));
             uses++;
         }
         else throw new IllegalAccessException("No more uses available");

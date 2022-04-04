@@ -20,7 +20,7 @@ public class ResolveStrategyCharacter implements Character {
     /**
      * ID of the Character
      */
-    private int ID = 0;
+    private int ID;
 
     /**
      * The player who paid for the Character
@@ -94,7 +94,7 @@ public class ResolveStrategyCharacter implements Character {
             throw new IllegalStateException("Already activated");
         else {
             this.playerUsing = player;
-            if (!isFirstUse)
+            if (isFirstUse)
                 isFirstUse = false;
             usedThisTurn = true;
         }
@@ -107,7 +107,7 @@ public class ResolveStrategyCharacter implements Character {
      */
     @Override
     public int getCharacterID() {
-        return 0;
+        return ID;
     }
 
     /**

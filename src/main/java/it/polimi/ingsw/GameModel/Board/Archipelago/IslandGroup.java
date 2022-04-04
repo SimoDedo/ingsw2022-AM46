@@ -212,6 +212,11 @@ public class IslandGroup {
         return studentToReturn;
     }
 
+    /**
+     * Finds a IslandTile with a given ID
+     * @param ID The ID of the IslandTile
+     * @return The IslandTile if found, null otherwise
+     */
     public IslandTile findIslandTileByID(int ID){
         for (IslandTile islandTile : islandTiles){
             if(islandTile.getID() == ID)

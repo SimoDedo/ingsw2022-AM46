@@ -139,6 +139,9 @@ class IslandGroupTest {
         assertTrue(islandGroup.getTowerColor() == TowerColor.BLACK);
     }
 
+    /**
+     * Tests that method actually finds the right student
+     */
     @Test
     void findStudentByID(){
         IslandGroup islandGroup = new IslandGroup(true);
@@ -155,6 +158,9 @@ class IslandGroupTest {
         assertTrue(studentToFind.equals(islandGroup.findStudentByID(studentToFind.getID())));
     }
 
+    /**
+     * Tests that method actually finds the right IslandTile
+     */
     @Test
     void findIslandTileByID(){
         IslandGroup islandGroup = new IslandGroup(true);

@@ -40,6 +40,19 @@ public abstract class StudentContainer extends PawnContainer<Student>{
     }
 
     /**
+     *  Alternativa to RemovePawn using index
+     * @param index index of the pawn to be removed
+     * @return The student removed
+     * @throws IllegalStateException When no student with such ID is contained
+     */
+    @Override
+    public Student removePawnByIndex(int index) throws IllegalStateException{
+        Student student = super.removePawnByIndex(index);
+        student.setStudentContainer(null);
+        return student;
+    }
+
+    /**
      * Removes the student from its former container (if it has one, but it should) then places it in this container.
      * @param studentToPlace Student to place in this container
      * @return The student removed from the StudentContainer of the student (same as the studentToPlace)

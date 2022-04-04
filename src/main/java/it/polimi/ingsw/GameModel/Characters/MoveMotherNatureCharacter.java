@@ -47,7 +47,7 @@ public class MoveMotherNatureCharacter implements Character{
             throw new IllegalStateException("Already activated");
         else {
             this.playerUsing = player;
-            if (!isFirstUse)
+            if (isFirstUse)
                 isFirstUse = false;
             usedThisTurn = true;
         }

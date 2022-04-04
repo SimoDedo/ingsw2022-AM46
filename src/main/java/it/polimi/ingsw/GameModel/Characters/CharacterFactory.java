@@ -45,12 +45,14 @@ public class CharacterFactory {
         switch (ID){
             case 1 :
                 requestParameters.add(RequestParameters.STUDCARD);
-                requestParameters.add(RequestParameters.STUDENTRANCE);
+                requestParameters.add(RequestParameters.ISLAND);
                 character = new MoveCharacter(null, 4, 1,1, 1, requestParameters);
                 ((MoveCharacter) character).setBag(bag);
                 ((MoveCharacter) character).initialFill();
                 break;
             case 2 :
+                requestParameters.add(RequestParameters.ISLAND); //FIXME: placeholder while no C&M prof
+                character = new ResolveStrategyCharacter(3, 3, requestParameters, new ResolveStrategyC3());
                 break;
             case 3 :
                 requestParameters.add(RequestParameters.ISLAND);
@@ -70,6 +72,7 @@ public class CharacterFactory {
                 requestParameters.add(RequestParameters.STUDCARD);
                 requestParameters.add(RequestParameters.STUDENTRANCE);
                 character = new MoveCharacter(null, 6, 7, 1, 3, requestParameters);
+                ((MoveCharacter) character).setBag(bag);
                 ((MoveCharacter) character).initialFill();
                 break;
             case 8 :

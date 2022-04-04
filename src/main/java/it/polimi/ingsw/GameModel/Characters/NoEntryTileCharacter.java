@@ -45,7 +45,7 @@ public class NoEntryTileCharacter implements Character{
             throw  new IllegalStateException("No more tile left, would be useless");
         else {
             this.playerUsing = player;
-            if (!isFirstUse)
+            if (isFirstUse)
                 isFirstUse = false;
             usedThisTurn = true;
         }

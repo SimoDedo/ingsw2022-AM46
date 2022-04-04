@@ -42,6 +42,7 @@ public class IslandTile extends StudentContainer{
      */
     public void placeMotherNature(MotherNature motherNature) {
         this.motherNature = motherNature;
+        motherNature.setIslandTile(this);
     }
 
     /**

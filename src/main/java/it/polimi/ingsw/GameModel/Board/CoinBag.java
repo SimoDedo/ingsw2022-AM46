@@ -8,7 +8,9 @@ public class CoinBag {
         coins = 20;
     }
 
-    public void removeCoin() {
+    public void removeCoin() throws ArithmeticException{
+        if(coins == 0) throw
+                new ArithmeticException("No more coins to take");
         coins--;
     }
 

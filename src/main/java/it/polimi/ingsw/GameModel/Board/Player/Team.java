@@ -6,6 +6,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -16,6 +17,7 @@ public class Team {
     private int max_players;
 
     public Team(TowerColor color, int numOfPlayers){
+        this.members = new ArrayList<>();
         this.color = color;
         switch (numOfPlayers){
             case 2: case 3:

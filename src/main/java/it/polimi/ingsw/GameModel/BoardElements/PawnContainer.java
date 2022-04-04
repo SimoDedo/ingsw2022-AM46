@@ -75,6 +75,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * Alternative version of removePawn using list index
      * @param index index of the pawn to be removed
      * @return the pawn, removed from the container
+     * @throws IllegalArgumentException When no pawn with such ID is contained
      */
     public T removePawnByIndex(int index) throws IllegalArgumentException {
         if (index < 0 || index >= getMaxPawns()) {
@@ -104,6 +105,17 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         return new ArrayList<>(pawns);
     }
 
+    /**
+     * Getter for a list of IDs of pawns contained in the PawnContainer
+     * @return A new list of Integers containing the IDs
+     */
+    public  List<Integer> getPawnsIDs(){
+        List<Integer> IDs = new ArrayList<>();
+        for(T pawn : pawns){
+            IDs.add(pawn.getID());
+        }
+        return IDs;
+    }
 
     public T getPawnByID(int ID){
         for(T pawn : pawns){

@@ -29,7 +29,6 @@ public class Player {
         board = new PlayerBoard(this, towerColor, players, maxTowers, initialEntranceStudents);
 
 
-
     }
 
     /**
