@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.PawnContainer;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 public class TowerSpace extends PawnContainer<Tower> {
 
@@ -33,7 +34,7 @@ public class TowerSpace extends PawnContainer<Tower> {
     /**
      * @return Tower at index 0, removed from the container
      */
-    public Tower takeTower() {
+    public Tower takeTower() throws GameOverException {
         if (getTowersPlaced() == getMaxPawns()) {
             System.out.print("win :)");
         }

@@ -6,21 +6,20 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Team {
-
-    private List<Player> members;
+    private List<Player> members = new ArrayList<>();
     private final TowerColor color;
     private int max_players;
 
-    public Team(TowerColor color, int numOfPlayers){
-        this.members = new ArrayList<>();
+    public Team(TowerColor color, int game_players){
         this.color = color;
-        switch (numOfPlayers){
+        switch (game_players){
             case 2: case 3:
                 this.max_players = 1;
                 break;
@@ -41,16 +40,16 @@ public class Team {
      * @param nick name of the candidate to add to the team
      * @throws FullTeamException if the team is already full (size = max_players)
      */
-    public void addMember(String nick, int game_players, List<Student> initialEntranceStudents) throws FullTeamException {
+    public void addMember(String nick, int gamePlayers, List<Student> initialEntranceStudents) throws FullTeamException {
         if(members.size() < max_players){
             int maxTowers = 0;
             if(members.size() == 0){
-                switch (game_players){
+                switch (gamePlayers){
                     case 2: case 4: maxTowers = 8; break;
                     case 3: maxTowers = 6; break;
                 }
             }
-            members.add(new Player(nick, maxTowers, color, game_players, initialEntranceStudents));
+            members.add(new Player(nick, maxTowers, color, gamePlayers, initialEntranceStudents));
 
         } else throw new FullTeamException();
     }
@@ -112,7 +111,7 @@ public class Team {
     }
 
 
-    public Tower takeTower(){
+    public Tower takeTower() throws GameOverException {
         return getPlayerWithTowers().takeTower();
     }
 

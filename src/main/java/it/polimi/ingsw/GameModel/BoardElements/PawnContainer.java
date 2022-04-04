@@ -117,12 +117,9 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         return IDs;
     }
 
-    public T getPawnByID(int ID){
-        for(T pawn : pawns){
-            if (pawn.getID() == ID)
-                return pawn;
-        }
-       return null;
+    public T getPawnByID(int ID) throws NoSuchElementException {
+        Predicate<T> test = pawn -> pawn.getID() == ID;
+        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(NoSuchElementException::new);
     }
 
 }

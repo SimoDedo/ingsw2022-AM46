@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
 public class Table extends StudentContainer {
     private boolean firstCoin, secondCoin, thirdCoin;
@@ -25,11 +26,10 @@ public class Table extends StudentContainer {
      * checks if the owner of the table is rewarded with a coin
      * @param student to place
      */
-    public void placeStudent(Student student){
+    public void placeStudent(Student student) throws FullTableException {
         if((pawnCount() == 2 && !firstCoin) || (pawnCount() == 5 && !secondCoin) ||
-                (pawnCount() == 8 && thirdCoin)){
-            getOwner().awardCoin();
-        }
+                (pawnCount() == 8 && thirdCoin)){ getOwner().awardCoin(); }
+        placePawn(student);
     }
 
     public int getScore(){

@@ -4,6 +4,8 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +58,7 @@ public class PlayerBoard {
      * @param students to place in the entrance
      * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
      */
-    public void refillEntrance(List<Student> students) throws IllegalArgumentException{
+    public void refillEntrance(List<Student> students) throws IllegalStateException{
         entrance.refillStudents(students);
     }
 
@@ -69,7 +71,7 @@ public class PlayerBoard {
         return towerSpace.getTowersPlaced();
     }
 
-    public Tower takeTower(){
+    public Tower takeTower() throws GameOverException {
         return towerSpace.takeTower();
     }
 
@@ -86,8 +88,8 @@ public class PlayerBoard {
      * @throws NoSuchElementException if any of the students cannot be found. If there are no matches with the
      *      * boardPiece IDs it will be assumed they are all Island locations.
      */
-    public HashMap<Student, Integer> moveStudentsFromEntranceToDN(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalArgumentException, NoSuchElementException{
+    public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
+            throws IllegalStateException, NoSuchElementException, FullTableException {
         HashMap<Student, Integer> islandMovements = new HashMap<>();
         for(Map.Entry<Integer, Integer> pair : studentDestinations.entrySet()){
             Student student = entrance.getPawnByID(pair.getKey());
@@ -95,7 +97,7 @@ public class PlayerBoard {
             // this requires that no island has ID 0... maybe a custom ID class to handle special values?
             if(pair.getValue() == 0){
                 entrance.removePawn(student);
-                diningRoom.getTable(student.getColor()).placeStudent(student);
+                diningRoom.placeStudent(student);
             } else {
                 islandMovements.put(student, pair.getValue());
             }

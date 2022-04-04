@@ -6,8 +6,10 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrate
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
+import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -113,7 +115,7 @@ public class Archipelago {
      * @param teams Teams in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet){
+    public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet) throws GameOverException{
         if(!islandGroup.isNoEntryTilePlaced()) {
             Team winner = resolveStrategy.resolveIslandGroup(islandGroup, teams, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
@@ -128,7 +130,7 @@ public class Archipelago {
      * @param islandGroup The IslandGroup to conquer
      * @param team The team who conquers the IslandGroup
      */
-    private boolean conquerIslandGroup(IslandGroup islandGroup, Team team){
+    private boolean conquerIslandGroup(IslandGroup islandGroup, Team team) throws GameOverException {
         return islandGroup.conquer(team);
     }
 

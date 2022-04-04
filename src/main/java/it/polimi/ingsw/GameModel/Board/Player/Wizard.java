@@ -5,13 +5,13 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 public class Wizard {
 
     private final WizardType type;
-    private final int deckSize = 10;
-    private List<AssistantCard> deck = new ArrayList<>();
+
+    int deckSize = 10;
+    private final List<AssistantCard> deck = new ArrayList<>();
 
     /**
      * initializes the deck of assistants for this wizard
@@ -31,10 +31,9 @@ public class Wizard {
      * @throws NoSuchElementException if this wizard's deck does not contain an assistant with specified ID
      */
     public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
-        AssistantCard assistant = deck.stream().filter(card -> card.getID() == assistantID)
-                                .findAny().orElseThrow(NoSuchElementException::new);
-        deck.removeIf(card -> card.getID() == assistantID); // if we reach this statement it means no exception was
-                                                            // thrown, so we could use remove instead of removeIf. correct?
+        AssistantCard assistant = deck.stream().filter(card -> card.getID() == assistantID).
+                findAny().orElseThrow(NoSuchElementException::new);
+        deck.removeIf(card -> card.getID() == assistantID);
         return assistant;
     }
 
