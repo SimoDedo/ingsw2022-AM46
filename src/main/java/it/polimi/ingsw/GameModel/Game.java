@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.Player.TeamsFactory;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class Game {
      * @param nick name of the player who is requesting the movement
      * @param studentDestinations Map of Student IDs to either a table (0) or an island ID.
      */
-    public void moveStudentsFromEntrance(String nick, HashMap<Integer, Integer> studentDestinations){
+    public void moveStudentsFromEntrance(String nick, HashMap<Integer, Integer> studentDestinations) throws FullTableException {
         // check it's actually the players turn
         HashMap<Student, Integer> studentsToIslands =
                 getPlayerByNick(nick).moveStudentsFromEntranceToDN(studentDestinations);

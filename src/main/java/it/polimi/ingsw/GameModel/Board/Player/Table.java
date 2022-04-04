@@ -27,6 +27,8 @@ public class Table extends StudentContainer {
      * @param student to place
      */
     public void placeStudent(Student student) throws FullTableException {
+        if(student.getColor() != this.color)
+            throw new IllegalArgumentException("Student has wrong color for this table");
         if((pawnCount() == 2 && !firstCoin) || (pawnCount() == 5 && !secondCoin) ||
                 (pawnCount() == 8 && thirdCoin)){ getOwner().awardCoin(); }
         placePawn(student);

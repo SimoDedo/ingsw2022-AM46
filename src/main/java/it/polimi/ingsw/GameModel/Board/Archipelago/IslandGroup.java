@@ -206,11 +206,16 @@ public class IslandGroup {
     public Student findStudentByID(int ID){
         Student studentToReturn = null;
         for (IslandTile islandTile : islandTiles){
-            Student temp = islandTile.getPawnByID(ID);
-            if (temp != null)
-                studentToReturn = temp;
+            try{
+                studentToReturn =  islandTile.getPawnByID(ID);
+            }
+            catch (NoSuchElementException e){
+            }
         }
-        return studentToReturn;
+        if(studentToReturn != null)
+            return studentToReturn;
+        else
+            throw new NoSuchElementException("No such student in this IslandGroup");
     }
 
     /**

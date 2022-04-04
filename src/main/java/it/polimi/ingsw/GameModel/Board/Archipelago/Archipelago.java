@@ -198,10 +198,11 @@ public class Archipelago {
      */
     public Student findStudentByID(int ID) throws NoSuchElementException {
         Student studentToReturn = null;
-        for (IslandGroup islandGroup : islandGroups){
-            Student temp = islandGroup.findStudentByID(ID);
-            if(temp != null)
-                studentToReturn = temp;
+        for (IslandGroup islandGroup : islandGroups) {
+            try {
+                studentToReturn = islandGroup.findStudentByID(ID);
+            } catch (NoSuchElementException e) {
+            }
         }
         if(studentToReturn == null)
             throw new NoSuchElementException("No Student with such ID in IslandGroups");

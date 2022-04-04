@@ -119,7 +119,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
 
     public T getPawnByID(int ID) throws NoSuchElementException {
         Predicate<T> test = pawn -> pawn.getID() == ID;
-        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(NoSuchElementException::new);
+        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(() -> new NoSuchElementException("No such element in container"));
     }
 
 }

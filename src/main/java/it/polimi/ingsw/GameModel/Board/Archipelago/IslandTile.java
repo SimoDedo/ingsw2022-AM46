@@ -68,7 +68,7 @@ public class IslandTile extends StudentContainer{
      * @return
      */
     public TowerColor getTowerColor() {
-        return tower == null ? null : tower.getTowerColor();
+        return tower == null ? null : tower.getColor();
     }
 
     public Integer getTowerID(){

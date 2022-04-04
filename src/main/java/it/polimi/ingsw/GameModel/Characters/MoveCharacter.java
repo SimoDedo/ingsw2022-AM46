@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.*;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -221,7 +222,7 @@ public class MoveCharacter extends StudentContainer implements Character {
      * @param studentFromDiningRoom
      * @throws IllegalAccessException When no more uses are available
      */
-    public void useAbilityC10(Student studentFromEntrance, Student studentFromDiningRoom) throws IllegalAccessException {
+    public void useAbilityC10(Student studentFromEntrance, Student studentFromDiningRoom) throws IllegalAccessException, FullTableException {
         if(uses < maxUses){
             StudentContainer entrance = studentFromEntrance.getStudentContainer();
             HashMap<Integer, Integer> studentToMove = new HashMap<>();
