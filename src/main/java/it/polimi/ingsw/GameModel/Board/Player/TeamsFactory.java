@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Deprecated
+ */
 public class TeamsFactory {
 
     public static List<Team> create(int game_players){

@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
@@ -14,18 +15,11 @@ public class Team {
 
     private List<Player> members;
     private final TowerColor color;
-    private int max_players;
+    private int teamSize;
 
-    public Team(TowerColor color, int numOfPlayers){
+    public Team(TowerColor color, int teamSize){
         this.color = color;
-        switch (numOfPlayers){
-            case 2: case 3:
-                this.max_players = 1;
-                break;
-            case 4:
-                this.max_players = 2;
-        }
-
+        this.teamSize = teamSize;
     }
 
     /**
@@ -39,18 +33,14 @@ public class Team {
      * @param nick name of the candidate to add to the team
      * @throws FullTeamException if the team is already full (size = max_players)
      */
-    public void addMember(String nick, int game_players, Bag bag) throws FullTeamException {
-        if(members.size() < max_players){
-            int maxTowers = 0;
-            if(members.size() == 0){
-                switch (game_players){
-                    case 2: case 4: maxTowers = 8; break;
-                    case 3: maxTowers = 6; break;
-                }
-            }
-            members.add(new Player(nick, maxTowers, color, game_players, bag));
-
-        } else throw new FullTeamException();
+    public void addMember(String nick, PlayerConfig playerConfig) throws FullTeamException {
+        if(members.size() == 0) {
+            members.add(new Player(nick, color, true, playerConfig));
+        }
+        else if (members.size() == 1) {
+            members.add(new Player(nick, color, false, playerConfig));
+        }
+        else throw new FullTeamException();
     }
 
     /**

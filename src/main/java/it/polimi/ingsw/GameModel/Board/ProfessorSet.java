@@ -8,10 +8,11 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProfessorSet {
 
-    private final HashMap<Color, Professor> professors = new HashMap<>();
+    private final Map<Color, Professor> professors = new HashMap<>();
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
