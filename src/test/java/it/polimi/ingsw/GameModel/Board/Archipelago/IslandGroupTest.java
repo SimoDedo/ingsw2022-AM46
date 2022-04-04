@@ -1,9 +1,15 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.GameModel.Board.Player.Table;
+import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import org.hamcrest.core.Is;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -60,8 +66,26 @@ class IslandGroupTest {
         assertTrue(islandGroup.countInfluence(Color.PINK) == 7 && islandGroup.countInfluence(Color.RED) == 3 && islandGroup.countInfluence(Color.BLUE) == 0);
     }
 
+    /**
+     *  Tests that team correctly conquers
+     * @throws FullTeamException not used
+     * @throws GameOverException not used
+     */
     @Test
-    void conquer() {
+    void conquer() throws FullTeamException, GameOverException {
+        IslandGroup islandGroup = new IslandGroup(true);
+        Bag bag = new Bag();
+        bag.fillRemaining();
+        Team team1 = new Team(TowerColor.BLACK, 4);
+        team1.addMember("simo", 4, bag.drawN(7));
+        team1.addMember("greg", 4, bag.drawN(7));
+        Team team2 = new Team(TowerColor.WHITE, 4);
+        team2.addMember("ceruti", 4, bag.drawN(7));
+        team2.addMember("pirovano", 4, bag.drawN(7));
+        islandGroup.conquer(team1);
+        assertTrue(islandGroup.getTowerColor().equals(TowerColor.BLACK));
+        islandGroup.conquer(team2);
+        assertTrue(islandGroup.getTowerColor().equals(TowerColor.WHITE));
     }
 
     /**
@@ -73,10 +97,6 @@ class IslandGroupTest {
         List<IslandTile> islandTiles = islandGroup.removeIslandTiles();
         assertTrue(islandTiles.get(0) != null && islandTiles.get(0).hasMotherNature());
         assertFalse(islandGroup.hasIslandTile(islandTiles.get(0)));
-    }
-
-    @Test
-    void selfDestruct() {
     }
 
     /**
@@ -119,11 +139,6 @@ class IslandGroupTest {
         islandTiles.add(new IslandTile(null, false,null ));
         islandGroup.addIslandTilesBefore(islandTiles);
         assertTrue(islandGroup.hasIslandTile(islandTiles.get(0)));
-    }
-
-    @Test
-    void placeStudent() { //Test not needed, calls a single function that is tested and works
-
     }
 
     /**

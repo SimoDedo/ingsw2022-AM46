@@ -92,8 +92,4 @@ public class Player {
         //assert board != null;
         return board.moveStudentsFromEntranceToDR(studentDestinations);
     }
-
-
-    public void putTower(Tower towerRemoved) {
-    }
 }
