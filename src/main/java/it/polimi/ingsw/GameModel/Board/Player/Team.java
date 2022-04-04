@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -13,20 +14,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Team {
+
     private List<Player> members = new ArrayList<>();
     private final TowerColor color;
-    private int max_players;
+    private int teamSize;
 
-    public Team(TowerColor color, int game_players){
+    public Team(TowerColor color, int teamSize){
         this.color = color;
-        switch (game_players){
-            case 2: case 3:
-                this.max_players = 1;
-                break;
-            case 4:
-                this.max_players = 2;
-        }
-
+        this.teamSize = teamSize;
     }
 
     /**
@@ -40,18 +35,18 @@ public class Team {
      * @param nick name of the candidate to add to the team
      * @throws FullTeamException if the team is already full (size = max_players)
      */
-    public void addMember(String nick, int gamePlayers, List<Student> initialEntranceStudents) throws FullTeamException {
-        if(members.size() < max_players){
-            int maxTowers = 0;
-            if(members.size() == 0){
-                switch (gamePlayers){
-                    case 2: case 4: maxTowers = 8; break;
-                    case 3: maxTowers = 6; break;
-                }
-            }
-            members.add(new Player(nick, maxTowers, color, gamePlayers, initialEntranceStudents));
-
-        } else throw new FullTeamException();
+    public Player addMember(String nick, PlayerConfig playerConfig) throws FullTeamException {
+        if(members.size() == 0) {
+            Player newPlayer = new Player(nick, color, true, playerConfig);
+            members.add(newPlayer);
+            return newPlayer;
+        }
+        else if (members.size() == 1) {
+            Player newPlayer = new Player(nick, color, false, playerConfig);
+            members.add(newPlayer);
+            return newPlayer;
+        }
+        else throw new FullTeamException();
     }
 
     /**
@@ -59,7 +54,7 @@ public class Team {
      * @return the player
      * @throws NoSuchElementException if there is no player in this team with specified nickname
      */
-    public Player getPlayerByNick(String nick) throws NoSuchElementException {
+    public Player getPlayerByNickname(String nick) throws NoSuchElementException {
         return members.stream().filter(p -> p.getNickname().equals(nick)).
                 findAny().orElseThrow(NoSuchElementException::new);
     }
@@ -90,7 +85,7 @@ public class Team {
      * @throws NoSuchElementException if the specified player does not hold the student with the specified ID
      */
     public Student getStudentByID(String nick, int ID) throws NoSuchElementException{
-        return getPlayerByNick(nick).getStudentByID(ID);
+        return getPlayerByNickname(nick).getStudentByID(ID);
     }
 
     /**
@@ -107,7 +102,7 @@ public class Team {
      * @return number of Students of that color in the diningRoom
      */
     public int getScore(String nick, Color color){
-        return getPlayerByNick(nick).getScore(color);
+        return getPlayerByNickname(nick).getScore(color);
     }
 
 
@@ -128,6 +123,6 @@ public class Team {
                 orElseThrow(NoSuchElementException::new).getTowersPlaced();
     }
     public void refillEntrance(List<Student> students, String nick) throws IllegalArgumentException, NoSuchElementException{
-        getPlayerByNick(nick).refillEntrance(students);
+        getPlayerByNickname(nick).refillEntrance(students);
     }
 }

@@ -227,7 +227,7 @@ public class MoveCharacter extends StudentContainer implements Character {
             StudentContainer entrance = studentFromEntrance.getStudentContainer();
             HashMap<Integer, Integer> studentToMove = new HashMap<>();
             studentToMove.put(studentFromEntrance.getID(), 0); //CHECKME: "0" should be changed. also below
-            playerUsing.moveStudentsFromEntranceToDN(studentToMove);
+            //todo: fix following line using new methods: playerUsing.moveStudentsFromEntranceToDN(studentToMove);
             entrance.moveStudent(studentFromDiningRoom);
             uses++;
         }

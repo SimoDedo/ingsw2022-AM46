@@ -1,6 +1,8 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -13,34 +15,21 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PlayerBoard {
-    private TowerSpace towerSpace;
+    private TowerSpace towerSpace = null;
     private Entrance entrance;
     private DiningRoom diningRoom;
-    private int studentsToPick;
 
 
 
     /**
      * Creates a new Entrance, TowerSpace and DiningRoom. The maximum amount of students the entrance can hold and the
      * maximum amount of students that can be moved from it every turn are decided based on the amount of players.
-     *
      * @param player the owner of the board
      * @param towerColor color of the player's towers
-     * @param players number of players in the game
-     * @param maxTowers maximum towers the towerSpace can hold. Can be 0 in the case of 4 players.
      */
-    public PlayerBoard(Player player, TowerColor towerColor, int players, int maxTowers, List<Student> initialEntranceStudents){
-        switch (players){
-            case 2: case 4:
-                this.entrance = new Entrance(player, 7, 3, initialEntranceStudents);
-                this.studentsToPick = 3;
-                break;
-            case 3:
-                this.entrance = new Entrance(player, 9, 4, initialEntranceStudents);
-                this.studentsToPick = 4;
-                break;
-        }
-        this.towerSpace = new TowerSpace(player, maxTowers, towerColor);
+    public PlayerBoard(Player player, TowerColor towerColor, boolean isTowerHolder, PlayerConfig playerConfig) {
+        this.entrance = new Entrance(player, playerConfig.getInitialEntranceSize(), playerConfig.getMovableEntranceStudents(), playerConfig.getBag());
+        if (isTowerHolder) this.towerSpace = new TowerSpace(player, playerConfig.getMaxTowers(), towerColor);
         this.diningRoom = new DiningRoom(player);
     }
 
@@ -103,6 +92,14 @@ public class PlayerBoard {
             }
         }
         return islandMovements;
+    }
+
+    public Table getTable(Color color) {
+        return diningRoom.getTable(color);
+    }
+
+    public Student getStudentFromEntrance(int studentID) {
+        return entrance.getPawnByID(studentID);
     }
 
 
