@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 
-import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -33,12 +32,16 @@ public class Team {
      * @param nick name of the candidate to add to the team
      * @throws FullTeamException if the team is already full (size = max_players)
      */
-    public void addMember(String nick, PlayerConfig playerConfig) throws FullTeamException {
+    public Player addMember(String nick, PlayerConfig playerConfig) throws FullTeamException {
         if(members.size() == 0) {
-            members.add(new Player(nick, color, true, playerConfig));
+            Player newPlayer = new Player(nick, color, true, playerConfig);
+            members.add(newPlayer);
+            return newPlayer;
         }
         else if (members.size() == 1) {
-            members.add(new Player(nick, color, false, playerConfig));
+            Player newPlayer = new Player(nick, color, false, playerConfig);
+            members.add(newPlayer);
+            return newPlayer;
         }
         else throw new FullTeamException();
     }
@@ -48,7 +51,7 @@ public class Team {
      * @return the player
      * @throws NoSuchElementException if there is no player in this team with specified nickname
      */
-    public Player getPlayerByNick(String nick) throws NoSuchElementException {
+    public Player getPlayerByNickname(String nick) throws NoSuchElementException {
         return members.stream().filter(p -> p.getNickname().equals(nick)).
                 findAny().orElseThrow(NoSuchElementException::new);
     }
@@ -79,7 +82,7 @@ public class Team {
      * @throws NoSuchElementException if the specified player does not hold the student with the specified ID
      */
     public Student getStudentByID(String nick, int ID) throws NoSuchElementException{
-        return getPlayerByNick(nick).getStudentByID(ID);
+        return getPlayerByNickname(nick).getStudentByID(ID);
     }
 
     /**
@@ -96,7 +99,7 @@ public class Team {
      * @return number of Students of that color in the diningRoom
      */
     public int getScore(String nick, Color color){
-        return getPlayerByNick(nick).getScore(color);
+        return getPlayerByNickname(nick).getScore(color);
     }
 
     /**
@@ -108,6 +111,6 @@ public class Team {
                 orElseThrow(NoSuchElementException::new).getTowersPlaced();
     }
     public void refillEntrance(List<Student> students, String nick) throws IllegalArgumentException, NoSuchElementException{
-        getPlayerByNick(nick).refillEntrance(students);
+        getPlayerByNickname(nick).refillEntrance(students);
     }
 }

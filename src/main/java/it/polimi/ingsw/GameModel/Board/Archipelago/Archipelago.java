@@ -14,6 +14,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -164,10 +165,21 @@ public class Archipelago {
      * @param islandTile IslandTile where student must be placed
      */
     public void placeStudent(Student student, IslandTile islandTile){
-        for(IslandGroup islandGroup : islandGroups){ //CHECKME: you could just call islandTile.placeStudent withouth checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { //CHECKME: you could just call islandTile.placeStudent withouth checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(islandTile))
                 islandGroup.placeStudent(student, islandTile);
         }
+    }
+
+    public void moveStudent(Student student, IslandTile islandTile) {} //todo
+
+    public IslandTile getIslandTileByID(int containerID) throws NoSuchElementException {
+        for (IslandGroup islandGroup : islandGroups) {
+            for (IslandTile islandTile : islandGroup.getIslandTiles()) {
+                if (islandTile.getID() == containerID) return islandTile;
+            }
+        }
+        throw new NoSuchElementException("Container not found in archipelago");
     }
 
     //TODO: add search by IDs

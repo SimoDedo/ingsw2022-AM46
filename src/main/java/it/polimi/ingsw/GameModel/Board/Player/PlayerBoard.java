@@ -84,6 +84,14 @@ public class PlayerBoard {
         return islandMovements;
     }
 
+    public Table getTable(Color color) {
+        return diningRoom.getTable(color);
+    }
+
+    public Student getStudentFromEntrance(int studentID) {
+        return entrance.getPawnByID(studentID);
+    }
+
 
 
 }

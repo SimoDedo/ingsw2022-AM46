@@ -8,6 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -89,4 +90,25 @@ public class Player {
 
     public void putTower(Tower towerRemoved) {
     }
+
+    public List<AssistantCard> getDeck() {
+        return wizard.getDeck();
+    }
+
+    public boolean checkDesperate(Collection<AssistantCard> cardsPlayedThisRound) {
+        for (AssistantCard cardInHand : getDeck()) {
+            if (!cardsPlayedThisRound.contains(cardInHand)) return false;
+        }
+        return true;
+    }
+
+    public Table getTable(Color color) {
+        return playerBoard.getTable(color);
+    }
+
+    public Student getStudentFromEntrance(int studentID) {
+        return playerBoard.getStudentFromEntrance(studentID);
+    }
+
+    public void addToEntrance(List<Student> studentsFromCloud) {} //todo: implementation
 }

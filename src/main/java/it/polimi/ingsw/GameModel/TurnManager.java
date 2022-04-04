@@ -37,7 +37,8 @@ public class TurnManager {
      * Game will call this method each time it is executed.
      * @param player the new player introduced into the game room
      */
-    public void addPlayerClockwise(Player player) {
+    public void addPlayerClockwise(Player player) throws NullPointerException {
+        if (player == null) throw new NullPointerException("Parameter is null");
         clockwisePlayerList.add(player);
     }
 
@@ -45,7 +46,7 @@ public class TurnManager {
      * Function that randomly selects the player who starts the game. They will be the first
      * to choose their Assistant card in the planning phase of the very first round.
      */
-    public Player determineRandomPlayer() {
+    private Player determineRandomPlayer() {
         int randomNum = ThreadLocalRandom.current().nextInt(0, clockwisePlayerList.size());
         return clockwisePlayerList.get(randomNum);
     }
@@ -61,7 +62,7 @@ public class TurnManager {
         currentPlayer = planningPlayerList.get(0);
     }
 
-    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) {
+    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) { // doesn't treat desperate situations though!
         // I've never hated code written by me this much, but it works somehow.
         // let's refactor it in the future
         actionPlayerList.clear();

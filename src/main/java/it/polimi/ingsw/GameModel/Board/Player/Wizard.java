@@ -41,4 +41,8 @@ public class Wizard {
     public WizardType getType() {
         return type;
     }
+
+    public List<AssistantCard> getDeck() {
+        return deck;
+    }
 }

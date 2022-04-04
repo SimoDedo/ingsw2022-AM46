@@ -171,4 +171,6 @@ public class IslandGroup {
         else
             return islandTiles.size();
     }
+
+    public List<IslandTile> getIslandTiles() { return islandTiles; }
 }
