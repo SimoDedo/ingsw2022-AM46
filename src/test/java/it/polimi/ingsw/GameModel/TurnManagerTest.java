@@ -22,9 +22,11 @@ public class TurnManagerTest {
     public void testStartingPlanningOrder() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        Player player1 = new Player("1-pietro", 6, TowerColor.WHITE, 3, bag);
-        Player player2 = new Player("2-simo", 6, TowerColor.GREY, 3, bag);
-        Player player3 = new Player("3-greg", 6, TowerColor.BLACK, 3, bag);
+        PlayerConfig config = new PlayerConfig(3);
+        config.setBag(bag);
+        Player player1 = new Player("1-pietro", TowerColor.WHITE, true, config);
+        Player player2 = new Player("2-simo", TowerColor.GREY, true, config);
+        Player player3 = new Player("3-greg", TowerColor.BLACK, true, config);
         TurnManager turnManager = new TurnManager();
         turnManager.addPlayerClockwise(player1);
         turnManager.addPlayerClockwise(player2);
@@ -45,9 +47,11 @@ public class TurnManagerTest {
     public void testDeterminePlanningOrder() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        Player player1 = new Player("1-pietro", 6, TowerColor.WHITE, 3, bag);
-        Player player2 = new Player("2-simo", 6, TowerColor.GREY, 3, bag);
-        Player player3 = new Player("3-greg", 6, TowerColor.BLACK, 3, bag);
+        PlayerConfig config = new PlayerConfig(3);
+        config.setBag(bag);
+        Player player1 = new Player("1-pietro", TowerColor.WHITE, true, config);
+        Player player2 = new Player("2-simo", TowerColor.GREY, true, config);
+        Player player3 = new Player("3-greg", TowerColor.BLACK, true, config);
         TurnManager turnManager = new TurnManager();
 
         turnManager.addPlayerClockwise(player2);
@@ -78,9 +82,11 @@ public class TurnManagerTest {
     public void testDetermineActionOrder() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        Player player1 = new Player("1-pietro", 6, TowerColor.WHITE, 3, bag);
-        Player player2 = new Player("2-simo", 6, TowerColor.GREY, 3, bag);
-        Player player3 = new Player("3-greg", 6, TowerColor.BLACK, 3, bag);
+        PlayerConfig config = new PlayerConfig(3);
+        config.setBag(bag);
+        Player player1 = new Player("1-pietro", TowerColor.WHITE, true, config);
+        Player player2 = new Player("2-simo", TowerColor.GREY, true, config);
+        Player player3 = new Player("3-greg", TowerColor.BLACK, true, config);
         TurnManager turnManager = new TurnManager();
 
         turnManager.addPlayerClockwise(player2);
