@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class IslandGroup {
      * @param team The team who owns the towers on the IslandTile, once Conquer has finished
      * @return Returns true if towers had to be swapped, false if not
      */
-    public boolean conquer(Team team){
+    public boolean conquer(Team team) throws GameOverException {
         if(team != null && team.getColor() != this.getTowerColor()){
             for(IslandTile islandTile : islandTiles){
                 Tower towerToPut = team.getPlayerWithTowers().takeTower();

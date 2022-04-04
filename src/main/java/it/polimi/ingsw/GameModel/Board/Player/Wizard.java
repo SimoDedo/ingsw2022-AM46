@@ -2,16 +2,16 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.Utils.Enum.WizardType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 public class Wizard {
 
     private final WizardType type;
 
-    private final int deckSize = 10;
-    private List<AssistantCard> deck;
+    int deckSize = 10;
+    private final List<AssistantCard> deck = new ArrayList<>();
 
     /**
      * initializes the deck of assistants for this wizard

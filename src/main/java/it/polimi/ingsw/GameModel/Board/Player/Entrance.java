@@ -15,8 +15,10 @@ public class Entrance extends StudentContainer{
      * @param maxPawns number of students that are initially placed in the entrance
      * @param movableStudents number of students to move during each action phase
      */
-    public Entrance(Player player, int maxPawns, int movableStudents, List<Student> initialStudents) {
+    public Entrance(Player player, int maxPawns, int movableStudents, List<Student> initialStudents)
+            throws IllegalStateException {
         super(player, maxPawns);
+        if(maxPawns != initialStudents.size()) throw new IllegalStateException();
         this.movableStudents = movableStudents;
         fillInitial(initialStudents);
     }
@@ -26,7 +28,7 @@ public class Entrance extends StudentContainer{
      *
      * @param students List of Students
      */
-    public void fillInitial(List<Student> students) {
+    private void fillInitial(List<Student> students) {
         for (int s = 0; s < getMaxPawns(); s++) { placePawn(students.get(s));}
     }
 
@@ -39,8 +41,9 @@ public class Entrance extends StudentContainer{
      * @throws NoSuchElementException if there is at least one ID with no match
      * @throws IllegalArgumentException if the size of the ID list is incorrect for the game type
      */
-    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException, IllegalArgumentException {
-        if(IDList.size() != movableStudents){ throw new IllegalArgumentException(); }
+    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException, IllegalStateException {
+        // check might have to be removed to implement characters
+        //if(IDList.size() != movableStudents){ throw new IllegalStateException(); }
         List<Student> students = new ArrayList<>();
         for(int ID : IDList){
             Student student = getPawnByID(ID);
@@ -54,7 +57,8 @@ public class Entrance extends StudentContainer{
      * @param students drawn from the bag and moving to the entrance
      * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
      */
-    public void refillStudents(List<Student> students) throws IllegalArgumentException {
+    public void refillStudents(List<Student> students) throws IllegalStateException {
+        // this check might have to be overridden for character implementation
         if (students.size() == movableStudents) {
             for (Student s : students) { placePawn(s); }
         } else throw new IllegalArgumentException();

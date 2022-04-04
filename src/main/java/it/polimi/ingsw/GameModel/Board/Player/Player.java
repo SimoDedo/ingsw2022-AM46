@@ -1,11 +1,12 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-import it.polimi.ingsw.GameModel.BoardElements.BoardPiece;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,9 +70,8 @@ public class Player {
 
     public int getTowersPlaced() throws NullPointerException { return board.getTowersPlaced(); }
 
-    public Tower takeTower(){
-        return board.takeTower();
-    }
+    public Tower takeTower() throws GameOverException { return board.takeTower(); }
+
     public void placeTower(Tower tower){
         board.placeTower(tower);
     }
@@ -88,14 +88,11 @@ public class Player {
     }
 
     public HashMap<Student, Integer> moveStudentsFromEntranceToDN(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalArgumentException, NoSuchElementException{
+            throws IllegalStateException, NoSuchElementException, FullTableException {
         //assert board != null;
-        return board.moveStudentsFromEntranceToDN(studentDestinations);
+        return board.moveStudentsFromEntranceToDR(studentDestinations);
     }
 
-    public Tower takeTower() {
-        return  null;
-    }
 
     public void putTower(Tower towerRemoved) {
     }

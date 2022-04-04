@@ -60,7 +60,7 @@ class IslandTileTest {
         Tower tower1 = new Tower(TowerColor.WHITE, null);
         islandTile.swapTower(tower);
         islandTile.swapTower(tower1);
-        assertTrue(islandTile.getTower().getTowerColor() == TowerColor.WHITE);
+        assertTrue(islandTile.getTower().getColor() == TowerColor.WHITE);
     }
 
     /**
@@ -73,7 +73,7 @@ class IslandTileTest {
         Tower tower1 = new Tower(TowerColor.BLACK, null);
         islandTile.swapTower(tower);
         islandTile.swapTower(tower1);
-        assertTrue(islandTile.getTower().equals(tower1) && ! islandTile.getTower().equals(tower) && islandTile.getTower().getTowerColor() == tower.getTowerColor());
+        assertTrue(islandTile.getTower().equals(tower1) && ! islandTile.getTower().equals(tower) && islandTile.getTower().getColor() == tower.getColor());
     }
 
     /**

@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Player.*;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 /**
@@ -86,9 +87,9 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         return copy;
     }
 
-    public T getPawnByID(int ID){
+    public T getPawnByID(int ID) throws NoSuchElementException {
         Predicate<T> test = pawn -> pawn.getID() == ID;
-        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
+        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(NoSuchElementException::new);
     }
 
 }

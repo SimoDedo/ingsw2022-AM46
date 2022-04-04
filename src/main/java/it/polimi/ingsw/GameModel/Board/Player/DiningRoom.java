@@ -1,13 +1,15 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
 public class DiningRoom {
-    private List<Table> tables;
+    private List<Table> tables = new ArrayList<>();
 
     public DiningRoom(Player player){
         for(Color c : Color.values()){tables.add(new Table(player, 10, c));}
@@ -24,6 +26,8 @@ public class DiningRoom {
         return null;
     }
 
+
+
     /**
      * @param color of the table
      * @return score of the table
@@ -33,6 +37,12 @@ public class DiningRoom {
             if(t.getColor() == color) return t.getScore();
         }
         return 0;
+    }
+
+    public void placeStudent(Student student) throws FullTableException {
+        for(Color c : Color.values()){
+            if(student.getColor() == c) getTable(c).placeStudent(student);
+        }
     }
 
     /**
