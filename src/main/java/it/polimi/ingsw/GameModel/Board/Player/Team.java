@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
@@ -110,6 +111,15 @@ public class Team {
         return getPlayerByNick(nick).getScore(color);
     }
 
+
+    public Tower takeTower(){
+        return getPlayerWithTowers().takeTower();
+    }
+
+    public void placeTower(Tower tower) throws IllegalArgumentException, IllegalStateException{
+        if(tower.getColor().equals(getColor())){getPlayerWithTowers().placeTower(tower);}
+        else throw new IllegalArgumentException();
+    }
     /**
      * @return number of towers placed by this team
      * @throws NoSuchElementException never. (if no players are tower holders in this team)

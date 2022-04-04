@@ -37,8 +37,12 @@ public class TowerSpace extends PawnContainer<Tower> {
         if (getTowersPlaced() == getMaxPawns()) {
             System.out.print("win :)");
         }
-        return super.removePawnByIndex(0);
+        return removePawnByIndex(0);
 
+    }
+
+    public void placeTower(Tower tower){
+        placePawn(tower);
     }
 
     /**

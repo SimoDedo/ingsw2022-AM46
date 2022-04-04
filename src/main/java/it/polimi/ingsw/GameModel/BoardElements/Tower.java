@@ -26,7 +26,7 @@ public class Tower extends BoardPieceWithOwner {
      * Getter for the TowerColor
      * @return the current owner of this tower
      */
-    public TowerColor getTowerColor() {
+    public TowerColor getColor() {
         return towerColor;
     }
 }
