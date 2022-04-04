@@ -1,20 +1,23 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Player {
     private final String nickname;
-    private final PlayerBoard board;
+    private final PlayerBoard playerBoard;
     private Wizard wizard;
     private final boolean isTowerHolder;
     private final boolean isNeutral;
@@ -22,25 +25,21 @@ public class Player {
     private int coins;
 
 
-    public Player(String nickname, int maxTowers, TowerColor towerColor, int players, List<Student> initialEntranceStudents){
+    public Player(String nickname, TowerColor towerColor, boolean isTowerHolder, PlayerConfig playerConfig) {
         this.nickname = nickname;
-        this.isTowerHolder = (maxTowers != 0);
+        this.isTowerHolder = isTowerHolder;
         this.isNeutral = false;
-
-        board = new PlayerBoard(this, towerColor, players, maxTowers, initialEntranceStudents);
-
-
+        playerBoard = new PlayerBoard(this, towerColor, isTowerHolder, playerConfig);
     }
 
     /**
      * Constructor for neutral player (i.e. island and bag owner)... there is  probably a better way to do it?
      */
-    public Player(){
+    public Player() {
         nickname = null;
-        board = null;
+        playerBoard = null;
         isTowerHolder = false;
         isNeutral = true;
-
     }
 
     public void pickWizard(WizardType wizardType){
@@ -60,40 +59,61 @@ public class Player {
     }
 
     public int getScore(Color color){
-        // assert board != null;
-        return board.getScore(color);
+        // assert playerBoard != null;
+        return playerBoard.getScore(color);
     }
 
     public int getCoins() {
         return coins;
     }
 
-    public int getTowersPlaced() throws NullPointerException { return board.getTowersPlaced(); }
+    public int getTowersPlaced() throws NullPointerException { return playerBoard.getTowersPlaced(); }
 
     public Tower takeTower() throws GameOverException { return board.takeTower(); }
 
-    public void placeTower(Tower tower){
-        board.placeTower(tower);
+    public void placeTower(Tower tower) {
+        playerBoard.placeTower(tower);
     }
 
-    public WizardType getWizardType(){ return wizard.getType(); }
+    public WizardType getWizardType() { return wizard.getType(); }
 
-    public Student getStudentByID(int ID) throws NoSuchElementException { return board.getStudentByID(ID); }
+    public Student getStudentByID(int ID) throws NoSuchElementException { return playerBoard.getStudentByID(ID); }
 
-    public boolean isTowerHolder(){ return isTowerHolder; }
+    public boolean isTowerHolder() { return isTowerHolder; }
 
     public void refillEntrance(List<Student> students) throws IllegalArgumentException{
-        //assert board != null;
-        board.refillEntrance(students);
+        //assert playerBoard != null;
+        playerBoard.refillEntrance(students);
     }
 
     public HashMap<Student, Integer> moveStudentsFromEntranceToDN(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalStateException, NoSuchElementException, FullTableException {
-        //assert board != null;
-        return board.moveStudentsFromEntranceToDR(studentDestinations);
+            throws IllegalArgumentException, NoSuchElementException{
+        //assert playerBoard != null;
+        return playerBoard.moveStudentsFromEntranceToDN(studentDestinations);
     }
 
 
     public void putTower(Tower towerRemoved) {
     }
+
+    public List<AssistantCard> getDeck() {
+        return wizard.getDeck();
+    }
+
+    public boolean checkDesperate(Collection<AssistantCard> cardsPlayedThisRound) {
+        for (AssistantCard cardInHand : getDeck()) {
+            if (!cardsPlayedThisRound.contains(cardInHand)) return false;
+        }
+        return true;
+    }
+
+    public Table getTable(Color color) {
+        return playerBoard.getTable(color);
+    }
+
+    public Student getStudentFromEntrance(int studentID) {
+        return playerBoard.getStudentFromEntrance(studentID);
+    }
+
+    public void addToEntrance(List<Student> studentsFromCloud) {} //todo: implementation
 }

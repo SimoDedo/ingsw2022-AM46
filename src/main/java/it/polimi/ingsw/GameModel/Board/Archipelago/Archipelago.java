@@ -36,18 +36,18 @@ public class Archipelago {
     /**
      * Strategy to apply when moving MotherNature
      */
-    private MoveMotherNatureStrategyStandard moveMotherNatureStrategyStandard;
+    private MoveMotherNatureStrategy moveMotherNatureStrategy;
 
     /**
      * Creates the Archipelago and creates 12 IslandGroups,
      */
-    public Archipelago(){
+    public Archipelago() {
         islandGroups = new ArrayList<IslandGroup>();
         int startingIsland = selectStartingIsland();
         for (int i = 0; i < 12; i++) {
             islandGroups.add(new IslandGroup(i==startingIsland));
         }
-        moveMotherNatureStrategyStandard = new MoveMotherNatureStrategyStandard();
+        moveMotherNatureStrategy = new MoveMotherNatureStrategyStandard();
         resolveStrategy = new ResolveStrategyStandard();
     }
 
@@ -83,7 +83,7 @@ public class Archipelago {
      * @param moveCount Allowed island that MotherNature can move
      */
     public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws InvalidObjectException {
-        moveMotherNatureStrategyStandard.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
+        moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 
     /**
@@ -122,7 +122,7 @@ public class Archipelago {
             if (swapped)
                 mergeIslandGroup(islandGroup);
         }
-        else return;
+        else return; // consider refactoring this line
     }
 
     /**
@@ -168,7 +168,7 @@ public class Archipelago {
      * @param islandTile IslandTile where student must be placed
      */
     public void placeStudent(Student student, IslandTile islandTile){
-        for(IslandGroup islandGroup : islandGroups){ //CHECKME: you could just call islandTile.placeStudent withouth checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { // CHECKME: you could just call islandTile.placeStudent withouth checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(islandTile))
                 islandGroup.placeStudent(student, islandTile);
         }
@@ -187,7 +187,7 @@ public class Archipelago {
      * @param motherNatureStrategy The strategy to apply
      */
     public void setMotherNatureStrategy(MoveMotherNatureStrategy motherNatureStrategy) {
-        this.moveMotherNatureStrategyStandard = moveMotherNatureStrategyStandard;
+        this.moveMotherNatureStrategy = moveMotherNatureStrategy;
     }
 
     /**
@@ -216,7 +216,7 @@ public class Archipelago {
      * @return The IslandTile
      * @throws NoSuchElementException When no IslandGroup contains IslandTile with such ID
      */
-    public IslandTile findIslandTileByID(int ID) throws NoSuchElementException{
+    public IslandTile getIslandTileByID(int ID) throws NoSuchElementException{
         IslandTile islandTileToReturn = null;
         for (IslandGroup islandGroup : islandGroups){
             IslandTile temp = islandGroup.findIslandTileByID(ID);
@@ -229,6 +229,7 @@ public class Archipelago {
             return islandTileToReturn;
     }
 
+    public void moveStudent(Student student, IslandTile islandTile) {} //todo
 
     //TODO: add search by IDs and get by IDs (useful for view i think)
 

@@ -177,6 +177,8 @@ public class IslandGroup {
             return islandTiles.size();
     }
 
+    public List<IslandTile> getIslandTiles() { return islandTiles; }
+
     /**
      * Adds a NoEntryTile to this IslandGroup
      */
@@ -230,4 +232,6 @@ public class IslandGroup {
         }
         return null;
     }
+
+
 }
