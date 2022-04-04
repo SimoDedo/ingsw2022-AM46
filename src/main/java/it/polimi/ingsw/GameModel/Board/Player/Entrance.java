@@ -17,10 +17,9 @@ public class Entrance extends StudentContainer{
      * @param maxPawns number of students that are initially placed in the entrance
      * @param movableStudents number of students to move during each action phase
      */
-    public Entrance(Player player, int maxPawns, int movableStudents, List<Student> initialStudents)
+    public Entrance(Player player, int maxPawns, int movableStudents, Bag bag)
             throws IllegalStateException {
         super(player, maxPawns);
-        if(maxPawns != initialStudents.size()) throw new IllegalStateException();
         this.movableStudents = movableStudents;
         this.bag = bag;
         fillInitial();

@@ -18,7 +18,6 @@ public class PlayerBoard {
     private TowerSpace towerSpace = null;
     private Entrance entrance;
     private DiningRoom diningRoom;
-    private int studentsToPick;
 
 
 

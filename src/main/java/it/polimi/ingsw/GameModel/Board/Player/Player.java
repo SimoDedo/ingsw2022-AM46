@@ -69,7 +69,7 @@ public class Player {
 
     public int getTowersPlaced() throws NullPointerException { return playerBoard.getTowersPlaced(); }
 
-    public Tower takeTower() throws GameOverException { return board.takeTower(); }
+    public Tower takeTower() throws GameOverException { return playerBoard.takeTower(); }
 
     public void placeTower(Tower tower) {
         playerBoard.placeTower(tower);
@@ -85,13 +85,6 @@ public class Player {
         //assert playerBoard != null;
         playerBoard.refillEntrance(students);
     }
-
-    public HashMap<Student, Integer> moveStudentsFromEntranceToDN(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalArgumentException, NoSuchElementException{
-        //assert playerBoard != null;
-        return playerBoard.moveStudentsFromEntranceToDN(studentDestinations);
-    }
-
 
     public void putTower(Tower towerRemoved) {
     }

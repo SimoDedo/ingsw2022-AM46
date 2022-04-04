@@ -17,6 +17,7 @@ import it.polimi.ingsw.GameModel.TurnManager;
 import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.*;
 
@@ -73,18 +74,6 @@ public class Game {
         }
     }
 
-    /**
-     * @param nick name of the player who is requesting the movement
-     * @param studentDestinations Map of Student IDs to either a table (0) or an island ID.
-     */
-    public void moveStudentsFromEntrance(String nick, HashMap<Integer, Integer> studentDestinations){
-        // check it's actually the players turn
-        HashMap<Student, Integer> studentsToIslands =
-                getPlayerByNick(nick).moveStudentsFromEntranceToDN(studentDestinations);
-        // move students in hashmap into corresponding islands
-
-
-    }
 
     private Player getPlayerByNickname(String nickname) throws NoSuchElementException {
         Player player = null;
@@ -119,7 +108,9 @@ public class Game {
         turnManager.nextPhase(); // set from idle -> planning
     }
 
-    public String getCurrentPlayer() {return turnManager.getCurrentPlayer().getNickname();} // could be useful to controller
+    public String getCurrentPlayer() {
+        return turnManager.getCurrentPlayer().getNickname();
+    } // could be useful to controller
 
     public void playAssistant(String nickname, int assistantID) {
         if (!checkDesperate(nickname)) {
@@ -147,11 +138,13 @@ public class Game {
         checkAndMoveProfessor(student.getColor());
     }
 
-    public void checkAndMoveProfessor(Color color) {} //this calls a strategy! todo: calls professorset.setowner when winner is found
+    public void checkAndMoveProfessor(Color color) {
+    } //this calls a strategy! todo: calls professorset.setowner when winner is found
 
-    public void moveMotherNature(String nickname, int islandTileID) {} //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
+    public void moveMotherNature(String nickname, int islandTileID) {
+    } //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
 
-    public void resolveIslandGroup(IslandGroup islandGroup) {
+    public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroup, teams, professorSet);
     }
 
@@ -175,3 +168,4 @@ public class Game {
     public void pushThisRoundInLastRound() {
 
     }
+}
