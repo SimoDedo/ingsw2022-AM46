@@ -1,45 +1,94 @@
 package it.polimi.ingsw.GameModel;
 
+import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.CloudTile;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.Player.TeamsFactory;
+import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Game {
-    private List<Team> teams;
-    private int players;
-    private int currentPlayerNumber;
-    private final Player neutral = new Player();
 
-    private Bag bag;
+    private int players; // deprecated
+    private int currentPlayerNumber; // deprecated
+    private final Player neutralPlayer = new Player();
 
-    public Game() {} //todo
+    private Bag bag = new Bag();
+    private Archipelago archipelago = new Archipelago();
+    private List<CloudTile> clouds = new ArrayList<>();
+    private ProfessorSet professorSet = new ProfessorSet();
+    private List<Team> teams = new ArrayList<>();
 
-    public void initializeTeams(int players){
-        teams = TeamsFactory.create(players);
-    }
+    public Game(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
 
-    public void addPlayer(String nick) throws FullTeamException, IllegalStateException {
+        archipelago.initialStudentPlacement(bag.drawN(10));
+        bag.fillRemaining();
+        gameConfig.getPlayerConfig().setBag(bag);
 
-        int studentsToDraw;
+        for (int i = 0; i < gameConfig.getNumOfClouds(); i++)
+            clouds.add(new CloudTile(gameConfig.getCloudSize(), bag));
 
-        switch (players){
-            case 2: case 4: studentsToDraw = 7; break;
-            case 3: studentsToDraw = 9; break;
-            default:
-                throw new IllegalStateException("Too many players: " + players);
+        // the following code can be brought to an ad-hoc class: TeamManager.
+        int teamSize = gameConfig.getNumOfPlayers()/2;
+        Team white = new Team(TowerColor.WHITE, teamSize);
+        Team black = new Team(TowerColor.BLACK, teamSize);
+        Team grey;
+        if (gameConfig.getNumOfPlayers() == 3) grey = new Team(TowerColor.GREY, teamSize);
+        else grey = null;
+
+        try {
+            for (Map.Entry<String, TowerColor> entry : teamComposition.entrySet()) {
+                switch (entry.getValue()) {
+                    case WHITE:
+                        white.addMember(entry.getKey(), gameConfig.getPlayerConfig());
+                        break;
+                    case BLACK:
+                        black.addMember(entry.getKey(), gameConfig.getPlayerConfig());
+                        break;
+                    case GREY:
+                        grey.addMember(entry.getKey(), gameConfig.getPlayerConfig());
+                        break;
+                }
+            }
+        } catch (FullTeamException | NullPointerException e) {
+            e.printStackTrace();
         }
-
-        teams.get(currentPlayerNumber % players + 1).addMember(nick, players, bag);
-
-        currentPlayerNumber ++;
     }
+
+    //todo: complete game methods
+
+    public void pushThisRoundInLastRound() {
+
+    }
+
+    public void assignWizard() {
+
+    }
+
+    public void playAssistant() {
+
+    }
+
+    private void checkDesperate() {
+
+    }
+
+
+
+
+
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * @param nick name of the player who is requesting the movement
@@ -63,7 +112,7 @@ public class Game {
         return player;
     }
 
-    public void playAssistant(String nick, int assistantID) throws NoSuchElementException{
+    public void playAssistant(String nick, int assistantID) throws NoSuchElementException {
         getPlayerByNick(nick).playAssistant(assistantID);
     }
 }
