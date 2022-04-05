@@ -63,14 +63,14 @@ The project will include:
 
 
 - **Implementation**
-  - [ ] Game rules 
-  - [ ] Board elements and pawns
-  - [ ] Archipelago
+  - [x] ~~Game rules~~
+  - [x] ~~Board elements and pawns~~
+  - [x] ~~Archipelago~~
   - [ ] Players and teams
   - [ ] Expert mode: characters
   - [ ] Advanced features
     - [ ] AF1: 4-players game
-    - [ ] AF2: *WIP*
+    - [ ] AF2: all 12 characters
     - [ ] AF3: *WIP*
   - [ ] Unit testing
   - [ ] Communication protocol
@@ -91,7 +91,12 @@ The project will include:
   + **0.2.1**: Game and Character factory, complete check-up
   + **0.2.2**: minor changes and fixes
 + **0.3.0**: started implementation of pawns and base elements, rewrote Characters entirely *(once again)*
-
++ **0.4.0**: started game model implementation
++ **0.5.0**: rebuilt Game creation
+  + **0.5.1**: implemented Characters
+  + **0.5.2**: improved testing coverage
++ **0.6.0**: merged game, archipelago, team/player into main 
+  + **0.6.1**: 90% model implementation, 70% test coverage
 ---
 
 # Miscellaneous
