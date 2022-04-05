@@ -4,18 +4,21 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
+import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
-import org.hamcrest.core.Is;
+import it.polimi.ingsw.Utils.PlayerList;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -77,18 +80,22 @@ class IslandGroupTest {
         IslandGroup islandGroup = new IslandGroup(true);
         Bag bag = new Bag();
         bag.fillRemaining();
-        PlayerConfig playerConfig = new PlayerConfig(4);
-        playerConfig.setBag(bag);
-        Team team1 = new Team(TowerColor.BLACK, 4);
-        team1.addMember("simo", playerConfig);
-        team1.addMember("greg", playerConfig);
-        Team team2 = new Team(TowerColor.WHITE, 4);
-        team2.addMember("ceruti",playerConfig);
-        team2.addMember("pirovano", playerConfig);
-        islandGroup.conquer(team1);
+        GameConfig gameConfig = new GameConfig(4);
+        gameConfig.getPlayerConfig().setBag(bag);
+
+        HashMap<String, TowerColor> teamConfiguration = new HashMap<String, TowerColor>();
+        teamConfiguration.put("Simo", TowerColor.BLACK);
+        teamConfiguration.put("Greg", TowerColor.BLACK);
+        teamConfiguration.put("Pirovano", TowerColor.WHITE);
+        teamConfiguration.put("Ceruti", TowerColor.WHITE);
+        TeamManager teamManager = new TeamManager();
+        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+
+        islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
         assertTrue(islandGroup.getTowerColor().equals(TowerColor.BLACK));
-        islandGroup.conquer(team2);
+        islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE));
         assertTrue(islandGroup.getTowerColor().equals(TowerColor.WHITE));
+        assertFalse(islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE)));
     }
 
     /**

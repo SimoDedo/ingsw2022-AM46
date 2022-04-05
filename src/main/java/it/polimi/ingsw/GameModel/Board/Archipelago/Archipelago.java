@@ -4,12 +4,14 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.Move
 import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -112,12 +114,12 @@ public class Archipelago {
     /**
      * Resolves IslandGroup
      * @param islandGroup IslandGroup to resolve
-     * @param teams Teams in play who could get ownership of the islandGroup
+     * @param players players in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(IslandGroup islandGroup, List<Team> teams, ProfessorSet professorSet) throws GameOverException{
+    public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet) throws GameOverException{
         if(!islandGroup.isNoEntryTilePlaced()) {
-            Team winner = resolveStrategy.resolveIslandGroup(islandGroup, teams, professorSet);
+            Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
             if (swapped)
                 mergeIslandGroup(islandGroup);
@@ -128,10 +130,10 @@ public class Archipelago {
     /**
      * Conquers the IslandGroup, replacing (if existing) towers with those of team
      * @param islandGroup The IslandGroup to conquer
-     * @param team The team who conquers the IslandGroup
+     * @param player The tower holder of the team who conquers the IslandGroup
      */
-    private boolean conquerIslandGroup(IslandGroup islandGroup, Team team) throws GameOverException {
-        return islandGroup.conquer(team);
+    private boolean conquerIslandGroup(IslandGroup islandGroup, Player player) throws GameOverException {
+        return islandGroup.conquer(player);
     }
 
     /**

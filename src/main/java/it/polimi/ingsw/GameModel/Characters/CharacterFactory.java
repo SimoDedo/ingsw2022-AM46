@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.*;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +23,16 @@ public class CharacterFactory {
     /**
      * List of the teams in the game given to characters that need this knowledge
      */
-    List<Team> teams;
+    PlayerList players;
 
     /**
      * Constructor for the CharacterFactory
      * @param bag Bag given to character that need to draw Students
-     * @param teams List of the teams in the game given to characters that need this knowledge
+     * @param players List of the teams in the game given to characters that need this knowledge
      */
-    public CharacterFactory(Bag bag, List<Team> teams) {
+    public CharacterFactory(Bag bag, PlayerList players) {
         this.bag = bag;
-        this.teams = teams;
+        this.players = players;
     }
 
     /**
@@ -96,7 +97,7 @@ public class CharacterFactory {
             case 12 :
                 requestParameters.add(RequestParameters.COLOR);
                 character = new MoveCharacter(null, 0, 12, 3, 1, requestParameters);
-                ((MoveCharacter) character).setTeams(teams);
+                ((MoveCharacter) character).setPlayers(players);
                 break;
 
         }

@@ -7,7 +7,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class PlayerBoardTest {
         PlayerBoard boardTest = new PlayerBoard(p0, TowerColor.BLACK, true, playerConfig);
 
         for(int ID : studentIDs){assert (boardTest.getStudentByID(ID) != null);}
-        Assertions.assertThrows(NoSuchElementException.class, ()-> boardTest.getStudentByID(maxStudents * 2));
+        assertThrows(NoSuchElementException.class, ()-> boardTest.getStudentByID(maxStudents * 2));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PlayerBoardTest {
             movements.put(studentIDs.get(i), i+1);
         }
         for(Color c : Color.values()){
-            assert (board.getScore(c) == 0);
+            assert  (board.getScore(c) == 0);
         }
     }
 

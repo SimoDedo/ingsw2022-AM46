@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
+import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ class MoveCharacterTest {
     void  initialFill(){
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         assertTrue(((MoveCharacter)character).pawnCount() == 4);
         character = characterFactory.create(7);
@@ -42,7 +43,7 @@ class MoveCharacterTest {
     void useCharacter() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         assertTrue(character.useCharacter(1, null).get(0).equals(RequestParameters.STUDCARD));
     }
@@ -54,7 +55,7 @@ class MoveCharacterTest {
     void useCharacterExceptions() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         character.useCharacter(1, null);
         assertThrows(IllegalStateException.class, () -> character.useCharacter(1, null));
@@ -68,7 +69,7 @@ class MoveCharacterTest {
     void getCharacterID() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         assertTrue(character.getCharacterID()==1);
     }
@@ -80,7 +81,7 @@ class MoveCharacterTest {
     void isFirstUse() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         assertTrue(character.isFirstUse());
         character.useCharacter(1, null);
@@ -94,7 +95,7 @@ class MoveCharacterTest {
     void wasUsedThisTurn() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         character.useCharacter(1, null);
         assertTrue(character.wasUsedThisTurn());
@@ -107,7 +108,7 @@ class MoveCharacterTest {
     void getCost() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         assertTrue(character.getCost() == 1);
         character.useCharacter(1, null);
@@ -121,7 +122,7 @@ class MoveCharacterTest {
     void resetUseState() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         character.useCharacter(1, null);
         assertTrue(character.wasUsedThisTurn());
@@ -137,7 +138,7 @@ class MoveCharacterTest {
     void useAbilityC1() throws IllegalAccessException {
         Bag bag = new Bag();
         bag.fillRemaining();
-        CharacterFactory characterFactory = new CharacterFactory(bag, new ArrayList<>());
+        CharacterFactory characterFactory = new CharacterFactory(bag, new PlayerList());
         Character character = characterFactory.create(1);
         character.useCharacter(1, null);
         IslandTile islandTile = new IslandTile(null, true, null);

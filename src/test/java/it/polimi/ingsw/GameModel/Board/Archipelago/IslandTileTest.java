@@ -80,7 +80,7 @@ class IslandTileTest {
      * Checks that after placing Students you can correctly count them
      */
     @Test
-    void count() {
+    void countInfluence() {
         IslandTile islandTile = new IslandTile(null, true, null);
         List<Student> students = new ArrayList<>();
         students.add(new Student(Color.BLUE, islandTile));
@@ -91,4 +91,12 @@ class IslandTileTest {
         assertTrue(islandTile.countInfluence(Color.BLUE) == 3);
     }
 
+    /**
+     * Checks that after placing Students you can correctly count them
+     */
+    @Test
+    void countInfluenceZero() {
+        IslandTile islandTile = new IslandTile(null, true, null);
+        assertTrue(islandTile.countInfluence(Color.BLUE) == 0);
+    }
 }

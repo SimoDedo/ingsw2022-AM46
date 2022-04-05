@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import javax.management.modelmbean.RequiredModelMBean;
 import java.util.*;
@@ -20,9 +21,9 @@ public class CharacterSet {
      */
     private CharacterFactory characterFactory;
 
-    public CharacterSet(Bag bag, List<Team> teams){
+    public CharacterSet(Bag bag, PlayerList players){
         characters = new ArrayList<Character>();
-        characterFactory = new CharacterFactory(bag, teams);
+        characterFactory = new CharacterFactory(bag, players);
         Set<Integer> randomIDs = selectRandomIDs();
         for (Integer integer : randomIDs){
             characters.add(characterFactory.create(integer));

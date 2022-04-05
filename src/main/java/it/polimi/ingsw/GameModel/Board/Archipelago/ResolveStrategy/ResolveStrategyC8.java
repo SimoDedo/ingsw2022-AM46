@@ -5,6 +5,8 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,52 +33,51 @@ public class ResolveStrategyC8 implements ResolveStrategy {
     /**
      * Method used to resolve an island when C8 is active. Adds 2 influence to activating player
      * @param islandGroupToResolve The island to resolve
-     * @param teams The teams of the current game
+     * @param players The players of the current game
      * @param professorSet Manager for the professor, used to know who owns them
-     * @return The team which holds the most influence, or null if a tie happens
+     * @return The player holding the towers of the team which holds the most influence, or null if a tie happens
      */
     @Override
-    public Team resolveIslandGroup(IslandGroup islandGroupToResolve, List<Team> teams, ProfessorSet professorSet) {
-        HashMap<Team, Integer> scores = new HashMap<Team, Integer>();
-        for(Team team : teams){ //Initializes the HashMap
-            scores.put(team, 0);
+    public Player resolveIslandGroup(IslandGroup islandGroupToResolve, PlayerList players, ProfessorSet professorSet) {
+        HashMap<TowerColor, Integer> scores = new HashMap<TowerColor, Integer>();
+        for(TowerColor towerColor : TowerColor.values()){ //Initializes the HashMap
+            scores.put(towerColor, 0);
         }
+
         for(Color color : Color.values()){ // Checks each color and gives to the right team the influence counted, based on the ownership of the professor
             Player professorOwner = professorSet.getProfessor(color).getOwner();
-            for(Team team : teams){
-                if(team.getMembers().contains(professorOwner)){
-                    int temp = scores.get(team);
-                    scores.put(team, temp + islandGroupToResolve.countInfluence(color));
-                }
+            if(professorOwner != null){
+                int temp = scores.get(professorOwner.getTowerColor());
+                scores.put(professorOwner.getTowerColor(), temp + islandGroupToResolve.countInfluence(color));
             }
         }
-        for(Team team : teams) { //Checks each team to see who should get the tower points and to find who activated the card to give them 2 extra points
-            if(team.getColor() == islandGroupToResolve.getTowerColor()){
-                int temp = scores.get(team);
-                scores.put(team, temp + islandGroupToResolve.getTowerCount());
-            }
-            if(team.getMembers().contains(activatingPlayer)) {
-                int temp = scores.get(team);
-                scores.put(team, temp + 2);
+
+        for(TowerColor towerColor : TowerColor.values()) { //Checks each team to see who should get the tower points
+            if(towerColor == islandGroupToResolve.getTowerColor()){
+                int temp = scores.get(towerColor);
+                scores.put(towerColor, temp + islandGroupToResolve.getTowerCount());
             }
         }
-        return getTeamWinner(scores);
+
+        int temp = scores.get(activatingPlayer.getTowerColor());
+        scores.put(activatingPlayer.getTowerColor(), temp + 2);
+        return players.getTowerHolder(getTeamWinner(scores));
     }
 
     /**
      * Returns the Team in the HashMap with the most influence
-     * @param scores HashMap of teams and their score
-     * @return The team with the highest score, or null if more than one team holds the highest score
+     * @param scores HashMap of towerColors(teams) and their score
+     * @return The towerColor(team) with the highest score, or null if more than one team holds the highest score
      */
-    private Team getTeamWinner(Map<Team, Integer> scores){
-        Team teamWinner = null;
+    private TowerColor getTeamWinner(Map<TowerColor, Integer> scores){
+        TowerColor teamWinner = null;
         int max = 0;
-        for(Team team : scores.keySet()){
-            if(scores.get(team) > max){
-                max = scores.get(team);
-                teamWinner = team;
+        for(TowerColor towerColor : TowerColor.values()){
+            if(scores.get(towerColor) > max){
+                max = scores.get(towerColor);
+                teamWinner = towerColor;
             }
-            if(scores.get(team) == max)
+            else if(scores.get(towerColor) == max)
                 teamWinner = null;
         }
         return teamWinner;

@@ -20,8 +20,10 @@ public class Player {
     private final PlayerBoard playerBoard;
     private Wizard wizard;
     private final boolean isTowerHolder;
-    private final boolean isNeutral;
 
+    private TowerColor towerColor;
+
+    private final boolean isNeutral;
     private int coins;
 
 
@@ -29,6 +31,7 @@ public class Player {
         this.nickname = nickname;
         this.isTowerHolder = isTowerHolder;
         this.isNeutral = false;
+        this.towerColor = towerColor;
         playerBoard = new PlayerBoard(this, towerColor, isTowerHolder, playerConfig);
     }
 
@@ -68,6 +71,10 @@ public class Player {
     }
 
     public int getTowersPlaced() throws NullPointerException { return playerBoard.getTowersPlaced(); }
+
+    public TowerColor getTowerColor() {
+        return towerColor;
+    }
 
     public Tower takeTower() throws GameOverException { return playerBoard.takeTower(); }
 

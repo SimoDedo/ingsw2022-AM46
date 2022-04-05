@@ -4,20 +4,14 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
-import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
-import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Table;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
+import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import it.polimi.ingsw.GameModel.TurnManager;
-import it.polimi.ingsw.GameModel.GameConfig;
-import it.polimi.ingsw.GameModel.PlayerConfig;
-import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.*;
 
@@ -28,12 +22,12 @@ public class Game {
     private Archipelago archipelago = new Archipelago();
     private List<CloudTile> clouds = new ArrayList<>();
     private ProfessorSet professorSet = new ProfessorSet();
-    private List<Team> teams = new ArrayList<>();
+    private PlayerList players = new PlayerList();
     private TurnManager turnManager = new TurnManager();
+    private TeamManager teamManager = new TeamManager();
     private Map<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
 
-    public Game(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
-
+    public Game(GameConfig gameConfig, LinkedHashMap<String, TowerColor> teamComposition) {
         archipelago.initialStudentPlacement(bag.drawN(10));
         bag.fillRemaining();
         gameConfig.getPlayerConfig().setBag(bag);
@@ -41,58 +35,27 @@ public class Game {
         for (int i = 0; i < gameConfig.getNumOfClouds(); i++)
             clouds.add(new CloudTile(gameConfig.getCloudSize(), bag));
 
-        // the following code can be (almost, except for the TurnManager part) moved to an ad-hoc class: TeamManager.
-        int teamSize = gameConfig.getNumOfPlayers() / 2;
-        Team white = new Team(TowerColor.WHITE, teamSize);
-        Team black = new Team(TowerColor.BLACK, teamSize);
-        teams.add(white);
-        teams.add(black);
-        Team grey;
-        if (gameConfig.getNumOfPlayers() == 3) {
-            grey = new Team(TowerColor.GREY, teamSize);
-            teams.add(grey);
-        } else grey = null;
-
-        Player newPlayer = null;
-        try {
-            for (Map.Entry<String, TowerColor> entry : teamComposition.entrySet()) {
-                switch (entry.getValue()) {
-                    case WHITE:
-                        newPlayer = white.addMember(entry.getKey(), gameConfig.getPlayerConfig());
-                        break;
-                    case BLACK:
-                        newPlayer = black.addMember(entry.getKey(), gameConfig.getPlayerConfig());
-                        break;
-                    case GREY:
-                        newPlayer = grey.addMember(entry.getKey(), gameConfig.getPlayerConfig());
-                        break;
-                }
-                turnManager.addPlayerClockwise(newPlayer);
-            }
-        } catch (FullTeamException | NullPointerException e) {
-            e.printStackTrace();
-        }
+        // the following code can be (almost, except for the TurnManager part) moved to an ad-hoc class: TeamManager. <- moved in TeamManager cry about it
+        players = teamManager.create(gameConfig, teamComposition);
+        for(Player player : players)
+            turnManager.addPlayerClockwise(player);
     }
 
 
     private Player getPlayerByNickname(String nickname) throws NoSuchElementException {
-        Player player = null;
-        for (Team team : teams) {
-            try {
-                player = team.getPlayerByNickname(nickname);
-            } catch (NoSuchElementException ignored) {
-            }
+        Player playerToReturn = null;
+        for (Player player : players) {
+            if(player.getNickname().equals(nickname))
+                playerToReturn = player;
         }
-        if (player == null) throw new NoSuchElementException("Player not found");
-        return player;
+        if (playerToReturn == null) throw new NoSuchElementException("Player not found");
+        return playerToReturn;
     }
 
     private List<WizardType> getWizardTypes() { // can be made using streams
         List<WizardType> wizardTypes = new ArrayList<>();
-        for (Team team : teams) {
-            for (Player player : team.getMembers()) {
+        for (Player player : players) {
                 wizardTypes.add(player.getWizardType());
-            }
         }
         return wizardTypes;
     }
@@ -145,7 +108,7 @@ public class Game {
     } //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
 
     public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
-        archipelago.resolveIslandGroup(islandGroup, teams, professorSet);
+        archipelago.resolveIslandGroup(islandGroup, players, professorSet);
     }
 
     public void takeFromCloud(String nickname, int cloudID) {

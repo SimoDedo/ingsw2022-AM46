@@ -8,6 +8,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
+import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +64,9 @@ public class MoveCharacter extends StudentContainer implements Character {
     Bag bag = null;
 
     /**
-     * The teams of the game. Given only to Character that needs it
+     * The players of the game. Given only to Character that needs it
      */
-    List<Team> teams = null;
+    PlayerList players = null;
 
     /**
      * Constructor for the character
@@ -95,10 +96,10 @@ public class MoveCharacter extends StudentContainer implements Character {
 
     /**
      * Setter for the team
-     * @param teams The teams of the game
+     * @param players The teams of the game
      */
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    public void setPlayers(PlayerList players) {
+        this.players = players;
     }
 
     /**

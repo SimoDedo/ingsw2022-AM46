@@ -66,13 +66,13 @@ public class IslandGroup {
 
     /**
      * If the Towers on the IslandTiles aren't of the given Team, replaces the Towers with theirs
-     * @param team The team who owns the towers on the IslandTile, once Conquer has finished
+     * @param player The team who owns the towers on the IslandTile, once Conquer has finished
      * @return Returns true if towers had to be swapped, false if not
      */
-    public boolean conquer(Team team) throws GameOverException {
-        if(team != null && !team.getColor().equals(this.getTowerColor())){
+    public boolean conquer(Player player) throws GameOverException {
+        if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
             for(IslandTile islandTile : islandTiles){
-                Tower towerToPut = team.getPlayerWithTowers().takeTower();
+                Tower towerToPut = player.takeTower();
                 if(towerToPut == null){
                     //CHECKME: se finite le torri, vinta partita => andrà qui il notify o in towerspace? nel dubbio lascio questo commento piangetene a rigaurdo
                 }
