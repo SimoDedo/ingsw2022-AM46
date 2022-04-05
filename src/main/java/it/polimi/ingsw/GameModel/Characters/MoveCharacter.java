@@ -3,7 +3,6 @@ package it.polimi.ingsw.GameModel.Characters;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.*;

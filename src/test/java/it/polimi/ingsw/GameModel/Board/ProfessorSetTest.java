@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
 import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.GameModel.PlayerConfig;
@@ -9,10 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 import it.polimi.ingsw.Utils.PlayerList;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-
-import javax.swing.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

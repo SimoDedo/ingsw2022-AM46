@@ -3,7 +3,6 @@ package it.polimi.ingsw.GameModel.Characters;
 import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyC4;
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.*;
 import it.polimi.ingsw.GameModel.Board.Bag;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
 import it.polimi.ingsw.Utils.PlayerList;
 

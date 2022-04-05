@@ -3,14 +3,12 @@ package it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

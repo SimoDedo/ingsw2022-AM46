@@ -2,11 +2,9 @@ package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import javax.management.modelmbean.RequiredModelMBean;
 import java.util.*;
 
 public class CharacterSet {

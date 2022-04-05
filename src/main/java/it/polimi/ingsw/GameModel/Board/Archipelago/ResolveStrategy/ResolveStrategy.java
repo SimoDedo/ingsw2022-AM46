@@ -2,11 +2,8 @@ package it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.PlayerList;
-
-import java.util.List;
 
 /**
  * Interface for the strategy used to resolve an island
