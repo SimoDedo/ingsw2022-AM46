@@ -206,7 +206,7 @@ public class IslandGroup {
      * @param ID The ID of the student
      * @return The Student if found, null otherwise
      */
-    public Student findStudentByID(int ID){
+    public Student getStudentByID(int ID){
         Student studentToReturn = null;
         for (IslandTile islandTile : islandTiles){
             try{
@@ -222,16 +222,40 @@ public class IslandGroup {
     }
 
     /**
+     * Collects all IDs of students in IslandTiles
+     * @return A list of the Students IDs
+     */
+    public List<Integer> getStudentIDs(){
+        List<Integer> studentsIDs = new ArrayList<Integer>();
+        for (IslandTile islandTile : islandTiles){
+            studentsIDs.addAll(islandTile.getPawnsIDs());
+        }
+        return  studentsIDs;
+    }
+
+    /**
      * Finds a IslandTile with a given ID
      * @param ID The ID of the IslandTile
      * @return The IslandTile if found, null otherwise
      */
-    public IslandTile findIslandTileByID(int ID){
+    public IslandTile getIslandTileByID(int ID){
         for (IslandTile islandTile : islandTiles){
             if(islandTile.getID() == ID)
                 return islandTile;
         }
         return null;
+    }
+
+    /**
+     * Gets all the IslandTile IDs contained in IslandGroup
+     * @return List with all IslandTiles ID
+     */
+    public  List<Integer> getIslandTileIDs(){
+        List<Integer> islandTiledIDs = new ArrayList<>();
+        for(IslandTile islandTile : islandTiles){
+            islandTiledIDs.add(islandTile.getID());
+        }
+        return islandTiledIDs;
     }
 
 

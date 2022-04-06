@@ -96,7 +96,7 @@ public class Game {
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID) potentialTable.moveStudent(student);
         else {
-            archipelago.moveStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
+            archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
         }
         checkAndMoveProfessor(student.getColor());
     }

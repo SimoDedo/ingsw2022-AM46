@@ -176,7 +176,7 @@ class IslandGroupTest {
         islandTile.moveStudent(studentToFind);
         islandTiles.add(islandTile);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(studentToFind.equals(islandGroup.findStudentByID(studentToFind.getID())));
+        assertTrue(studentToFind.equals(islandGroup.getStudentByID(studentToFind.getID())));
     }
 
     /**
@@ -191,6 +191,6 @@ class IslandGroupTest {
         islandTiles.add(islandTileToFind);
         islandTiles.add(islandTile1);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(islandTileToFind.equals(islandGroup.findIslandTileByID(islandTileToFind.getID())));
+        assertTrue(islandTileToFind.equals(islandGroup.getIslandTileByID(islandTileToFind.getID())));
     }
 }
