@@ -69,7 +69,7 @@ public class PlayerBoard {
     }
 
     /**
-     * @param studentDestinations HashMap<Student ID><BoardPiece ID> (their destinations).
+     * @param studentDestinations  their destinations
      *                            If the destination ID is set to 0 they are to be placed in the diningRoom.
      * @return HashMap of Students and the corresponding destination island's ID. Movements to Table locations are
      * resolved here

@@ -84,7 +84,7 @@ public class ResolveStrategyCharacter implements Character {
      * @param player Player who is spending coins
      * @return A list of parameters which are needed to consequently use its ability
      * @throws IllegalArgumentException When wrong ID is given
-     * @throws IllegalAccessException When it was already activated this turn
+     * @throws IllegalStateException When it was already activated this turn
      */
     @Override
     public List<RequestParameters> useCharacter(int ID, Player player) throws IllegalArgumentException, IllegalStateException {
