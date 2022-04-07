@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The standard strategy used when resolving an island
+ * The standard strategy, used when resolving an island when no character is activated.
  */
 public class ResolveStrategyStandard implements ResolveStrategy{
 
     /**
-     * Method used to resolve an island
-     * @param islandGroupToResolve The island to resolve
-     * @param teams The teams of the current game
-     * @param professorSet Manager for the professor, used to know who owns them
+     * Method used to resolve an island group the default way.
+     * @param islandGroupToResolve The group to resolve
+     * @param teams The teams inside the current game
+     * @param professorSet Manager for the professor, used to know who owns each professor
      * @return The team which holds the most influence, or null if a tie happens
      */
     @Override
@@ -48,7 +48,7 @@ public class ResolveStrategyStandard implements ResolveStrategy{
 
     /**
      * Returns the Team in the HashMap with the most influence
-     * @param scores HashMap of teams and their score
+     * @param scores HashMap of the teams and their partial score
      * @return The team with the highest score, or null if more than one team holds the highest score
      */
     private Team getTeamWinner(Map<Team, Integer> scores){

@@ -9,25 +9,28 @@ import java.util.List;
 
 public class IslandTile extends StudentContainer{
     /**
-     * Holds MotherNature if IslandTile is current holder, otherwise it's null
+     * Holds a reference to MotherNature if IslandTile is the current holder, otherwise it's null.
      */
     private MotherNature motherNature = null;
 
     /**
-     * Holds tower currently placed on the IslandTile. It's null if no tower has been placed
+     * Holds a reference to the Tower currently placed on the IslandTile. It's null if no tower
+     * is currently placed on the tile.
      */
     private Tower tower = null;
 
     /**
-     * Holds the IslandGroup of which the IslandTile is part
+     * Holds the IslandGroup of which the IslandTile is part. Deprecated.
      */
-    private IslandGroup islandGroup;
+    private IslandGroup islandGroup; // considering removing this variable in the future (it's useless as of now)
 
     /**
-     * Creates IslandTile with owner and maxPawns. If it's a starting island, also instantiates MotherNature
+     * Constructor for IslandTile with an owner and a maximum number of students that it can hold.
+     * If it's a starting island, the constructor also instantiates MotherNature.
      *
-     * @param player   the player who owns the container
+     * @param player the Player who owns the container
      * @param isStarting whether this IslandTile should instantiate (and hold) MotherNature
+     * @param islandGroup the IslandGroup that owns the tile
      */
     public IslandTile(Player player, boolean isStarting, IslandGroup islandGroup) {
         super(player, 130);
@@ -37,8 +40,8 @@ public class IslandTile extends StudentContainer{
     }
 
     /**
-     * Places MotherNature on IslandTile
-     * @param motherNature
+     * Places MotherNature on this IslandTile.
+     * @param motherNature MotherNature instance
      */
     public void placeMotherNature(MotherNature motherNature) {
         this.motherNature = motherNature;
@@ -46,8 +49,8 @@ public class IslandTile extends StudentContainer{
     }
 
     /**
-     * Removes MotherNature from IslandTile, thus leaving it null
-     * @return
+     * Removes MotherNature from IslandTile, thus setting the motherNature variable to null.
+     * @return the MotherNature instance if present, null otherwise
      */
     public MotherNature removeMotherNature() {
         MotherNature temp = motherNature;
@@ -56,56 +59,61 @@ public class IslandTile extends StudentContainer{
     }
 
     /**
-     * Returns true if it holds MotherNature
-     * @return
+     * Returns true if this IslandTile holds MotherNature.
+     * @return true if motherNature is not null, false otherwise
      */
     public boolean hasMotherNature(){
         return motherNature != null;
     }
 
     /**
-     * Getter for the Tower
-     * @return
+     * Getter for the color of the Tower placed on this IslandTile.
+     * @return color of the tile's tower if present, null otherwise
      */
     public TowerColor getTowerColor() {
         return tower == null ? null : tower.getColor();
     }
 
+    /**
+     * Getter for the ID of the Tower placed on this IslandTile.
+     * @return ID of the tile's tower if present, null otherwise
+     */
     public Integer getTowerID(){
         return tower == null ? null : tower.getID();
     }
     /**
-     * Swaps and return current Tower with given tower. Returns null if no tower was placed beforehand
-     * @param tower
+     * Swaps and return current Tower with the given new Tower. Returns null if no Tower is present
+     * on the island.
+     * @param newTower
      * @return
      */
-    public Tower swapTower(Tower tower) {
+    public Tower swapTower(Tower newTower) {
         Tower temp = this.tower;
-        this.tower = tower;
-        this.setOwner(tower.getOwner());
+        this.tower = newTower;
+        this.setOwner(newTower.getOwner());
         return temp;
     }
 
     /**
-     * Getter for the IslandGroup
-     * @return
+     * Getter for the IslandGroup which holds this IslandTile.
+     * @return the IslandGroup that holds this tile
      */
     public IslandGroup getIslandGroup() {
         return islandGroup;
     }
 
     /**
-     * Setter for the IslandGroup
-     * @param islandGroup
+     * Setter for the islandGroup variable.
+     * @param islandGroup the future IslandGroup that will own this tile
      */
     public void setIslandGroup(IslandGroup islandGroup) {
         this.islandGroup = islandGroup;
     }
 
     /**
-     * Counts number of student with given Color
-     * @param color
-     * @return
+     * Method that counts the number of students with the given Color on this tile.
+     * @param color the color of the students to count
+     * @return the number of students with the given color
      */
     public int countInfluence(Color color){
         List<Student> contained = this.getPawns();
@@ -116,6 +124,5 @@ public class IslandTile extends StudentContainer{
         }
         return score;
     }
-
 
 }

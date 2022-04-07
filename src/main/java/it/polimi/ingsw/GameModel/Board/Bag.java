@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel.Board;
 
-
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -10,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A special type of student container, from which students are drawn throughout the game.
- * This is the only source of students, that all the players draw from.
+ * This is the only source of students that all the players draw from.
  */
 public class Bag extends StudentContainer {
     public Bag() {
@@ -19,7 +18,7 @@ public class Bag extends StudentContainer {
     }
 
     /**
-     * Function that fills the bag with 2 students of each color. Used for initial setup of the game.
+     * Method that fills the bag with 2 students of each color. Used for initial setup of the game.
      */
     private void fillInitial() {
         for (Color color : Color.values()) {
@@ -30,7 +29,7 @@ public class Bag extends StudentContainer {
     }
 
     /**
-     * Function that fills the bag with the remaining students (after the initial 10). Used for
+     * Method that fills the bag with the remaining students (after the initial 10). Used for
      * initial setup of the game.
      */
     public void fillRemaining() {
@@ -43,6 +42,7 @@ public class Bag extends StudentContainer {
 
     /**
      * Returns a list of students randomly removed from the bag.
+     *
      * @param numberToDraw number of students to draw
      * @return a list of the drawn students
      */

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The strategy used when resolving an island if C3 was activated
+ * The strategy used when resolving an island if C3 has been activated in this turn.
  */
 public class ResolveStrategyC3 implements ResolveStrategy{
 
@@ -22,7 +22,7 @@ public class ResolveStrategyC3 implements ResolveStrategy{
     private IslandTile islandTileSelected;
 
     /**
-     * Setter for the island
+     * Setter for the selected island tile (=> group) to be resolved.
      * @param islandTileSelected
      */
     public void setIslandTileSelected(IslandTile islandTileSelected) {
@@ -30,19 +30,22 @@ public class ResolveStrategyC3 implements ResolveStrategy{
     }
 
     /**
-     * Method to be used to resolve the island, uses information already stored to know which IslandGroup to resolve
-     * @param teams The teams of the current game
-     * @param professorSet Manager for the professor, used to know who owns them
+     * Method to be used to resolve the island. It uses already stored information to know which
+     * IslandGroup to resolve.
+     * @param teams The teams inside the current game
+     * @param professorSet Manager for the professor, used to know who owns each professor
      * @return The team which holds the most influence, or null if a tie happens
      */
     public Team resolveIslandGroup(List<Team> teams, ProfessorSet professorSet){
         return this.resolveIslandGroup(islandTileSelected.getIslandGroup(), teams, professorSet);
     }
     /**
-     * Method used to resolve an island, doesn't change from then standard strategy, but won't get directly called
-     * @param islandGroupToResolve The island to resolve
-     * @param teams The teams of the current game
-     * @param professorSet Manager for the professor, used to know who owns them
+     * Method used to resolve an island group. It doesn't change from the standard strategy,
+     * and will be called by the Archipelago once when C3 is activated, and to resolve the
+     * island MotherNature lands on normally.
+     * @param islandGroupToResolve The group to resolve
+     * @param teams The teams inside the current game
+     * @param professorSet Manager for the professor, used to know who owns each professor
      * @return The team which holds the most influence, or null if a tie happens
      */
     @Override
@@ -71,7 +74,7 @@ public class ResolveStrategyC3 implements ResolveStrategy{
 
     /**
      * Returns the Team in the HashMap with the most influence
-     * @param scores HashMap of teams and their score
+     * @param scores HashMap of the teams and their partial score
      * @return The team with the highest score, or null if more than one team holds the highest score
      */
     private Team getTeamWinner(Map<Team, Integer> scores){

@@ -11,17 +11,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The strategy used when resolving an island if C9 was activated
+ * The strategy used when resolving an island if C9 has been activated in this turn.
  */
 public class ResolveStrategyC9 implements ResolveStrategy{
 
     /**
-     * The color who won't add influence
+     * The color that won't count towards the influence
      */
     private Color colorToIgnore = null;
 
     /**
-     * Setter for the color to ignore
+     * Setter for the color to ignore during influence calculation
      * @param colorToIgnore The color to ignore
      */
     public void setColorToIgnore(Color colorToIgnore) {
@@ -30,10 +30,11 @@ public class ResolveStrategyC9 implements ResolveStrategy{
 
 
     /**
-     * Method used to resolve an island when C8 is active. Doesn't count influence for colorToIgnore
-     * @param islandGroupToResolve The island to resolve
-     * @param teams The teams of the current game
-     * @param professorSet Manager for the professor, used to know who owns them
+     * Method used to resolve an island when C9 is active. Doesn't count influence given by students
+     * whose color is colorToIgnore
+     * @param islandGroupToResolve The group to resolve
+     * @param teams The teams inside the current game
+     * @param professorSet Manager for the professor, used to know who owns each professor
      * @return The team which holds the most influence, or null if a tie happens
      */
     @Override
@@ -64,7 +65,7 @@ public class ResolveStrategyC9 implements ResolveStrategy{
 
     /**
      * Returns the Team in the HashMap with the most influence
-     * @param scores HashMap of teams and their score
+     * @param scores HashMap of the teams and their partial score
      * @return The team with the highest score, or null if more than one team holds the highest score
      */
     private Team getTeamWinner(Map<Team, Integer> scores){

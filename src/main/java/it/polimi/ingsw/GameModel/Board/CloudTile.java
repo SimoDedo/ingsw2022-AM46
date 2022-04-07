@@ -13,12 +13,12 @@ import java.util.List;
 public class CloudTile extends StudentContainer {
 
     /**
-     *
+     * Reference to the Bag of this game, used for drawing at the end of the round.
      */
     private final Bag bag;
 
     /**
-     * Constructor for the Cloud class
+     * Constructor for the Cloud class.
      * @param maxCloudStudents max number of students on cloud
      * @param bag reference to Bag for drawing students autonomously
      */
@@ -27,10 +27,18 @@ public class CloudTile extends StudentContainer {
         this.bag = bag;
     }
 
+    /**
+     * Method that fills the cloud by drawing students from the bag.
+     */
     public void fill() {
         placePawns(bag.drawN(this.getMaxPawns()));
     }
 
+    /**
+     * Method that returns a list of all the students present on this cloud.
+     * @return list of all the students on the cloud
+     * @throws IllegalStateException if the cloud has no students
+     */
     public List<Student> removeAll() throws IllegalStateException{
         if(pawnCount() == 0)
             throw new IllegalStateException("Island is already empty");

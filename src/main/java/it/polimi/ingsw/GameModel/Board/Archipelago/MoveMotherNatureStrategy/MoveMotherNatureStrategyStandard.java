@@ -8,18 +8,20 @@ import java.io.InvalidObjectException;
 import java.util.List;
 
 /**
- * Strategy to move MotherNature when no character is activated
+ * Standard Strategy to move MotherNature when no character is activated.
  */
 public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrategy {
     /**
-     * Moves motherNature to the destination, throws exception if movement is not allowed
+     * Moves motherNature to the destination, throws exception if movement is not allowed.
      * @param islandTileStarting IslandTile where MotherNature is now
      * @param islandTileDestination IslandTile where MotherNature should end
      * @param moveCount Number of moves allowed
      * @param islandGroups List containing all the IslandGroups to check legal movement
+     * @throws InvalidObjectException when the destination island is not within reach
      */
     @Override
     public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException {
+        //the first part of the algorithm can be moved inside a helper function, and StrategyC4 can inherit from standard to avoid code repetition
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
         int moveCountNeeded = 0;
@@ -38,6 +40,14 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
         }
     }
 
+    /**
+     * Helper function for determining how many hops it takes to get from an IslandGroup index
+     * to another.
+     * @param startingNumber starting IslandGroup index
+     * @param endingNumber ending IslandGroup index
+     * @param maxNumber total number of IslandGroups
+     * @return number of hops from start to end
+     */
     private int moveCount(int startingNumber, int endingNumber, int maxNumber){
         int temp = endingNumber - startingNumber;
         if(temp < 0)
