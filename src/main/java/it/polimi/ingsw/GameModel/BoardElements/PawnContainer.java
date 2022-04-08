@@ -122,4 +122,8 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(() -> new NoSuchElementException("No such element in container"));
     }
 
+    public T removePawnByID(int ID) { //todo
+        return null;
+    }
+
 }

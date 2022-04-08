@@ -49,10 +49,12 @@ public class Bag extends StudentContainer {
     public List<Student> drawN(int numberToDraw) {
         List<Student> drawnStudents = new ArrayList<>();
         int randomNum;
-        for (int i = 0; i < numberToDraw; i++) {
-            randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
-            drawnStudents.add(removePawnByIndex(randomNum));
-        }
+        for (int i = 0; i < numberToDraw; i++) { drawnStudents.add(draw()); }
         return drawnStudents;
+    }
+
+    public Student draw() {
+        int randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
+        return removePawnByIndex(randomNum);
     }
 }

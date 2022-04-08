@@ -85,6 +85,9 @@ public class Player {
     public WizardType getWizardType() { return wizard.getType(); }
 
     public Student getStudentByID(int ID) throws NoSuchElementException { return playerBoard.getStudentByID(ID); }
+    public Student removeStudentByID(int studentID) {
+        return playerBoard.removeStudentByID(studentID);
+    }
 
     public boolean isTowerHolder() { return isTowerHolder; }
 
@@ -116,4 +119,21 @@ public class Player {
     }
 
     public void addToEntrance(List<Student> studentsFromCloud) {} //todo: implementation
+
+    public void addToEntrance(Student student) {} //todo: implementation
+
+    public Student removeStudentFromEntrance(int studentID) { //todo: implementation
+        return null;
+    }
+
+    public Student removeStudentFromDR(int studentID) { //todo: implementation
+        return null;
+    }
+
+    public void addToDR(Student student) { //todo: implementation
+    }
+
+    public Student removeThreeFromDR(Color color) { //todo: implementation
+        return null;
+    }
 }

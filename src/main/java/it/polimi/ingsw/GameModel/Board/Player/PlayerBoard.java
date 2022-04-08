@@ -68,32 +68,6 @@ public class PlayerBoard {
         towerSpace.placeTower(tower);
     }
 
-    /**
-     * @param studentDestinations  their destinations
-     *                            If the destination ID is set to 0 they are to be placed in the diningRoom.
-     * @return HashMap of Students and the corresponding destination island's ID. Movements to Table locations are
-     * resolved here
-     * @throws IllegalArgumentException if the hashmap is not sized correctly
-     * @throws NoSuchElementException if any of the students cannot be found. If there are no matches with the
-     *      * boardPiece IDs it will be assumed they are all Island locations.
-     */
-    public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalStateException, NoSuchElementException, FullTableException {
-        HashMap<Student, Integer> islandMovements = new HashMap<>();
-        for(Map.Entry<Integer, Integer> pair : studentDestinations.entrySet()){
-            Student student = entrance.getPawnByID(pair.getKey());
-
-            // this requires that no island has ID 0... maybe a custom ID class to handle special values?
-            if(pair.getValue() == 0){
-                entrance.removePawn(student);
-                diningRoom.placeStudent(student);
-            } else {
-                islandMovements.put(student, pair.getValue());
-            }
-        }
-        return islandMovements;
-    }
-
     public Table getTable(Color color) {
         return diningRoom.getTable(color);
     }
@@ -103,5 +77,19 @@ public class PlayerBoard {
     }
 
 
-
+    public Student removeStudentByID(int studentID) {
+        Student student;
+        try{
+            student = entrance.getPawnByID(studentID);
+            return entrance.removePawn(student);
+        } catch (Exception ee) {
+            try {
+                student = diningRoom.getStudentByID(studentID);
+                return diningRoom.getTable(student.getColor()).removePawn(student);
+            }
+            catch (Exception dne) {
+                throw new NoSuchElementException("No student was found");
+            }
+        }
+    }
 }

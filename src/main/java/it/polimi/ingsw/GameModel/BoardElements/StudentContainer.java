@@ -57,7 +57,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
      * @param studentToPlace Student to place in this container
      * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
      */
-    public Student moveStudent(Student studentToPlace) {
+    public Student moveStudent(Student studentToPlace) { // deprecated
         Student studentToReturn = null;
         if(studentToPlace.getStudentContainer() != null)
             studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);

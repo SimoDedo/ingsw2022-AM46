@@ -49,5 +49,8 @@ public class PlayerList extends ArrayList<Player> { //FIXME: should throw except
         return playerListToReturn;
     }
 
+    public Player get(String nickname) {
+        return null;
+    } //todo
 
 }

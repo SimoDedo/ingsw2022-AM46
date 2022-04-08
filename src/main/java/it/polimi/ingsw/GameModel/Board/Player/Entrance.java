@@ -52,6 +52,10 @@ public class Entrance extends StudentContainer{
         return students;
     }
 
+    public Student removeStudentByID(int studentID) {
+        return removePawnByID(studentID);
+    }
+
     /**
      * @param students drawn from the bag and moving to the entrance
      * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
