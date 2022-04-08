@@ -1,6 +1,8 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,8 @@ public class Wizard {
      * @return the assistant with the corresponding ID
      * @throws NoSuchElementException if this wizard's deck does not contain an assistant with specified ID
      */
-    public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
+    public AssistantCard playAssistant(int assistantID) throws NoSuchElementException, GameOverException {
+        if(deck.size() == 0){ throw new GameOverException(); }
         AssistantCard assistant = deck.stream().filter(card -> card.getID() == assistantID).
                 findAny().orElseThrow(NoSuchElementException::new);
         deck.removeIf(card -> card.getID() == assistantID);

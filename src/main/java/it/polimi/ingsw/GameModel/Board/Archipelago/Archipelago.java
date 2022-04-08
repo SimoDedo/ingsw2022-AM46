@@ -40,7 +40,7 @@ public class Archipelago {
      * Creates the Archipelago and creates 12 IslandGroups,
      */
     public Archipelago() {
-        islandGroups = new ArrayList<IslandGroup>();
+        islandGroups = new ArrayList<>();
         int startingIsland = selectStartingIsland();
         for (int i = 0; i < 12; i++) {
             islandGroups.add(new IslandGroup(i==startingIsland));
@@ -170,7 +170,8 @@ public class Archipelago {
      * Merges given IslandGroup with nearby IslandGroups
      * @param islandGroupToMerge The IslandGroup to merge
      */
-    private void mergeIslandGroup(IslandGroup islandGroupToMerge){
+    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException{
+        if(getNumOfIslandGroups() == 4){ throw new GameOverException(); }
         int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
         TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
 
@@ -294,7 +295,7 @@ public class Archipelago {
         return -1;
     }
 
-    public int getIslandGroupSize(){
+    public int getNumOfIslandGroups(){
         return islandGroups.size();
     }
 

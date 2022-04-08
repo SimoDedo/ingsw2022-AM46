@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.*;
 
@@ -39,9 +40,9 @@ public class Entrance extends StudentContainer{
      * @throws NoSuchElementException if there is at least one ID with no match
      * @throws IllegalArgumentException if the size of the ID list is incorrect for the game type
      */
-    public Set<Student> removeStudentsByID(Set<Integer> IDList) throws NoSuchElementException {
+    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException {
         if(IDList.size() != movableStudents) { return null; }
-        Set<Student> students = new HashSet<>();
+        List<Student> students = new ArrayList<>();
         for(int ID : IDList){
             Student s = removePawnByID(ID);
             students.add(s);
@@ -49,11 +50,14 @@ public class Entrance extends StudentContainer{
         return students;
     }
 
+
     /**
      * @param students drawn from the bag and moving to the entrance
-     * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
+     * @throws IllegalStateException if the size of the student list is incorrect for the game type
+     * @throws GameOverException if the bag is empty, and the game is over
      */
-    public void refillStudents(List<Student> students) throws IllegalArgumentException {
+    public void refillStudents(List<Student> students) throws IllegalStateException, GameOverException {
+        if (students == null){ throw new GameOverException(); }
         if (students.size() == movableStudents) {
             for (Student s : students) { placePawn(s); }
         } else throw new IllegalArgumentException();

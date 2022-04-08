@@ -23,15 +23,16 @@ public class EntranceTest {
         assertEquals(entrance.pawnCount(), 10);
     }
 
+    @Test
     public void removeStudentsTest(){
 
         Bag bag = new Bag();
         bag.fillRemaining();
         Player p0 = new Player();
         Entrance entrance = new Entrance(p0, 10, 4, bag);
-        Set<Integer> pawnIDs = entrance.getPawnIDs();
+        List<Integer> pawnIDs = entrance.getPawnIDs();
         assertEquals(pawnIDs.size(), 10);
-        entrance.removeStudentsByID(pawnIDs);
+        entrance.removeStudentsByID(pawnIDs.subList(0, 4));
         assertEquals(entrance.pawnCount(), 6);
     }
 

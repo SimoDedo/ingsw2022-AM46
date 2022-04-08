@@ -42,9 +42,10 @@ public class PlayerBoard {
 
     /**
      * @param students to place in the entrance
-     * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
+     * @throws IllegalStateException if the size of the student list is incorrect for the game type
+     * @throws GameOverException if the bag is empty, and the game is over
      */
-    public void refillEntrance(List<Student> students) throws IllegalStateException{
+    public void refillEntrance(List<Student> students) throws IllegalStateException, GameOverException{
         entrance.refillStudents(students);
     }
 
@@ -77,7 +78,7 @@ public class PlayerBoard {
      */
     public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
             throws IllegalStateException, NoSuchElementException, FullTableException {
-        Set<Student> studentsToMove = entrance.removeStudentsByID(studentDestinations.keySet());
+        List<Student> studentsToMove = entrance.removeStudentsByID(List.copyOf(studentDestinations.keySet()));
         HashMap<Student, Integer> islandMovements = new HashMap<>();
 
         for(Student s : studentsToMove){

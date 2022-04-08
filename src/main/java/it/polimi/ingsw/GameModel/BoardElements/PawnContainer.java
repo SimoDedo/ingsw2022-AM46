@@ -13,7 +13,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * The list containing the pawns
      */
-    private Set<T> pawns;
+    private List<T> pawns;
 
     /**
      * Maximum number of pawns that the container can hold. If set at -1, no limit is set
@@ -28,7 +28,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
-        this.pawns = new HashSet<>();
+        this.pawns = new ArrayList<>();
         this.maxPawns = maxPawns;
     }
 
@@ -37,21 +37,18 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * is already inside the container.
      * @param pawn the pawn to be placed
      */
-    public void placePawn(T pawn) throws IllegalArgumentException {
-        if (maxPawns >=0 && pawnCount() == maxPawns) {
-            throw new IllegalArgumentException("The container is already full");
-        }
-        if (pawns.contains(pawn)) {
-            throw new IllegalArgumentException("The pawn is already inside this container");
-        }
-        pawns.add(pawn);
+    public void placePawn(T pawn) throws IllegalArgumentException{
+        if (!(maxPawns >=0 && pawnCount() == maxPawns || pawns.contains(pawn)))  {
+            pawns.add(pawn);
+        } else throw new IllegalArgumentException();
     }
 
     /**
      * Wrapper that calls placePawn() over all the pawns in the given list.
      * @param pawns list of pawns to be placed inside this container
      */
-    public void placePawns(List<T> pawns) {
+    public void placePawns(List<T> pawns) throws IllegalArgumentException {
+
         for (T pawn : pawns) {
             placePawn(pawn);
         }
@@ -62,8 +59,8 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * Removes and return pawn from container
      * @param pawnToRemove pawn to be removed
      */
-    public void removePawn(T pawnToRemove) {
-        pawns.remove(pawnToRemove);
+    public boolean removePawn(T pawnToRemove) {
+        return pawns.remove(pawnToRemove);
     }
 
     /**
@@ -76,6 +73,14 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         T pawn = getPawnByID(ID);
         removePawn(pawn);
         return pawn;
+    }
+
+    /**
+     * removes the first pawn in the list
+     * @return the removed pawn
+     */
+    public T removePawn(){
+        return pawns.remove(0);
     }
 
     /**
@@ -103,8 +108,8 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * Getter for a list of IDs of pawns contained in the PawnContainer
      * @return A new list of Integers containing the IDs
      */
-    public Set<Integer> getPawnIDs(){
-        Set<Integer> IDs = new HashSet<>();
+    public List<Integer> getPawnIDs(){
+        List<Integer> IDs = new ArrayList<>();
         for(T pawn : pawns){
             IDs.add(pawn.getID());
         }
@@ -115,5 +120,6 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
         Predicate<T> test = pawn -> pawn.getID() == ID;
         return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
     }
+
 
 }

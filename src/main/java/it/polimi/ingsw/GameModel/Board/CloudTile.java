@@ -36,7 +36,7 @@ public class CloudTile extends StudentContainer {
             throw new IllegalStateException("Island is already empty");
         List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {
-            drawnStudents.add(removePawnByIndex(0));
+            drawnStudents.add(removePawn());
         }
         return drawnStudents;
     }

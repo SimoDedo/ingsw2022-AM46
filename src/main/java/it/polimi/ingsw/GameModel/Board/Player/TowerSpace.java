@@ -37,8 +37,9 @@ public class TowerSpace extends PawnContainer<Tower> {
     public Tower takeTower() throws GameOverException {
         if (getTowersPlaced() == getMaxPawns()) {
             System.out.print("win :)");
+            throw new GameOverException();
         }
-        return removePawnByIndex(0);
+        return removePawn();
 
     }
 

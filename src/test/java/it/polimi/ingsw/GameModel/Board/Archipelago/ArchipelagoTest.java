@@ -74,7 +74,7 @@ class ArchipelagoTest {
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getIslandGroupSize() == 12);
+        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getNumOfIslandGroups() == 12);
         archipelago.resolveIslandGroup(0, players,professorSet);
         assertTrue(archipelago.getTowerColorOfIslandGroup(0).equals(TowerColor.BLACK));
         Random random = new Random(89);
@@ -149,7 +149,7 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(2, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
-        assertTrue(archipelago.getIslandGroupSize() == 10);
+        assertTrue(archipelago.getNumOfIslandGroups() == 10);
         assertTrue(archipelago.getIslandTilesIDs().get(0).size() == 3);
 
     }
@@ -185,7 +185,7 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(11, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getIslandGroupSize() == 10);
+        assertTrue(archipelago.getNumOfIslandGroups() == 10);
         assertTrue(archipelago.getIslandTilesIDs().get(0).size() == 3);
 
     }
@@ -221,8 +221,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(10, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(11, players,professorSet);
-        assertTrue(archipelago.getIslandGroupSize() == 10);
-        assertTrue(archipelago.getIslandTilesIDs().get(archipelago.getIslandGroupSize()-1).size() == 3); //Merge on last IslandGroup, thus check on last after merge
+        assertTrue(archipelago.getNumOfIslandGroups() == 10);
+        assertTrue(archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups()-1).size() == 3); //Merge on last IslandGroup, thus check on last after merge
     }
 
     /**
@@ -275,7 +275,7 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(5, players,professorSet);
         archipelago.resolveIslandGroup(6, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getIslandGroupSize() == 6);
+        assertTrue(archipelago.getNumOfIslandGroups() == 6);
         //System.out.println(archipelago.getIslandTilesIDs());
         assertTrue(archipelago.getIslandTilesIDs().get(5).size() == 4 &&
                 archipelago.getTowerColorOfIslandGroup(5).equals(TowerColor.BLACK));

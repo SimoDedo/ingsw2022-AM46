@@ -75,7 +75,7 @@ public class Game {
         return turnManager.getCurrentPlayer().getNickname();
     } // could be useful to controller
 
-    public void playAssistant(String nickname, int assistantID) {
+    public void playAssistant(String nickname, int assistantID) throws IllegalArgumentException, GameOverException {
         if (!checkDesperate(nickname)) {
             for (AssistantCard assistantCard : cardsPlayedThisRound.values()) {
                 if (assistantCard.getID() == assistantID)
