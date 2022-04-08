@@ -27,7 +27,7 @@ public class IslandGroup {
     private int noEntryTiles = 0;
 
     public IslandGroup(boolean isStarting){
-        this.islandTiles = new ArrayList<IslandTile>();
+        this.islandTiles = new ArrayList<>();
         this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
     }
 
@@ -228,7 +228,7 @@ public class IslandGroup {
     public List<Integer> getStudentIDs(){
         List<Integer> studentsIDs = new ArrayList<Integer>();
         for (IslandTile islandTile : islandTiles){
-            studentsIDs.addAll(islandTile.getPawnsIDs());
+            studentsIDs.addAll(islandTile.getPawnIDs());
         }
         return  studentsIDs;
     }

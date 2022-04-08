@@ -2,10 +2,7 @@ package it.polimi.ingsw.GameModel.BoardElements;
 
 import it.polimi.ingsw.GameModel.Board.Player.*;
 
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -16,7 +13,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * The list containing the pawns
      */
-    private List<T> pawns;
+    private Set<T> pawns;
 
     /**
      * Maximum number of pawns that the container can hold. If set at -1, no limit is set
@@ -31,7 +28,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      */
     public PawnContainer(Player player, int maxPawns) {
         super(player);
-        this.pawns = new ArrayList<>();
+        this.pawns = new HashSet<>();
         this.maxPawns = maxPawns;
     }
 
@@ -64,24 +61,21 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * Removes and return pawn from container
      * @param pawnToRemove pawn to be removed
-     * @return the pawn, removed from the container
      */
-    public T removePawn(T pawnToRemove) {
-        int index = pawns.indexOf(pawnToRemove);
-        return removePawnByIndex(index);
+    public void removePawn(T pawnToRemove) {
+        pawns.remove(pawnToRemove);
     }
 
     /**
-     * Alternative version of removePawn using list index
-     * @param index index of the pawn to be removed
-     * @return the pawn, removed from the container
-     * @throws IllegalArgumentException When no pawn with such ID is contained
+     *  Alternative method to remove a pawn from a container referencing it by its ID
+     *
+     * @param ID the ID of the pawn to remove
+     * @return the freshly removed pawn
      */
-    public T removePawnByIndex(int index) throws IllegalArgumentException {
-        if (index < 0 || index >= getMaxPawns()) {
-            throw new IndexOutOfBoundsException("Index not inside this container's range");
-        }
-        return pawns.remove(index);
+    public T removePawnByID(int ID){
+        T pawn = getPawnByID(ID);
+        removePawn(pawn);
+        return pawn;
     }
 
     /**
@@ -109,17 +103,17 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * Getter for a list of IDs of pawns contained in the PawnContainer
      * @return A new list of Integers containing the IDs
      */
-    public  List<Integer> getPawnsIDs(){
-        List<Integer> IDs = new ArrayList<>();
+    public Set<Integer> getPawnIDs(){
+        Set<Integer> IDs = new HashSet<>();
         for(T pawn : pawns){
             IDs.add(pawn.getID());
         }
         return IDs;
     }
 
-    public T getPawnByID(int ID) throws NoSuchElementException {
+    public T getPawnByID(int ID) {
         Predicate<T> test = pawn -> pawn.getID() == ID;
-        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElseThrow(() -> new NoSuchElementException("No such element in container"));
+        return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
     }
 
 }

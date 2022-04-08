@@ -63,7 +63,7 @@ class StudentContainerTest {
         islandTile.moveStudent(new Student(Color.BLUE, null));
         Student studentToTest = new Student(Color.YELLOW, null);
         islandTile.moveStudent(studentToTest);
-        assertTrue(islandTile.getPawnsIDs().contains(studentToTest.getID()) && islandTile.getPawnsIDs().size() == 5);
+        assertTrue(islandTile.getPawnIDs().contains(studentToTest.getID()) && islandTile.getPawnIDs().size() == 5);
     }
 
     /**

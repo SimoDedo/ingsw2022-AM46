@@ -31,37 +31,29 @@ public abstract class StudentContainer extends PawnContainer<Student>{
     /**
      * Sets the StudentContainer to null, then removes the student from itself
      * @param pawnToRemove Student to be removed
-     * @return The Student removed (the same given)
      */
     @Override
-    public Student removePawn(Student pawnToRemove) {
+    public void removePawn(Student pawnToRemove) {
         pawnToRemove.setStudentContainer(null);
-        return super.removePawn(pawnToRemove);
+        super.removePawn(pawnToRemove);
     }
 
-    /**
-     *  Alternativa to RemovePawn using index
-     * @param index index of the pawn to be removed
-     * @return The student removed
-     * @throws IllegalStateException When no student with such ID is contained
-     */
     @Override
-    public Student removePawnByIndex(int index) throws IllegalStateException{
-        Student student = super.removePawnByIndex(index);
-        student.setStudentContainer(null);
-        return student;
+    public Student removePawnByID(int ID){
+        Student s = getPawnByID(ID);
+        removePawn(s);
+        return s;
     }
 
     /**
      * Removes the student from its former container (if it has one, but it should) then places it in this container.
      * @param studentToPlace Student to place in this container
-     * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
      */
-    public Student moveStudent(Student studentToPlace) {
-        Student studentToReturn = null;
-        if(studentToPlace.getStudentContainer() != null)
-            studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);
-        placePawn(studentToPlace);
-        return studentToReturn;
+    public void moveStudent(Student studentToPlace) {
+        if(studentToPlace.getStudentContainer() != null) {
+            studentToPlace.getStudentContainer().removePawn(studentToPlace);}
+
+        studentToPlace.setStudentContainer(this);
     }
+
 }

@@ -3,9 +3,7 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Entrance extends StudentContainer{
 
@@ -28,7 +26,7 @@ public class Entrance extends StudentContainer{
     /**
      * Fills pawns List with students at the start of the game
      */
-    public void fillInitial() {
+    private void fillInitial() {
         placePawns(bag.drawN(this.getMaxPawns()));
     }
 
@@ -41,13 +39,12 @@ public class Entrance extends StudentContainer{
      * @throws NoSuchElementException if there is at least one ID with no match
      * @throws IllegalArgumentException if the size of the ID list is incorrect for the game type
      */
-    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException, IllegalArgumentException {
-        if(IDList.size() != movableStudents) { throw new IllegalArgumentException(); }
-        List<Student> students = new ArrayList<>();
+    public Set<Student> removeStudentsByID(Set<Integer> IDList) throws NoSuchElementException {
+        if(IDList.size() != movableStudents) { return null; }
+        Set<Student> students = new HashSet<>();
         for(int ID : IDList){
-            Student student = getPawnByID(ID);
-            students.add(student);
-            removePawn(student);
+            Student s = removePawnByID(ID);
+            students.add(s);
         }
         return students;
     }

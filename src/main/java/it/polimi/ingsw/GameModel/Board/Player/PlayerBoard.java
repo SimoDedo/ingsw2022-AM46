@@ -9,10 +9,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class PlayerBoard {
     private TowerSpace towerSpace = null;
@@ -68,6 +65,7 @@ public class PlayerBoard {
         towerSpace.placeTower(tower);
     }
 
+
     /**
      * @param studentDestinations HashMap<Student ID><BoardPiece ID> (their destinations).
      *                            If the destination ID is set to 0 they are to be placed in the diningRoom.
@@ -79,20 +77,16 @@ public class PlayerBoard {
      */
     public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
             throws IllegalStateException, NoSuchElementException, FullTableException {
+        Set<Student> studentsToMove = entrance.removeStudentsByID(studentDestinations.keySet());
         HashMap<Student, Integer> islandMovements = new HashMap<>();
-        for(Map.Entry<Integer, Integer> pair : studentDestinations.entrySet()){
-            Student student = entrance.getPawnByID(pair.getKey());
 
-            // this requires that no island has ID 0... maybe a custom ID class to handle special values?
-            if(pair.getValue() == 0){
-                entrance.removePawn(student);
-                diningRoom.placeStudent(student);
-            } else {
-                islandMovements.put(student, pair.getValue());
-            }
+        for(Student s : studentsToMove){
+            if (studentDestinations.get(s.getID()) == 0) {diningRoom.placeStudent(s);}
+            else islandMovements.put(s, studentDestinations.get(s.getID()));
         }
         return islandMovements;
     }
+
 
     public Table getTable(Color color) {
         return diningRoom.getTable(color);
