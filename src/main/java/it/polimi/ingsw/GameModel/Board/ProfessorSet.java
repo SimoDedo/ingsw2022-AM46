@@ -1,5 +1,7 @@
 package it.polimi.ingsw.GameModel.Board;
 
+import it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategy;
+import it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -11,6 +13,8 @@ import java.util.Map;
 public class ProfessorSet {
 
     private final Map<Color, Professor> professors = new HashMap<>();
+
+    private CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy = new CheckAndMoveProfessorStrategyStandard();
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
@@ -32,5 +36,9 @@ public class ProfessorSet {
             if (prof.getOwner().getTowerColor().equals(towerColor)) score++;
         }
         return score;
+    }
+
+    public void setCheckAndMoveProfessorStrategy(CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy) {
+        this.checkAndMoveProfessorStrategy = checkAndMoveProfessorStrategy;
     }
 }
