@@ -132,13 +132,12 @@ public class Archipelago {
      * @param professorSet The set to manage professor ownership and calculate influence
      */
     public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet) throws GameOverException{
-        if(!islandGroup.isNoEntryTilePlaced()) {
+        if(islandGroup.hasNoEntryTiles()) islandGroup.removeNoEntryTile();
+        else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
-            if (swapped)
-                mergeIslandGroup(islandGroup);
+            if (swapped) mergeIslandGroup(islandGroup);
         }
-        else return; // consider refactoring this line (on my corpse)
     }
 
     /**
@@ -148,13 +147,13 @@ public class Archipelago {
      * @param professorSet The set to manage professor ownership and calculate influence
      */
     public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet) throws GameOverException{
-        if(!islandGroups.get(islandGroupIndex).isNoEntryTilePlaced()) {
+        if(islandGroups.get(islandGroupIndex).hasNoEntryTiles())
+            islandGroups.get(islandGroupIndex).removeNoEntryTile();
+        else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);
-            if (swapped)
-                mergeIslandGroup(islandGroups.get(islandGroupIndex));
+            if (swapped) mergeIslandGroup(islandGroups.get(islandGroupIndex));
         }
-        else return; // consider refactoring this line (on my corpse)
     }
 
     /**
@@ -332,6 +331,15 @@ public class Archipelago {
     public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
         return islandGroups.get(islandGroupIndex).getTowerColor();
     }
+
+    public ResolveStrategy getResolveStrategy() {
+        return resolveStrategy;
+    }
+
+    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
+        return moveMotherNatureStrategy;
+    }
+
     //endregion
 
 }

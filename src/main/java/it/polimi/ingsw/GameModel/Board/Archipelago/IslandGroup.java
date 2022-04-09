@@ -3,7 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
-import it.polimi.ingsw.GameModel.Characters.NoEntryTileCharacter;
+import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
@@ -19,12 +19,10 @@ public class IslandGroup {
     /**
      * IslandTiles that compose the IslandGroup
      */
-    private List<IslandTile> islandTiles;
+    private List<IslandTile> islandTiles = null;
 
-    /**
-     * Model NoEntryTiles present on given IslandGroup
-     */
-    private int noEntryTiles = 0;
+    private NoEntryTilesSpace noEntryTilesSpace;
+
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<IslandTile>();
@@ -178,27 +176,30 @@ public class IslandGroup {
             return islandTiles.size();
     }
 
-    public List<IslandTile> getIslandTiles() { return islandTiles; }
-
-    /**
-     * Adds a NoEntryTile to this IslandGroup
-     */
-    public void addNoEntryTile(){
-        noEntryTiles++;
+    public List<IslandTile> getIslandTiles() {
+        return islandTiles;
     }
 
     /**
-     * Checks if there is a NoEntryTile placed. If there is, it removes one
-     * @return True if there is at least one NoEntryTile
+     * Adds a NoEntryTile to this IslandGroup.
      */
-    public boolean isNoEntryTilePlaced(){
-        if(noEntryTiles>0){
-            noEntryTiles--;
-            NoEntryTileCharacter.putBackNoEntryTile();
-            return true;
-        }
-        else
-            return false;
+    public void addNoEntryTile(NoEntryCharacter noEntryCharacter) {
+        if (noEntryTilesSpace == null) noEntryTilesSpace = new NoEntryTilesSpace(noEntryCharacter);
+        noEntryTilesSpace.addNoEntryTile();
+    }
+
+    public void removeNoEntryTile() {
+        if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
+            throw new IllegalStateException("There are already zero no-entry tiles on this group");
+    }
+
+    /**
+     * Returns true if there is more than zero no entry tiles on this IslandGroup.
+     * @return true if there is at least one NoEntryTile
+     */
+    public boolean hasNoEntryTiles() {
+        if (noEntryTilesSpace == null) return false;
+        else return noEntryTilesSpace.hasNoEntryTiles();
     }
 
     /**
@@ -257,6 +258,7 @@ public class IslandGroup {
         }
         return islandTiledIDs;
     }
+
 
 
 }

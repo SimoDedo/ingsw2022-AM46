@@ -57,4 +57,5 @@ public class Bag extends StudentContainer {
         int randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
         return removePawnByIndex(randomNum);
     }
+
 }

@@ -5,7 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 /**
  * Abstract class which extends PawnContainer, using Students specifically
  */
-public abstract class StudentContainer extends PawnContainer<Student>{
+public abstract class StudentContainer extends PawnContainer<Student> implements PlaceAndRemoveStudent {
 
     /**
      * Creates StudentContainer with owner and maxPawns
@@ -46,7 +46,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
      * @throws IllegalStateException When no student with such ID is contained
      */
     @Override
-    public Student removePawnByIndex(int index) throws IllegalStateException{
+    public Student removePawnByIndex(int index) throws IllegalStateException {
         Student student = super.removePawnByIndex(index);
         student.setStudentContainer(null);
         return student;
@@ -55,13 +55,11 @@ public abstract class StudentContainer extends PawnContainer<Student>{
     /**
      * Removes the student from its former container (if it has one, but it should) then places it in this container.
      * @param studentToPlace Student to place in this container
-     * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
      */
-    public Student moveStudent(Student studentToPlace) { // deprecated
+    public void moveStudent(Student studentToPlace) { // deprecated
         Student studentToReturn = null;
         if(studentToPlace.getStudentContainer() != null)
             studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);
         placePawn(studentToPlace);
-        return studentToReturn;
     }
 }

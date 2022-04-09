@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * Abstract class to model a section of the board which contains students or towers
  * @param <T> the type of the pawns contained, extends BoardPiece
  */
-public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWithOwnerMutable{
+public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWithOwnerMutable {
     /**
      * The list containing the pawns
      */
