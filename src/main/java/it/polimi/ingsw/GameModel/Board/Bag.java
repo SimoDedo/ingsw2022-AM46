@@ -46,7 +46,7 @@ public class Bag extends StudentContainer {
     /**
      * Returns a list of students randomly removed from the bag.
      * @param numberToDraw number of students to draw
-     * @return a list of the drawn students, null if the game is over
+     * @return a list of the drawn students, null if the game is about to be over
      */
     public List<Student> drawN(int numberToDraw) {
         if (pawnCount() < numberToDraw){ return null; }

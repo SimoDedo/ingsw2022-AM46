@@ -10,6 +10,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class Player {
         this.wizard = new Wizard(wizardType);
     }
 
-    public AssistantCard playAssistant(int assistantID) throws GameOverException {
+    public AssistantCard playAssistant(int assistantID) {
         return wizard.playAssistant(assistantID);
     }
 
@@ -89,7 +90,7 @@ public class Player {
 
     public boolean isTowerHolder() { return isTowerHolder; }
 
-    public void refillEntrance(List<Student> students) throws IllegalStateException, GameOverException{
+    public void refillEntrance(List<Student> students) throws IllegalStateException{
         //assert playerBoard != null;
         playerBoard.refillEntrance(students);
     }
@@ -116,5 +117,4 @@ public class Player {
         return playerBoard.getStudentFromEntrance(studentID);
     }
 
-    public void addToEntrance(List<Student> studentsFromCloud) {} //todo: implementation
 }

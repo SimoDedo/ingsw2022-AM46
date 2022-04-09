@@ -208,6 +208,7 @@ public class IslandGroup {
         for (IslandTile islandTile : islandTiles){
             try{
                 studentToReturn =  islandTile.getPawnByID(ID);
+                break;
             }
             catch (NoSuchElementException e){
             }

@@ -78,7 +78,6 @@ class StudentContainerTest {
         islandTile.moveStudent(new Student(Color.BLUE, null));
         Student studentToTest = new Student(Color.YELLOW, null);
         islandTile.moveStudent(studentToTest);
-        assertThrows(NoSuchElementException.class, () -> islandTile.getPawnByID(0));
         assertTrue(islandTile.getPawnByID(studentToTest.getID()).getColor().equals(Color.YELLOW));
     }
 }

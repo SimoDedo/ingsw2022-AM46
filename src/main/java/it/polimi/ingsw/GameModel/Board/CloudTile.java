@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +31,15 @@ public class CloudTile extends StudentContainer {
         this.bag = bag;
     }
 
-    public void fill() throws GameOverException{
+    public void fill() throws LastRoundException {
         List<Student> students = bag.drawN(this.getMaxPawns());
-        if (students == null) { throw new GameOverException(); }
+        if (students == null) { throw new LastRoundException(); }
         placePawns(students);
         selectable = true;
     }
 
     public List<Student> removeAll(){
+        if(!selectable){return null;}
         selectable = false;
         List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {

@@ -31,7 +31,7 @@ public class PlayerBoardTest {
         PlayerBoard boardTest = new PlayerBoard(p0, TowerColor.BLACK, true, playerConfig);
 
         for(int ID : studentIDs){assert (boardTest.getStudentByID(ID) != null);}
-        assertThrows(NoSuchElementException.class, ()-> boardTest.getStudentByID(maxStudents * 2));
+
     }
 
     @Test

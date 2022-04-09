@@ -8,6 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.*;
 
@@ -43,9 +44,8 @@ public class PlayerBoard {
     /**
      * @param students to place in the entrance
      * @throws IllegalStateException if the size of the student list is incorrect for the game type
-     * @throws GameOverException if the bag is empty, and the game is over
      */
-    public void refillEntrance(List<Student> students) throws IllegalStateException, GameOverException{
+    public void refillEntrance(List<Student> students) throws IllegalStateException {
         entrance.refillStudents(students);
     }
 

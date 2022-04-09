@@ -14,9 +14,8 @@ public class WizardTest {
     public void playAssistantTest(){
         Wizard wiz = new Wizard(WizardType.MAGE);
         for(int i = 0; i < 10; i ++) {
-            try {
-                assert (wiz.playAssistant(i).getMovePower() == Math.floor(i / 2));
-            } catch (GameOverException e){}
+            assert (wiz.playAssistant(i).getMovePower() == Math.floor(i / 2));
+
         }
         Assertions.assertThrows(NoSuchElementException.class, () -> wiz.playAssistant(1));
 
