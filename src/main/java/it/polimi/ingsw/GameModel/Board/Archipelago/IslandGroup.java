@@ -144,8 +144,11 @@ public class IslandGroup {
      * @param islandTile The tile where it must be placed
      */
     public void placeStudent(Student student, IslandTile islandTile){
-        if(hasIslandTile(islandTile)) //this should be true, already checked in Archipelago.placeStudent
-            islandTile.moveStudent(student);
+        if(hasIslandTile(islandTile)){//this should be true, already checked in Archipelago.placeStudent
+            if(student.getStudentContainer() != null)
+                student.getStudentContainer().removePawn(student);
+            islandTile.placePawn(student);
+        }
     }
 
     /**
@@ -153,7 +156,7 @@ public class IslandGroup {
      * @param student The student to place
      */
     public void placeStudent(Student student){
-            islandTiles.get(0).moveStudent(student);
+            islandTiles.get(0).placePawn(student);
     }
 
     /**

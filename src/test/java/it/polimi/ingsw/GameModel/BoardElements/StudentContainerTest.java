@@ -57,12 +57,12 @@ class StudentContainerTest {
     @Test
     void  getPawnsIDs(){
         IslandTile islandTile = new IslandTile(null, true, null);
-        islandTile.moveStudent(new Student(Color.GREEN, null));
-        islandTile.moveStudent(new Student(Color.PINK, null));
-        islandTile.moveStudent(new Student(Color.RED, null));
-        islandTile.moveStudent(new Student(Color.BLUE, null));
+        islandTile.placePawn(new Student(Color.GREEN, null));
+        islandTile.placePawn(new Student(Color.PINK, null));
+        islandTile.placePawn(new Student(Color.RED, null));
+        islandTile.placePawn(new Student(Color.BLUE, null));
         Student studentToTest = new Student(Color.YELLOW, null);
-        islandTile.moveStudent(studentToTest);
+        islandTile.placePawn(studentToTest);
         assertTrue(islandTile.getPawnsIDs().contains(studentToTest.getID()) && islandTile.getPawnsIDs().size() == 5);
     }
 
@@ -72,12 +72,12 @@ class StudentContainerTest {
     @Test
     void getPawnByID(){
         IslandTile islandTile = new IslandTile(null, true, null);
-        islandTile.moveStudent(new Student(Color.GREEN, null));
-        islandTile.moveStudent(new Student(Color.PINK, null));
-        islandTile.moveStudent(new Student(Color.RED, null));
-        islandTile.moveStudent(new Student(Color.BLUE, null));
+        islandTile.placePawn(new Student(Color.GREEN, null));
+        islandTile.placePawn(new Student(Color.PINK, null));
+        islandTile.placePawn(new Student(Color.RED, null));
+        islandTile.placePawn(new Student(Color.BLUE, null));
         Student studentToTest = new Student(Color.YELLOW, null);
-        islandTile.moveStudent(studentToTest);
+        islandTile.placePawn(studentToTest);
         assertThrows(NoSuchElementException.class, () -> islandTile.getPawnByID(0));
         assertTrue(islandTile.getPawnByID(studentToTest.getID()).getColor().equals(Color.YELLOW));
     }

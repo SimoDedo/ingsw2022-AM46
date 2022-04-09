@@ -49,5 +49,14 @@ public class PlayerList extends ArrayList<Player> { //FIXME: should throw except
         return playerListToReturn;
     }
 
+    /**
+     * Finds a player in the list who has given nickname
+     * @param nickname The nickname of the player to find
+     * @return The player found, or null if no player has given nickname
+     */
+    public Player getByNickname(String nickname){
+        return stream().filter(player -> player.getNickname().equals(nickname)).findAny().orElse(null);
+    }
+
 
 }
