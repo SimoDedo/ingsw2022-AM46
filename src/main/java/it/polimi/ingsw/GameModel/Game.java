@@ -75,6 +75,7 @@ public class Game {
         return turnManager.getCurrentPlayer().getNickname();
     } // could be useful to controller
 
+    // handle GameOverException here or pass on to controller?
     public void playAssistant(String nickname, int assistantID) throws IllegalArgumentException, GameOverException {
         if (!checkDesperate(nickname)) {
             for (AssistantCard assistantCard : cardsPlayedThisRound.values()) {
@@ -107,6 +108,8 @@ public class Game {
     public void moveMotherNature(String nickname, int islandTileID) {
     } //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
 
+
+    // we could handle GameOverException here instead of passing on to the controller... thoughts? prayers? lmk
     public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroup, players, professorSet);
     }
@@ -114,8 +117,10 @@ public class Game {
     public void takeFromCloud(String nickname, int cloudID) {
         for (CloudTile cloud : clouds) {
             if (cloud.getID() == cloudID) {
-                List<Student> studentsTaken = cloud.removeAll();
-                getPlayerByNickname(nickname).addToEntrance(studentsTaken);
+                if(cloud.isSelectable()) {
+                    List<Student> studentsTaken = cloud.removeAll();
+                    getPlayerByNickname(nickname).addToEntrance(studentsTaken);
+                } else throw new IllegalArgumentException();
             }
         }
     }
@@ -128,7 +133,17 @@ public class Game {
         turnManager.determineActionOrder(cardsPlayedThisRound);
     }
 
-    public void pushThisRoundInLastRound() {
+    public void pushThisRoundInLastRound() {}
 
+    // in the future this method might be private, called by an endOfRoundOperations wrapper
+    // (which (wrapper) also handles exception?)
+
+    public void refillClouds() throws GameOverException{
+        try{
+            for(CloudTile c : clouds){ c.fill(); }
+        } catch (GameOverException e){
+            for(CloudTile c : clouds){ c.removeAll(); }
+            throw new GameOverException();
+        }
     }
 }

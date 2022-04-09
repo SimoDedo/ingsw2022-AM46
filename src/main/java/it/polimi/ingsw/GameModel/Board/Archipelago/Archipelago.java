@@ -131,14 +131,15 @@ public class Archipelago {
      * @param players players in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet) throws GameOverException{
+    public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet)
+            throws GameOverException{
         if(!islandGroup.isNoEntryTilePlaced()) {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
             if (swapped)
                 mergeIslandGroup(islandGroup);
         }
-        else return; // consider refactoring this line (on my corpse)
+        else return; // consider refactoring this line (on my corpse) i want 2 cry
     }
 
     /**
@@ -147,7 +148,8 @@ public class Archipelago {
      * @param players players in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet) throws GameOverException{
+    public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet)
+            throws GameOverException{
         if(!islandGroups.get(islandGroupIndex).isNoEntryTilePlaced()) {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);

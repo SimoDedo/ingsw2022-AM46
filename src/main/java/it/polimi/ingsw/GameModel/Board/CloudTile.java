@@ -2,6 +2,8 @@ package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
+import it.polimi.ingsw.GameModel.Game;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ public class CloudTile extends StudentContainer {
      *
      */
     private final Bag bag;
+    private boolean selectable;
 
     /**
      * Constructor for the Cloud class
@@ -27,18 +30,27 @@ public class CloudTile extends StudentContainer {
         this.bag = bag;
     }
 
-    public void fill() {
-        placePawns(bag.drawN(this.getMaxPawns()));
+    public void fill() throws GameOverException{
+        List<Student> students = bag.drawN(this.getMaxPawns());
+        if (students == null) { throw new GameOverException(); }
+        placePawns(students);
+        selectable = true;
     }
 
-    public List<Student> removeAll() throws IllegalStateException{
-        if(pawnCount() == 0)
-            throw new IllegalStateException("Island is already empty");
+    public List<Student> removeAll(){
+        selectable = false;
         List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {
             drawnStudents.add(removePawn());
         }
         return drawnStudents;
+    }
+
+    /**
+     * @return true if the island can be picked by a player
+     */
+    public boolean isSelectable(){
+        return selectable;
     }
 
 }

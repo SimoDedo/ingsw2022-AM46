@@ -54,10 +54,8 @@ public class Entrance extends StudentContainer{
     /**
      * @param students drawn from the bag and moving to the entrance
      * @throws IllegalStateException if the size of the student list is incorrect for the game type
-     * @throws GameOverException if the bag is empty, and the game is over
      */
-    public void refillStudents(List<Student> students) throws IllegalStateException, GameOverException {
-        if (students == null){ throw new GameOverException(); }
+    public void refillStudents(List<Student> students) throws IllegalStateException {
         if (students.size() == movableStudents) {
             for (Student s : students) { placePawn(s); }
         } else throw new IllegalArgumentException();

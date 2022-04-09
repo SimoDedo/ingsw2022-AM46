@@ -73,9 +73,6 @@ public class IslandGroup {
         if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
             for(IslandTile islandTile : islandTiles){
                 Tower towerToPut = player.takeTower();
-                if(towerToPut == null){
-                    //CHECKME: se finite le torri, vinta partita => andrà qui il notify o in towerspace? nel dubbio lascio questo commento piangetene a rigaurdo
-                }
                 Tower towerRemoved = islandTile.swapTower(towerToPut);
                 if(towerRemoved != null) {
                     towerRemoved.getOwner().placeTower(towerRemoved);
