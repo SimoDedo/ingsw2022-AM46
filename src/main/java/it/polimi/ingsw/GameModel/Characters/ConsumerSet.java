@@ -1,4 +1,4 @@
-package it.polimi.ingsw.GameModel.Characters.Dynamite;
+package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
@@ -21,24 +21,26 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
-public class ConsumerSetDynamite {
+public class ConsumerSet {
 
     private final List<Consumer<List<Integer>>> consumers = new ArrayList<>();
 
-    public ConsumerSetDynamite(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet, List<CharacterDynamite> characters) {
+    public ConsumerSet(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet,
+                       List<AbstractCharacter> characters) {
 
         //todo: add exception handling maybe?
 
         consumers.add((list) -> { // C1
-            StudentMoverCharacterDynamite char1 = (StudentMoverCharacterDynamite) characters.get(0);
-            Student student = char1.getPawnByID(list.get(0));
+            StudentMoverCharacter char1 = (StudentMoverCharacter) characters.get(0);
+            Student student = null;
+            student = char1.getPawnByID(list.get(0));
             IslandTile islandTile = archipelago.getIslandTileByID(list.get(1));
             islandTile.moveStudent(student);
-            char1.moveStudent(bag.draw());
+            char1.placePawn(bag.draw());
         });
 
         consumers.add((list) -> { // C2
-            Player activator = ((StrategyCharacterDynamite) characters.get(1)).getOwner();
+            Player activator = ((StrategyCharacter) characters.get(1)).getOwner();
             professorSet.setCheckAndMoveProfessorStrategy(new CheckAndMoveProfessorStrategyC2(activator));
         });
 
@@ -53,9 +55,10 @@ public class ConsumerSetDynamite {
         });
 
         consumers.add((list) -> { // C5
-            ((NoEntryCharacterDynamite) characters.get(4)).removeNoEntryTile();
+            NoEntryCharacter char5 = (NoEntryCharacter) characters.get(4);
+            char5.removeNoEntryTile();
             IslandGroup islandGroup = archipelago.getIslandTileByID(list.get(0)).getIslandGroup();
-            islandGroup.addNoEntryTile();
+            islandGroup.addNoEntryTile(char5);
         });
 
         consumers.add((list) -> { // C6
@@ -63,10 +66,10 @@ public class ConsumerSetDynamite {
         });
 
         consumers.add((list) -> { // C7
-            StudentMoverCharacterDynamite char7 = (StudentMoverCharacterDynamite) characters.get(6);
+            StudentMoverCharacter char7 = (StudentMoverCharacter) characters.get(6);
             Player activator = char7.getOwner();
 
-            Student studentFromCharacter = char7.removePawnByID(list.get(0));
+            Student studentFromCharacter = char7.removePawnByIndex(list.get(0));
             activator.addToEntrance(studentFromCharacter);
 
             Student studentFromEntrance = activator.removeStudentFromEntrance(list.get(1));
@@ -82,7 +85,7 @@ public class ConsumerSetDynamite {
         });
 
         consumers.add((list) -> { // C10
-            StudentMoverCharacterDynamite char9 = (StudentMoverCharacterDynamite) characters.get(9);
+            StudentMoverCharacter char9 = (StudentMoverCharacter) characters.get(9);
             Player activator = char9.getOwner();
             Student studentFromEntrance, studentFromDR;
             try { // entrance -> DR
@@ -102,13 +105,13 @@ public class ConsumerSetDynamite {
         });
 
         consumers.add((list) -> { // C11
-            StudentMoverCharacterDynamite char11 = (StudentMoverCharacterDynamite) characters.get(10);
+            StudentMoverCharacter char11 = (StudentMoverCharacter) characters.get(10);
             Player activator = char11.getOwner();
 
-            Student student = char11.removePawnByID(list.get(0));
+            Student student = char11.removePawnByIndex(list.get(0));
             activator.addToDR(student);
 
-            char11.moveStudent(bag.draw());
+            char11.placePawn(bag.draw());
         });
 
         consumers.add((list) -> { // C12
@@ -128,8 +131,8 @@ public class ConsumerSetDynamite {
         });
     }
 
-    public Consumer<List<Integer>> getConsumer(int ID) {
-        return consumers.get(ID);
+    public Consumer<List<Integer>> getConsumer(int characterID) {
+        return consumers.get(characterID - 1);
     }
 
 

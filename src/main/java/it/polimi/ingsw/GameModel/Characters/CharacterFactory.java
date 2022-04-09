@@ -1,104 +1,73 @@
 package it.polimi.ingsw.GameModel.Characters;
 
-import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyC4;
-import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.*;
-import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
-import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Character Factory which given the ID creates Character with the right attributes
- */
 public class CharacterFactory {
 
     /**
-     * Bag given to character that need to draw Students
+     * Constructor for the CharacterFactory.
      */
-    Bag bag;
-
-    /**
-     * List of the teams in the game given to characters that need this knowledge
-     */
-    PlayerList players;
-
-    /**
-     * Constructor for the CharacterFactory
-     * @param bag Bag given to character that need to draw Students
-     * @param players List of the teams in the game given to characters that need this knowledge
-     */
-    public CharacterFactory(Bag bag, PlayerList players) {
-        this.bag = bag;
-        this.players = players;
-    }
+    public CharacterFactory() {}
 
     /**
      * Method which creates a Character
      * @param ID The ID of the Character to create
      * @return The Character object
      */
-    public Character create(int ID){
-        Character character = null;
+    public AbstractCharacter create(int ID){
+        AbstractCharacter character = null;
         List<RequestParameters> requestParameters = new ArrayList<>();
         switch (ID){
-            case 1 :
+            case 1:
                 requestParameters.add(RequestParameters.STUDCARD);
                 requestParameters.add(RequestParameters.ISLAND);
-                character = new MoveCharacter(null, 4, 1,1, 1, requestParameters);
-                ((MoveCharacter) character).setBag(bag);
-                ((MoveCharacter) character).initialFill();
+                character = new StudentMoverCharacter(1, 1, 1, 4, requestParameters);
                 break;
-            case 2 :
-                requestParameters.add(RequestParameters.ISLAND); //FIXME: placeholder while no C&M prof
-                character = new ResolveStrategyCharacter(3, 3, requestParameters, new ResolveStrategyC3());
+            case 2:
+                character = new StrategyCharacter(2, 2, requestParameters);
                 break;
-            case 3 :
+            case 3:
                 requestParameters.add(RequestParameters.ISLAND);
-                character = new ResolveStrategyCharacter(3, 3, requestParameters, new ResolveStrategyC3());
+                character = new StrategyCharacter(3, 3, requestParameters);
                 break;
-            case 4 :
-                character = new MoveMotherNatureCharacter(4,1,requestParameters,new MoveMotherNatureStrategyC4());
+            case 4:
+                character = new StrategyCharacter(4,1, requestParameters);
                 break;
-            case 5 :
+            case 5:
                 requestParameters.add(RequestParameters.ISLAND);
-                character = new NoEntryTileCharacter(5,2,requestParameters);
+                character = new NoEntryCharacter(5, 2, 4, requestParameters);
                 break;
-            case 6 :
-                character = new ResolveStrategyCharacter(6, 3 , requestParameters, new ResolveStrategyC6());
+            case 6:
+                character = new StrategyCharacter(6, 3, requestParameters);
                 break;
-            case 7 :
+            case 7:
                 requestParameters.add(RequestParameters.STUDCARD);
                 requestParameters.add(RequestParameters.STUDENTRANCE);
-                character = new MoveCharacter(null, 6, 7, 1, 3, requestParameters);
-                ((MoveCharacter) character).setBag(bag);
-                ((MoveCharacter) character).initialFill();
+                character = new StudentMoverCharacter(7, 1, 3, 6, requestParameters);
                 break;
-            case 8 :
-                character = new ResolveStrategyCharacter(8, 2, requestParameters, new ResolveStrategyC8());
+            case 8:
+                character = new StrategyCharacter(8, 2, requestParameters);
                 break;
-            case 9 :
+            case 9:
                 requestParameters.add(RequestParameters.COLOR);
-                character = new ResolveStrategyCharacter(9, 3, requestParameters, new ResolveStrategyC9());
+                character = new StrategyCharacter(9, 3, requestParameters);
                 break;
-            case 10 :
+            case 10:
                 requestParameters.add(RequestParameters.STUDENTRANCE);
                 requestParameters.add(RequestParameters.STUDDININGROOM);
-                character = new MoveCharacter(null, 0, 10, 1, 2, requestParameters);
+                character = new StudentMoverCharacter(10, 1, 2, 0, requestParameters);
                 break;
-            case 11 :
+            case 11:
                 requestParameters.add(RequestParameters.STUDCARD);
-                character = new MoveCharacter(null, 4, 11, 2, 1, requestParameters);
-                ((MoveCharacter) character).setBag(bag);
-                ((MoveCharacter) character).initialFill();
+                character = new StudentMoverCharacter(11, 2, 1, 4, requestParameters);
                 break;
-            case 12 :
+            case 12:
                 requestParameters.add(RequestParameters.COLOR);
-                character = new MoveCharacter(null, 0, 12, 3, 1, requestParameters);
-                ((MoveCharacter) character).setPlayers(players);
+                character = new StudentMoverCharacter(12, 3, 1, 0, requestParameters);
                 break;
-
         }
         return character;
     }

@@ -1,31 +1,29 @@
-package it.polimi.ingsw.GameModel.Characters.Dynamite;
+package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.RequestParameters;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class StudentMoverCharacterDynamite extends StudentContainer implements CharacterDynamite {
+public abstract class AbstractCharacter implements Character {
 
-    private int ID, cost, usesLeft, maxUses;
+    private int ID, cost;
 
     private boolean isFirstUse, wasUsedThisTurn;
 
+    private List<RequestParameters> requestParameters;
+
     private Player owner;
 
-    List<RequestParameters> requestParameters;
-
-    public StudentMoverCharacterDynamite(int ID, int cost, int maxUses, int maxPawns, List<RequestParameters> requestParameters) {
-        super(null, maxPawns);
+    public AbstractCharacter(int ID, int cost, List<RequestParameters> requestParameters) {
         this.ID = ID;
-        this.maxUses = maxUses;
         this.cost = cost;
+        this.isFirstUse = true;
+        this.wasUsedThisTurn = false;
         this.requestParameters = requestParameters;
     }
 
-    @Override
     public List<RequestParameters> useCharacter(Player owner) {
         if (wasUsedThisTurn) throw new IllegalStateException("Already activated");
         else {
@@ -39,35 +37,33 @@ public class StudentMoverCharacterDynamite extends StudentContainer implements C
         return requestParameters;
     }
 
-    @Override
-    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) {
+    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException {
         consumer.accept(parameterList);
     }
 
-    @Override
     public int getCharacterID() {
         return ID;
     }
 
-    @Override
     public boolean isFirstUse() {
         return isFirstUse;
     }
 
-    @Override
     public boolean wasUsedThisTurn() {
         return wasUsedThisTurn;
     }
 
-    @Override
     public int getCost() {
         return cost;
     }
 
-    @Override
     public void resetUseState() {
         wasUsedThisTurn = false;
-        usesLeft = maxUses;
         owner = null;
     }
+
+    public Player getOwner() {
+        return owner;
+    }
+
 }
