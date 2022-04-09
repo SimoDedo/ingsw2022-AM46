@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.CloudTile;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
@@ -109,9 +110,11 @@ public class Game {
     } //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
 
 
-    // we could handle GameOverException here instead of passing on to the controller... thoughts? prayers? lmk
-    public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
-        archipelago.resolveIslandGroup(islandGroup, players, professorSet);
+    // should we be passing GameOverException on to the controller... thoughts? prayers? lmk
+    public void resolveIslandGroup(IslandGroup islandGroup){
+        try {
+            archipelago.resolveIslandGroup(islandGroup, players, professorSet);
+        } catch (GameOverException e){ determineWinner(); }
     }
 
     public void takeFromCloud(String nickname, int cloudID) {
@@ -135,15 +138,40 @@ public class Game {
 
     public void pushThisRoundInLastRound() {}
 
-    // in the future this method might be private, called by an endOfRoundOperations wrapper
-    // (which (wrapper) also handles exception?)
 
-    public void refillClouds() throws GameOverException{
+    public void refillClouds() {
         try{
             for(CloudTile c : clouds){ c.fill(); }
         } catch (GameOverException e){
             for(CloudTile c : clouds){ c.removeAll(); }
-            throw new GameOverException();
         }
+    }
+
+    /**
+     * checks if during the last round the students where exhausted or any player has finished their cards
+     */
+    // for now only useful to end game if the students from the bag where exhausted this round, or
+    // the players have played all their assistant cards.
+    public void endOfRoundOperations(){
+        // if any player has 0 cards at the end of the round the game ends...
+        // checking all is a bit pedantic but whatever
+        for(Player p : players){
+            if(p.getDeck().size() == 0){ determineWinner(); }
+        }
+        if(bag.pawnCount() == 0) { determineWinner(); }
+    }
+
+    private void determineWinner(){
+        Player currentWinner = players.get(0);
+
+        for(Player p : players.getTowerHolders()) {
+            if(p.getTowersPlaced() > currentWinner.getTowersPlaced()){
+                currentWinner = p;
+            } else if(p.getTowersPlaced() == currentWinner.getTowersPlaced()){
+                currentWinner = professorSet.determineStrongestPlayer(p, currentWinner);
+            }
+        }
+        TowerColor actualWinner = currentWinner.getTowerColor();
+        System.exit(0); // :o
     }
 }
