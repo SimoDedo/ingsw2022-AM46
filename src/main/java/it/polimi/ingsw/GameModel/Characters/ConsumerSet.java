@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
+/**
+ * Class that stores the different Consumer objects used by each Character to model their abilities.
+ */
 public class ConsumerSet {
 
     private final List<Consumer<List<Integer>>> consumers = new ArrayList<>();
@@ -88,6 +91,7 @@ public class ConsumerSet {
             StudentMoverCharacter char9 = (StudentMoverCharacter) characters.get(9);
             Player activator = char9.getOwner();
             Student studentFromEntrance, studentFromDR;
+
             try { // entrance -> DR
                 studentFromEntrance = activator.removeStudentFromEntrance(list.get(0));
                 activator.addToDR(studentFromEntrance);
@@ -102,6 +106,8 @@ public class ConsumerSet {
                 studentFromEntrance = activator.removeStudentFromEntrance(list.get(1));
                 activator.addToDR(studentFromEntrance);
             }
+
+            professorSet.checkAndMoveProfessor(studentFromDR.getColor());
         });
 
         consumers.add((list) -> { // C11
@@ -128,9 +134,16 @@ public class ConsumerSet {
                 removedStudents.add(player.removeThreeFromDR(color));
             }
             bag.placePawns(removedStudents);
+
+            professorSet.checkAndMoveProfessor(color);
         });
     }
 
+    /**
+     * Getter for the Consumer of the Character with the given character ID.
+     * @param characterID the ID of the Character that needs this Consumer
+     * @return the Consumer of that Character
+     */
     public Consumer<List<Integer>> getConsumer(int characterID) {
         return consumers.get(characterID - 1);
     }

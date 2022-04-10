@@ -40,7 +40,7 @@ public abstract class StudentContainer extends PawnContainer<Student> implements
     }
 
     /**
-     *  Alternativa to RemovePawn using index
+     * Alternative to RemovePawn using index.
      * @param index index of the pawn to be removed
      * @return The student removed
      * @throws IllegalStateException When no student with such ID is contained

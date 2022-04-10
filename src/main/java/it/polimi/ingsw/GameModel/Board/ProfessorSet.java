@@ -10,10 +10,17 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class contains the Professors and offers useful methods to retrieve the right professor or
+ * change their ownership.
+ */
 public class ProfessorSet {
 
     private final Map<Color, Professor> professors = new HashMap<>();
 
+    /**
+     * Strategy for determining how players conquer professors or snatch them from other players.
+     */
     private CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy = new CheckAndMoveProfessorStrategyStandard();
 
     public ProfessorSet() {
@@ -22,14 +29,29 @@ public class ProfessorSet {
         }
     }
 
+    /**
+     * Getter for the Professor of the given color.
+     * @param color the color of the professor to retrieve
+     * @return the professor of that color
+     */
     public Professor getProfessor(Color color) {
         return professors.get(color);
     }
 
+    /**
+     * Setter for the owner of a given professor.
+     * @param color the color of the professor to access
+     * @param owner the future owner of that professor
+     */
     public void setOwner(Color color, Player owner) {
         getProfessor(color).setOwner(owner);
     }
 
+    /**
+     * Method for calculating the number of professor that a given team possesses.
+     * @param towerColor the tower color of the given team
+     * @return the number of professors owned by the members of the team
+     */
     public int getNumberOfProfessors(TowerColor towerColor) {
         int score = 0;
         for (Professor prof : professors.values()) {
@@ -38,6 +60,16 @@ public class ProfessorSet {
         return score;
     }
 
+    public void checkAndMoveProfessor(Color color) {
+        checkAndMoveProfessorStrategy.checkAndMoveProfessor(color);
+        //todo: actual implementation of the strategy. also add needed parameters to the signature
+        // calls professorset.setowner when winner is found
+    }
+
+    /**
+     * Setter for the checkAndMoveProfessor strategy.
+     * @param checkAndMoveProfessorStrategy the strategy to set as current
+     */
     public void setCheckAndMoveProfessorStrategy(CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy) {
         this.checkAndMoveProfessorStrategy = checkAndMoveProfessorStrategy;
     }

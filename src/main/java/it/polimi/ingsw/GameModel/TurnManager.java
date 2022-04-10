@@ -79,10 +79,6 @@ public class TurnManager {
         return currentPlayer;
     }
 
-    public Phase getCurrentPhase() {
-        return currentPhase;
-    }
-
     /**
      * Method that sets the planning order clockwise starting from a given player.
      * @param startingPlayer player from which to start the planning turn
@@ -133,13 +129,6 @@ public class TurnManager {
                 determinePlanningOrder();
                 break;
         }
-    }
-
-    /**
-     * Setter for currentPhase
-     */
-    public void setCurrentPhase(Phase phase) {
-        currentPhase = phase;
     }
 
 }
