@@ -110,4 +110,47 @@ public class TurnManagerTest {
         assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname());
     }
 
+    @Test
+    public void desperateActionOrder() {
+        Bag bag = new Bag();
+        bag.fillRemaining();
+        PlayerConfig config = new PlayerConfig(3);
+        config.setBag(bag);
+        Player player1 = new Player("1-pietro", TowerColor.WHITE, false, config);
+        Player player2 = new Player("2-simo", TowerColor.WHITE, true, config);
+        Player player3 = new Player("3-greg", TowerColor.BLACK, false, config);
+        Player player4 = new Player("4-margara <3", TowerColor.BLACK, true, config);
+        Player player5 = new Player("5-ceruti", TowerColor.GREY, true, config);
+
+        TurnManager turnManager = new TurnManager();
+        turnManager.addPlayerClockwise(player5);
+        turnManager.addPlayerClockwise(player4);
+        turnManager.addPlayerClockwise(player3);
+        turnManager.addPlayerClockwise(player2);
+        turnManager.addPlayerClockwise(player1);
+
+        turnManager.determinePlanningOrder();
+        turnManager.nextPhase(); // planning phase: play assistant cards
+
+        Map<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
+        cardsPlayedThisRound.put(player1, new AssistantCard(4, 5));
+        cardsPlayedThisRound.put(player2, new AssistantCard(2, 6));
+        cardsPlayedThisRound.put(player3, new AssistantCard(2, 3));
+        cardsPlayedThisRound.put(player4, new AssistantCard(2, 7));
+        cardsPlayedThisRound.put(player5, new AssistantCard(4, 5));
+
+        turnManager.determineActionOrder(cardsPlayedThisRound);
+        turnManager.nextPhase(); // action phase
+
+        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        turnManager.nextTurn();
+        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        turnManager.nextTurn();
+        assertSame(player4.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        turnManager.nextTurn();
+        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        turnManager.nextTurn();
+        assertSame(player5.getNickname(), turnManager.getCurrentPlayer().getNickname());
+    }
+
 }
