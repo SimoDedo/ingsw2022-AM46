@@ -22,8 +22,8 @@ public class Wizard {
      */
     public Wizard(WizardType type) {
         this.type = type;
-        for(int i = 0; i < deckSize; i++){
-            deck.add(new AssistantCard(i, i/2));
+        for(int i = 1; i <= deckSize; i++){
+            deck.add(new AssistantCard(i,(i+1)/2));
         }
     }
 

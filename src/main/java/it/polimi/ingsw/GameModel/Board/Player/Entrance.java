@@ -52,13 +52,17 @@ public class Entrance extends StudentContainer{
 
 
     /**
-     * @param students drawn from the bag and moving to the entrance
+     * @param students picked from a cloud and moving to the entrance
      * @throws IllegalStateException if the size of the student list is incorrect for the game type
+     * @throws IllegalArgumentException if any of the students are alreay in the entrance
      */
-    public void refillStudents(List<Student> students) throws IllegalStateException {
+    public void refillStudents(List<Student> students) throws IllegalStateException, IllegalArgumentException {
+
         if (students.size() == movableStudents) {
-            for (Student s : students) { placePawn(s); }
-        } else throw new IllegalArgumentException();
+            for (Student s : students) {
+                placePawn(s);
+            }
+        } else throw new IllegalStateException();
     }
 }
 

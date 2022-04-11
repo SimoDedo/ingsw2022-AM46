@@ -44,8 +44,9 @@ public class PlayerBoard {
     /**
      * @param students to place in the entrance
      * @throws IllegalStateException if the size of the student list is incorrect for the game type
+     * @throws IllegalArgumentException if any of the students is already in the entrance
      */
-    public void refillEntrance(List<Student> students) throws IllegalStateException {
+    public void refillEntrance(List<Student> students) throws IllegalStateException, IllegalArgumentException {
         entrance.refillStudents(students);
     }
 
@@ -58,6 +59,10 @@ public class PlayerBoard {
         return towerSpace.getTowersPlaced();
     }
 
+    /**
+     * @return a tower from the towerSpace
+     * @throws GameOverException if the tower was the last
+     */
     public Tower takeTower() throws GameOverException {
         return towerSpace.takeTower();
     }

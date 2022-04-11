@@ -47,10 +47,18 @@ public class Player {
         isNeutral = true;
     }
 
+    /**
+     * creates a deck of assistant cards
+     * @param wizardType type of card back
+     */
     public void pickWizard(WizardType wizardType){
         this.wizard = new Wizard(wizardType);
     }
 
+    /**
+     * @param assistantID unique ID of the assistant to play
+     * @return the assistant which has been removed from the deck
+     */
     public AssistantCard playAssistant(int assistantID) {
         return wizard.playAssistant(assistantID);
     }
@@ -88,23 +96,46 @@ public class Player {
 
     public Student getStudentByID(int ID) throws NoSuchElementException { return playerBoard.getStudentByID(ID); }
 
+    /**
+     * @return true if this player holds towers in his playerBoard
+     */
     public boolean isTowerHolder() { return isTowerHolder; }
 
-    public void refillEntrance(List<Student> students) throws IllegalStateException{
+    /**
+     * @param students list of students to put into the entrance at the beginning of the round
+     * @throws IllegalStateException if the list is of wrong size, or if any of the students we want to place are
+     * already in the entrance
+     * @throws IllegalArgumentException if any of the students is already in the entrance
+     */
+    public void refillEntrance(List<Student> students) throws IllegalStateException, IllegalArgumentException{
         //assert playerBoard != null;
         playerBoard.refillEntrance(students);
     }
 
+    /**
+     * puts a tower back to the tower storage
+     * @param towerRemoved a tower removed from an island conquered by another player
+     */
     public void putTower(Tower towerRemoved) {
+        playerBoard.placeTower(towerRemoved);
     }
 
+    /**
+     * @return the list of assistant cards
+     */
     public List<AssistantCard> getDeck() {
         return wizard.getDeck();
     }
 
+    /**
+     * @param cardsPlayedThisRound Collection of all the assistants played this round
+     * @return true if the player only has cards which have already been played this round.
+     */
     public boolean checkDesperate(Collection<AssistantCard> cardsPlayedThisRound) {
         for (AssistantCard cardInHand : getDeck()) {
-            if (!cardsPlayedThisRound.contains(cardInHand)) return false;
+            int id = cardInHand.getID();
+            if (cardsPlayedThisRound.stream().anyMatch(x -> x.getID() == id)) {continue;}
+            return false;
         }
         return true;
     }
@@ -113,6 +144,11 @@ public class Player {
         return playerBoard.getTable(color);
     }
 
+    /**
+     * looks for student with specific id in the entrance
+     * @param studentID the ID of the student to return
+     * @return the student
+     */
     public Student getStudentFromEntrance(int studentID) {
         return playerBoard.getStudentFromEntrance(studentID);
     }

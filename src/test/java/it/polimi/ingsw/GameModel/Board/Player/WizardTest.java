@@ -1,10 +1,10 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
-import org.junit.Assert;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.NoSuchElementException;
 
@@ -17,7 +17,14 @@ public class WizardTest {
             assert (wiz.playAssistant(i).getMovePower() == Math.floor(i / 2));
 
         }
-        Assertions.assertThrows(NoSuchElementException.class, () -> wiz.playAssistant(1));
+        assertThrows(NoSuchElementException.class, () -> wiz.playAssistant(1));
+
+
+    }
+    @Test
+    public void testGetters(){
+        Wizard wiz = new Wizard(WizardType.MAGE);
+        assertEquals(wiz.getType(), WizardType.MAGE);
 
     }
 }
