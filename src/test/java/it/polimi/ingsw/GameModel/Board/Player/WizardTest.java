@@ -13,8 +13,8 @@ public class WizardTest {
     @Test
     public void playAssistantTest(){
         Wizard wiz = new Wizard(WizardType.MAGE);
-        for(int i = 0; i < 10; i ++) {
-            assert (wiz.playAssistant(i).getMovePower() == Math.floor(i / 2));
+        for(int i = 1; i <= 10; i ++) {
+            assertEquals(wiz.playAssistant(i).getMovePower(), (i + 1)/2);
 
         }
         assertThrows(NoSuchElementException.class, () -> wiz.playAssistant(1));
