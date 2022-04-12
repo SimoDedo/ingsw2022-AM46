@@ -37,7 +37,7 @@ public class ResolveStrategyC8 implements ResolveStrategy {
      */
     @Override
     public Player resolveIslandGroup(IslandGroup islandGroupToResolve, PlayerList players, ProfessorSet professorSet) {
-        HashMap<TowerColor, Integer> scores = new HashMap<TowerColor, Integer>();
+        HashMap<TowerColor, Integer> scores = new HashMap<>();
         for(TowerColor towerColor : TowerColor.values()){ //Initializes the HashMap
             scores.put(towerColor, 0);
         }

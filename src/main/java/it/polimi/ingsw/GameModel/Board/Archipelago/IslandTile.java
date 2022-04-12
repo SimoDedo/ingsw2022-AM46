@@ -7,7 +7,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.List;
 
-public class IslandTile extends StudentContainer{
+public class IslandTile extends StudentContainer {
     /**
      * Holds MotherNature if IslandTile is current holder, otherwise it's null
      */
@@ -38,7 +38,7 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Places MotherNature on IslandTile
-     * @param motherNature
+     * @param motherNature a reference to the Mother Nature object
      */
     public void placeMotherNature(MotherNature motherNature) {
         this.motherNature = motherNature;
@@ -47,7 +47,7 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Removes MotherNature from IslandTile, thus leaving it null
-     * @return
+     * @return a reference to the Mother Nature object
      */
     public MotherNature removeMotherNature() {
         MotherNature temp = motherNature;
@@ -57,7 +57,7 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Returns true if it holds MotherNature
-     * @return
+     * @return true if this tile contains Mother Nature, false otherwise
      */
     public boolean hasMotherNature(){
         return motherNature != null;
@@ -65,7 +65,7 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Getter for the Tower
-     * @return
+     * @return the tower color on this tile
      */
     public TowerColor getTowerColor() {
         return tower == null ? null : tower.getColor();
@@ -75,9 +75,9 @@ public class IslandTile extends StudentContainer{
         return tower == null ? null : tower.getID();
     }
     /**
-     * Swaps and return current Tower with given tower. Returns null if no tower was placed beforehand
-     * @param tower
-     * @return
+     * Swaps and returns current Tower with given tower. Returns null if no tower was placed beforehand
+     * @param tower the future tower to swap with the current one
+     * @return the tower previously placed on this tile, or null if there was none
      */
     public Tower swapTower(Tower tower) {
         Tower temp = this.tower;
@@ -88,7 +88,7 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Getter for the IslandGroup
-     * @return
+     * @return the islandgroup that contains this tile
      */
     public IslandGroup getIslandGroup() {
         return islandGroup;
@@ -96,16 +96,16 @@ public class IslandTile extends StudentContainer{
 
     /**
      * Setter for the IslandGroup
-     * @param islandGroup
+     * @param islandGroup the islandgroup that will contain this tile
      */
     public void setIslandGroup(IslandGroup islandGroup) {
         this.islandGroup = islandGroup;
     }
 
     /**
-     * Counts number of student with given Color
-     * @param color
-     * @return
+     * Counts number of students with given Color
+     * @param color the color of the students to check
+     * @return the number of students on this tile with the given color
      */
     public int countInfluence(Color color){
         List<Student> contained = this.getPawns();

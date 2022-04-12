@@ -2,8 +2,6 @@ package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
-import it.polimi.ingsw.GameModel.Game;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;

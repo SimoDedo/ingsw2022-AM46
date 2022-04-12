@@ -31,8 +31,6 @@ public class DiningRoom {
         return null;
     }
 
-
-
     /**
      * @param color of the table
      * @return score of the table
@@ -63,10 +61,16 @@ public class DiningRoom {
     public Student getStudentByID(int ID) throws NoSuchElementException {
         Student s = null;
         for(Table t : tables){
-            if(s == null){ s = t.getPawnByID(ID);}
+            if (s == null) s = t.getPawnByID(ID);
         }
-        if(s == null){ throw new NoSuchElementException(); }
+        if (s == null) throw new NoSuchElementException("No student with the given ID in the dining room");
         return s;
+    }
+
+    public Student removeStudentByID (int ID) throws NoSuchElementException {
+        Student student = getStudentByID(ID);
+        student.setStudentContainer(null);
+        return student;
     }
 
 

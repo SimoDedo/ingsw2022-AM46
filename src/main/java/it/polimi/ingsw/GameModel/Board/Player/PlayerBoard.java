@@ -1,16 +1,14 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
-import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class PlayerBoard {
     private TowerSpace towerSpace = null;
@@ -77,29 +75,6 @@ public class PlayerBoard {
         towerSpace.placeTower(tower);
     }
 
-
-    /**
-     * @param studentDestinations HashMap<Student ID><BoardPiece ID> (their destinations).
-     *                            If the destination ID is set to 0 they are to be placed in the diningRoom.
-     * @return HashMap of Students and the corresponding destination island's ID. Movements to Table locations are
-     * resolved here
-     * @throws IllegalArgumentException if the hashmap is not sized correctly
-     * @throws NoSuchElementException if any of the students cannot be found. If there are no matches with the
-     *      * boardPiece IDs it will be assumed they are all Island locations.
-     */
-    public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalStateException, NoSuchElementException, FullTableException {
-        List<Student> studentsToMove = entrance.removeStudentsByID(List.copyOf(studentDestinations.keySet()));
-        HashMap<Student, Integer> islandMovements = new HashMap<>();
-
-        for(Student s : studentsToMove){
-            if (studentDestinations.get(s.getID()) == 0) {diningRoom.placeStudent(s);}
-            else islandMovements.put(s, studentDestinations.get(s.getID()));
-        }
-        return islandMovements;
-    }
-
-
     public Table getTable(Color color) {
         return diningRoom.getTable(color);
     }
@@ -114,5 +89,22 @@ public class PlayerBoard {
     }
 
 
-
+    /**
+     * Removes a student from the player's board using its ID.
+     * @param studentID the ID of the student to remove
+     * @return the removed student
+     * @throws NoSuchElementException if the student is not in the entrance, nor in the table of its color
+     */
+    public Student removeStudentByID(int studentID) throws NoSuchElementException {
+        try {
+            return entrance.removeStudentByID(studentID);
+        } catch (Exception entranceException) {
+            try {
+                return diningRoom.removeStudentByID(studentID);
+            }
+            catch (Exception diningRoomException) {
+                throw new NoSuchElementException("No student was found");
+            }
+        }
+    }
 }

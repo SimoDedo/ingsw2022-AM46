@@ -17,5 +17,5 @@ public interface ResolveStrategy {
      * @param professorSet Manager for the professor, used to know who owns them
      * @return The player holding the towers of the team which holds the most influence, or null if a tie happens
      */
-    public Player resolveIslandGroup(IslandGroup islandGroupToResolve, PlayerList players, ProfessorSet professorSet);
+    Player resolveIslandGroup(IslandGroup islandGroupToResolve, PlayerList players, ProfessorSet professorSet);
 }

@@ -15,9 +15,6 @@ public class Table extends StudentContainer {
         color = c;
     }
 
-
-    private void addProfessor(){}
-
     public Color getColor() {
         return color;
     }
@@ -40,7 +37,5 @@ public class Table extends StudentContainer {
     public int getScore(){
         return pawnCount();
     }
-
-
 
 }

@@ -11,9 +11,9 @@ public class GameFactory {
     public GameFactory() {}
 
     public Game create(int numOfPlayers, GameMode gameMode, Map<String, TowerColor> teamComposition) {
-        switch (gameMode) {
-            case NORMAL: default: return new Game(new GameConfig(numOfPlayers), teamComposition);
-            case EXPERT: return new GameExpert(new GameConfig(numOfPlayers), teamComposition);
-        }
+        return switch (gameMode) {
+            case NORMAL -> new Game(new GameConfig(numOfPlayers), teamComposition);
+            case EXPERT -> new GameExpert(new GameConfig(numOfPlayers), teamComposition);
+        };
     }
 }

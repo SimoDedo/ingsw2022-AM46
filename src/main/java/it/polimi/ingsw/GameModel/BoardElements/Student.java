@@ -15,13 +15,13 @@ public class Student extends BoardPiece{
     /**
      * StudentContainer which hold the Student. Never null (guaranteed by PlaceStudent of studentContainer and initial constructor)
      */
-    private StudentContainer studentContainer;
+    private PlaceAndRemoveStudent studentContainer;
 
     /**
      * Creates a Student contained in a given StudentContainer, with a unique ID and a given color
      * @param studentContainer the initial container of this student
      */
-    public Student(Color color, StudentContainer studentContainer){
+    public Student(Color color, PlaceAndRemoveStudent studentContainer){
         super();
         this.color = color;
         this.studentContainer = studentContainer;
@@ -39,7 +39,7 @@ public class Student extends BoardPiece{
      * Getter for StudentContainer
      * @return the current container of this student
      */
-    public StudentContainer getStudentContainer() {
+    public PlaceAndRemoveStudent getStudentContainer() {
         return studentContainer;
     }
 

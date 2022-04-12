@@ -3,7 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
-import it.polimi.ingsw.GameModel.Characters.NoEntryTileCharacter;
+import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
@@ -21,10 +21,8 @@ public class IslandGroup {
      */
     private List<IslandTile> islandTiles;
 
-    /**
-     * Model NoEntryTiles present on given IslandGroup
-     */
-    private int noEntryTiles = 0;
+    private NoEntryTilesSpace noEntryTilesSpace;
+
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<>();
@@ -40,21 +38,23 @@ public class IslandGroup {
     }
     /**
      * Returns the IslandTile which contains MotherNature
-     * @return
+     * @return the island tile that contains Mother Nature if there exists one
+     * @throws NoSuchElementException if there is no island tile that contains Mother Nature in this group
      */
-    public IslandTile getMotherNatureTile(){
+    public IslandTile getMotherNatureTile() throws NoSuchElementException {
         IslandTile temp = null;
         for(IslandTile islandTile : islandTiles){
             if(islandTile.hasMotherNature())
                 temp = islandTile;
+            return temp;
         }
-        return temp; //CHECKME: consider throwing exception; right now whoever calls this method needs to check before if islandGroup has MotherNature
+        throw new NoSuchElementException("No tile in this IslandGroup has Mother Nature");
     }
 
     /**
      * Counts the influence of a color in the whole island group, checking each IslandTile
-     * @param color The color of which we compute the influence
-     * @return The influence of that color
+     * @param color the color of which we compute the influence
+     * @return the influence of that color
      */
     public int countInfluence(Color color){
         int score = 0;
@@ -66,8 +66,8 @@ public class IslandGroup {
 
     /**
      * If the Towers on the IslandTiles aren't of the given Team, replaces the Towers with theirs
-     * @param player The team who owns the towers on the IslandTile, once Conquer has finished
-     * @return Returns true if towers had to be swapped, false if not
+     * @param player the team who owns the towers on the IslandTile, once Conquer has finished
+     * @return true if the towers had to be swapped, false if not
      */
     public boolean conquer(Player player) throws GameOverException {
         if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
@@ -87,17 +87,16 @@ public class IslandGroup {
      * Empties the islandTiles list
      * @return A copy of the islandTiles list before it was emptied, where each IslandTile has IslandGroup set to null
      */
-    public List<IslandTile> removeIslandTiles(){
-        ArrayList<IslandTile> temp = new ArrayList<IslandTile>();
-        temp.addAll(islandTiles);
+    public List<IslandTile> removeIslandTiles() {
+        ArrayList<IslandTile> temp = new ArrayList<>(islandTiles);
         islandTiles.removeAll(islandTiles);
         for(IslandTile islandTile : temp)
             islandTile.setIslandGroup(null);
         return temp;
     }
 
-    public void selfDestruct(){
-        //??????????????????????????????????????????
+    public void selfDestruct() {
+        //???
     }
 
     /**
@@ -124,8 +123,8 @@ public class IslandGroup {
 
     /**
      * Return true if IslandGroup contains the given IslandTile
-     * @param islandTileToFind
-     * @return
+     * @param islandTileToFind the IslandTile to find in this group
+     * @return true if the tile was found, false otherwise
      */
     public boolean hasIslandTile(IslandTile islandTileToFind){
         for(IslandTile  islandTile : islandTiles){
@@ -178,27 +177,30 @@ public class IslandGroup {
             return islandTiles.size();
     }
 
-    public List<IslandTile> getIslandTiles() { return islandTiles; }
-
-    /**
-     * Adds a NoEntryTile to this IslandGroup
-     */
-    public void addNoEntryTile(){
-        noEntryTiles++;
+    public List<IslandTile> getIslandTiles() {
+        return islandTiles;
     }
 
     /**
-     * Checks if there is a NoEntryTile placed. If there is, it removes one
-     * @return True if there is at least one NoEntryTile
+     * Adds a NoEntryTile to this IslandGroup.
      */
-    public boolean isNoEntryTilePlaced(){
-        if(noEntryTiles>0){
-            noEntryTiles--;
-            NoEntryTileCharacter.putBackNoEntryTile();
-            return true;
-        }
-        else
-            return false;
+    public void addNoEntryTile(NoEntryCharacter noEntryCharacter) {
+        if (noEntryTilesSpace == null) noEntryTilesSpace = new NoEntryTilesSpace(noEntryCharacter);
+        noEntryTilesSpace.addNoEntryTile();
+    }
+
+    public void removeNoEntryTile() {
+        if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
+            throw new IllegalStateException("There are already zero no-entry tiles on this group");
+    }
+
+    /**
+     * Returns true if there is more than zero no entry tiles on this IslandGroup.
+     * @return true if there is at least one NoEntryTile
+     */
+    public boolean hasNoEntryTiles() {
+        if (noEntryTilesSpace == null) return false;
+        else return noEntryTilesSpace.hasNoEntryTiles();
     }
 
     /**
@@ -207,19 +209,12 @@ public class IslandGroup {
      * @return The Student if found, null otherwise
      */
     public Student getStudentByID(int ID){
-        Student studentToReturn = null;
-        for (IslandTile islandTile : islandTiles){
-            try{
-                studentToReturn =  islandTile.getPawnByID(ID);
-                break;
-            }
-            catch (NoSuchElementException e){
-            }
+        Student studentToReturn;
+        for (IslandTile islandTile : islandTiles) {
+            studentToReturn =  islandTile.getPawnByID(ID);
+            if (studentToReturn != null) return studentToReturn;
         }
-        if(studentToReturn != null)
-            return studentToReturn;
-        else
-            throw new NoSuchElementException("No such student in this IslandGroup");
+        throw new NoSuchElementException("No such student in this IslandGroup");
     }
 
     /**
@@ -227,7 +222,7 @@ public class IslandGroup {
      * @return A list of the Students IDs
      */
     public List<Integer> getStudentIDs(){
-        List<Integer> studentsIDs = new ArrayList<Integer>();
+        List<Integer> studentsIDs = new ArrayList<>();
         for (IslandTile islandTile : islandTiles){
             studentsIDs.addAll(islandTile.getPawnIDs());
         }
@@ -258,6 +253,7 @@ public class IslandGroup {
         }
         return islandTiledIDs;
     }
+
 
 
 }

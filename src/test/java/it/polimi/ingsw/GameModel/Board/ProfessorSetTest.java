@@ -34,23 +34,22 @@ class ProfessorSetTest {
         Player player2 = new Player("caio", TowerColor.BLACK, true, playerConfig);
         professorSet.setOwner(Color.RED, player1);
         professorSet.setOwner(Color.PINK, player2);
-        assertTrue(professorSet.getProfessor(Color.RED).getOwner().equals(player1));
-        assertTrue(professorSet.getProfessor(Color.PINK).getOwner().equals(player2));
-        assertTrue(professorSet.getProfessor(Color.GREEN).getOwner() == null);
+        assertEquals(professorSet.getProfessor(Color.RED).getOwner(), player1);
+        assertEquals(professorSet.getProfessor(Color.PINK).getOwner(), player2);
+        assertNull(professorSet.getProfessor(Color.GREEN).getOwner());
     }
 
     /**
-     * Test that method count correctly number of professor each team has
-     * @throws FullTeamException When team is already full (not tested here)
+     * Test that the getNumberOfProfessors method correctly counts the number of professor each team has.
      */
     @Test
-    void getNumberOfProfessors() throws FullTeamException {
+    void getNumberOfProfessors() {
         Bag bag = new Bag();
         bag.fillRemaining();
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);

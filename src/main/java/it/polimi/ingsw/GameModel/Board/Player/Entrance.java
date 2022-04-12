@@ -1,17 +1,20 @@
 package it.polimi.ingsw.GameModel.Board.Player;
+
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-public class Entrance extends StudentContainer{
+public class Entrance extends StudentContainer {
 
     /**
      * how many students can be moved from the entrance each round, and how many have to be put back
      */
     private final int movableStudents;
+
     /**
      * reference to Bag, shared between all entrances
      */
@@ -56,6 +59,9 @@ public class Entrance extends StudentContainer{
         return students;
     }
 
+    public Student removeStudentByID(int studentID) {
+        return removePawnByID(studentID);
+    }
 
     /**
      * @param students picked from a cloud and moving to the entrance

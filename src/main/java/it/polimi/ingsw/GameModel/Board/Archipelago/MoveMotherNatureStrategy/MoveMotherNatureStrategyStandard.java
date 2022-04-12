@@ -22,7 +22,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
     public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException {
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
-        int moveCountNeeded = 0;
+        int moveCountNeeded;
         for(IslandGroup islandGroup: islandGroups){
             if(islandGroup.equals(islandTileStarting.getIslandGroup()))
                 startingIslandGroupNumber = islandGroups.indexOf(islandGroup);

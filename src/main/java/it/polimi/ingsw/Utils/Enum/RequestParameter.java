@@ -3,7 +3,7 @@ package it.polimi.ingsw.Utils.Enum;
 /**
  * Enum for the parameters required by the Characters for their abilities.
  */
-public enum RequestParameters {
+public enum RequestParameter {
     STUDENTRANCE,
     STUDDININGROOM,
     STUDCARD,

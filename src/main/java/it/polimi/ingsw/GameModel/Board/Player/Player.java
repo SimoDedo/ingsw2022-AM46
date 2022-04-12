@@ -1,23 +1,19 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
-import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Player {
+
     private final String nickname;
     private final PlayerBoard playerBoard;
     private Wizard wizard;
@@ -25,14 +21,11 @@ public class Player {
 
     private TowerColor towerColor;
 
-    private final boolean isNeutral;
     private int coins;
-
 
     public Player(String nickname, TowerColor towerColor, boolean isTowerHolder, PlayerConfig playerConfig) {
         this.nickname = nickname;
         this.isTowerHolder = isTowerHolder;
-        this.isNeutral = false;
         this.towerColor = towerColor;
         playerBoard = new PlayerBoard(this, towerColor, isTowerHolder, playerConfig);
     }
@@ -44,7 +37,6 @@ public class Player {
         nickname = null;
         playerBoard = null;
         isTowerHolder = false;
-        isNeutral = true;
     }
 
     /**
@@ -90,7 +82,9 @@ public class Player {
         return coins;
     }
 
-    public int getTowersPlaced() { return playerBoard.getTowersPlaced(); }
+    public int getTowersPlaced() {
+        return playerBoard.getTowersPlaced();
+    }
 
     public TowerColor getTowerColor() {
         return towerColor;
@@ -113,14 +107,6 @@ public class Player {
     public WizardType getWizardType() { return wizard.getType(); }
 
     /**
-     * Searches for a student in the entrance and dining room
-     * @param ID of the student to search
-     * @return the student of specified ID
-     * @throws NoSuchElementException if no such student is in the playerBoard
-     */
-    public Student getStudentByID(int ID) throws NoSuchElementException { return playerBoard.getStudentByID(ID); }
-
-    /**
      * @return true if this player holds towers in his playerBoard
      */
     public boolean isTowerHolder() { return isTowerHolder; }
@@ -136,7 +122,6 @@ public class Player {
         playerBoard.refillEntrance(students);
     }
 
-
     /**
      * @return the list of assistant cards
      */
@@ -145,14 +130,16 @@ public class Player {
     }
 
     /**
+     * Method that checks if a player is "desperate", that is, if they can only play assistants that
+     * have already been played by someone else in this round.
+     *
      * @param cardsPlayedThisRound Collection of all the assistants played this round
      * @return true if the player only has cards which have already been played this round.
      */
     public boolean checkDesperate(Collection<AssistantCard> cardsPlayedThisRound) {
         for (AssistantCard cardInHand : getDeck()) {
-            int id = cardInHand.getID();
-            if (cardsPlayedThisRound.stream().anyMatch(x -> x.getID() == id)) {continue;}
-            return false;
+            int turnOrder = cardInHand.getTurnOrder();
+            if (cardsPlayedThisRound.stream().noneMatch(card -> card.getTurnOrder() == turnOrder)) return false;
         }
         return true;
     }
@@ -168,6 +155,26 @@ public class Player {
      */
     public Student getStudentFromEntrance(int studentID) {
         return playerBoard.getStudentFromEntrance(studentID);
+    }
+
+    //todo: implement, comment and test all these methods
+
+    public void addToEntrance(List<Student> studentsFromCloud) {}
+
+    public void addToEntrance(Student student) {}
+
+    public Student removeStudentFromEntrance(int studentID) { //todo: implementation
+        return null;
+    }
+
+    public Student removeStudentFromDR(int studentID) { //todo: implementation
+        return null;
+    }
+
+    public void addToDR(Student student) {}
+
+    public Student removeThreeFromDR(Color color) { //todo: implementation
+        return null;
     }
 
 }

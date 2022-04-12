@@ -1,10 +1,11 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.PawnContainer;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.BoardElements.TowerContainer;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-public class TowerSpace extends PawnContainer<Tower> {
+public class TowerSpace extends TowerContainer {
 
     private final TowerColor color;
 

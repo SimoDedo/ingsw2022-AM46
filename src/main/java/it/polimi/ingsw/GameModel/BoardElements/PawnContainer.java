@@ -3,13 +3,12 @@ package it.polimi.ingsw.GameModel.BoardElements;
 import it.polimi.ingsw.GameModel.Board.Player.*;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Abstract class to model a section of the board which contains students or towers
  * @param <T> the type of the pawns contained, extends BoardPiece
  */
-public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWithOwnerMutable{
+public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWithOwnerMutable {
     /**
      * The list containing the pawns
      */
@@ -37,10 +36,14 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * is already inside the container.
      * @param pawn the pawn to be placed
      */
-    public void placePawn(T pawn) throws IllegalArgumentException{
-        if (!(maxPawns >=0 && pawnCount() == maxPawns || pawns.contains(pawn)))  {
-            pawns.add(pawn);
-        } else throw new IllegalArgumentException();
+    public void placePawn(T pawn) throws IllegalArgumentException {
+        if (maxPawns >=0 && pawnCount() == maxPawns) {
+            throw new IllegalArgumentException("The container is already full");
+        }
+        if (pawns.contains(pawn)) {
+            throw new IllegalArgumentException("The pawn is already inside this container");
+        }
+        pawns.add(pawn);
     }
 
     /**
@@ -48,7 +51,6 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * @param pawns list of pawns to be placed inside this container
      */
     public void placePawns(List<T> pawns) throws IllegalArgumentException {
-
         for (T pawn : pawns) {
             placePawn(pawn);
         }
@@ -58,6 +60,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * Removes and return pawn from container
      * @param pawnToRemove pawn to be removed
+     * @return true if the pawn was removed successfully, false otherwise
      */
     public boolean removePawn(T pawnToRemove) {
         return pawns.remove(pawnToRemove);
@@ -69,7 +72,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * @param ID the ID of the pawn to remove
      * @return the freshly removed pawn
      */
-    public T removePawnByID(int ID){
+    public T removePawnByID(int ID) {
         T pawn = getPawnByID(ID);
         removePawn(pawn);
         return pawn;
@@ -79,21 +82,21 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * removes the first pawn in the list
      * @return the removed pawn
      */
-    public T removePawn(){
+    public T removePawn() {
         return pawns.remove(0);
     }
 
     /**
      * @return the number of pawns currently contained
      */
-    public int pawnCount(){
+    public int pawnCount() {
         return pawns.size();
     }
 
     /**
     * Getter for the max number of pawns this container can hold
     */
-    public int getMaxPawns() {return maxPawns; }
+    public int getMaxPawns() { return maxPawns; }
 
     /**
      * Getter for the list, given through a copy; grants subclasses access to the list to perform
@@ -108,7 +111,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
      * Getter for a list of IDs of pawns contained in the PawnContainer
      * @return A new list of Integers containing the IDs
      */
-    public List<Integer> getPawnIDs(){
+    public List<Integer> getPawnIDs() {
         List<Integer> IDs = new ArrayList<>();
         for(T pawn : pawns){
             IDs.add(pawn.getID());
@@ -117,9 +120,7 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     }
 
     public T getPawnByID(int ID) {
-        Predicate<T> test = pawn -> pawn.getID() == ID;
         return pawns.stream().filter(pawn -> pawn.getID() == ID).findAny().orElse(null);
     }
-
 
 }

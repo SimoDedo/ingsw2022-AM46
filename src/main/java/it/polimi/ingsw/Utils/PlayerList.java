@@ -5,7 +5,6 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * New list used for players. Adds functionality useful to manage player and their teams

@@ -132,14 +132,13 @@ public class Archipelago {
      * @param professorSet The set to manage professor ownership and calculate influence
      */
     public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet)
-            throws GameOverException{
-        if(!islandGroup.isNoEntryTilePlaced()) {
+            throws GameOverException {
+        if (islandGroup.hasNoEntryTiles()) islandGroup.removeNoEntryTile();
+        else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
-            if (swapped)
-                mergeIslandGroup(islandGroup);
+            if (swapped) mergeIslandGroup(islandGroup);
         }
-        else return; // consider refactoring this line (on my corpse) i want 2 cry
     }
 
     /**
@@ -149,14 +148,14 @@ public class Archipelago {
      * @param professorSet The set to manage professor ownership and calculate influence
      */
     public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet)
-            throws GameOverException{
-        if(!islandGroups.get(islandGroupIndex).isNoEntryTilePlaced()) {
+            throws GameOverException {
+        if (islandGroups.get(islandGroupIndex).hasNoEntryTiles())
+            islandGroups.get(islandGroupIndex).removeNoEntryTile();
+        else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);
-            if (swapped)
-                mergeIslandGroup(islandGroups.get(islandGroupIndex));
+            if (swapped) mergeIslandGroup(islandGroups.get(islandGroupIndex));
         }
-        else return; // consider refactoring this line (on my corpse)
     }
 
     /**
@@ -172,8 +171,8 @@ public class Archipelago {
      * Merges given IslandGroup with nearby IslandGroups
      * @param islandGroupToMerge The IslandGroup to merge
      */
-    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException{
-        if(getNumOfIslandGroups() == 4){ throw new GameOverException(); }
+    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException {
+        if (getNumOfIslandGroups() == 4) throw new GameOverException();
         int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
         TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
 
@@ -195,13 +194,10 @@ public class Archipelago {
             islandGroups.remove(islandGroups.get(idxRight));
 
         }
-        if(tcToMerge != tcLeft && tcToMerge != tcRight)
-            return;
-        else
-            mergeIslandGroup(islandGroupToMerge);
-                                                //FIXME: checks always right and left, even if useless to check left.
-                                                // - Could divide in mergeLeft and mergeRight (probably not worth it)
-                                                // -  probably no need recursion (if two of the same tower are adjacent they should be merged)
+        if(tcToMerge == tcLeft || tcToMerge == tcRight) mergeIslandGroup(islandGroupToMerge);
+        //FIXME: checks always right and left, even if useless to check left.
+        // - Could divide in mergeLeft and mergeRight (probably not worth it)
+        // -  probably no need recursion (if two of the same tower are adjacent they should be merged)
     }
 
     //endregion
@@ -264,8 +260,7 @@ public class Archipelago {
         for (IslandGroup islandGroup : islandGroups) {
             try {
                 studentToReturn = islandGroup.getStudentByID(ID);
-            } catch (NoSuchElementException e) {
-            }
+            } catch (NoSuchElementException ignored) {}
         }
         if(studentToReturn == null)
             throw new NoSuchElementException("No Student with such ID in IslandGroups");
@@ -297,7 +292,7 @@ public class Archipelago {
         return -1;
     }
 
-    public int getNumOfIslandGroups(){
+    public int getNumOfIslandGroups() {
         return islandGroups.size();
     }
 
@@ -335,6 +330,15 @@ public class Archipelago {
     public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
         return islandGroups.get(islandGroupIndex).getTowerColor();
     }
+
+    public ResolveStrategy getResolveStrategy() {
+        return resolveStrategy;
+    }
+
+    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
+        return moveMotherNatureStrategy;
+    }
+
     //endregion
 
 }

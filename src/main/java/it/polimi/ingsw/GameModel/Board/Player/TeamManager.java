@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.GameModel.GameConfig;
-import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.PlayerList;
 
@@ -17,7 +16,7 @@ public class TeamManager {
      * @param gameConfig Configuration of the game
      * @param teamComposition Composition of teams. Contains nicknames and teams
      * @return A PlayerList containing all players in the Game
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if the team distribution is incorrect
      */
     public PlayerList create(GameConfig gameConfig, Map<String, TowerColor> teamComposition) throws IllegalArgumentException{
         PlayerList players = new PlayerList();

@@ -23,7 +23,7 @@ public class ResolveStrategyC3 implements ResolveStrategy{
 
     /**
      * Setter for the island
-     * @param islandTileSelected
+     * @param islandTileSelected the IslandTile to set as the currently selected one
      */
     public void setIslandTileSelected(IslandTile islandTileSelected) {
         this.islandTileSelected = islandTileSelected;
@@ -47,7 +47,7 @@ public class ResolveStrategyC3 implements ResolveStrategy{
      */
     @Override
     public Player resolveIslandGroup(IslandGroup islandGroupToResolve, PlayerList players, ProfessorSet professorSet) {
-        HashMap<TowerColor, Integer> scores = new HashMap<TowerColor, Integer>();
+        HashMap<TowerColor, Integer> scores = new HashMap<>();
         for(TowerColor towerColor : TowerColor.values()){ //Initializes the HashMap
             scores.put(towerColor, 0);
         }
