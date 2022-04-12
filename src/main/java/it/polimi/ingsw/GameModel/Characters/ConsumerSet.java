@@ -13,6 +13,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
@@ -74,7 +75,7 @@ public class ConsumerSet {
             Student studentFromCharacter = char7.removePawnByID(list.get(0));
             activator.addToEntrance(studentFromCharacter);
 
-            Student studentFromEntrance = activator.removeStudentFromEntrance(list.get(1));
+            Student studentFromEntrance = activator.removeStudentByID(list.get(1));
             char7.placePawn(studentFromEntrance);
         });
 
@@ -92,21 +93,23 @@ public class ConsumerSet {
             Student studentFromEntrance, studentFromDR;
 
             try { // entrance -> DR
-                studentFromEntrance = activator.removeStudentFromEntrance(list.get(0));
-                activator.addToDR(studentFromEntrance);
+                studentFromEntrance = activator.removeStudentByID(list.get(0));
+                try { activator.addToDR(studentFromEntrance); }
+                catch (FullTableException fte) { fte.printStackTrace(); }
 
-                studentFromDR = activator.removeStudentFromDR(list.get(1));
+                studentFromDR = activator.removeStudentByID(list.get(1));
                 activator.addToEntrance(studentFromDR);
             }
             catch (NoSuchElementException e) { // DR -> entrance
-                studentFromDR = activator.removeStudentFromDR(list.get(0));
+                studentFromDR = activator.removeStudentByID(list.get(0));
                 activator.addToEntrance(studentFromDR);
 
-                studentFromEntrance = activator.removeStudentFromEntrance(list.get(1));
-                activator.addToDR(studentFromEntrance);
+                studentFromEntrance = activator.removeStudentByID(list.get(1));
+                try { activator.addToDR(studentFromEntrance); }
+                catch (FullTableException fte) { fte.printStackTrace(); }
             }
 
-            professorSet.checkAndMoveProfessor(studentFromDR.getColor());
+            professorSet.checkAndMoveProfessor(playerList, studentFromDR.getColor());
         });
 
         consumers.add((list) -> { // C11
@@ -114,7 +117,8 @@ public class ConsumerSet {
             Player activator = char11.getOwner();
 
             Student student = char11.removePawnByID(list.get(0));
-            activator.addToDR(student);
+            try { activator.addToDR(student); }
+            catch (FullTableException fte) { fte.printStackTrace(); }
 
             char11.placePawn(bag.draw());
         });
@@ -131,11 +135,11 @@ public class ConsumerSet {
                 default -> throw new IllegalArgumentException("Invalid color");
             };
             for (Player player : playerList) {
-                removedStudents.add(player.removeThreeFromDR(color));
+                removedStudents.addAll(player.removeNFromDR(3, color));
             }
             bag.placePawns(removedStudents);
 
-            professorSet.checkAndMoveProfessor(color);
+            professorSet.checkAndMoveProfessor(playerList, color);
         });
     }
 

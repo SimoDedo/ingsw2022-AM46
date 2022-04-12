@@ -4,8 +4,6 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.Utils.Enum.Color;
 import org.junit.jupiter.api.Test;
 
-import java.util.NoSuchElementException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +20,7 @@ class StudentContainerTest {
         islandTile1.placePawn(new Student(Color.GREEN, null));
         islandTile1.placePawn(new Student(Color.RED, null));
         islandTile1.placePawn(new Student(Color.BLUE, null));
-        assertTrue(islandTile1.getPawns().size() == 3);
+        assertEquals(3, islandTile1.getPawns().size());
     }
 
     /**
@@ -78,6 +76,6 @@ class StudentContainerTest {
         islandTile.moveStudent(new Student(Color.BLUE, null));
         Student studentToTest = new Student(Color.YELLOW, null);
         islandTile.moveStudent(studentToTest);
-        assertTrue(islandTile.getPawnByID(studentToTest.getID()).getColor().equals(Color.YELLOW));
+        assertEquals(islandTile.getPawnByID(studentToTest.getID()).getColor(), Color.YELLOW);
     }
 }

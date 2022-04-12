@@ -1,8 +1,6 @@
 package it.polimi.ingsw.GameModel.BoardElements;
 
-import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Player.TowerSpace;
-import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
-import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import org.junit.jupiter.api.Test;
 
 import java.io.InvalidObjectException;
@@ -27,6 +26,6 @@ class MoveMotherNatureStrategyC4Test {
         int idxEndIG =  idxStartIG + 6 > 11 ? idxStartIG + 6 - 12 : idxStartIG + 6;
         int moveCount = 4;
         archipelago.moveMotherNature(archipelago.getIslandTilesIDs().get(idxEndIG).get(0), moveCount);
-        assertTrue(archipelago.getMotherNatureIslandGroupIndex() == idxEndIG);
+        assertEquals(archipelago.getMotherNatureIslandGroupIndex(), idxEndIG);
     }
 }

@@ -62,7 +62,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -76,9 +76,9 @@ class ArchipelagoTest {
 
         assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getNumOfIslandGroups() == 12);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0).equals(TowerColor.BLACK));
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
         Random random = new Random(89);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)) == null);
+        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)));
     }
 
     /**
@@ -96,7 +96,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -109,13 +109,13 @@ class ArchipelagoTest {
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null);
+        assertNull(archipelago.getTowerColorOfIslandGroup(0));
         archipelago.placeStudent(new Student(Color.PINK, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0).equals(TowerColor.BLACK));
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
         archipelago.placeStudent(new Student(Color.RED, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0).equals(TowerColor.BLACK));
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
     }
 
     /**
@@ -134,7 +134,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -149,8 +149,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(2, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
-        assertTrue(archipelago.getNumOfIslandGroups() == 10);
-        assertTrue(archipelago.getIslandTilesIDs().get(0).size() == 3);
+        assertEquals(10, archipelago.getNumOfIslandGroups());
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
 
     }
 
@@ -170,7 +170,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -185,8 +185,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(11, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getNumOfIslandGroups() == 10);
-        assertTrue(archipelago.getIslandTilesIDs().get(0).size() == 3);
+        assertEquals(10, archipelago.getNumOfIslandGroups());
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
 
     }
 
@@ -206,7 +206,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -221,8 +221,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(10, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(11, players,professorSet);
-        assertTrue(archipelago.getNumOfIslandGroups() == 10);
-        assertTrue(archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups()-1).size() == 3); //Merge on last IslandGroup, thus check on last after merge
+        assertEquals(10, archipelago.getNumOfIslandGroups());
+        assertEquals(3, archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups() - 1).size()); //Merge on last IslandGroup, thus check on last after merge
     }
 
     /**
@@ -250,7 +250,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -275,7 +275,7 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(5, players,professorSet);
         archipelago.resolveIslandGroup(6, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertTrue(archipelago.getNumOfIslandGroups() == 6);
+        assertEquals(6, archipelago.getNumOfIslandGroups());
         //System.out.println(archipelago.getIslandTilesIDs());
         assertTrue(archipelago.getIslandTilesIDs().get(5).size() == 4 &&
                 archipelago.getTowerColorOfIslandGroup(5).equals(TowerColor.BLACK));
@@ -297,7 +297,7 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -313,7 +313,7 @@ class ArchipelagoTest {
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players, professorSet);
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0).equals(TowerColor.WHITE)); //Wins white despite Black having 1 student and 1
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.WHITE); //Wins white despite Black having 1 student and 1
                                                                                                     // tower because of the strategy
     }
     //endregion
@@ -323,6 +323,6 @@ class ArchipelagoTest {
         Archipelago archipelago = new Archipelago();
         Student student = new Student(Color.RED, null);
         archipelago.placeStudent(student, archipelago.getIslandTilesIDs().get(0).get(0));
-        assertTrue(archipelago.getStudentByID(student.getID()).equals(student));
+        assertEquals(archipelago.getStudentByID(student.getID()), student);
     }
 }

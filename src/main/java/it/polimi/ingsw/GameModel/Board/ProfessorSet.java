@@ -6,9 +6,10 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.PlayerList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class contains the Professors and offers useful methods to retrieve the right professor or
@@ -16,7 +17,8 @@ import java.util.Map;
  */
 public class ProfessorSet {
 
-    private final Map<Color, Professor> professors = new HashMap<>();
+    private final List<Professor> professors = new ArrayList<>();
+    //note: an arraylist is slightly overkill, but it's better to keep it this way and eventually downgrade it to a set after the view is done
 
     /**
      * Strategy for determining how players conquer professors or snatch them from other players.
@@ -25,7 +27,7 @@ public class ProfessorSet {
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
-            professors.put(color, new Professor(null, color));
+            professors.add(new Professor(null, color));
         }
     }
 
@@ -35,7 +37,11 @@ public class ProfessorSet {
      * @return the professor of that color
      */
     public Professor getProfessor(Color color) {
-        return professors.get(color);
+        return professors
+                .stream()
+                .filter(prof -> prof.getColor() == color)
+                .findAny()
+                .orElse(null);
     }
 
     /**
@@ -54,7 +60,7 @@ public class ProfessorSet {
      */
     public int getNumberOfProfessors(TowerColor towerColor) {
         int score = 0;
-        for (Professor prof : professors.values()) {
+        for (Professor prof : professors) {
             if (prof.getOwner().getTowerColor().equals(towerColor)) score++;
         }
         return score;
@@ -66,10 +72,8 @@ public class ProfessorSet {
         else return player2;
     }
 
-    public void checkAndMoveProfessor(Color color) {
-        checkAndMoveProfessorStrategy.checkAndMoveProfessor(color);
-        //todo: actual implementation of the strategy. also add needed parameters to the signature
-        // calls professorset.setowner when winner is found
+    public void checkAndMoveProfessor(PlayerList playerList, Color color) {
+        checkAndMoveProfessorStrategy.checkAndMoveProfessor(getProfessor(color), playerList, color);
     }
 
     /**

@@ -35,25 +35,15 @@ public class PlayerBoard {
      * @return student of specified ID
      * @throws NoSuchElementException if no student with this ID is found
      */
-    public Student getStudentByID(int ID) throws NoSuchElementException{
+    public Student getStudentByID(int ID) throws NoSuchElementException {
         Student student;
-        try{
+        try {
             student = entrance.getPawnByID(ID);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             student = diningRoom.getStudentByID(ID);
         }
         return student;
     }
-
-    /**
-     * @param students to place in the entrance
-     * @throws IllegalStateException if the size of the student list is incorrect for the game type
-     * @throws IllegalArgumentException if any of the students is already in the entrance
-     */
-    public void refillEntrance(List<Student> students) throws IllegalStateException, IllegalArgumentException {
-        entrance.refillStudents(students);
-    }
-
 
     public int getScore(Color c){
         return diningRoom.getScore(c);
@@ -106,5 +96,14 @@ public class PlayerBoard {
                 throw new NoSuchElementException("No student was found");
             }
         }
+    }
+
+    /**
+     * Method for adding a single student to the entrance.
+     *
+     * @param student the student to add to the entrance
+     */
+    public void addToEntrance(Student student) {
+        entrance.placePawn(student);
     }
 }

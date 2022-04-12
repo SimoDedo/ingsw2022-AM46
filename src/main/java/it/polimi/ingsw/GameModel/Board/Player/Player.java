@@ -6,11 +6,12 @@ import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class Player {
 
@@ -34,7 +35,7 @@ public class Player {
      * Constructor for neutral player (i.e. island and bag owner)... there is  probably a better way to do it?
      */
     public Player() {
-        nickname = null;
+        nickname = "NEUTRAL";
         playerBoard = null;
         isTowerHolder = false;
     }
@@ -112,17 +113,6 @@ public class Player {
     public boolean isTowerHolder() { return isTowerHolder; }
 
     /**
-     * @param students list of students to put into the entrance at the beginning of the round
-     * @throws IllegalStateException if the list is of wrong size, or if any of the students we want to place are
-     * already in the entrance
-     * @throws IllegalArgumentException if any of the students is already in the entrance
-     */
-    public void refillEntrance(List<Student> students) throws IllegalStateException, IllegalArgumentException{
-        //assert playerBoard != null;
-        playerBoard.refillEntrance(students);
-    }
-
-    /**
      * @return the list of assistant cards
      */
     public List<AssistantCard> getDeck() {
@@ -149,7 +139,7 @@ public class Player {
     }
 
     /**
-     * looks for student with specific id in the entrance
+     * Method that looks for the student with the specific ID in the player's entrance.
      * @param studentID the ID of the student to return
      * @return the student
      */
@@ -157,24 +147,60 @@ public class Player {
         return playerBoard.getStudentFromEntrance(studentID);
     }
 
-    //todo: implement, comment and test all these methods
-
-    public void addToEntrance(List<Student> studentsFromCloud) {}
-
-    public void addToEntrance(Student student) {}
-
-    public Student removeStudentFromEntrance(int studentID) { //todo: implementation
-        return null;
+    /**
+     * Method for bulk-adding students to a player's entrance. This method is called when an entrance
+     * is being filled with students from a cloud.
+     *
+     * @param studentsFromCloud the students to add to the entrance
+     */
+    public void addToEntrance(List<Student> studentsFromCloud) {
+        for (Student student : studentsFromCloud) addToEntrance(student);
     }
 
-    public Student removeStudentFromDR(int studentID) { //todo: implementation
-        return null;
+    /**
+     * Method that adds a student to the player's entrance. This method is called by characters, or when
+     * filling the entrance with students coming from a cloud.
+     *
+     * @param student the student to add to the entrance
+     */
+    public void addToEntrance(Student student) {
+        playerBoard.addToEntrance(student);
     }
 
-    public void addToDR(Student student) {}
+    /**
+     * Method that removes a student from the player's entrance/dining room. This method should only
+     * be called by characters.
+     *
+     * @param studentID the ID of the student to remove
+     * @return the student removed from the entrance
+     */
+    public Student removeStudentByID(int studentID) {
+        return playerBoard.removeStudentByID(studentID);
+    }
 
-    public Student removeThreeFromDR(Color color) { //todo: implementation
-        return null;
+    /**
+     * Method that adds a student to its respective dining room in the player's board.
+     *
+     * @param student the student to place on the dining room
+     */
+    public void addToDR(Student student) throws FullTableException {
+        playerBoard.getTable(student.getColor()).placeStudent(student);
+    }
+
+    /**
+     * Method that removes three students of a given color from the player's dining room. It is only
+     * called by Characeter 12.
+     *
+     * @param color the color of the three students to remove from the dining room
+     * @return the
+     */
+    public List<Student> removeNFromDR(int numberToRemove, Color color) {
+        List<Student> removedStudents = new ArrayList<>();
+        for (int i = 0; i < numberToRemove; i++) {
+            try { removedStudents.add(playerBoard.getTable(color).removePawn()); }
+            catch (IndexOutOfBoundsException ioobe) { break; }
+        }
+        return removedStudents;
     }
 
 }

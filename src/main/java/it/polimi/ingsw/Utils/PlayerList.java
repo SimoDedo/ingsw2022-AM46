@@ -9,7 +9,26 @@ import java.util.List;
 /**
  * New list used for players. Adds functionality useful to manage player and their teams
  */
-public class PlayerList extends ArrayList<Player> { //FIXME: should throw exception on add if two have same nickname?
+public class PlayerList extends ArrayList<Player> {
+
+    /**
+     * Override of the add method in ArrayList<>. Returns false if the player about to be added
+     * has the same nickname as some other player already inside the list, otherwise it adds the
+     * player into the list normally. Neutral players are excluded from this rule.
+     *
+     * @param newPlayer the player to add
+     * @return true if the insertion is successful, false if the new player has the same nickname
+     * as another player already inside the list
+     */
+    @Override
+    public boolean add(Player newPlayer) {
+        for (Player player : this) {
+            if (player.getNickname().equals(newPlayer.getNickname())
+                    && !newPlayer.getNickname().equals("NEUTRAL")) return false;
+        }
+        return super.add(newPlayer);
+    }
+
 
     /**
      * Gets the first player found who holds the towers. (TeamManager ensures only one for each team)
@@ -58,7 +77,7 @@ public class PlayerList extends ArrayList<Player> { //FIXME: should throw except
      * @param nickname The nickname of the player to find
      * @return The player found, or null if no player has given nickname
      */
-    public Player getByNickname(String nickname){
+    public Player getByNickname(String nickname) {
         return stream().filter(player -> player.getNickname().equals(nickname)).findAny().orElse(null);
     }
 

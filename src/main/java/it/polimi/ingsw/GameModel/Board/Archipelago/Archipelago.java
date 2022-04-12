@@ -179,7 +179,6 @@ public class Archipelago {
         int idxLeft = idxToMerge == 0 ?
                 islandGroups.size() - 1 : idxToMerge - 1;
         TowerColor tcLeft = islandGroups.get(idxLeft).getTowerColor();
-
         if(tcToMerge == tcLeft) {
             islandGroupToMerge.addIslandTilesBefore(islandGroups.get(idxLeft).removeIslandTiles());
             islandGroups.remove(islandGroups.get(idxLeft));
@@ -194,10 +193,8 @@ public class Archipelago {
             islandGroups.remove(islandGroups.get(idxRight));
 
         }
-        if(tcToMerge == tcLeft || tcToMerge == tcRight) mergeIslandGroup(islandGroupToMerge);
-        //FIXME: checks always right and left, even if useless to check left.
-        // - Could divide in mergeLeft and mergeRight (probably not worth it)
-        // -  probably no need recursion (if two of the same tower are adjacent they should be merged)
+        // if(tcToMerge == tcLeft || tcToMerge == tcRight) mergeIslandGroup(islandGroupToMerge);
+        // - probably no need for recursion (if two groups of the same towercolor are adjacent, they should be already merged)
     }
 
     //endregion

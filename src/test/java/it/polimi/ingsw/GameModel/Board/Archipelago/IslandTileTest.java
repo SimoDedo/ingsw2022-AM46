@@ -47,7 +47,7 @@ class IslandTileTest {
         IslandTile islandTile = new IslandTile(null, true, null);
         Tower tower = new Tower(TowerColor.BLACK, null);
         islandTile.swapTower(tower);
-        assertTrue(islandTile.getTowerID().equals(tower.getID()));
+        assertEquals((int) islandTile.getTowerID(), tower.getID());
     }
 
     /**
@@ -60,7 +60,7 @@ class IslandTileTest {
         Tower tower1 = new Tower(TowerColor.WHITE, null);
         islandTile.swapTower(tower);
         islandTile.swapTower(tower1);
-        assertTrue(islandTile.getTowerColor() == TowerColor.WHITE);
+        assertSame(islandTile.getTowerColor(), TowerColor.WHITE);
     }
 
     /**
@@ -88,7 +88,7 @@ class IslandTileTest {
         students.add(new Student(Color.BLUE, islandTile));
         for(Student student : students)
             islandTile.placePawn(student);
-        assertTrue(islandTile.countInfluence(Color.BLUE) == 3);
+        assertEquals(3, islandTile.countInfluence(Color.BLUE));
     }
 
     /**
@@ -97,6 +97,6 @@ class IslandTileTest {
     @Test
     void countInfluenceZero() {
         IslandTile islandTile = new IslandTile(null, true, null);
-        assertTrue(islandTile.countInfluence(Color.BLUE) == 0);
+        assertEquals(0, islandTile.countInfluence(Color.BLUE));
     }
 }

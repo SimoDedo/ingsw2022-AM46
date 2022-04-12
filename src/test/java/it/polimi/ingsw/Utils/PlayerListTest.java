@@ -27,8 +27,8 @@ class PlayerListTest {
         players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
         players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
         players.add(new Player("PIETRO", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
-        assertTrue(players.getTowerHolder(TowerColor.BLACK).getNickname().equals("Simo"));
-        assertTrue(players.getTowerHolder(TowerColor.WHITE) == null);
+        assertEquals("Simo", players.getTowerHolder(TowerColor.BLACK).getNickname());
+        assertNull(players.getTowerHolder(TowerColor.WHITE));
     }
 
     /**
@@ -68,7 +68,7 @@ class PlayerListTest {
         assertTrue(players.getTeam(TowerColor.BLACK).contains(player1) &&
                 players.getTeam(TowerColor.BLACK).contains(player2) &&
                 !players.getTeam(TowerColor.BLACK).contains(player3));
-        assertTrue(players.getTeam(TowerColor.BLACK).getTowerHolder(TowerColor.BLACK).equals(player1));
+        assertEquals(players.getTeam(TowerColor.BLACK).getTowerHolder(TowerColor.BLACK), player1);
     }
 
     /**

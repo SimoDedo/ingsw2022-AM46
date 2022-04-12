@@ -45,7 +45,7 @@ class ResolveStrategyC8Test {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
@@ -60,6 +60,6 @@ class ResolveStrategyC8Test {
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
 
         resolveStrategyC8.setActivatingPlayer(players.getTowerHolder(TowerColor.BLACK));
-        assertTrue(resolveStrategyC8.resolveIslandGroup(islandGroup, players,professorSet).equals(players.getTowerHolder(TowerColor.BLACK)));
+        assertEquals(resolveStrategyC8.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
     }
 }

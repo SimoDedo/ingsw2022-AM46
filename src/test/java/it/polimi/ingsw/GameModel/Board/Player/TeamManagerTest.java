@@ -26,15 +26,15 @@ class TeamManagerTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.WHITE);
         teamConfiguration.put("Ceruti", TowerColor.WHITE);
         TeamManager teamManager = new TeamManager();
         PlayerList players = teamManager.create(gameConfig, teamConfiguration);
-        assertTrue(players.getTowerHolder(TowerColor.BLACK).getNickname().equals("Simo"));
-        assertTrue(players.getTowerHolder(TowerColor.WHITE).getNickname().equals("Pirovano"));
+        assertEquals("Simo", players.getTowerHolder(TowerColor.BLACK).getNickname());
+        assertEquals("Pirovano", players.getTowerHolder(TowerColor.WHITE).getNickname());
     }
 
     /**
@@ -47,7 +47,7 @@ class TeamManagerTest {
         GameConfig gameConfig = new GameConfig(3);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.GREY);
         teamConfiguration.put("Pirovano", TowerColor.BLACK);
@@ -67,7 +67,7 @@ class TeamManagerTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<String, TowerColor>();
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
         teamConfiguration.put("Simo", TowerColor.BLACK);
         teamConfiguration.put("Greg", TowerColor.BLACK);
         teamConfiguration.put("Pirovano", TowerColor.BLACK);

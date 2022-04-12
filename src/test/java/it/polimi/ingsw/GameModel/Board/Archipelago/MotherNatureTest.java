@@ -17,7 +17,7 @@ class MotherNatureTest {
         MotherNature motherNature = new MotherNature(null);
         IslandTile islandTile = new IslandTile(null, false, null);
         islandTile.placeMotherNature(motherNature);
-        assertTrue(motherNature.getIslandTile().equals(islandTile));
+        assertEquals(motherNature.getIslandTile(), islandTile);
     }
 
 }

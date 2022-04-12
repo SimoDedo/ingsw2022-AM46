@@ -1,7 +1,11 @@
 package it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.PlayerList;
+
+import java.util.List;
 
 /**
  * Modified CheckAndMoveProfessor strategy set up by Character 2. This strategy is different
@@ -30,5 +34,12 @@ public class CheckAndMoveProfessorStrategyC2 implements CheckAndMoveProfessorStr
      * the most students of that color in their dining room. In the case of a draw, if one of the two
      * drawing player is the activator of the character, they win the professor.
      */
-    public void checkAndMoveProfessor(Color color) {}
+    public void checkAndMoveProfessor(Professor prof, PlayerList playerList, Color color) {
+        Player winner = playerList.get(0);
+        for (Player player : playerList) {
+            if (player.getScore(color) > winner.getScore(color)) winner = player;
+            else if (player.equals(activator) && player.getScore(color) == winner.getScore(color)) winner = player;
+        }
+        prof.setOwner(winner);
+    }
 }

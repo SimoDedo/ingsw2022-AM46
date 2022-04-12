@@ -27,6 +27,7 @@ public class CloudTile extends StudentContainer {
     public CloudTile(int maxCloudStudents, Bag bag) {
         super(null, maxCloudStudents);
         this.bag = bag;
+        selectable = true;
     }
 
     public void fill() throws LastRoundException {
@@ -37,7 +38,7 @@ public class CloudTile extends StudentContainer {
     }
 
     public List<Student> removeAll(){
-        if(!selectable){return null;}
+        if (!selectable) { return null; }
         selectable = false;
         List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {
@@ -49,7 +50,7 @@ public class CloudTile extends StudentContainer {
     /**
      * @return true if the island can be picked by a player
      */
-    public boolean isSelectable(){
+    public boolean isSelectable() {
         return selectable;
     }
 

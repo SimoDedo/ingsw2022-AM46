@@ -89,7 +89,7 @@ public class IslandGroup {
      */
     public List<IslandTile> removeIslandTiles() {
         ArrayList<IslandTile> temp = new ArrayList<>(islandTiles);
-        islandTiles.removeAll(islandTiles);
+        islandTiles.removeAll(temp);
         for(IslandTile islandTile : temp)
             islandTile.setIslandGroup(null);
         return temp;

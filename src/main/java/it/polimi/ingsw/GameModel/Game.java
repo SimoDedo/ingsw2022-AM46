@@ -166,16 +166,17 @@ public class Game {
         else {
             archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
         }
-        checkAndMoveProfessor(student.getColor());
+        checkAndMoveProfessor(players, student.getColor());
     }
 
     /**
      * Method that checks if any Player has gained the right to host the Professor of the given color
      * by moving students into their dining room.
+     * @param players the list of players inside the game
      * @param color the color of the Professor to check
      */
-    public void checkAndMoveProfessor(Color color) {
-        professorSet.checkAndMoveProfessor(color); // this in turn calls a checkAndMoveProfessor strategy
+    public void checkAndMoveProfessor(PlayerList players, Color color) {
+        professorSet.checkAndMoveProfessor(players, color); // this in turn calls a checkAndMoveProfessor strategy
     }
 
     /**
@@ -198,6 +199,7 @@ public class Game {
     public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroup, players, professorSet);
         // should we be passing GameOverException on to the controller... thoughts? prayers? lmk
+        // yep, we should. so i think the code is perfect as it is right now. greg
     }
 
     /**
@@ -209,14 +211,14 @@ public class Game {
      * @param cloudID the ID of the cloud that the player chose
      */
     public void takeFromCloud(String nickname, int cloudID) {
-        for (CloudTile cloud : clouds) {
-            if (cloud.getID() == cloudID) {
-                if(cloud.isSelectable()) {
-                    List<Student> studentsTaken = cloud.removeAll();
-                    getPlayerByNickname(nickname).refillEntrance(studentsTaken);
-                }
-            }
-        }
+        List<Student> studentsTaken = new ArrayList<>(
+                clouds.stream()
+                .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
+                .findAny()
+                .orElseThrow(NoSuchElementException::new)
+                .removeAll());
+
+        getPlayerByNickname(nickname).addToEntrance(studentsTaken);
     }
 
     /**
@@ -225,6 +227,7 @@ public class Game {
      */
     public void determinePlanningOrder() {
         turnManager.determinePlanningOrder();
+        refillClouds();
     }
 
     /**
@@ -243,25 +246,34 @@ public class Game {
     }
 
     public void refillClouds() {
-        try{
+        try {
             for(CloudTile c : clouds){ c.fill(); }
-        } catch (LastRoundException e){
-            for(CloudTile c : clouds){ c.removeAll(); }
+        } catch (LastRoundException e) {
+            disableClouds();
         }
     }
 
     /**
-     * checks if during the last round the students where exhausted or any player has finished their cards
+     * Method that should be called by the controller when it catches a LastRoundException. In fact
+     * during the last round it is not possible to draw from CloudTiles.
+     */
+    public void disableClouds() {
+        for (CloudTile c : clouds) c.removeAll();
+    }
+
+    /**
+     * Method that checks if during the last round the students where exhausted or any player has
+     * finished their cards.
      */
     // for now only useful to end game if the students from the bag where exhausted this round, or
     // the players have played all their assistant cards.
-    public void endOfRoundOperations(){
+    public TowerColor endOfRoundOperations() throws LastRoundException {
         // if any player has 0 cards at the end of the round the game ends
-        // checking all is a bit pedantic but whatever
-        for(Player p : players){
-            if(p.getDeck().size() == 0){ determineWinner(); }
+        for (Player p : players) {
+            if(p.getDeck().size() == 0){ return determineWinner(); }
         }
-        if(bag.pawnCount() == 0) { determineWinner(); }
+        if(bag.pawnCount() == 0) { return determineWinner(); }
+        return null; // the game can continue
     }
 
     private TowerColor determineWinner(){

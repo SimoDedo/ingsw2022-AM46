@@ -2,7 +2,6 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.Utils.Enum.WizardType;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
