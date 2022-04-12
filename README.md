@@ -20,9 +20,9 @@ Online implementation of the tabletop game [Eriantys](https://craniointernationa
 
 # Overview
 Made by:
-- **Pietro Beghetto** (account: [**@PietroBeghetto**](https://www.github.com/pietrobeghetto), personal code: **10672945**, e-mail: **pietro.beghetto@mail.polimi.it**
-- **Simone de Donato** (account: [**@SimoDedo**](https://www.github.com/simodedo), personal code: **10677578**, e-mail: **simone.dedonato@mail.polimi.it**
-- **Gregorio Dimaglie** (account: [**@MizuGreg**](https://www.github.com/mizugreg), personal code: **10705277**, e-mail: **gregorio.dimaglie@mail.polimi.it**
+- **Pietro Beghetto** (account: [**@PietroBeghetto**](https://www.github.com/pietrobeghetto), personal code: **10672945**, e-mail: **pietro.beghetto@mail.polimi.it**)
+- **Simone de Donato** (account: [**@SimoDedo**](https://www.github.com/simodedo), personal code: **10677578**, e-mail: **simone.dedonato@mail.polimi.it**)
+- **Gregorio Dimaglie** (account: [**@MizuGreg**](https://www.github.com/mizugreg), personal code: **10705277**, e-mail: **gregorio.dimaglie@mail.polimi.it**)
 
 | Feature                   | Progress |
 |:--------------------------|:--------:|
@@ -36,8 +36,6 @@ Made by:
 | Client & view             |    🔴    |
 | CLI                       |    🔴    |
 | GUI                       |    🔴    |
-
-
 
 ### Made with
 - Development kit: [JDK 17](https://www.oracle.com/java/technologies/downloads/)
