@@ -70,4 +70,24 @@ class PlayerListTest {
                 !players.getTeam(TowerColor.BLACK).contains(player3));
         assertTrue(players.getTeam(TowerColor.BLACK).getTowerHolder(TowerColor.BLACK).equals(player1));
     }
+
+    /**
+     * Tests that method correctly returns player with given nickname
+     */
+    @Test
+    void getByNickname(){
+        PlayerList players = new PlayerList();
+        Bag bag = new Bag();
+        bag.fillRemaining();
+        GameConfig gameConfig = new GameConfig(4);
+        gameConfig.getPlayerConfig().setBag(bag);
+
+        Player player1 = new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig());
+        Player player2 = new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig());
+        Player player3 = new Player("PIETRO", TowerColor.WHITE, false, gameConfig.getPlayerConfig());
+        players.add(player1);
+        players.add(player2);
+        players.add(player3);
+        assertTrue(players.getByNickname("Simo").equals(player1) && players.getByNickname("Dani") == null);
+    }
 }

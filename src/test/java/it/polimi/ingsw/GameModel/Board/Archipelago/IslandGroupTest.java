@@ -168,12 +168,12 @@ class IslandGroupTest {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<>();
         IslandTile islandTile = new IslandTile(null, true, null);
-        islandTile.moveStudent(new Student(Color.GREEN, null));
-        islandTile.moveStudent(new Student(Color.PINK, null));
-        islandTile.moveStudent(new Student(Color.RED, null));
-        islandTile.moveStudent(new Student(Color.BLUE, null));
+        islandTile.placePawn(new Student(Color.GREEN, null));
+        islandTile.placePawn(new Student(Color.PINK, null));
+        islandTile.placePawn(new Student(Color.RED, null));
+        islandTile.placePawn(new Student(Color.BLUE, null));
         Student studentToFind = new Student(Color.YELLOW, null);
-        islandTile.moveStudent(studentToFind);
+        islandTile.placePawn(studentToFind);
         islandTiles.add(islandTile);
         islandGroup.addIslandTilesBefore(islandTiles);
         assertEquals(studentToFind, islandGroup.getStudentByID(studentToFind.getID()));
