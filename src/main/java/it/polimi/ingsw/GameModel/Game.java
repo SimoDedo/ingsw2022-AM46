@@ -29,7 +29,7 @@ public class Game {
     private TeamManager teamManager = new TeamManager();
     private Map<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
 
-    public Game(GameConfig gameConfig, LinkedHashMap<String, TowerColor> teamComposition) {
+    public Game(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
         archipelago.initialStudentPlacement(bag.drawN(10));
         bag.fillRemaining();
         gameConfig.getPlayerConfig().setBag(bag);

@@ -29,10 +29,6 @@ public class PlayerConfig {
         return maxTowers;
     }
 
-    public void setMaxTowers(int maxTowers) {
-        this.maxTowers = maxTowers;
-    }
-
     public Bag getBag() {
         return bag;
     }

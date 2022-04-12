@@ -4,20 +4,17 @@ public class CoinBag {
 
     private int coins;
 
-    public CoinBag() {
-        coins = 20;
+    public CoinBag(int initialCoins) {
+        coins = initialCoins;
     }
 
-    public void removeCoin() throws ArithmeticException{
-        if(coins == 0) throw
-                new ArithmeticException("No more coins to take");
+    public void removeCoin() throws ArithmeticException {
+        if (coins == 0) throw new ArithmeticException("No more coins to take");
         coins--;
     }
 
     public void removeCoins(int numOfCoins) throws ArithmeticException {
-        if (coins - numOfCoins < 0) {
-            throw new ArithmeticException("Amount of coins taken exceeds current amount of coins");
-        }
+        if (coins - numOfCoins < 0) throw new ArithmeticException("Amount of coins taken exceeds current amount of coins");
         coins -= numOfCoins;
     }
 

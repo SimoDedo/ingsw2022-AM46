@@ -62,11 +62,11 @@ public class TurnManager {
         currentPlayer = planningPlayerList.get(0);
     }
 
-    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) { // doesn't treat desperate situations though!
+    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) {
         // I've never hated code written by me this much, but it works somehow.
         // let's refactor it in the future
         actionPlayerList.clear();
-        actionPlayerList = new LinkedHashMap<>(cardsPlayedThisRound)
+        actionPlayerList = cardsPlayedThisRound
                 .entrySet()
                 .stream()
                 .sorted(Comparator.comparingInt(e -> e.getValue().getTurnOrder()))
