@@ -1,6 +1,9 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +22,8 @@ public class Wizard {
      */
     public Wizard(WizardType type) {
         this.type = type;
-        for(int i = 0; i < deckSize; i++){
-            deck.add(new AssistantCard(i, i/2));
+        for(int i = 1; i <= deckSize; i++){
+            deck.add(new AssistantCard(i,(i+1)/2));
         }
     }
 

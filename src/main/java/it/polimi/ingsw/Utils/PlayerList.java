@@ -26,6 +26,11 @@ public class PlayerList extends ArrayList<Player> { //FIXME: should throw except
         return null;
     }
 
+    public List<Player> getTowerHolders(){
+        return this.stream().filter(Player::isTowerHolder).toList();
+
+    }
+
     /**
      * Returns the current number of players in team (not the one it should have, just how many there are)
      * @param towerColor The color of the tower (team) to count

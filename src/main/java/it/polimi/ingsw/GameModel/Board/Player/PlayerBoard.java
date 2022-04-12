@@ -8,11 +8,9 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class PlayerBoard {
     private TowerSpace towerSpace = null;
@@ -33,6 +31,12 @@ public class PlayerBoard {
         this.diningRoom = new DiningRoom(player);
     }
 
+    /**
+     * Searches for a student in the entrance and dining room
+     * @param ID of the student to return
+     * @return student of specified ID
+     * @throws NoSuchElementException if no student with this ID is found
+     */
     public Student getStudentByID(int ID) throws NoSuchElementException{
         Student student;
         try{
@@ -45,9 +49,10 @@ public class PlayerBoard {
 
     /**
      * @param students to place in the entrance
-     * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
+     * @throws IllegalStateException if the size of the student list is incorrect for the game type
+     * @throws IllegalArgumentException if any of the students is already in the entrance
      */
-    public void refillEntrance(List<Student> students) throws IllegalStateException{
+    public void refillEntrance(List<Student> students) throws IllegalStateException, IllegalArgumentException {
         entrance.refillStudents(students);
     }
 
@@ -60,6 +65,10 @@ public class PlayerBoard {
         return towerSpace.getTowersPlaced();
     }
 
+    /**
+     * @return a tower from the towerSpace
+     * @throws GameOverException if the tower was the last
+     */
     public Tower takeTower() throws GameOverException {
         return towerSpace.takeTower();
     }
@@ -67,6 +76,7 @@ public class PlayerBoard {
     public void placeTower(Tower tower){
         towerSpace.placeTower(tower);
     }
+
 
     /**
      * @param studentDestinations HashMap<Student ID><BoardPiece ID> (their destinations).
@@ -79,25 +89,26 @@ public class PlayerBoard {
      */
     public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
             throws IllegalStateException, NoSuchElementException, FullTableException {
+        List<Student> studentsToMove = entrance.removeStudentsByID(List.copyOf(studentDestinations.keySet()));
         HashMap<Student, Integer> islandMovements = new HashMap<>();
-        for(Map.Entry<Integer, Integer> pair : studentDestinations.entrySet()){
-            Student student = entrance.getPawnByID(pair.getKey());
 
-            // this requires that no island has ID 0... maybe a custom ID class to handle special values?
-            if(pair.getValue() == 0){
-                entrance.removePawn(student);
-                diningRoom.placeStudent(student);
-            } else {
-                islandMovements.put(student, pair.getValue());
-            }
+        for(Student s : studentsToMove){
+            if (studentDestinations.get(s.getID()) == 0) {diningRoom.placeStudent(s);}
+            else islandMovements.put(s, studentDestinations.get(s.getID()));
         }
         return islandMovements;
     }
+
 
     public Table getTable(Color color) {
         return diningRoom.getTable(color);
     }
 
+    /**
+     * Searches for a student in the entrance only
+     * @param studentID of the student to return
+     * @return student of specified ID
+     */
     public Student getStudentFromEntrance(int studentID) {
         return entrance.getPawnByID(studentID);
     }

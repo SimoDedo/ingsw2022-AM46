@@ -22,7 +22,7 @@ public abstract class StudentContainer extends PawnContainer<Student>{
      * @param student student to be placed inside this container
      */
     @Override
-    public void placePawn(Student student) {
+    public void placePawn(Student student) throws IllegalArgumentException{
         super.placePawn(student);
         student.setStudentContainer(this);
     }
@@ -31,37 +31,40 @@ public abstract class StudentContainer extends PawnContainer<Student>{
     /**
      * Sets the StudentContainer to null, then removes the student from itself
      * @param pawnToRemove Student to be removed
-     * @return The Student removed (the same given)
+     * @return true if the pawn was removed.
      */
     @Override
-    public Student removePawn(Student pawnToRemove) {
+    public boolean removePawn(Student pawnToRemove) {
         pawnToRemove.setStudentContainer(null);
         return super.removePawn(pawnToRemove);
     }
 
     /**
-     * Alternative to RemovePawn using index
-     * @param index index of the pawn to be removed
-     * @return The student removed
-     * @throws IllegalStateException When no student with such ID is contained
+     * @param ID the ID of the student to remove
+     * @return the student if it was removed, null otherwise.
      */
     @Override
-    public Student removePawnByIndex(int index) throws IllegalStateException{
-        Student student = super.removePawnByIndex(index);
-        student.setStudentContainer(null);
-        return student;
+    public Student removePawnByID(int ID){
+        Student s = getPawnByID(ID);
+        if(removePawn(s)) return s;
+        return null;
     }
 
-    /**
-     * (Maybe deprecated) Removes the student from its former container (if it has one, but it should) then places it in this container.
-     * @param studentToPlace Student to place in this container
-     * @return The student removed from the StudentContainer of the student (same as the studentToPlace)
-     */
-    public Student moveStudent(Student studentToPlace) {
-        Student studentToReturn = null;
-        if(studentToPlace.getStudentContainer() != null)
-            studentToReturn = studentToPlace.getStudentContainer().removePawn(studentToPlace);
-        placePawn(studentToPlace);
-        return studentToReturn;
+    @Override
+    public Student removePawn(){
+        Student s = super.removePawn();
+        s.setStudentContainer(null);
+        return s;
     }
+    /**
+     * Removes the student from its former container (if it has one, but it should) then places it in this container.
+     * @param studentToPlace Student to place in this container
+     */
+    public void moveStudent(Student studentToPlace) throws IllegalArgumentException{
+        if(studentToPlace.getStudentContainer() != null) {
+            studentToPlace.getStudentContainer().removePawn(studentToPlace);}
+
+        placePawn(studentToPlace);
+    }
+
 }

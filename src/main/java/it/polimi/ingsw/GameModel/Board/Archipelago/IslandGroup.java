@@ -27,7 +27,7 @@ public class IslandGroup {
     private int noEntryTiles = 0;
 
     public IslandGroup(boolean isStarting){
-        this.islandTiles = new ArrayList<IslandTile>();
+        this.islandTiles = new ArrayList<>();
         this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
     }
 
@@ -73,9 +73,6 @@ public class IslandGroup {
         if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
             for(IslandTile islandTile : islandTiles){
                 Tower towerToPut = player.takeTower();
-                if(towerToPut == null){
-                    //CHECKME: se finite le torri, vinta partita => andrà qui il notify o in towerspace? nel dubbio lascio questo commento piangetene a rigaurdo
-                }
                 Tower towerRemoved = islandTile.swapTower(towerToPut);
                 if(towerRemoved != null) {
                     towerRemoved.getOwner().placeTower(towerRemoved);
@@ -214,6 +211,7 @@ public class IslandGroup {
         for (IslandTile islandTile : islandTiles){
             try{
                 studentToReturn =  islandTile.getPawnByID(ID);
+                break;
             }
             catch (NoSuchElementException e){
             }
@@ -231,7 +229,7 @@ public class IslandGroup {
     public List<Integer> getStudentIDs(){
         List<Integer> studentsIDs = new ArrayList<Integer>();
         for (IslandTile islandTile : islandTiles){
-            studentsIDs.addAll(islandTile.getPawnsIDs());
+            studentsIDs.addAll(islandTile.getPawnIDs());
         }
         return  studentsIDs;
     }

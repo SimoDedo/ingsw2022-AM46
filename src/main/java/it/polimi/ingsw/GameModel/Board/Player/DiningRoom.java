@@ -9,8 +9,12 @@ import java.util.NoSuchElementException;
 
 
 public class DiningRoom {
-    private List<Table> tables = new ArrayList<>();
+    private final List<Table> tables;
 
+    /**
+     * creates an array with a table for each student color
+     * @param player owner of this dining room
+     */
     public DiningRoom(Player player){
         tables = new ArrayList<>();
         for(Color c : Color.values()){tables.add(new Table(player, 10, c));}
@@ -40,7 +44,12 @@ public class DiningRoom {
         return 0;
     }
 
-    public void placeStudent(Student student) throws FullTableException {
+    /**
+     * @param student to place in the table of corresponding color
+     * @throws FullTableException if the table of the same color of the student is full
+     * @throws IllegalArgumentException if the student is already in a table, and the table is not full
+     */
+    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException {
         for(Color c : Color.values()){
             if(student.getColor() == c) getTable(c).placeStudent(student);
         }
@@ -54,13 +63,7 @@ public class DiningRoom {
     public Student getStudentByID(int ID) throws NoSuchElementException {
         Student s = null;
         for(Table t : tables){
-            try {
-                s = t.getPawnByID(ID);
-                break;
-            } catch (NoSuchElementException e){
-                // empty catch body?
-                e.printStackTrace();
-            }
+            if(s == null){ s = t.getPawnByID(ID);}
         }
         if(s == null){ throw new NoSuchElementException(); }
         return s;

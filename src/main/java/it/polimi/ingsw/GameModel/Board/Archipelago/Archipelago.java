@@ -40,7 +40,7 @@ public class Archipelago {
      * Creates the Archipelago and creates 12 IslandGroups,
      */
     public Archipelago() {
-        islandGroups = new ArrayList<IslandGroup>();
+        islandGroups = new ArrayList<>();
         int startingIsland = selectStartingIsland();
         for (int i = 0; i < 12; i++) {
             islandGroups.add(new IslandGroup(i==startingIsland));
@@ -131,14 +131,15 @@ public class Archipelago {
      * @param players players in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet) throws GameOverException{
+    public void resolveIslandGroup(IslandGroup islandGroup, PlayerList players, ProfessorSet professorSet)
+            throws GameOverException{
         if(!islandGroup.isNoEntryTilePlaced()) {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
             if (swapped)
                 mergeIslandGroup(islandGroup);
         }
-        else return; // consider refactoring this line (on my corpse)
+        else return; // consider refactoring this line (on my corpse) i want 2 cry
     }
 
     /**
@@ -147,7 +148,8 @@ public class Archipelago {
      * @param players players in play who could get ownership of the islandGroup
      * @param professorSet The set to manage professor ownership and calculate influence
      */
-    public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet) throws GameOverException{
+    public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet)
+            throws GameOverException{
         if(!islandGroups.get(islandGroupIndex).isNoEntryTilePlaced()) {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);
@@ -170,7 +172,8 @@ public class Archipelago {
      * Merges given IslandGroup with nearby IslandGroups
      * @param islandGroupToMerge The IslandGroup to merge
      */
-    private void mergeIslandGroup(IslandGroup islandGroupToMerge){
+    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException{
+        if(getNumOfIslandGroups() == 4){ throw new GameOverException(); }
         int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
         TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
 
@@ -294,7 +297,7 @@ public class Archipelago {
         return -1;
     }
 
-    public int getIslandGroupSize(){
+    public int getNumOfIslandGroups(){
         return islandGroups.size();
     }
 

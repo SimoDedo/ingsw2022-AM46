@@ -4,6 +4,8 @@ package it.polimi.ingsw.GameModel.Board;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,14 +46,15 @@ public class Bag extends StudentContainer {
     /**
      * Returns a list of students randomly removed from the bag.
      * @param numberToDraw number of students to draw
-     * @return a list of the drawn students
+     * @return a list of the drawn students, null if the game is about to be over
      */
     public List<Student> drawN(int numberToDraw) {
+        if (pawnCount() < numberToDraw){ return null; }
         List<Student> drawnStudents = new ArrayList<>();
         int randomNum;
         for (int i = 0; i < numberToDraw; i++) {
             randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
-            drawnStudents.add(removePawnByIndex(randomNum));
+            drawnStudents.add(removePawnByID(getPawnIDs().get(randomNum)));
         }
         return drawnStudents;
     }

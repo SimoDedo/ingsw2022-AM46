@@ -33,4 +33,11 @@ public class ProfessorSet {
         }
         return score;
     }
+
+    public Player determineStrongestPlayer(Player p0, Player p1){
+        if(getNumberOfProfessors(p0.getTowerColor()) > getNumberOfProfessors(p1.getTowerColor())){
+            return p0;
+        } else return p1;
+    }
+
 }

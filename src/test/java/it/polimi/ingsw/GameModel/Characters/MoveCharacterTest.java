@@ -7,8 +7,6 @@ import it.polimi.ingsw.Utils.Enum.RequestParameters;
 import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -142,11 +140,11 @@ class MoveCharacterTest {
         Character character = characterFactory.create(1);
         character.useCharacter(1, null);
         IslandTile islandTile = new IslandTile(null, true, null);
-        Student studentToMove = ((MoveCharacter)character).getPawnByID(((MoveCharacter)character).getPawnsIDs().get(0));
+        Student studentToMove = ((MoveCharacter)character).getPawnByID(((MoveCharacter)character).getPawnIDs().iterator().next());
         ((MoveCharacter) character).useAbilityC1(studentToMove, islandTile);
-        assertFalse(((MoveCharacter)character).getPawnsIDs().contains(studentToMove.getID()));
-        assertTrue(islandTile.getPawnsIDs().contains(studentToMove.getID()));
-        assertTrue(((MoveCharacter) character).getPawnsIDs().size()==4);
+        assertFalse(((MoveCharacter)character).getPawnIDs().contains(studentToMove.getID()));
+        assertTrue(islandTile.getPawnIDs().contains(studentToMove.getID()));
+        assertTrue(((MoveCharacter) character).getPawnIDs().size()==4);
     }
 
     @Test

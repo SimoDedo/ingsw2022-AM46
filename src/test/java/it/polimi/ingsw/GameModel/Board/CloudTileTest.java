@@ -3,6 +3,9 @@ package it.polimi.ingsw.GameModel.Board;
 import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.Game;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -18,12 +21,14 @@ public class CloudTileTest{
      */
     @Test
     public void fill() {
-        CloudTile cloudTile = new CloudTile(4, new Bag());
-        cloudTile.fill();
-        assertTrue(cloudTile.pawnCount() == 4);
-        CloudTile cloudTile1 = new CloudTile(3, new Bag());
-        cloudTile1.fill();
-        assertTrue(cloudTile1.pawnCount() == 3);
+        try {
+            CloudTile cloudTile = new CloudTile(4, new Bag());
+            cloudTile.fill();
+            assertTrue(cloudTile.pawnCount() == 4);
+            CloudTile cloudTile1 = new CloudTile(3, new Bag());
+            cloudTile1.fill();
+            assertTrue(cloudTile1.pawnCount() == 3);
+        }catch (LastRoundException e){}
     }
 
     /**
@@ -31,14 +36,17 @@ public class CloudTileTest{
      */
     @Test
     public void removeAll() {
-        CloudTile cloudTile = new CloudTile(4, new Bag());
-        cloudTile.fill();
-        List<Student> students = cloudTile.removeAll();
-        assertTrue(cloudTile.pawnCount() == 0 && students.size() == 4 && students.get(0).getStudentContainer() == null);
-        CloudTile cloudTile1 = new CloudTile(3, new Bag());
-        cloudTile1.fill();
-        students = cloudTile1.removeAll();
-        assertTrue(cloudTile1.pawnCount() == 0 && students.size() == 3);
-        assertThrows(IllegalStateException.class,() -> cloudTile1.removeAll());
+        try {
+            CloudTile cloudTile = new CloudTile(4, new Bag());
+            cloudTile.fill();
+            List<Student> students = cloudTile.removeAll();
+            assertTrue(cloudTile.pawnCount() == 0 && students.size() == 4 && students.get(0).getStudentContainer() == null);
+            CloudTile cloudTile1 = new CloudTile(3, new Bag());
+            cloudTile1.fill();
+            students = cloudTile1.removeAll();
+            assertTrue(cloudTile1.pawnCount() == 0 && students.size() == 3);
+            assertNull(cloudTile1.removeAll());
+        } catch (LastRoundException e){}
+
     }
 }

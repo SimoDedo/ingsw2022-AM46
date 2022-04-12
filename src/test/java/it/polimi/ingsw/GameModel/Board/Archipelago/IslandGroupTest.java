@@ -176,7 +176,7 @@ class IslandGroupTest {
         islandTile.placePawn(studentToFind);
         islandTiles.add(islandTile);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(studentToFind.equals(islandGroup.getStudentByID(studentToFind.getID())));
+        assertEquals(studentToFind, islandGroup.getStudentByID(studentToFind.getID()));
     }
 
     /**
