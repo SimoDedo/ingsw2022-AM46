@@ -63,14 +63,24 @@ public class Player {
         return wizard.playAssistant(assistantID);
     }
 
+    /**
+     * @return the unique identifier for this player
+     */
     public String getNickname() {
         return nickname;
     }
 
+    /**
+     * adds 1 to coin count
+     */
     public void awardCoin(){
         coins++;
     }
 
+    /**
+     * @param color of the students
+     * @return amount of students of the specified color in the dining room
+     */
     public int getScore(Color color){
         // assert playerBoard != null;
         return playerBoard.getScore(color);
@@ -80,20 +90,34 @@ public class Player {
         return coins;
     }
 
-    public int getTowersPlaced() throws NullPointerException { return playerBoard.getTowersPlaced(); }
+    public int getTowersPlaced() { return playerBoard.getTowersPlaced(); }
 
     public TowerColor getTowerColor() {
         return towerColor;
     }
 
+    /**
+     * @return a tower taken from the playerBoard's tower space
+     * @throws GameOverException if the last tower is taken
+     */
     public Tower takeTower() throws GameOverException { return playerBoard.takeTower(); }
 
+    /**
+     * puts a tower back to the tower space
+     * @param tower removed from an island conquered by another player
+     */
     public void placeTower(Tower tower) {
         playerBoard.placeTower(tower);
     }
 
     public WizardType getWizardType() { return wizard.getType(); }
 
+    /**
+     * Searches for a student in the entrance and dining room
+     * @param ID of the student to search
+     * @return the student of specified ID
+     * @throws NoSuchElementException if no such student is in the playerBoard
+     */
     public Student getStudentByID(int ID) throws NoSuchElementException { return playerBoard.getStudentByID(ID); }
 
     /**
@@ -112,13 +136,6 @@ public class Player {
         playerBoard.refillEntrance(students);
     }
 
-    /**
-     * puts a tower back to the tower storage
-     * @param towerRemoved a tower removed from an island conquered by another player
-     */
-    public void putTower(Tower towerRemoved) {
-        playerBoard.placeTower(towerRemoved);
-    }
 
     /**
      * @return the list of assistant cards

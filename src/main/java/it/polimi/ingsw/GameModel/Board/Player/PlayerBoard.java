@@ -31,6 +31,12 @@ public class PlayerBoard {
         this.diningRoom = new DiningRoom(player);
     }
 
+    /**
+     * Searches for a student in the entrance and dining room
+     * @param ID of the student to return
+     * @return student of specified ID
+     * @throws NoSuchElementException if no student with this ID is found
+     */
     public Student getStudentByID(int ID) throws NoSuchElementException{
         Student student;
         try{
@@ -98,6 +104,11 @@ public class PlayerBoard {
         return diningRoom.getTable(color);
     }
 
+    /**
+     * Searches for a student in the entrance only
+     * @param studentID of the student to return
+     * @return student of specified ID
+     */
     public Student getStudentFromEntrance(int studentID) {
         return entrance.getPawnByID(studentID);
     }

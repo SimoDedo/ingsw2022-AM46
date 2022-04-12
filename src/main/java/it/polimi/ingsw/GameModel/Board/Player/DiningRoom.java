@@ -12,7 +12,7 @@ public class DiningRoom {
     private final List<Table> tables;
 
     /**
-     * creates an array with a table for each color
+     * creates an array with a table for each student color
      * @param player owner of this dining room
      */
     public DiningRoom(Player player){

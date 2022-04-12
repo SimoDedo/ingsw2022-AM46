@@ -8,7 +8,13 @@ import java.util.*;
 
 public class Entrance extends StudentContainer{
 
+    /**
+     * how many students can be moved from the entrance each round, and how many have to be put back
+     */
     private final int movableStudents;
+    /**
+     * reference to Bag, shared between all entrances
+     */
     private final Bag bag;
 
     /**
@@ -54,7 +60,7 @@ public class Entrance extends StudentContainer{
     /**
      * @param students picked from a cloud and moving to the entrance
      * @throws IllegalStateException if the size of the student list is incorrect for the game type
-     * @throws IllegalArgumentException if any of the students are alreay in the entrance
+     * @throws IllegalArgumentException if any of the students are already in the entrance
      */
     public void refillStudents(List<Student> students) throws IllegalStateException, IllegalArgumentException {
 

@@ -9,6 +9,9 @@ public class AssistantCard {
         this.ID = turnOrder;
     }
 
+    /**
+     * @return the unique ID for this assistant, which also corresponds to how much it can move mother nature
+     */
     public int getID() {
         return ID;
     }
@@ -17,6 +20,9 @@ public class AssistantCard {
         return movePower;
     }
 
+    /**
+     * @return the value which determines turn order (lowest goes first)
+     */
     public int getTurnOrder() {
         return turnOrder;
     }

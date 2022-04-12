@@ -21,7 +21,7 @@ public class TowerSpace extends PawnContainer<Tower> {
     }
 
     /**
-     * Fills TowerSpace when it is initialized
+     * Fills TowerSpace with towers when it is initialized
      *
      * @param maxPawns the maximum number of pawns the container can hold
      */
@@ -48,7 +48,7 @@ public class TowerSpace extends PawnContainer<Tower> {
     }
 
     /**
-     * @return pawns placed
+     * @return amount of towers removed from the tower space since the start of the game
      */
     public int getTowersPlaced(){
         return getMaxPawns() - pawnCount();
