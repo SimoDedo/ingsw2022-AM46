@@ -1,10 +1,10 @@
 package it.polimi.ingsw.GameModel.Board.Player;
-import it.polimi.ingsw.GameModel.BoardElements.PawnContainer;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.BoardElements.TowerContainer;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-public class TowerSpace extends PawnContainer<Tower> {
+public class TowerSpace extends TowerContainer {
 
     private final TowerColor color;
 
@@ -21,7 +21,7 @@ public class TowerSpace extends PawnContainer<Tower> {
     }
 
     /**
-     * Fills TowerSpace when it is initialized
+     * Fills TowerSpace with towers when it is initialized
      *
      * @param maxPawns the maximum number of pawns the container can hold
      */
@@ -37,8 +37,9 @@ public class TowerSpace extends PawnContainer<Tower> {
     public Tower takeTower() throws GameOverException {
         if (getTowersPlaced() == getMaxPawns()) {
             System.out.print("win :)");
+            throw new GameOverException();
         }
-        return removePawnByIndex(0);
+        return removePawn();
 
     }
 
@@ -47,7 +48,7 @@ public class TowerSpace extends PawnContainer<Tower> {
     }
 
     /**
-     * @return pawns placed
+     * @return amount of towers removed from the tower space since the start of the game
      */
     public int getTowersPlaced(){
         return getMaxPawns() - pawnCount();

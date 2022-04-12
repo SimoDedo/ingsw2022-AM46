@@ -8,8 +8,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
-
 /**
  * Class that manages the order in which players play their turn. This class determines planning
  * order and action order in the Planning and Action phases of the game.
@@ -62,11 +60,11 @@ public class TurnManager {
         currentPlayer = planningPlayerList.get(0);
     }
 
-    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) { // doesn't treat desperate situations though!
+    public void determineActionOrder(Map<Player, AssistantCard> cardsPlayedThisRound) {
         // I've never hated code written by me this much, but it works somehow.
         // let's refactor it in the future
         actionPlayerList.clear();
-        actionPlayerList = new LinkedHashMap<>(cardsPlayedThisRound)
+        actionPlayerList = cardsPlayedThisRound
                 .entrySet()
                 .stream()
                 .sorted(Comparator.comparingInt(e -> e.getValue().getTurnOrder()))
@@ -77,10 +75,6 @@ public class TurnManager {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    public Phase getCurrentPhase() {
-        return currentPhase;
     }
 
     /**
@@ -103,17 +97,11 @@ public class TurnManager {
      * This method progresses the turn, updating currentPlayer.
      */
     public void nextTurn() throws IllegalStateException {
-        List<Player> currentPhaseList;
-        switch (currentPhase) {
-            case PLANNING:
-                currentPhaseList = planningPlayerList;
-                break;
-            case ACTION:
-                currentPhaseList = actionPlayerList;
-                break;
-            default:
-                throw new IllegalStateException("There is no phase currently being played");
-        }
+        List<Player> currentPhaseList = switch (currentPhase) {
+            case PLANNING -> planningPlayerList;
+            case ACTION -> actionPlayerList;
+            default -> throw new IllegalStateException("There is no phase currently being played");
+        };
         int prevPlayerIndex = currentPhaseList.indexOf(currentPlayer);
         if (prevPlayerIndex == currentPhaseList.size() - 1) throw new IllegalStateException("This phase has ended");
         else currentPlayer = currentPhaseList.get(prevPlayerIndex + 1);
@@ -125,21 +113,12 @@ public class TurnManager {
      */
     public void nextPhase() {
         switch (currentPhase) {
-            case PLANNING:
-                currentPhase = Phase.ACTION;
-                break;
-            case ACTION: default:
+            case IDLE, ACTION -> {
                 currentPhase = Phase.PLANNING;
                 determinePlanningOrder();
-                break;
+            }
+            case PLANNING -> currentPhase = Phase.ACTION;
         }
-    }
-
-    /**
-     * Setter for currentPhase
-     */
-    public void setCurrentPhase(Phase phase) {
-        currentPhase = phase;
     }
 
 }

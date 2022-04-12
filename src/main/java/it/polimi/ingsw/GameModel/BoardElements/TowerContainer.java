@@ -5,7 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 /**
  * Abstract class which extends PawnContainer, using Towers specifically
  */
-public abstract class TowerContainer extends PawnContainer<Tower>{
+public abstract class TowerContainer extends PawnContainer<Tower> {
     /**
      * Creates TowerContainer with owner and maxPawns
      *

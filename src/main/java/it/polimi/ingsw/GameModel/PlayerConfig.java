@@ -12,25 +12,21 @@ public class PlayerConfig {
 
     public PlayerConfig (int numOfPlayers) {
         switch (numOfPlayers) {
-            case 2: case 4:
+            case 2, 4 -> {
                 this.maxTowers = 8;
                 this.initialEntranceSize = 7;
                 this.movableEntranceStudents = 3;
-                break;
-            case 3:
+            }
+            case 3 -> {
                 this.maxTowers = 6;
                 this.initialEntranceSize = 9;
                 this.movableEntranceStudents = 4;
-                break;
+            }
         }
     }
 
     public int getMaxTowers() {
         return maxTowers;
-    }
-
-    public void setMaxTowers(int maxTowers) {
-        this.maxTowers = maxTowers;
     }
 
     public Bag getBag() {

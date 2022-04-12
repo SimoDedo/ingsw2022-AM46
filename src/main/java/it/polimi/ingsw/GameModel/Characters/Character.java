@@ -1,52 +1,66 @@
 package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.Utils.Enum.RequestParameters;
+import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * Interface common to all 12 Characters
+ * Interface for the common methods shared by all the different types of Character.
  */
 public interface Character {
+
     /**
-     * Method called when a Player tries to pay and use a Character
-     * @param ID ID of the Character
-     * @param player Player who is spending coins
-     * @return A list of parameters which are needed to consequently use its ability
-     * @throws IllegalArgumentException When wrong ID is given
-     * @throws IllegalAccessException When it was already activated this turn
+     * Precedes a character's ability activation. The character sets its activator as its owner,
+     * and returns a list of parameters it needs in order for its ability to activate. This list
+     * will be picked up by the controller.
+     * @param owner the player who activated this character
+     * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameters> useCharacter(int ID, Player player) throws IllegalArgumentException, IllegalStateException;
+    List<RequestParameter> useCharacter(Player owner);
+
+    /**
+     * Method that executes the character's ability. It passes the list of parameters (in the form
+     * of IDs of various pawns/board pieces) to the right Consumer according to the character's ID.
+     * @param consumer the Consumer that acts on the GameModel
+     * @param parameterList the list of the consumer's parameters
+     */
+    void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList);
 
     /**
      * Returns the ID of the Character
      * @return the ID of the Character
      */
-    public int getCharacterID();
+    int getCharacterID();
 
     /**
      * True if it's the first time the Character is being used
      * @return isFirstUse
      */
-    public boolean isFirstUse();
+    boolean isFirstUse();
 
     /**
-     * True if Character was used (paid) this turn
+     * True if Character was used (paid for) this turn
      * @return usedThisTurn
      */
-    public boolean wasUsedThisTurn();
+    boolean wasUsedThisTurn();
 
     /**
-     * The cost of the Character
-     * @return The cost already incremented if this isn't its first use
+     * Getter for cost of the Character
+     * @return the current cost (standard, or incremented by one if the character has already been used once)
      */
-    public int getCost();
+    int getCost();
 
     /**
-     * Resets uses and sets usedThisTurn to false. Will be called once the turn ends
+     * Resets the state of the character (uses, owner etc.). Will be called once the turn ends
      */
-    public void resetUseState();
+    void resetUseState();
 
+    /**
+     * Getter for the character's owner.
+     * @return the current owner (activator) of this character
+     */
+    Player getOwner();
 
 }

@@ -1,4 +1,5 @@
 package it.polimi.ingsw.GameModel.Board.Player;
+
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
@@ -7,9 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class Entrance extends StudentContainer{
+public class Entrance extends StudentContainer {
 
+    /**
+     * how many students can be moved from the entrance each round, and how many have to be put back
+     */
     private final int movableStudents;
+
+    /**
+     * reference to Bag, shared between all entrances
+     */
     private final Bag bag;
 
     /**
@@ -28,7 +36,7 @@ public class Entrance extends StudentContainer{
     /**
      * Fills pawns List with students at the start of the game
      */
-    public void fillInitial() {
+    private void fillInitial() {
         placePawns(bag.drawN(this.getMaxPawns()));
     }
 
@@ -41,25 +49,19 @@ public class Entrance extends StudentContainer{
      * @throws NoSuchElementException if there is at least one ID with no match
      * @throws IllegalArgumentException if the size of the ID list is incorrect for the game type
      */
-    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException, IllegalArgumentException {
-        if(IDList.size() != movableStudents) { throw new IllegalArgumentException(); }
+    public List<Student> removeStudentsByID(List<Integer> IDList) throws NoSuchElementException {
+        if(IDList.size() != movableStudents) { return null; }
         List<Student> students = new ArrayList<>();
         for(int ID : IDList){
-            Student student = getPawnByID(ID);
-            students.add(student);
-            removePawn(student);
+            Student s = removePawnByID(ID);
+            students.add(s);
         }
         return students;
     }
 
-    /**
-     * @param students drawn from the bag and moving to the entrance
-     * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
-     */
-    public void refillStudents(List<Student> students) throws IllegalArgumentException {
-        if (students.size() == movableStudents) {
-            for (Student s : students) { placePawn(s); }
-        } else throw new IllegalArgumentException();
+    public Student removeStudentByID(int studentID) {
+        return removePawnByID(studentID);
     }
+
 }
 

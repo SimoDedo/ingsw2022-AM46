@@ -7,76 +7,70 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-/**
- * Class that models the container for the five tables on the player board.
- */
+
 public class DiningRoom {
-    private List<Table> tables = new ArrayList<>();
+    private final List<Table> tables;
 
     /**
-     * Constructor for the Dining Room that initializes the tables, giving them the player as
-     * their owner.
-     *
-     * @param player the owner of the tables
+     * creates an array with a table for each student color
+     * @param player owner of this dining room
      */
-    public DiningRoom(Player player) {
-        for(Color c : Color.values()) tables.add(new Table(player, 10, c));
+    public DiningRoom(Player player){
+        tables = new ArrayList<>();
+        for(Color c : Color.values()){tables.add(new Table(player, 10, c));}
     }
 
     /**
-     * Getter for the Table with the given Color.
-     *
-     * @param color the color of the table to find
-     * @return the table with the given color
+     * @param color of the table
+     * @return the table
      */
-    public Table getTable(Color color) {
-        for(Table t : tables) {
+    public Table getTable(Color color){
+        for(Table t : tables){
             if(t.getColor() == color) return t;
         }
         return null;
     }
 
     /**
-     * Method that calculates the score of the Table with the given Color.
-     *
-     * @param color the color of the table of which to calculate the score
-     * @return the score of the table
+     * @param color of the table
+     * @return score of the table
      */
-    public int getScore(Color color) {
-        for(Table t : tables) {
+    public int getScore(Color color){
+        for(Table t : tables){
             if(t.getColor() == color) return t.getScore();
         }
         return 0;
     }
 
     /**
-     * Method that places a Student in the Table of its Color. Calls placeStudent method in Table.
-     * @param student student to place inside the dining room
-     * @throws FullTableException when the table is already full
+     * @param student to place in the table of corresponding color
+     * @throws FullTableException if the table of the same color of the student is full
+     * @throws IllegalArgumentException if the student is already in a table, and the table is not full
      */
-    public void placeStudent(Student student) throws FullTableException {
-        for(Color c : Color.values()) {
+    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException {
+        for(Color c : Color.values()){
             if(student.getColor() == c) getTable(c).placeStudent(student);
         }
     }
 
     /**
-     * Method that returns the Student in the DiningRoom with the given ID.
-     *
-     * @param ID the ID of the student to retrieve
+     * @param ID ID of the Student to get
      * @return the student with the specified ID
      * @throws NoSuchElementException if this DiningRoom does not contain the specified student
      */
     public Student getStudentByID(int ID) throws NoSuchElementException {
         Student s = null;
-        for (Table t : tables) {
-            try {
-                s = t.getPawnByID(ID);
-                break; // is this break statement needed?
-            } catch (NoSuchElementException ignored) {}
+        for(Table t : tables){
+            if (s == null) s = t.getPawnByID(ID);
         }
-        if (s == null) { throw new NoSuchElementException(); }
+        if (s == null) throw new NoSuchElementException("No student with the given ID in the dining room");
         return s;
+    }
+
+    public Student removeStudentByID (int ID) throws NoSuchElementException {
+        Student student = getStudentByID(ID);
+        student.setStudentContainer(null);
+        return student;
     }
 
 

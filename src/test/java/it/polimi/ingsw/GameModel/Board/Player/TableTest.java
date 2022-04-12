@@ -27,7 +27,7 @@ public class TableTest {
         table.placeStudent(studentToPlace);
         assertThrows(IllegalArgumentException.class, () -> table.placeStudent(studentToPlace));
         assertThrows(IllegalArgumentException.class, () -> table.placeStudent(new Student(Color.RED, null)));
-        assertTrue(table.getScore() == 6);
+        assertEquals(table.getScore(), 6);
 
     }
 }

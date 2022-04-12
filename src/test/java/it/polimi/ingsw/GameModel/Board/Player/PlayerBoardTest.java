@@ -5,9 +5,9 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.FullTableException;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,21 +17,32 @@ import java.util.NoSuchElementException;
 
 public class PlayerBoardTest {
 
+    /**
+     * Test that checks that the player board is created correctly, and that tables can be accessed
+     * and students from the entrance removed in a correct way from the Player class.
+     */
     @Test
     public void constructorTest(){
         PlayerConfig playerConfig = new PlayerConfig(2);
         Bag bag = new Bag();
-        bag.fillRemaining();
+        List<Integer> IDlist = bag.getPawnIDs();
+
         playerConfig.setBag(bag);
-        int maxStudents = 7;
-        Player p0 = new Player();
-        List<Integer> studentIDs = new ArrayList<>();
+        PlayerBoard board = new PlayerBoard(new Player(), TowerColor.BLACK, true, playerConfig);
 
+        assertNotNull(board.getTable(Color.BLUE));
+        int matches = 0, discarded = 0;
+        for (int ID : IDlist) {
+            try {
+                Student student = board.removeStudentByID(ID);
+                matches++;
+            } catch (NoSuchElementException ignored) {
+                discarded++;
+            }
+        }
+        assertEquals(matches, 7);
+        assertEquals(discarded, 3);
 
-        PlayerBoard boardTest = new PlayerBoard(p0, TowerColor.BLACK, true, playerConfig);
-
-        for(int ID : studentIDs){assert (boardTest.getStudentByID(ID) != null);}
-        Assertions.assertThrows(NoSuchElementException.class, ()-> boardTest.getStudentByID(maxStudents * 2));
     }
 
     @Test
@@ -63,7 +74,7 @@ public class PlayerBoardTest {
             movements.put(studentIDs.get(i), i+1);
         }
         for(Color c : Color.values()){
-            assert (board.getScore(c) == 0);
+            assert  (board.getScore(c) == 0);
         }
     }
 

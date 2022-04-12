@@ -1,5 +1,4 @@
 package it.polimi.ingsw.Utils;
-import java.util.*;
 
 /**
  * Interface for implementing the Observer/Observable pattern in the project.

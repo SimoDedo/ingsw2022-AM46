@@ -1,14 +1,16 @@
 package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
+import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
+import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
+import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,33 +33,35 @@ class ProfessorSetTest {
         Player player2 = new Player("caio", TowerColor.BLACK, true, playerConfig);
         professorSet.setOwner(Color.RED, player1);
         professorSet.setOwner(Color.PINK, player2);
-        assertTrue(professorSet.getProfessor(Color.RED).getOwner().equals(player1));
-        assertTrue(professorSet.getProfessor(Color.PINK).getOwner().equals(player2));
-        assertTrue(professorSet.getProfessor(Color.GREEN).getOwner() == null);
+        assertEquals(professorSet.getProfessor(Color.RED).getOwner(), player1);
+        assertEquals(professorSet.getProfessor(Color.PINK).getOwner(), player2);
+        assertNull(professorSet.getProfessor(Color.GREEN).getOwner());
     }
 
     /**
-     * Test that method count correctly number of professor each team has
-     * @throws FullTeamException When team is already full (not tested here)
+     * Test that the getNumberOfProfessors method correctly counts the number of professor each team has.
      */
     @Test
-    void getNumberOfProfessors() throws FullTeamException {
+    void getNumberOfProfessors() {
         Bag bag = new Bag();
         bag.fillRemaining();
-        PlayerConfig playerConfig = new PlayerConfig(4);
-        playerConfig.setBag(bag);
-        Team team1 = new Team(TowerColor.BLACK, 2);
-        team1.addMember("tizio", playerConfig);
-        team1.addMember("caio", playerConfig);
-        Team team2 = new Team(TowerColor.WHITE, 2);
-        team2.addMember("caio", playerConfig);
-        team2.addMember("caio", playerConfig);
+        GameConfig gameConfig = new GameConfig(4);
+        gameConfig.getPlayerConfig().setBag(bag);
+
+        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
+        teamConfiguration.put("Simo", TowerColor.BLACK);
+        teamConfiguration.put("Greg", TowerColor.BLACK);
+        teamConfiguration.put("Pirovano", TowerColor.WHITE);
+        teamConfiguration.put("Ceruti", TowerColor.WHITE);
+        TeamManager teamManager = new TeamManager();
+        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+
         ProfessorSet professorSet = new ProfessorSet();
-        professorSet.setOwner(Color.PINK, team1.getMembers().get(0));
-        professorSet.setOwner(Color.RED, team1.getMembers().get(1));
-        professorSet.setOwner(Color.BLUE, team1.getMembers().get(0));
-        professorSet.setOwner(Color.GREEN, team2.getMembers().get(0));
-        professorSet.setOwner(Color.YELLOW, team2.getMembers().get(0));
-        assertTrue(professorSet.getNumberOfProfessors(team1) == 3 && professorSet.getNumberOfProfessors(team2) == 2);
+        professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
+        professorSet.setOwner(Color.RED, players.getTeam(TowerColor.BLACK).get(0));
+        professorSet.setOwner(Color.BLUE, players.getTeam(TowerColor.BLACK).get(1));
+        professorSet.setOwner(Color.GREEN, players.getTeam(TowerColor.WHITE).get(1));
+        professorSet.setOwner(Color.YELLOW, players.getTeam(TowerColor.WHITE).get(0));
+        assertTrue(professorSet.getNumberOfProfessors(TowerColor.BLACK) == 3 && professorSet.getNumberOfProfessors(TowerColor.WHITE) == 2);
     }
 }

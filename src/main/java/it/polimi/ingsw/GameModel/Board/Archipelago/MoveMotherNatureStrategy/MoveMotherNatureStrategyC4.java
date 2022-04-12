@@ -26,8 +26,8 @@ public class MoveMotherNatureStrategyC4 implements  MoveMotherNatureStrategy{
         //the first part of the algorithm can be moved inside a helper function, and StrategyC4 can inherit from standard to avoid code repetition
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
-        int moveCountNeeded = 0;
-        for(IslandGroup islandGroup: islandGroups){
+        int moveCountNeeded;
+        for(IslandGroup islandGroup : islandGroups){
             if(islandGroup.equals(islandTileStarting.getIslandGroup()))
                 startingIslandGroupNumber = islandGroups.indexOf(islandGroup);
             if(islandGroup.equals(islandTileDestination.getIslandGroup()))
@@ -35,7 +35,7 @@ public class MoveMotherNatureStrategyC4 implements  MoveMotherNatureStrategy{
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
         if(moveCountNeeded == 0 || moveCountNeeded > moveCount + 2)
-            throw new InvalidObjectException(islandTileDestination.toString()); //TODO: either another exception/define toString/return ID
+            throw new InvalidObjectException(islandTileDestination.toString());
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
             islandTileDestination.placeMotherNature(motherNature);

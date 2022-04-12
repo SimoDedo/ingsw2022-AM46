@@ -1,21 +1,20 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
-import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Board.Player.Table;
-import it.polimi.ingsw.GameModel.Board.Player.Team;
+import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
-import it.polimi.ingsw.GameModel.PlayerConfig;
+import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
-import org.hamcrest.core.Is;
+import it.polimi.ingsw.Utils.PlayerList;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -50,7 +49,7 @@ class IslandGroupTest {
     @Test
     void countInfluence() {
         IslandGroup islandGroup = new IslandGroup(true);
-        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        List<IslandTile> islandTiles = new ArrayList<>();
         islandTiles.add(new IslandTile(null, false, null));
         islandTiles.add(new IslandTile(null, false, null));
         islandTiles.get(0).placePawn(new Student(Color.PINK, null));
@@ -77,18 +76,22 @@ class IslandGroupTest {
         IslandGroup islandGroup = new IslandGroup(true);
         Bag bag = new Bag();
         bag.fillRemaining();
-        PlayerConfig playerConfig = new PlayerConfig(4);
-        playerConfig.setBag(bag);
-        Team team1 = new Team(TowerColor.BLACK, 4);
-        team1.addMember("simo", playerConfig);
-        team1.addMember("greg", playerConfig);
-        Team team2 = new Team(TowerColor.WHITE, 4);
-        team2.addMember("ceruti",playerConfig);
-        team2.addMember("pirovano", playerConfig);
-        islandGroup.conquer(team1);
-        assertTrue(islandGroup.getTowerColor().equals(TowerColor.BLACK));
-        islandGroup.conquer(team2);
-        assertTrue(islandGroup.getTowerColor().equals(TowerColor.WHITE));
+        GameConfig gameConfig = new GameConfig(4);
+        gameConfig.getPlayerConfig().setBag(bag);
+
+        HashMap<String, TowerColor> teamConfiguration = new HashMap<>();
+        teamConfiguration.put("Simo", TowerColor.BLACK);
+        teamConfiguration.put("Greg", TowerColor.BLACK);
+        teamConfiguration.put("Pirovano", TowerColor.WHITE);
+        teamConfiguration.put("Ceruti", TowerColor.WHITE);
+        TeamManager teamManager = new TeamManager();
+        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+
+        islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
+        assertEquals(islandGroup.getTowerColor(), TowerColor.BLACK);
+        islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE));
+        assertEquals(islandGroup.getTowerColor(), TowerColor.WHITE);
+        assertFalse(islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE)));
     }
 
     /**
@@ -110,7 +113,7 @@ class IslandGroupTest {
         IslandGroup islandGroup1 = new IslandGroup(true);
         IslandGroup islandGroup2 = new IslandGroup(false);
         IslandGroup islandGroup3 = new IslandGroup(false);
-        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        List<IslandTile> islandTiles;
         islandGroup2.addIslandTilesBefore(islandGroup1.removeIslandTiles());
         islandGroup3.addIslandTilesBefore(islandGroup2.removeIslandTiles());
         islandTiles = islandGroup3.removeIslandTiles();
@@ -125,7 +128,7 @@ class IslandGroupTest {
         IslandGroup islandGroup1 = new IslandGroup(true);
         IslandGroup islandGroup2 = new IslandGroup(false);
         IslandGroup islandGroup3 = new IslandGroup(false);
-        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        List<IslandTile> islandTiles;
         islandGroup2.addIslandTilesAfter(islandGroup1.removeIslandTiles());
         islandGroup3.addIslandTilesAfter(islandGroup2.removeIslandTiles());
         islandTiles = islandGroup3.removeIslandTiles();
@@ -138,7 +141,7 @@ class IslandGroupTest {
     @Test
     void hasIslandTile() {
         IslandGroup islandGroup = new IslandGroup(true);
-        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        List<IslandTile> islandTiles = new ArrayList<>();
         islandTiles.add(new IslandTile(null, false,null ));
         islandGroup.addIslandTilesBefore(islandTiles);
         assertTrue(islandGroup.hasIslandTile(islandTiles.get(0)));
@@ -150,11 +153,11 @@ class IslandGroupTest {
     @Test
     void getTowerColor() {//TODO: modify and add javadoc description once conquer is done. Right now just inserts a tower of TowerColor at start and checks, will have to use conquer (as would a real game)
         IslandGroup islandGroup = new IslandGroup(true);
-        List<IslandTile> islandTiles = new ArrayList<IslandTile>();
+        List<IslandTile> islandTiles = new ArrayList<>();
         islandTiles.add(new IslandTile(null, false,null ));
         islandTiles.get(0).swapTower(new Tower(TowerColor.BLACK, null));
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(islandGroup.getTowerColor() == TowerColor.BLACK);
+        assertSame(islandGroup.getTowerColor(), TowerColor.BLACK);
     }
 
     /**
@@ -165,15 +168,15 @@ class IslandGroupTest {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<>();
         IslandTile islandTile = new IslandTile(null, true, null);
-        islandTile.moveStudent(new Student(Color.GREEN, null));
-        islandTile.moveStudent(new Student(Color.PINK, null));
-        islandTile.moveStudent(new Student(Color.RED, null));
-        islandTile.moveStudent(new Student(Color.BLUE, null));
+        islandTile.placePawn(new Student(Color.GREEN, null));
+        islandTile.placePawn(new Student(Color.PINK, null));
+        islandTile.placePawn(new Student(Color.RED, null));
+        islandTile.placePawn(new Student(Color.BLUE, null));
         Student studentToFind = new Student(Color.YELLOW, null);
-        islandTile.moveStudent(studentToFind);
+        islandTile.placePawn(studentToFind);
         islandTiles.add(islandTile);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(studentToFind.equals(islandGroup.findStudentByID(studentToFind.getID())));
+        assertEquals(studentToFind, islandGroup.getStudentByID(studentToFind.getID()));
     }
 
     /**
@@ -188,6 +191,6 @@ class IslandGroupTest {
         islandTiles.add(islandTileToFind);
         islandTiles.add(islandTile1);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(islandTileToFind.equals(islandGroup.findIslandTileByID(islandTileToFind.getID())));
+        assertEquals(islandTileToFind, islandGroup.getIslandTileByID(islandTileToFind.getID()));
     }
 }

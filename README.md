@@ -4,10 +4,8 @@
 
 Online implementation of the tabletop game [Eriantys](https://craniointernational.com/products/eriantys/) (Italian version [here](https://www.craniocreations.it/prodotto/eriantys/)), produced by [Cranio Creations](https://craniointernational.com/) (Italian website [here](https://www.craniocreations.it/)). Written in Java with the help of various tools.
 
-**Made by**: Pietro Beghetto, Simone de Donato, Gregorio Dimaglie.
-
 # Table of contents
-- [Intro](#intro)
+- [Overview](#overview)
     + [Made with](#made-with)
     + [Specification](#specification)
 - [The project](#the-project)
@@ -17,13 +15,28 @@ Online implementation of the tabletop game [Eriantys](https://craniointernationa
 - [Active development](#active-development)
   * [Roadmap](#roadmap)
   * [Changelog](#changelog)
-- [Miscellaneous](#miscellaneous)
-  * [Contacts](#contacts)
-  * [License](#license)
 
 ---
 
-# Intro
+# Overview
+Made by:
+- **Pietro Beghetto** (account: [**@PietroBeghetto**](https://www.github.com/pietrobeghetto), personal code: **10672945**, e-mail: **pietro.beghetto@mail.polimi.it**)
+- **Simone de Donato** (account: [**@SimoDedo**](https://www.github.com/simodedo), personal code: **10677578**, e-mail: **simone.dedonato@mail.polimi.it**)
+- **Gregorio Dimaglie** (account: [**@MizuGreg**](https://www.github.com/mizugreg), personal code: **10705277**, e-mail: **gregorio.dimaglie@mail.polimi.it**)
+
+| Feature                   | Progress |
+|:--------------------------|:--------:|
+| Game rules                |    🟢    |
+| Advanced game             |    🟢    |
+| AF1: 4 players            |    🟢    |
+| AF2: 12 characters        |    🟢    |
+| AF3: parallel matches     |    🟡    |
+| Controller & virtual view |    🟡    |
+| Communication protocol    |    🟡    |
+| Client & view             |    🔴    |
+| CLI                       |    🔴    |
+| GUI                       |    🔴    |
+
 ### Made with
 - Development kit: [JDK 17](https://www.oracle.com/java/technologies/downloads/)
 - IDE: [IntelliJ IDEA](https://www.jetbrains.com/idea/)
@@ -51,7 +64,6 @@ The project will include:
   - [x] ~~Create this GitHub repo~~
   - [x] ~~Set up the structure of README.md~~
 
-
 - **Game design**
   - [ ] Initial UML draft
     - [x] ~~Game rules diagram~~
@@ -60,23 +72,24 @@ The project will include:
   - [ ] Complete UML diagram
   - [ ] Final UML diagram, automatically generated from code
   - [ ] GUI design
-
-
+  
 - **Implementation**
   - [x] ~~Game rules~~
   - [x] ~~Board elements and pawns~~
   - [x] ~~Archipelago~~
-  - [ ] Players and teams
-  - [ ] Expert mode: characters
+  - [x] ~~Players and teams~~
+  - [x] ~~Expert mode: characters~~
   - [ ] Advanced features
-    - [ ] AF1: 4-players game
-    - [ ] AF2: all 12 characters
-    - [ ] AF3: *WIP*
-  - [ ] Unit testing
+    - [x] ~~AF1: 4-players game~~
+    - [x] ~~AF2: all 12 characters~~
+    - [ ] AF3: Parallel matches
+  - [ ] Unit testing for the model
+  - [ ] Controller
+  - [ ] Virtual view
+  - [ ] View
   - [ ] Communication protocol
   - [ ] CLI
   - [ ] GUI
-
 
 - **Finalization**
   - [ ] Polishing
@@ -97,21 +110,9 @@ The project will include:
   + **0.5.2**: improved testing coverage
 + **0.6.0**: merged game, archipelago, team/player into main 
   + **0.6.1**: 90% model implementation, 70% test coverage
++ **0.7.0**: rebuilt Characters, removed Team in favor of TeamManager, minor fixes
+  + **0.7.1**: initial design of the Controller; 95% model implementation, 80% test coverage 
+
 ---
-
-# Miscellaneous
-## Contacts
-- Pietro Beghetto
-  - Personal code: 10672945
-  - Email: pietro.beghetto@mail.polimi.it
-- Simone de Donato:
-  - Personal code: 10677578
-  - Email: simone.dedonato@mail.polimi.it
-- Gregorio Dimaglie:
-  - Personal code: 10705277
-  - Email: gregorio.dimaglie@mail.polimi.it
-
-## License
-This repository is **proprietary** and may not be used, forked or otherwise exploited by anyone, except the previously appointed supervisors of the project to which this repository pertains.
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")

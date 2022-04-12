@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.Board;
 
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,40 +14,44 @@ import java.util.List;
 public class CloudTile extends StudentContainer {
 
     /**
-     * Reference to the Bag of this game, used for drawing at the end of the round.
+     *
      */
     private final Bag bag;
+    private boolean selectable;
 
     /**
-     * Constructor for the Cloud class.
+     * Constructor for the Cloud class
      * @param maxCloudStudents max number of students on cloud
      * @param bag reference to Bag for drawing students autonomously
      */
     public CloudTile(int maxCloudStudents, Bag bag) {
         super(null, maxCloudStudents);
         this.bag = bag;
+        selectable = true;
     }
 
-    /**
-     * Method that fills the cloud by drawing students from the bag.
-     */
-    public void fill() {
-        placePawns(bag.drawN(this.getMaxPawns()));
+    public void fill() throws LastRoundException {
+        List<Student> students = bag.drawN(this.getMaxPawns());
+        if (students == null) { throw new LastRoundException(); }
+        placePawns(students);
+        selectable = true;
     }
 
-    /**
-     * Method that returns a list of all the students present on this cloud.
-     * @return list of all the students on the cloud
-     * @throws IllegalStateException if the cloud has no students
-     */
-    public List<Student> removeAll() throws IllegalStateException{
-        if(pawnCount() == 0)
-            throw new IllegalStateException("Island is already empty");
+    public List<Student> removeAll(){
+        if (!selectable) { return null; }
+        selectable = false;
         List<Student> drawnStudents = new ArrayList<>();
         for (int i = 0; i < getMaxPawns(); i++) {
-            drawnStudents.add(removePawnByIndex(0));
+            drawnStudents.add(removePawn());
         }
         return drawnStudents;
+    }
+
+    /**
+     * @return true if the island can be picked by a player
+     */
+    public boolean isSelectable() {
+        return selectable;
     }
 
 }

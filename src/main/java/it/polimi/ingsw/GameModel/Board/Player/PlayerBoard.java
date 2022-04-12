@@ -1,17 +1,13 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
+import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PlayerBoard {
@@ -33,24 +29,21 @@ public class PlayerBoard {
         this.diningRoom = new DiningRoom(player);
     }
 
-    public Student getStudentByID(int ID) throws NoSuchElementException{
+    /**
+     * Searches for a student in the entrance and dining room
+     * @param ID of the student to return
+     * @return student of specified ID
+     * @throws NoSuchElementException if no student with this ID is found
+     */
+    public Student getStudentByID(int ID) throws NoSuchElementException {
         Student student;
-        try{
+        try {
             student = entrance.getPawnByID(ID);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             student = diningRoom.getStudentByID(ID);
         }
         return student;
     }
-
-    /**
-     * @param students to place in the entrance
-     * @throws IllegalArgumentException if the size of the student list is incorrect for the game type
-     */
-    public void refillEntrance(List<Student> students) throws IllegalStateException{
-        entrance.refillStudents(students);
-    }
-
 
     public int getScore(Color c){
         return diningRoom.getScore(c);
@@ -60,6 +53,10 @@ public class PlayerBoard {
         return towerSpace.getTowersPlaced();
     }
 
+    /**
+     * @return a tower from the towerSpace
+     * @throws GameOverException if the tower was the last
+     */
     public Tower takeTower() throws GameOverException {
         return towerSpace.takeTower();
     }
@@ -68,40 +65,45 @@ public class PlayerBoard {
         towerSpace.placeTower(tower);
     }
 
-    /**
-     * @param studentDestinations HashMap<Student ID><BoardPiece ID> (their destinations).
-     *                            If the destination ID is set to 0 they are to be placed in the diningRoom.
-     * @return HashMap of Students and the corresponding destination island's ID. Movements to Table locations are
-     * resolved here
-     * @throws IllegalArgumentException if the hashmap is not sized correctly
-     * @throws NoSuchElementException if any of the students cannot be found. If there are no matches with the
-     *      * boardPiece IDs it will be assumed they are all Island locations.
-     */
-    public HashMap<Student, Integer> moveStudentsFromEntranceToDR(HashMap<Integer, Integer> studentDestinations)
-            throws IllegalStateException, NoSuchElementException, FullTableException {
-        HashMap<Student, Integer> islandMovements = new HashMap<>();
-        for(Map.Entry<Integer, Integer> pair : studentDestinations.entrySet()){
-            Student student = entrance.getPawnByID(pair.getKey());
-
-            // this requires that no island has ID 0... maybe a custom ID class to handle special values?
-            if(pair.getValue() == 0){
-                entrance.removePawn(student);
-                diningRoom.placeStudent(student);
-            } else {
-                islandMovements.put(student, pair.getValue());
-            }
-        }
-        return islandMovements;
-    }
-
     public Table getTable(Color color) {
         return diningRoom.getTable(color);
     }
 
+    /**
+     * Searches for a student in the entrance only
+     * @param studentID of the student to return
+     * @return student of specified ID
+     */
     public Student getStudentFromEntrance(int studentID) {
         return entrance.getPawnByID(studentID);
     }
 
 
+    /**
+     * Removes a student from the player's board using its ID.
+     * @param studentID the ID of the student to remove
+     * @return the removed student
+     * @throws NoSuchElementException if the student is not in the entrance, nor in the table of its color
+     */
+    public Student removeStudentByID(int studentID) throws NoSuchElementException {
+        try {
+            return entrance.removeStudentByID(studentID);
+        } catch (Exception entranceException) {
+            try {
+                return diningRoom.removeStudentByID(studentID);
+            }
+            catch (Exception diningRoomException) {
+                throw new NoSuchElementException("No student was found");
+            }
+        }
+    }
 
+    /**
+     * Method for adding a single student to the entrance.
+     *
+     * @param student the student to add to the entrance
+     */
+    public void addToEntrance(Student student) {
+        entrance.placePawn(student);
+    }
 }

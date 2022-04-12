@@ -3,6 +3,7 @@ package it.polimi.ingsw.GameModel.Board;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -48,11 +49,19 @@ public class Bag extends StudentContainer {
      */
     public List<Student> drawN(int numberToDraw) {
         List<Student> drawnStudents = new ArrayList<>();
-        int randomNum;
-        for (int i = 0; i < numberToDraw; i++) {
-            randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
-            drawnStudents.add(removePawnByIndex(randomNum));
-        }
+        if (numberToDraw > pawnCount()) numberToDraw = pawnCount();
+
+        for (int i = 0; i < numberToDraw; i++) drawnStudents.add(draw());
         return drawnStudents;
+    }
+
+    /**
+     * Returns a Student randomly drawn from the bag.
+     * @return a random Student from the bag
+     */
+    public Student draw() {
+        List<Integer> studentIDs = getPawnIDs();
+        int randomNum = ThreadLocalRandom.current().nextInt(0, pawnCount());
+        return removePawnByID(studentIDs.get(randomNum));
     }
 }
