@@ -3,8 +3,10 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
+import it.polimi.ingsw.Utils.Enum.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -62,6 +64,7 @@ public class Entrance extends StudentContainer {
     public Student removeStudentByID(int studentID) {
         return removePawnByID(studentID);
     }
+
 
 }
 

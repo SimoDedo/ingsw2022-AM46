@@ -73,6 +73,14 @@ public class DiningRoom {
         return student;
     }
 
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(Color color){
+        return getTable(color).getStudentIDsAndColor().keySet().stream().toList();
+    }
 
 
 }

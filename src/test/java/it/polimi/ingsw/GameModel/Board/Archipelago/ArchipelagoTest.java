@@ -38,12 +38,12 @@ class ArchipelagoTest {
         while (randCheck == idxMN || randCheck == idxOppositeMN){
             randCheck = random.nextInt(12);
         }
-        assertTrue(archipelago.getStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(randCheck).size() == 0);
+        assertTrue(archipelago.getIslandGroupsStudentsIDs().get(idxMN).size() == 0 &&
+                archipelago.getIslandGroupsStudentsIDs().get(randCheck).size() == 0);
         archipelago.initialStudentPlacement(bag.drawN(10));
-        assertTrue(archipelago.getStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(idxOppositeMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(randCheck).size() == 1);
+        assertTrue(archipelago.getIslandGroupsStudentsIDs().get(idxMN).size() == 0 &&
+                archipelago.getIslandGroupsStudentsIDs().get(idxOppositeMN).size() == 0 &&
+                archipelago.getIslandGroupsStudentsIDs().get(randCheck).size() == 1);
     }
 
     //region Resolve/Conquer/Merge testing

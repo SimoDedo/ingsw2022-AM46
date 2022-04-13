@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrate
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
@@ -266,10 +267,22 @@ public class Archipelago {
     }
 
     /**
+     * Returns all students contained in all islands with their color
+     * @return An HashMap with StudentID as key and Color as value
+     */
+    public  HashMap<Integer, Color> getStudentIDsAndColor(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            students.putAll(islandGroup.getStudentIDsAndColor());
+        }
+        return students;
+    }
+
+    /**
      * Searches all IslandGroup to find which student each contains
      * @return A HashMap containing as Key the idx of the IslandGroup, as value the list of StudentIDs
      */
-    public HashMap<Integer, List<Integer>> getStudentsIDs(){
+    public HashMap<Integer, List<Integer>> getIslandGroupsStudentsIDs(){
         HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
         for(IslandGroup islandGroup : islandGroups){
             studentIDs.put(islandGroups.indexOf(islandGroup),islandGroup.getStudentIDs());

@@ -7,6 +7,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -105,5 +106,22 @@ public class PlayerBoard {
      */
     public void addToEntrance(Student student) {
         entrance.placePawn(student);
+    }
+
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getEntranceStudentsIDs(){
+        return entrance.getStudentIDsAndColor();
+    }
+
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(Color color){
+        return diningRoom.getTableStudentsIDs(color);
     }
 }

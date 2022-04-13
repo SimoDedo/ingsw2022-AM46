@@ -9,6 +9,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -254,6 +255,16 @@ public class IslandGroup {
         return islandTiledIDs;
     }
 
-
+    /**
+     * Returns all students contained in all IslandTiles with their color
+     * @return An HashMap with StudentID as key and Color as value
+     */
+    public HashMap<Integer, Color> getStudentIDsAndColor(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(IslandTile islandTile : islandTiles){
+            students.putAll(islandTile.getStudentIDsAndColor());
+        }
+        return students;
+    }
 
 }

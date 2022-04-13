@@ -341,6 +341,10 @@ public class Game {
         return  result;
     }
 
+    /**
+     * Method used to observe cards played this round
+     * @return An HashMap containing the nickname of the Player and the ID of the card played
+     */
     public  Map<String, Integer> getCardPlayedThisRound(){
         Map<String, Integer> result = new HashMap<>();
         for (Map.Entry<Player, AssistantCard> entry : cardsPlayedThisRound.entrySet()){
@@ -349,6 +353,10 @@ public class Game {
         return  result;
     }
 
+    /**
+     * Method used to observe cards played last round
+     * @return An HashMap containing the nickname of the Player and the ID of the card played last round
+     */
     public  Map<String, Integer> getCardPlayedLastRound(){
         Map<String, Integer> result = new HashMap<>();
         for (Map.Entry<Player, AssistantCard> entry : cardsPlayedLastRound.entrySet()){
@@ -356,6 +364,24 @@ public class Game {
         }
         return  result;
     }
+
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
+        return players.getByNickname(nickname).getEntranceStudentsIDs();
+    }
+
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(String nickname, Color color){
+        return players.getByNickname(nickname).getTableStudentsIDs(color);
+    }
+    //TODO: add various observer method
 
     //endregion
 }

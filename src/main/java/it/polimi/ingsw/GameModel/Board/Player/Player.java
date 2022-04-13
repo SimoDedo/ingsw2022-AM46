@@ -9,10 +9,7 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Player {
 
@@ -203,5 +200,26 @@ public class Player {
         }
         return removedStudents;
     }
+
+    //region State observer method
+
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getEntranceStudentsIDs(){
+        return playerBoard.getEntranceStudentsIDs();
+    }
+
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(Color color){
+        return playerBoard.getTableStudentsIDs(color);
+    }
+
+    //endregion
 
 }
