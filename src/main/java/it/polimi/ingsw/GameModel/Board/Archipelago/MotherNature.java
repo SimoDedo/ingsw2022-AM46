@@ -3,7 +3,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 /**
  * Class that represents MotherNature pawn in game
  */
-public class MotherNature { //CHECKME: should be a singleton? could cause issues if we opt for multiple games
+public class MotherNature {
 
     /**
      * contains the IslandTile which currently holds MotherNature
@@ -33,6 +33,5 @@ public class MotherNature { //CHECKME: should be a singleton? could cause issues
     public void setIslandTile(IslandTile islandTile) {
         this.islandTile = islandTile;
     }
-
 
 }

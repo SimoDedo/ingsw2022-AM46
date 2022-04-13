@@ -32,7 +32,7 @@ public class Wizard {
      */
     public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
         AssistantCard assistant = deck.stream().filter(card -> card.getID() == assistantID).
-                findAny().orElseThrow(NoSuchElementException::new);
+                findAny().orElseThrow(() -> new NoSuchElementException("Already played this assistant in previous turn"));
         deck.removeIf(card -> card.getID() == assistantID);
         return assistant;
     }

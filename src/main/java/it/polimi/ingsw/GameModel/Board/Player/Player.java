@@ -12,6 +12,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Player {
 
@@ -52,7 +53,7 @@ public class Player {
      * @param assistantID unique ID of the assistant to play
      * @return the assistant which has been removed from the deck
      */
-    public AssistantCard playAssistant(int assistantID) {
+    public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
         return wizard.playAssistant(assistantID);
     }
 
@@ -105,7 +106,7 @@ public class Player {
         playerBoard.placeTower(tower);
     }
 
-    public WizardType getWizardType() { return wizard.getType(); }
+    public WizardType getWizardType() { return wizard == null ? null : wizard.getType(); }
 
     /**
      * @return true if this player holds towers in his playerBoard

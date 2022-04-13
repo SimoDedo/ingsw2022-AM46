@@ -94,7 +94,7 @@ public class Archipelago {
      * @param islandTileDestinationID Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException {
+    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException, NoSuchElementException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), getIslandTileByID(islandTileDestinationID), moveCount, islandGroups);
     }
 
@@ -322,6 +322,22 @@ public class Archipelago {
             islandTilesIDs.put(islandGroups.indexOf(islandGroup), islandGroup.getIslandTileIDs());
         }
         return  islandTilesIDs;
+    }
+
+    /**
+     * Given the ID of an IslandTile, returns the index of the IslandGroup which contains it
+     * @param islandTileID The ID of the IslandTile to check
+     * @return The ID of the IslandGroup
+     * @throws NoSuchElementException If no IslandTile with given ID exists
+     */
+    public int getIslandGroupID(int islandTileID) throws NoSuchElementException{
+        IslandTile islandTile = getIslandTileByID(islandTileID);
+        for(IslandGroup islandGroup : islandGroups){
+            if(islandGroup.hasIslandTile(islandTile))
+                return islandGroups.indexOf(islandGroup);
+        }
+        throw new NoSuchElementException("There is no IslandGroup for given IslandTIle");    //This should not get called,
+                                                                                            // get getIslandTileByID already throws exception if no IslandTile
     }
 
     public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){

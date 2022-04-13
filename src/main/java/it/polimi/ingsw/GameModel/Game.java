@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
-import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
@@ -17,6 +16,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
+import java.io.InvalidObjectException;
 import java.util.*;
 
 /**
@@ -30,11 +30,11 @@ import java.util.*;
 public class Game {
 
     private final Player neutralPlayer = new Player();
-    private Bag bag = new Bag();
-    private Archipelago archipelago = new Archipelago();
+    protected Bag bag = new Bag();
+    protected Archipelago archipelago = new Archipelago();
     private List<CloudTile> clouds = new ArrayList<>();
-    private ProfessorSet professorSet = new ProfessorSet();
-    private PlayerList players = new PlayerList();
+    protected ProfessorSet professorSet = new ProfessorSet();
+    protected PlayerList players = new PlayerList();
     private TurnManager turnManager = new TurnManager();
     private TeamManager teamManager = new TeamManager();
 
@@ -44,13 +44,24 @@ public class Game {
     private Map<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
 
     /**
+     * Linked hashmap that stores the Assistant cards played last round, and by whom they were played. Used for rendering
+     */
+    private Map<Player, AssistantCard> cardsPlayedLastRound = new LinkedHashMap<>();
+
+    /**
+     * Boolean to store whether this is the last round to play. Gets set when a LastRoundException is thrown
+     */
+    private boolean lastRound;
+
+    /**
      * Constructor for Game. Places 10 students across the Archipelago, fills the bag with the
-     * remaining students, then sets up the number and size of clouds and of players. Finally adds
+     * remaining students, then sets up the number and size of clouds and of players. Finally, adds
      * the Players to the TurnManager.
      * @param gameConfig the game configuration object, created by the GameFactory
      * @param teamComposition the nickname and tower color that every player chose during match setup
      */
     public Game(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
+        lastRound = false;
         archipelago.initialStudentPlacement(bag.drawN(10));
         bag.fillRemaining();
         gameConfig.getPlayerConfig().setBag(bag);
@@ -80,18 +91,6 @@ public class Game {
     }
 
     /**
-     * Getter for the wizard types that every player chose in this game.
-     * @return a list with the wizard types already chosen in the game
-     */
-    private List<WizardType> getWizardTypes() { // can be made using streams
-        List<WizardType> wizardTypes = new ArrayList<>();
-        for (Player player : players) {
-                wizardTypes.add(player.getWizardType());
-        }
-        return wizardTypes;
-    }
-
-    /**
      * Method that assigns a chosen Wizard and their deck to a player's hand.
      * @param nickname the nickname of the player who will own the deck
      * @param wizardType the type of the wizard
@@ -104,21 +103,26 @@ public class Game {
     }
 
     /**
+     * Getter for the wizard types that every player chose in this game.
+     * @return a list with the wizard types already chosen in the game
+     */
+    private List<WizardType> getWizardTypes() { // can be made using streams
+        List<WizardType> wizardTypes = new ArrayList<>();
+        for (Player player : players) {
+            wizardTypes.add(player.getWizardType());
+        }
+        return wizardTypes;
+    }
+
+    /**
      * Method that determines the planning order of the very first round, and actually starts the game
      * (game phase goes from idle to planning)
      */
     public void determineFirstRoundOrder() {
         turnManager.determinePlanningOrder();
         turnManager.nextPhase(); // set from idle -> planning
+        refillClouds();
     }
-
-    /**
-     * Getter for the current player in the game.
-     * @return the player currently executing their planning/action turn
-     */
-    public String getCurrentPlayer() {
-        return turnManager.getCurrentPlayer().getNickname();
-    } // could be useful to controller
 
     /**
      * Method that retrieves the played AssistantCard by its ID and passes its turn order to TurnManager.
@@ -128,7 +132,7 @@ public class Game {
      * @param assistantID the ID of the AssistantCard chosen
      * @throws IllegalArgumentException if a player is not "desperate" and chooses an Assistant card already chosen by someone else
      */
-    public void playAssistant(String nickname, int assistantID) throws IllegalArgumentException, LastRoundException {
+    public void playAssistant(String nickname, int assistantID) throws IllegalArgumentException,NoSuchElementException,LastRoundException {
         if (!checkDesperate(nickname)) {
             for (AssistantCard assistantCard : cardsPlayedThisRound.values()) {
                 if (assistantCard.getID() == assistantID)
@@ -137,7 +141,10 @@ public class Game {
         }
         AssistantCard assistantPlayed = getPlayerByNickname(nickname).playAssistant(assistantID);
         cardsPlayedThisRound.put(getPlayerByNickname(nickname), assistantPlayed);
-        if(getPlayerByNickname(nickname).getDeck().size() == 0) { throw new LastRoundException(); }
+        if(getPlayerByNickname(nickname).getDeck().size() == 0 && !lastRound) { //Only throws once, needless to throw for each player (once one is done, it is the lastRound for everyone)
+            lastRound = true;
+            throw new LastRoundException();
+        }
     }
 
     /**
@@ -186,20 +193,23 @@ public class Game {
      * @param nickname nickname of the Player that is moving Mother Nature
      * @param islandTileID the ID of the IslandTile where the player wants to place Mother Nature
      */
-    public void moveMotherNature(String nickname, int islandTileID) {
-    } //todo: receives movecount from cardsplayedthisround, calls archipelago.movemothernature(islandtileid, movecount). finally calls resolveislandgroup
+    public void moveMotherNature(String nickname, int islandTileID) throws InvalidObjectException, GameOverException {
+        archipelago.moveMotherNature(islandTileID, cardsPlayedThisRound.get(nickname).getMovePower());
+        resolveIslandGroup(archipelago.getIslandGroupID(islandTileID));
+    }
 
     /**
      * Method that "resolves" an island group, that is, it determines what player has the most
      * influence on that group, places one (or more) of that player's towers on the group if necessary
      * and finally checks if a merge is possible with the groups on the right or left of that group.
-     * @param islandGroup the group to resolve
+     * @param islandGroupID the group to resolve
      * @throws GameOverException if the total number of groups in the archipelago at the end of the process is 3 (or less)
      */
-    public void resolveIslandGroup(IslandGroup islandGroup) throws GameOverException {
-        archipelago.resolveIslandGroup(islandGroup, players, professorSet);
+    public void resolveIslandGroup(int islandGroupID) throws GameOverException {
+        archipelago.resolveIslandGroup(islandGroupID, players, professorSet);
         // should we be passing GameOverException on to the controller... thoughts? prayers? lmk
         // yep, we should. so i think the code is perfect as it is right now. greg
+        //just wanted to add a line cry about it. simo
     }
 
     /**
@@ -239,16 +249,33 @@ public class Game {
     }
 
     /**
+     * This method progresses the turn, updating currentPlayer.
+     */
+    public void nextTurn() throws IllegalStateException{
+        turnManager.nextTurn();
+    }
+
+    /**
+     * This method progresses the phase, going from planning to action and vice-versa.
+     */
+    public void nextPhase(){
+        turnManager.nextPhase();
+    }
+
+    /**
      * Method that moves the Assistant cards played this round into their respective discard pile.
      */
     public void pushThisRoundInLastRound() {
-
+        cardsPlayedLastRound.clear();
+        cardsPlayedLastRound.putAll(cardsPlayedThisRound);
+        cardsPlayedThisRound.clear();;
     }
 
     public void refillClouds() {
         try {
             for(CloudTile c : clouds){ c.fill(); }
         } catch (LastRoundException e) {
+            lastRound = true;
             disableClouds();
         }
     }
@@ -261,22 +288,25 @@ public class Game {
         for (CloudTile c : clouds) c.removeAll();
     }
 
+
     /**
-     * Method that checks if during the last round the students where exhausted or any player has
-     * finished their cards.
+     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
+     * Determining the winner if this is the last round to be played
+     * Changing the Phase
      */
-    // for now only useful to end game if the students from the bag where exhausted this round, or
-    // the players have played all their assistant cards.
-    public TowerColor endOfRoundOperations() throws LastRoundException {
-        // if any player has 0 cards at the end of the round the game ends
-        for (Player p : players) {
-            if(p.getDeck().size() == 0){ return determineWinner(); }
+    public TowerColor endOfRoundOperations() throws GameOverException {
+        if(lastRound)
+            throw new GameOverException();
+        else {
+            return null; // the game can continue
         }
-        if(bag.pawnCount() == 0) { return determineWinner(); }
-        return null; // the game can continue
     }
 
-    private TowerColor determineWinner(){
+    /**
+     * Determines the winner of the game
+     * @return The TowerColor of the winning team
+     */
+    public TowerColor determineWinner(){ //public: controller will ask for it when it receives GameOverException
         Player currentlyWinning = players.get(0);
 
         for (Player player : players.getTowerHolders()) {
@@ -288,4 +318,44 @@ public class Game {
         }
         return currentlyWinning.getTowerColor();
     }
+
+
+    //region State Observer methods
+    /**
+     * Getter for the current player in the game.
+     * @return the player currently executing their planning/action turn
+     */
+    public String getCurrentPlayer() {
+        return turnManager.getCurrentPlayer().getNickname();
+    } // could be useful to controller
+
+    /**
+     * Method used to observe which player chose which wizard
+     * @return An HashMap containing the nickname of the Player and the Wizard chosen
+     */
+    public HashMap<String, WizardType> getPlayerWizardType(){
+        HashMap<String, WizardType> result = new HashMap<String, WizardType>();
+        for(Player player : players){
+            result.put(player.getNickname(), player.getWizardType());
+        }
+        return  result;
+    }
+
+    public  Map<String, Integer> getCardPlayedThisRound(){
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<Player, AssistantCard> entry : cardsPlayedThisRound.entrySet()){
+            result.put(entry.getKey().getNickname(), entry.getValue().getID());
+        }
+        return  result;
+    }
+
+    public  Map<String, Integer> getCardPlayedLastRound(){
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<Player, AssistantCard> entry : cardsPlayedLastRound.entrySet()){
+            result.put(entry.getKey().getNickname(), entry.getValue().getID());
+        }
+        return  result;
+    }
+
+    //endregion
 }

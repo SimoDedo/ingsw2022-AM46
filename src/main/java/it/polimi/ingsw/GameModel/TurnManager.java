@@ -115,7 +115,7 @@ public class TurnManager {
         switch (currentPhase) {
             case IDLE, ACTION -> {
                 currentPhase = Phase.PLANNING;
-                determinePlanningOrder();
+                //determinePlanningOrder(); already a method in game that calls determinePlanningOrder, why also here? am I missing smth?
             }
             case PLANNING -> currentPhase = Phase.ACTION;
         }

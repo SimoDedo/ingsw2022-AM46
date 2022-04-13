@@ -103,4 +103,14 @@ public class CharacterManager {
     public AbstractCharacter getCharacterByID(int ID) {
         return characters.get(ID-1);
     }
+
+    /**
+     * Resets the character that was used this round, if there was any
+     */
+    public void resetActiveCharacter(){
+        for(Character character : characters) {
+            if (character != null && character.wasUsedThisTurn())
+                character.resetUseState();
+        }
+    }
 }

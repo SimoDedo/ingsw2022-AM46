@@ -148,10 +148,10 @@ class IslandGroupTest {
     }
 
     /**
-     *
+     * Tests that method correctly returns the color of the tower placed in the IslandGroup
      */
     @Test
-    void getTowerColor() {//TODO: modify and add javadoc description once conquer is done. Right now just inserts a tower of TowerColor at start and checks, will have to use conquer (as would a real game)
+    void getTowerColor() {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = new ArrayList<>();
         islandTiles.add(new IslandTile(null, false,null ));
