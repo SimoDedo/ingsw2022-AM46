@@ -320,68 +320,179 @@ public class Game {
     }
 
 
-    //region State Observer methods
-    /**
-     * Getter for the current player in the game.
-     * @return the player currently executing their planning/action turn
-     */
-    public String getCurrentPlayer() {
-        return turnManager.getCurrentPlayer().getNickname();
-    } // could be useful to controller
+    //region State observer methods
 
-    /**
-     * Method used to observe which player chose which wizard
-     * @return An HashMap containing the nickname of the Player and the Wizard chosen
-     */
-    public HashMap<String, WizardType> getPlayerWizardType(){
-        HashMap<String, WizardType> result = new HashMap<String, WizardType>();
-        for(Player player : players){
-            result.put(player.getNickname(), player.getWizardType());
+        //region Game
+        /**
+         * Getter for the current player in the game.
+         * @return the player currently executing their planning/action turn
+         */
+        public String getCurrentPlayer() {
+            return turnManager.getCurrentPlayer().getNickname();
+        } // could be useful to controller
+
+        /**
+         * Method used to observe cards played this round
+         * @return An HashMap containing the nickname of the Player and the ID of the card played
+         */
+        public  Map<String, Integer> getCardPlayedThisRound(){
+            Map<String, Integer> result = new HashMap<>();
+            for (Map.Entry<Player, AssistantCard> entry : cardsPlayedThisRound.entrySet()){
+                result.put(entry.getKey().getNickname(), entry.getValue().getID());
+            }
+            return  result;
         }
-        return  result;
-    }
 
-    /**
-     * Method used to observe cards played this round
-     * @return An HashMap containing the nickname of the Player and the ID of the card played
-     */
-    public  Map<String, Integer> getCardPlayedThisRound(){
-        Map<String, Integer> result = new HashMap<>();
-        for (Map.Entry<Player, AssistantCard> entry : cardsPlayedThisRound.entrySet()){
-            result.put(entry.getKey().getNickname(), entry.getValue().getID());
+        /**
+         * Method used to observe cards played last round
+         * @return An HashMap containing the nickname of the Player and the ID of the card played last round
+         */
+        public  Map<String, Integer> getCardPlayedLastRound(){
+            Map<String, Integer> result = new HashMap<>();
+            for (Map.Entry<Player, AssistantCard> entry : cardsPlayedLastRound.entrySet()){
+                result.put(entry.getKey().getNickname(), entry.getValue().getID());
+            }
+            return  result;
         }
-        return  result;
-    }
 
-    /**
-     * Method used to observe cards played last round
-     * @return An HashMap containing the nickname of the Player and the ID of the card played last round
-     */
-    public  Map<String, Integer> getCardPlayedLastRound(){
-        Map<String, Integer> result = new HashMap<>();
-        for (Map.Entry<Player, AssistantCard> entry : cardsPlayedLastRound.entrySet()){
-            result.put(entry.getKey().getNickname(), entry.getValue().getID());
+    //endregion
+        //region Player
+        /**
+         * Returns a list of cards that weren't yet played (thus to be shown to the player)
+         * @return a list of cards IDs
+         */
+        public List<Integer> getCardsLeft(String nickname){
+            return  players.getByNickname(nickname).getCardsLeft();
         }
-        return  result;
+        /**
+         * Method to observe all the students in the entrance and their color
+         * @return HashMap with the student ID as key and its color as object
+         */
+        public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
+            return players.getByNickname(nickname).getEntranceStudentsIDs();
+        }
+
+        /**
+         * Method to observe all the students in a table
+         * @param color The color of the table
+         * @return List with the student IDs in the requested table
+         */
+        public List<Integer> getTableStudentsIDs(String nickname, Color color){
+            return players.getByNickname(nickname).getTableStudentsIDs(color);
+        }
+
+        /**
+         * Returns the amount of towers contained in the TowerSpace of given player
+         * @param nickname the nickname of the player to check
+         * @return the amount of towers contained in the TowerSpace
+         */
+        public int getTowersLeft(String nickname){
+            return players.getByNickname(nickname).getTowersLeft();
+        }
+
+        /**
+         * Method used to observe which player chose which wizard
+         * @return An HashMap containing the nickname of the Player and the Wizard chosen
+         */
+        public HashMap<String, WizardType> getPlayersWizardType(){
+            HashMap<String, WizardType> result = new HashMap<String, WizardType>();
+            for(Player player : players){
+                result.put(player.getNickname(), player.getWizardType());
+            }
+            return  result;
+        }
+        //endregion
+        //region ProfessorSet
+        /**
+         * Method to observe which Professor is owned by who
+         * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+         */
+        public HashMap<Color, String> getProfessorsOwner(){
+            return  professorSet.getProfessorsOwner();
+        }
+        //endregion
+        //region Clouds
+        /**
+         * Returns a list containing all the IDs of CloudTiles
+         * @return a list containing all the IDs of CloudTiles
+         */
+        public List<Integer> getCloudIDs(){
+            List<Integer> cloudIDs = new ArrayList<>();
+            for(CloudTile cloudTile : clouds){
+                cloudIDs.add(cloudTile.getID());
+            }
+            return  cloudIDs;
+        }
+
+        /**
+         * Return all the IDs of students contained in a given cloud along with their color
+         * @param cloudTileID the ID of the CloudTile
+         * @return an HashMap with the Student IDs as Key and their color as Object
+         * @throws IllegalArgumentException thrown when the CloudTileID doesn't match any existing cloud
+         */
+        public HashMap<Integer, Color> getCloudStudentsIDs(int cloudTileID) throws IllegalArgumentException{
+            for(CloudTile cloudTile : clouds){
+                if(cloudTile.getID() == cloudTileID)
+                    return cloudTile.getStudentIDsAndColor();
+            }
+            throw new IllegalArgumentException("No cloud with such ID exists");
+        }
+        //endregion
+        //region Bag
+        /**
+         * Method to observe all the students in the bag and their color
+         * @return HashMap with the student ID as key and its color as object
+         */
+        public HashMap<Integer, Color> getBagStudentsIDs(){//Probably not needed
+            return  bag.getStudentIDsAndColor();
+        }
+        //endregion
+        //region Archipelago
+        /**
+         * Returns all students contained in all islands with their color
+         * @return An HashMap with StudentID as key and Color as value
+         */
+        public HashMap<Integer, Color> getArchipelagoStudentIDs(){
+            return archipelago.getStudentIDs();
+        }
+
+        /**
+         * Searches all IslandTiles to find which students each contains
+         * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+         */
+        public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
+            return archipelago.getIslandTilesStudentsIDs();
+        }
+
+        /**
+         * For each IslandGroup finds the IDs of its IslandTiles
+         * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
+         */
+        public HashMap<Integer, List<Integer>> getIslandTilesIDs(){
+            return  archipelago.getIslandTilesIDs();
+        }
+
+        /**
+         * Returns the IslandTile ID of the IslandTile which contains MotherNature
+         * @return the IslandTile ID of the IslandTile which contains MotherNature
+         */
+        public int getMotherNatureIslandTileIndex(){
+            return archipelago.getMotherNatureIslandTileIndex();
+        }
+
+        /**
+     * Returns the IslandGroups indexes along with the TowerColor of the Team who has towers.
+     * The color is null when no Team holds the IslandGroup
+     * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
+     */
+        public HashMap<Integer, TowerColor> getIslandGroupsOwner(){
+        return archipelago.getIslandGroupsOwner();
     }
 
-    /**
-     * Method to observe all the students in the entrance and their color
-     * @return HashMap with the student ID as key and its color as object
-     */
-    public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
-        return players.getByNickname(nickname).getEntranceStudentsIDs();
-    }
+        //endregion
+        //region CharacterManager
 
-    /**
-     * Method to observe all the students in a table
-     * @param color The color of the table
-     * @return List with the student IDs in the requested table
-     */
-    public List<Integer> getTableStudentsIDs(String nickname, Color color){
-        return players.getByNickname(nickname).getTableStudentsIDs(color);
-    }
-    //TODO: add various observer method
+        //endregion
 
     //endregion
 }

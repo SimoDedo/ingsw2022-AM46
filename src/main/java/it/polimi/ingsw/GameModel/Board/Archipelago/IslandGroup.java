@@ -8,10 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Model a group of island tiles
@@ -220,12 +217,12 @@ public class IslandGroup {
 
     /**
      * Collects all IDs of students in IslandTiles
-     * @return A list of the Students IDs
+     * @return A HashMap with the IslandTile ID as key and a List of Student IDs as Object
      */
-    public List<Integer> getStudentIDs(){
-        List<Integer> studentsIDs = new ArrayList<>();
+    public HashMap<Integer, List<Integer>> getStudentIDs(){
+        HashMap<Integer, List<Integer>> studentsIDs = new LinkedHashMap<>();
         for (IslandTile islandTile : islandTiles){
-            studentsIDs.addAll(islandTile.getPawnIDs());
+            studentsIDs.put(islandTile.getID(), islandTile.getPawnIDs());
         }
         return  studentsIDs;
     }

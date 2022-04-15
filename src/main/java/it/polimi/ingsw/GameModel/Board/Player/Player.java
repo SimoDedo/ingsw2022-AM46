@@ -204,6 +204,14 @@ public class Player {
     //region State observer method
 
     /**
+     * Returns a list of cards that weren't yet played (thus to be shown to the player)
+     * @return a list of cards IDs
+     */
+    public List<Integer> getCardsLeft(){
+        return wizard.getCardsLeft();
+    }
+
+    /**
      * Method to observe all the students in the entrance and their color
      * @return HashMap with the student ID as key and its color as object
      */
@@ -218,6 +226,14 @@ public class Player {
      */
     public List<Integer> getTableStudentsIDs(Color color){
         return playerBoard.getTableStudentsIDs(color);
+    }
+
+    /**
+     * Returns the amount of towers contained in the TowerSpace
+     * @return the amount of towers contained in the TowerSpace
+     */
+    public int getTowersLeft(){
+        return playerBoard.getTowersLeft();
     }
 
     //endregion

@@ -246,7 +246,7 @@ public class Archipelago {
     }
     //endregion
 
-    //region State observer methods using IDs
+    //region Getters
     /**
      * Finds a Student with a given ID
      * @param ID The ID of the student
@@ -264,46 +264,6 @@ public class Archipelago {
             throw new NoSuchElementException("No Student with such ID in IslandGroups");
         else
             return studentToReturn;
-    }
-
-    /**
-     * Returns all students contained in all islands with their color
-     * @return An HashMap with StudentID as key and Color as value
-     */
-    public  HashMap<Integer, Color> getStudentIDsAndColor(){
-        HashMap<Integer, Color> students = new HashMap<>();
-        for(IslandGroup islandGroup : islandGroups){
-            students.putAll(islandGroup.getStudentIDsAndColor());
-        }
-        return students;
-    }
-
-    /**
-     * Searches all IslandGroup to find which student each contains
-     * @return A HashMap containing as Key the idx of the IslandGroup, as value the list of StudentIDs
-     */
-    public HashMap<Integer, List<Integer>> getIslandGroupsStudentsIDs(){
-        HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
-        for(IslandGroup islandGroup : islandGroups){
-            studentIDs.put(islandGroups.indexOf(islandGroup),islandGroup.getStudentIDs());
-        }
-        return studentIDs;
-    }
-
-    /**
-     * Returns the (current) index of the IslandGroup containing MotherNature
-     * @return The (current) index of the IslandGroup containing MotherNature
-     */
-    public int getMotherNatureIslandGroupIndex(){
-        for(IslandGroup islandGroup : islandGroups){
-            if(islandGroup.hasMotherNature())
-                return islandGroups.indexOf(islandGroup);
-        }
-        return -1;
-    }
-
-    public int getNumOfIslandGroups() {
-        return islandGroups.size();
     }
 
     /**
@@ -325,6 +285,44 @@ public class Archipelago {
             return islandTileToReturn;
     }
 
+    public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
+        return islandGroups.get(islandGroupIndex).getTowerColor();
+    }
+
+    public ResolveStrategy getResolveStrategy() {
+        return resolveStrategy;
+    }
+
+    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
+        return moveMotherNatureStrategy;
+    }
+    //endregion
+
+    //region State observer methods
+    /**
+     * Returns all students contained in all islands with their color
+     * @return An HashMap with StudentID as key and Color as value
+     */
+    public  HashMap<Integer, Color> getStudentIDs(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            students.putAll(islandGroup.getStudentIDsAndColor());
+        }
+        return students;
+    }
+
+    /**
+     * Searches all IslandTiles to find which students each contains
+     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     */
+    public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
+        HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            studentIDs.putAll(islandGroup.getStudentIDs());
+        }
+        return studentIDs;
+    }
+
     /**
      * For each IslandGroup finds the IDs of its IslandTiles
      * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
@@ -335,6 +333,14 @@ public class Archipelago {
             islandTilesIDs.put(islandGroups.indexOf(islandGroup), islandGroup.getIslandTileIDs());
         }
         return  islandTilesIDs;
+    }
+
+    /**
+     * Return the number of IslandGroups
+     * @return the number of IslandGroups
+     */
+    public int getNumOfIslandGroups() {
+        return islandGroups.size();
     }
 
     /**
@@ -353,16 +359,32 @@ public class Archipelago {
                                                                                             // get getIslandTileByID already throws exception if no IslandTile
     }
 
-    public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
-        return islandGroups.get(islandGroupIndex).getTowerColor();
+    /**
+     * Returns the (current) index of the IslandGroup containing MotherNature
+     * @return The (current) index of the IslandGroup containing MotherNature
+     */
+    public int getMotherNatureIslandGroupIndex(){
+        return islandGroups.indexOf(getMotherNatureIslandGroup());
     }
 
-    public ResolveStrategy getResolveStrategy() {
-        return resolveStrategy;
+    /**
+     * Returns the IslandTile ID of the IslandTile which contains MotherNature
+     * @return the IslandTile ID of the IslandTile which contains MotherNature
+     */
+    public int getMotherNatureIslandTileIndex(){
+        return getMotherNatureIslandTile().getID();
     }
 
-    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
-        return moveMotherNatureStrategy;
+    /**
+     * Returns the IslandGroups indexes along with the TowerColor of the Team who has towers.
+     * The color is null when no Team holds the IslandGroup
+     * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
+     */
+    public HashMap<Integer, TowerColor> getIslandGroupsOwner(){
+        HashMap<Integer, TowerColor> result = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups)
+            result.put(islandGroups.indexOf(islandGroup), islandGroup.getTowerColor());
+        return result;
     }
 
     //endregion

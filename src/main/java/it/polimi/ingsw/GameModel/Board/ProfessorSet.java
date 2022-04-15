@@ -9,6 +9,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -83,5 +84,22 @@ public class ProfessorSet {
     public void setCheckAndMoveProfessorStrategy(CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy) {
         this.checkAndMoveProfessorStrategy = checkAndMoveProfessorStrategy;
     }
+
+    //region State Observer methods
+
+    /**
+     * Method to observe which Professor is owned by who
+     * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+     */
+    public HashMap<Color, String> getProfessorsOwner(){
+        HashMap<Color, String> result = new HashMap<>();
+        for (Professor professor : professors){
+            String owner = professor.getOwner() == null ? null : professor.getOwner().getNickname();
+            result.put(professor.getColor(), owner);
+        }
+        return result;
+    }
+
+    //endregion
 
 }

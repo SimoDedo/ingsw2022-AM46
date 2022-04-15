@@ -44,4 +44,15 @@ public class Wizard {
     public List<AssistantCard> getDeck() {
         return deck;
     }
+
+    /**
+     * Returns a list of cards that weren't yet played (thus to be shown to the player)
+     * @return a list of cards IDs
+     */
+    public List<Integer> getCardsLeft(){
+        List<Integer> cardsLeft = new ArrayList<>();
+        for (AssistantCard assistantCard : deck)
+            cardsLeft.add(assistantCard.getID());
+        return cardsLeft;
+    }
 }

@@ -124,4 +124,12 @@ public class PlayerBoard {
     public List<Integer> getTableStudentsIDs(Color color){
         return diningRoom.getTableStudentsIDs(color);
     }
+
+    /**
+     * Returns the amount of towers contained in the TowerSpace
+     * @return the amount of towers contained in the TowerSpace
+     */
+    public int getTowersLeft(){
+        return towerSpace.pawnCount();
+    }
 }

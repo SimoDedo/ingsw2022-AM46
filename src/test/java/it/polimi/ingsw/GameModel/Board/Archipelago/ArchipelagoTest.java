@@ -26,24 +26,29 @@ class ArchipelagoTest {
 
     /**
      * Test that given random starting island, method correctly distributes students
+     * Creates a new Archipelago, retrieves IslandTile index containing MotherNature and its opposite.
+     * Checks that those are empty, then checks another random IslandTile to see if a student was correctly placed
      */
-    @RepeatedTest(20)
+    @RepeatedTest(30)
     void initialStudentPlacement(){
         Archipelago archipelago = new Archipelago();
-        int idxMN = archipelago.getMotherNatureIslandGroupIndex();
-        int idxOppositeMN = idxMN + 6 > 11 ? idxMN + 6 - 12 : idxMN + 6;
+        int idxIGMN = archipelago.getMotherNatureIslandGroupIndex();
+        int idxIGOppositeMN = idxIGMN + 6 > 11 ? idxIGMN + 6 - 12 : idxIGMN + 6;
+        int idxMN = archipelago.getIslandTilesIDs().get(idxIGMN).get(0); //Only one IslandTile in IslandGroup, which contains MN
+        int idxOppositeMN = archipelago.getIslandTilesIDs().get(idxIGOppositeMN).get(0);
         Bag bag = new Bag();
-        int randCheck = idxMN;
+        int randCheckIG = idxIGMN;
         Random random = new Random(89);
-        while (randCheck == idxMN || randCheck == idxOppositeMN){
-            randCheck = random.nextInt(12);
+        while (randCheckIG == idxIGMN || randCheckIG == idxIGOppositeMN){
+            randCheckIG = random.nextInt(12);
         }
-        assertTrue(archipelago.getIslandGroupsStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getIslandGroupsStudentsIDs().get(randCheck).size() == 0);
+        int randCheck = archipelago.getIslandTilesIDs().get(randCheckIG).get(0);
+        assertTrue(archipelago.getIslandTilesStudentsIDs().get(idxMN).size() == 0 &&
+                archipelago.getIslandTilesStudentsIDs().get(randCheck).size() == 0);
         archipelago.initialStudentPlacement(bag.drawN(10));
-        assertTrue(archipelago.getIslandGroupsStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getIslandGroupsStudentsIDs().get(idxOppositeMN).size() == 0 &&
-                archipelago.getIslandGroupsStudentsIDs().get(randCheck).size() == 1);
+        assertTrue(archipelago.getIslandTilesStudentsIDs().get(idxMN).size() == 0 &&
+                archipelago.getIslandTilesStudentsIDs().get(idxOppositeMN).size() == 0 &&
+                archipelago.getIslandTilesStudentsIDs().get(randCheck).size() == 1);
     }
 
     //region Resolve/Conquer/Merge testing
