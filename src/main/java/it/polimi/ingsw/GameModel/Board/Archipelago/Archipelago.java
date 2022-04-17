@@ -138,7 +138,13 @@ public class Archipelago {
         else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
-            if (swapped) mergeIslandGroup(islandGroup);
+            if (swapped){
+                if(winner.getTowersLeft() == 0)
+                    throw new GameOverException("Player who conquered islandGroup has used all towers");
+                mergeIslandGroup(islandGroup);
+                if(getNumOfIslandGroups() <= 3)
+                    throw new GameOverException("There are only 3 groups of islands left");
+            }
         }
     }
 
@@ -150,13 +156,7 @@ public class Archipelago {
      */
     public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet)
             throws GameOverException {
-        if (islandGroups.get(islandGroupIndex).hasNoEntryTiles())
-            islandGroups.get(islandGroupIndex).removeNoEntryTile();
-        else {
-            Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
-            boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);
-            if (swapped) mergeIslandGroup(islandGroups.get(islandGroupIndex));
-        }
+        resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
     }
 
     /**
@@ -164,7 +164,7 @@ public class Archipelago {
      * @param islandGroup The IslandGroup to conquer
      * @param player The tower holder of the team who conquers the IslandGroup
      */
-    private boolean conquerIslandGroup(IslandGroup islandGroup, Player player) throws GameOverException {
+    public boolean conquerIslandGroup(IslandGroup islandGroup, Player player){
         return islandGroup.conquer(player);
     }
 
@@ -172,8 +172,7 @@ public class Archipelago {
      * Merges given IslandGroup with nearby IslandGroups
      * @param islandGroupToMerge The IslandGroup to merge
      */
-    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException {
-        if (getNumOfIslandGroups() == 4) throw new GameOverException();
+    public void mergeIslandGroup(IslandGroup islandGroupToMerge){
         int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
         TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
 

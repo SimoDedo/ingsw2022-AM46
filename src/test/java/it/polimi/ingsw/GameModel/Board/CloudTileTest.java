@@ -14,7 +14,7 @@ import java.util.List;
 public class CloudTileTest{
 
     /**
-     * Test that initial fill at creation and later fill completely fill the bag with all 130 students
+     * Test that clouds gets fully filled
      */
     @Test
     public void fill() {

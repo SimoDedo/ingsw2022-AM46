@@ -62,7 +62,7 @@ public class ProfessorSet {
     public int getNumberOfProfessors(TowerColor towerColor) {
         int score = 0;
         for (Professor prof : professors) {
-            if (prof.getOwner().getTowerColor().equals(towerColor)) score++;
+            if (prof.getOwner()!= null && prof.getOwner().getTowerColor().equals(towerColor)) score++;
         }
         return score;
     }

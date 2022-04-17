@@ -18,8 +18,8 @@ public class GameConfig {
         this.numOfPlayers = numOfPlayers;
         this.numOfClouds = numOfPlayers;
         switch (numOfPlayers) {
-            case 2, 4 -> this.cloudSize = 4;
-            case 3 -> this.cloudSize = 3;
+            case 2, 4 -> this.cloudSize = 3;
+            case 3 -> this.cloudSize = 4;
         }
         playerConfig = new PlayerConfig(numOfPlayers);
     }

@@ -32,7 +32,7 @@ public class CloudTile extends StudentContainer {
 
     public void fill() throws LastRoundException {
         List<Student> students = bag.drawN(this.getMaxPawns());
-        if (students == null) { throw new LastRoundException(); }
+        if (bag.pawnCount() == 0) { throw new LastRoundException("Last student was drawn"); }
         placePawns(students);
         selectable = true;
     }

@@ -41,7 +41,7 @@ public class Game {
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
      */
-    private Map<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
+    private LinkedHashMap<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
 
     /**
      * Linked hashmap that stores the Assistant cards played last round, and by whom they were played. Used for rendering
@@ -121,7 +121,6 @@ public class Game {
     public void determineFirstRoundOrder() {
         turnManager.determinePlanningOrder();
         turnManager.nextPhase(); // set from idle -> planning
-        refillClouds();
     }
 
     /**
@@ -142,8 +141,7 @@ public class Game {
         AssistantCard assistantPlayed = getPlayerByNickname(nickname).playAssistant(assistantID);
         cardsPlayedThisRound.put(getPlayerByNickname(nickname), assistantPlayed);
         if(getPlayerByNickname(nickname).getDeck().size() == 0 && !lastRound) { //Only throws once, needless to throw for each player (once one is done, it is the lastRound for everyone)
-            lastRound = true;
-            throw new LastRoundException();
+            throw new LastRoundException("Player "+nickname+" has played last assistant");
         }
     }
 
@@ -153,7 +151,7 @@ public class Game {
      * @param nickname the Player to check
      * @return true if the Player is "desperate", false otherwise
      */
-    private boolean checkDesperate(String nickname) {
+    public boolean checkDesperate(String nickname) {
         return getPlayerByNickname(nickname).checkDesperate(cardsPlayedThisRound.values());
     }
 
@@ -167,7 +165,7 @@ public class Game {
      */
     public void moveStudentFromEntrance(String nickname, int studentID, int containerID) {
         Player player = getPlayerByNickname(nickname);
-        Student student = player.getStudentFromEntrance(studentID); // will have to throw exception if not present
+        Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present, and to be tested
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID) potentialTable.moveStudent(student);
         else {
@@ -194,7 +192,7 @@ public class Game {
      * @param islandTileID the ID of the IslandTile where the player wants to place Mother Nature
      */
     public void moveMotherNature(String nickname, int islandTileID) throws InvalidObjectException, GameOverException {
-        archipelago.moveMotherNature(islandTileID, cardsPlayedThisRound.get(nickname).getMovePower());
+        archipelago.moveMotherNature(islandTileID, cardsPlayedThisRound.get(players.getByNickname(nickname)).getMovePower());
         resolveIslandGroup(archipelago.getIslandGroupID(islandTileID));
     }
 
@@ -207,9 +205,11 @@ public class Game {
      */
     public void resolveIslandGroup(int islandGroupID) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroupID, players, professorSet);
-        // should we be passing GameOverException on to the controller... thoughts? prayers? lmk
-        // yep, we should. so i think the code is perfect as it is right now. greg
-        //just wanted to add a line cry about it. simo
+            //TODO: not really a todo, just wanted someone to see this:
+            // to avoid long exception chain, exception is thrown in resolve of archipelago.
+            // Tower space no longer throws exception, just returns null -> this is because exception was thrown
+            // not when last tower was taken, but when the next tower was requested. Now method completes and then
+            // it's checked if game is over.
     }
 
     /**
@@ -237,7 +237,6 @@ public class Game {
      */
     public void determinePlanningOrder() {
         turnManager.determinePlanningOrder();
-        refillClouds();
     }
 
     /**
@@ -258,7 +257,7 @@ public class Game {
     /**
      * This method progresses the phase, going from planning to action and vice-versa.
      */
-    public void nextPhase(){
+    public void nextPhase(){//CHECKME: Could be "hidden" in determine action/planning order?
         turnManager.nextPhase();
     }
 
@@ -271,13 +270,8 @@ public class Game {
         cardsPlayedThisRound.clear();;
     }
 
-    public void refillClouds() {
-        try {
+    public void refillClouds() throws LastRoundException{
             for(CloudTile c : clouds){ c.fill(); }
-        } catch (LastRoundException e) {
-            lastRound = true;
-            disableClouds();
-        }
     }
 
     /**
@@ -286,8 +280,20 @@ public class Game {
      */
     public void disableClouds() {
         for (CloudTile c : clouds) c.removeAll();
+        //TODO: regole ambigue "se gli studenti non bastano non si pesca"; se finiscono gli studenti ma riempiono tutte
+        // le nuvole, i giocatori devono poter pescare dalle nuvole? in teoria è l'ultimo turno quindi non cambia,
+        // ma non so. Per ora non cambia tanto è il controller che chiama questo metodo.
+        // Inoltre, secondo il regolamento non si pesca solo nel caso in cui siano finiti gli studenti, ma non
+        // cambia nulla pescare o meno in qualunque caso. Possiamo disabilitarle sempre? Magari va chiesto
+
     }
 
+    /**
+     * Method that should be called by the controller when it catches a LastRoundException.
+     */
+    public  void setLastRound(){
+        lastRound = true;
+    }
 
     /**
      * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
@@ -313,7 +319,7 @@ public class Game {
             if (player.getTowersPlaced() > currentlyWinning.getTowersPlaced()) {
                 currentlyWinning = player;
             } else if (player.getTowersPlaced() == currentlyWinning.getTowersPlaced()){
-                currentlyWinning = professorSet.determineStrongestPlayer(player, currentlyWinning);
+                currentlyWinning = professorSet.determineStrongestPlayer(player, currentlyWinning); //TODO: what if same number of professors? maybe impossible, maybe better to check
             }
         }
         return currentlyWinning.getTowerColor();
@@ -332,25 +338,39 @@ public class Game {
         } // could be useful to controller
 
         /**
-         * Method used to observe cards played this round
-         * @return An HashMap containing the nickname of the Player and the ID of the card played
+         * Returns current player order
+         * @return a list of nicknames ordered
          */
-        public  Map<String, Integer> getCardPlayedThisRound(){
-            Map<String, Integer> result = new HashMap<>();
-            for (Map.Entry<Player, AssistantCard> entry : cardsPlayedThisRound.entrySet()){
-                result.put(entry.getKey().getNickname(), entry.getValue().getID());
+        public List<String> getPlayerOrder(){
+            return  turnManager.getCurrentOrder();
+        }
+
+        /**
+         * Method used to observe cards played this round. Returned according to current order (planning or action).
+         * To return them ordered, it uses the currentOrder given by TurnManager.
+         * If no order has been established yet, it will return an empty LinkedHashMap.
+         * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played.
+         */
+        public  LinkedHashMap<String, Integer> getCardsPlayedThisRound(){
+            LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+            for(String nickname : turnManager.getCurrentOrder()){
+                if(cardsPlayedThisRound.get(players.getByNickname(nickname)) != null)
+                    result.put(nickname, cardsPlayedThisRound.get(players.getByNickname(nickname)).getID());
             }
             return  result;
         }
 
         /**
-         * Method used to observe cards played last round
-         * @return An HashMap containing the nickname of the Player and the ID of the card played last round
+         * Method used to observe cards played last round. Returned according to current order (planning or action).
+         * To return them ordered, it uses the currentOrder given by TurnManager.
+         * If no order has been established yet, it will return an empty LinkedHashMap.
+         * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played
          */
-        public  Map<String, Integer> getCardPlayedLastRound(){
-            Map<String, Integer> result = new HashMap<>();
-            for (Map.Entry<Player, AssistantCard> entry : cardsPlayedLastRound.entrySet()){
-                result.put(entry.getKey().getNickname(), entry.getValue().getID());
+        public  LinkedHashMap<String, Integer> getCardsPlayedLastRound(){
+            LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+            for(String nickname : turnManager.getCurrentOrder()){
+                if(cardsPlayedLastRound.get(players.getByNickname(nickname)) != null)
+                    result.put(nickname, cardsPlayedLastRound.get(players.getByNickname(nickname)).getID());
             }
             return  result;
         }
@@ -364,12 +384,21 @@ public class Game {
         public List<Integer> getCardsLeft(String nickname){
             return  players.getByNickname(nickname).getCardsLeft();
         }
+
         /**
          * Method to observe all the students in the entrance and their color
          * @return HashMap with the student ID as key and its color as object
          */
         public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
             return players.getByNickname(nickname).getEntranceStudentsIDs();
+        }
+
+        /**
+         * Method to get all the table IDs and their color
+         * @return an HashMap with the table color as key and the Table ID as object
+         */
+        public HashMap<Color, Integer> getTableIDs(String nickname){
+            return players.getByNickname(nickname).getTableIDs();
         }
 
         /**
@@ -382,12 +411,12 @@ public class Game {
         }
 
         /**
-         * Returns the amount of towers contained in the TowerSpace of given player
-         * @param nickname the nickname of the player to check
+         * Returns the amount of towers contained in the TowerSpace of a given team
+         * @param towerColor the nickname of the player to check
          * @return the amount of towers contained in the TowerSpace
          */
-        public int getTowersLeft(String nickname){
-            return players.getByNickname(nickname).getTowersLeft();
+        public int getTowersLeft(TowerColor towerColor){
+            return players.getTowerHolder(towerColor).getTowersLeft();
         }
 
         /**
@@ -476,7 +505,7 @@ public class Game {
          * Returns the IslandTile ID of the IslandTile which contains MotherNature
          * @return the IslandTile ID of the IslandTile which contains MotherNature
          */
-        public int getMotherNatureIslandTileIndex(){
+        public int getMotherNatureIslandTileID(){
             return archipelago.getMotherNatureIslandTileIndex();
         }
 

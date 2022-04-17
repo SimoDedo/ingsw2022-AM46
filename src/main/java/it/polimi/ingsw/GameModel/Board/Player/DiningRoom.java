@@ -4,6 +4,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -71,6 +72,18 @@ public class DiningRoom {
         Student student = getStudentByID(ID);
         student.setStudentContainer(null);
         return student;
+    }
+
+    /**
+     * Method to get all the table IDs and their color
+     * @return an HashMap with the table color as key and the Table ID as object
+     */
+    public HashMap<Color, Integer> getTableIDs(){
+        HashMap<Color, Integer> result = new HashMap<>();
+        for (Table table : tables){
+            result.put(table.getColor(), table.getID());
+        }
+        return result;
     }
 
     /**

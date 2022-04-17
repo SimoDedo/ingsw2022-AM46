@@ -58,7 +58,7 @@ public class PlayerBoard {
      * @return a tower from the towerSpace
      * @throws GameOverException if the tower was the last
      */
-    public Tower takeTower() throws GameOverException {
+    public Tower takeTower(){
         return towerSpace.takeTower();
     }
 
@@ -114,6 +114,14 @@ public class PlayerBoard {
      */
     public HashMap<Integer, Color> getEntranceStudentsIDs(){
         return entrance.getStudentIDsAndColor();
+    }
+
+    /**
+     * Method to get all the table IDs and their color
+     * @return an HashMap with the table color as key and the Table ID as object
+     */
+    public HashMap<Color, Integer> getTableIDs(){
+        return diningRoom.getTableIDs();
     }
 
     /**

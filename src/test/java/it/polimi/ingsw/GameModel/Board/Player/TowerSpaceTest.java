@@ -10,12 +10,10 @@ public class TowerSpaceTest {
     public void takeTowerTest(){
         Player p0 = new Player();
         TowerSpace ts = new TowerSpace(p0, 10, TowerColor.BLACK);
+        ts.takeTower();
+        ts.takeTower();
+        ts.takeTower();
+        assert(ts.getTowersPlaced() == 3);
 
-        try{
-            ts.takeTower();
-            ts.takeTower();
-            ts.takeTower();
-            assert(ts.getTowersPlaced() == 3);
-        } catch (GameOverException e){e.printStackTrace();}
     }
 }

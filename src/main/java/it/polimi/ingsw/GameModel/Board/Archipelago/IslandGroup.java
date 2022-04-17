@@ -67,7 +67,7 @@ public class IslandGroup {
      * @param player the team who owns the towers on the IslandTile, once Conquer has finished
      * @return true if the towers had to be swapped, false if not
      */
-    public boolean conquer(Player player) throws GameOverException {
+    public boolean conquer(Player player) {
         if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
             for(IslandTile islandTile : islandTiles){
                 Tower towerToPut = player.takeTower();

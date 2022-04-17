@@ -55,13 +55,14 @@ public abstract class StudentContainer extends PawnContainer<Student> implements
     }
 
     /**
-     * Removed the first Student in the container.
-     * @return the Student at position 0
+     * Removed the first Student in the container if present
+     * @return the Student at position 0, null if container is empty
      */
     @Override
     public Student removePawn() {
         Student s = super.removePawn();
-        s.setStudentContainer(null);
+        if(s != null)
+            s.setStudentContainer(null);
         return s;
     }
     /**
