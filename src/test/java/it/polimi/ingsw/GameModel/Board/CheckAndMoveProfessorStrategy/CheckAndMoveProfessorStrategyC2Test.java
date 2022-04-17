@@ -1,7 +1,7 @@
 package it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
-import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.GameConfig;
@@ -34,13 +34,11 @@ class CheckAndMoveProfessorStrategyC2Test {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         CheckAndMoveProfessorStrategyC2 checkAndMoveProfessorStrategyC2 = new CheckAndMoveProfessorStrategyC2(players.getByNickname("Greg"));

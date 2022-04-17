@@ -4,10 +4,8 @@ import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class that extends Game. It is created instead of Game in an Expert match.
@@ -22,19 +20,24 @@ public class GameExpert extends Game {
      * Constructor for GameExpert. Calls Game constructor.
      * Then creates a CoinBag and gives each player one coin. Finally, it creates 3 random Characters.
      * @param gameConfig the game configuration object, created by the GameFactory
-     * @param teamComposition the nickname and tower color that every player chose during match setup
+     *
      */
-    public GameExpert(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
-        super(gameConfig, teamComposition);
+    public GameExpert(GameConfig gameConfig) {
+        super(gameConfig);
         coinBag = new CoinBag(20);
-        distributeInitialCoins();
+    }
+
+    /**
+     * Creates the characterManager (which creates the 3 characters). Called by the controller once all players are connected.
+     */
+    public void createCharacters(){
         characterManager = new CharacterManager(archipelago, bag, players, professorSet);
     }
 
     /**
-     * Awards each player with one coin
+     * Awards each player with one coin. Called by the controller once all players are connected.
      */
-    private void distributeInitialCoins(){
+    public void distributeInitialCoins(){
         for(Player player : players){
             coinBag.removeCoin();
             player.awardCoin();

@@ -2,7 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC6;
 import it.polimi.ingsw.GameModel.Board.Bag;
-import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.GameConfig;
@@ -29,7 +29,7 @@ class ArchipelagoTest {
      * Creates a new Archipelago, retrieves IslandTile index containing MotherNature and its opposite.
      * Checks that those are empty, then checks another random IslandTile to see if a student was correctly placed
      */
-    @RepeatedTest(30)
+    @RepeatedTest(10)
     void initialStudentPlacement(){
         Archipelago archipelago = new Archipelago();
         int idxIGMN = archipelago.getMotherNatureIslandGroupIndex();
@@ -67,13 +67,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -101,13 +99,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -139,13 +135,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -175,13 +169,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -211,13 +203,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -255,13 +245,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -302,13 +290,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));

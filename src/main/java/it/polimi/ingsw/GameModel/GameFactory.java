@@ -10,10 +10,10 @@ public class GameFactory {
 
     public GameFactory() {}
 
-    public Game create(int numOfPlayers, GameMode gameMode, Map<String, TowerColor> teamComposition) {
+    public Game create(int numOfPlayers, GameMode gameMode) {
         return switch (gameMode) {
-            case NORMAL -> new Game(new GameConfig(numOfPlayers), teamComposition);
-            case EXPERT -> new GameExpert(new GameConfig(numOfPlayers), teamComposition);
+            case NORMAL -> new Game(new GameConfig(numOfPlayers));
+            case EXPERT -> new GameExpert(new GameConfig(numOfPlayers));
         };
     }
 }

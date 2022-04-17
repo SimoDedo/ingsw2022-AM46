@@ -6,7 +6,6 @@ import it.polimi.ingsw.GameModel.Board.CloudTile;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
-import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -36,7 +35,6 @@ public class Game {
     protected ProfessorSet professorSet = new ProfessorSet();
     protected PlayerList players = new PlayerList();
     private TurnManager turnManager = new TurnManager();
-    private TeamManager teamManager = new TeamManager();
 
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
@@ -54,24 +52,25 @@ public class Game {
     private boolean lastRound;
 
     /**
+     * The configuration of this game
+     */
+    private GameConfig gameConfig;
+
+    /**
      * Constructor for Game. Places 10 students across the Archipelago, fills the bag with the
      * remaining students, then sets up the number and size of clouds and of players. Finally, adds
      * the Players to the TurnManager.
      * @param gameConfig the game configuration object, created by the GameFactory
-     * @param teamComposition the nickname and tower color that every player chose during match setup
      */
-    public Game(GameConfig gameConfig, Map<String, TowerColor> teamComposition) {
+    public Game(GameConfig gameConfig) {
         lastRound = false;
+        this.gameConfig = gameConfig;
         archipelago.initialStudentPlacement(bag.drawN(10));
         bag.fillRemaining();
         gameConfig.getPlayerConfig().setBag(bag);
 
         for (int i = 0; i < gameConfig.getNumOfClouds(); i++)
             clouds.add(new CloudTile(gameConfig.getCloudSize(), bag));
-
-        players = teamManager.create(gameConfig, teamComposition);
-        for(Player player : players)
-            turnManager.addPlayerClockwise(player);
     }
 
     /**
@@ -88,6 +87,23 @@ public class Game {
         }
         if (playerToReturn == null) throw new NoSuchElementException("Player not found");
         return playerToReturn;
+    }
+
+    /**
+     * Creates a new player in the current game.
+     * @param nickname Nickname of the player. Assumed unique.
+     * @param towerColor The team chosen by the player.
+     * @throws IllegalArgumentException Thrown when team selected is already full.
+     */
+    public void createPlayer(String nickname, TowerColor towerColor) throws  IllegalArgumentException{
+        int teamSize = gameConfig.getNumOfPlayers() / 2;
+        if(players.getTeam(towerColor).size() == teamSize)
+            throw new IllegalArgumentException("Team "+ towerColor + " is already full");
+        else{
+            boolean isTowerHolder = players.getTowerHolder(towerColor) == null;
+            players.add(new Player(nickname, towerColor,isTowerHolder, gameConfig.getPlayerConfig()));
+            turnManager.addPlayerClockwise(players.getByNickname(nickname));
+        }
     }
 
     /**

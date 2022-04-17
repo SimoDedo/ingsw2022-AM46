@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel;
 
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
@@ -7,6 +8,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
+import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +29,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class GameTest {
 
+    @Test
+    void playerTest(){
+        GameFactory gameFactory = new GameFactory();
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        assertThrows(IllegalArgumentException.class, () -> game.createPlayer("Pirovano", TowerColor.BLACK));
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
+    }
+
     /**
      * Tests that wizards are correctly assigned.
      * Creates a mock game situation and assigns each Player a wizard as if they were selected.
@@ -34,12 +47,11 @@ class GameTest {
     @Test
     void assignWizard() {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -52,14 +64,6 @@ class GameTest {
                 "Player 'Greg' should be assigned Witch mage type");
     }
 
-    @Test
-    void determineFirstRoundOrder() {//Tested with TurnManager
-    }
-
-    @Test
-    void getCurrentPlayer() {//Just a getter
-    }
-
     /**
      * Test that user can only play the right assistant, and that it is correctly placed in the cards played.
      * First we test that players can't use same assistant, then we test that they can't play
@@ -68,12 +72,11 @@ class GameTest {
     @RepeatedTest(10)
     void playAssistant() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -105,12 +108,11 @@ class GameTest {
     @Test
     void playAssistantDesperate() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -143,12 +145,11 @@ class GameTest {
     @Test
     void moveStudentFromEntranceToDN() {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         int studentToMove = game.getEntranceStudentsIDs("Simo").keySet().stream().toList().get(0); //Gets random student in entrance
         Color color = game.getEntranceStudentsIDs("Simo").get(studentToMove);   //Gets the student color, to know which table to move it to
@@ -169,12 +170,11 @@ class GameTest {
     @Test
     void moveStudentFromEntranceToIslandTIle() {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         int studentToMove = game.getEntranceStudentsIDs("Simo").keySet().stream().toList().get(0);
         int island = game.getIslandTilesIDs().get(0).get(0); //Gets first IslandTile of first IslandGroup
@@ -197,12 +197,11 @@ class GameTest {
     @RepeatedTest(10)
     void checkAndMoveProfessor() {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         int studentToMove = game.getEntranceStudentsIDs("Simo").keySet().stream().toList().get(0);
         Color color = game.getEntranceStudentsIDs("Simo").get(studentToMove);
@@ -233,12 +232,11 @@ class GameTest {
     @RepeatedTest(10)
     void moveMotherNature() throws LastRoundException, GameOverException, InvalidObjectException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.playAssistant("Simo", 10);
@@ -266,12 +264,11 @@ class GameTest {
     @RepeatedTest(10)
     void resolveIslandGroup() throws GameOverException, InvalidObjectException, LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.playAssistant("Simo", 10);
@@ -301,12 +298,11 @@ class GameTest {
     @RepeatedTest(10)
     void takeFromCloud() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         for (int i = 0; i < 3; i++) {
             Map.Entry<Integer, Color> studentToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream().toList().get(0);
@@ -333,12 +329,11 @@ class GameTest {
     @RepeatedTest(10)
     void determinePlanningOrder() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -371,12 +366,11 @@ class GameTest {
     @RepeatedTest(10)
     void determineActionOrder() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -404,12 +398,11 @@ class GameTest {
     @Test
     void pushThisRoundInLastRound() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.assignWizard("Simo", WizardType.MAGE);
         game.assignWizard("Greg", WizardType.WITCH);
@@ -434,12 +427,11 @@ class GameTest {
     @RepeatedTest(10)
     void disableClouds() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.refillClouds();
         game.disableClouds();
@@ -458,12 +450,11 @@ class GameTest {
     @Test
     void determineWinnerNoMoreTowers() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         for (int i = 0; i < 12; i++) {
                 game.archipelago.placeStudent(new Student(Color.RED, null),
@@ -492,11 +483,10 @@ class GameTest {
     @Test
     void determineWinnerThreeIslands() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.WHITE);
-        teamConfiguration.put("Pietro", TowerColor.GREY);
-        Game game = gameFactory.create(3, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(3, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.WHITE);
+        game.createPlayer("Pietro", TowerColor.GREY);
 
         for (int i = 0; i < 5; i++){
             game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(i).get(0));
@@ -544,12 +534,11 @@ class GameTest {
     @Test
     void determineWinnerNoCards() throws GameOverException, LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(0).get(0));
         game.archipelago.placeStudent(new Student(Color.PINK, null), game.getIslandTilesIDs().get(0).get(0));
@@ -580,15 +569,14 @@ class GameTest {
      * When endOfRoundOperation is called at the end of the round, since it was notified to be the last, we expect
      * a GameOverException to be thrown. In this simple scenario the winner will be the black team.
      */
-    @RepeatedTest(50)
+    @RepeatedTest(20)
     void determineWinnerNoStudents() throws GameOverException, LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(0).get(0));
         game.professorSet.setOwner(Color.RED, game.players.getByNickname("Simo"));
@@ -622,12 +610,11 @@ class GameTest {
     @Test
     void determineWinnerTowerTie() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        Game game = gameFactory.create(4, GameMode.NORMAL, teamConfiguration);
+        Game game = gameFactory.create(4, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
 
         game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(0).get(0));
         game.archipelago.placeStudent(new Student(Color.BLUE, null), game.getIslandTilesIDs().get(0).get(0));
