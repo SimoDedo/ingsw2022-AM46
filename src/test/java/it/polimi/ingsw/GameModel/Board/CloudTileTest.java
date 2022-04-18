@@ -14,18 +14,18 @@ import java.util.List;
 public class CloudTileTest{
 
     /**
-     * Test that clouds gets fully filled
+     * Test that clouds gets filled to expected value
      */
     @Test
     public void fill() {
         try {
             CloudTile cloudTile = new CloudTile(4, new Bag());
             cloudTile.fill();
-            assertEquals(4, cloudTile.pawnCount());
+            assertEquals(4, cloudTile.pawnCount(), "unexpected number of students in cloud after filling");
             CloudTile cloudTile1 = new CloudTile(3, new Bag());
             cloudTile1.fill();
-            assertEquals(3, cloudTile1.pawnCount());
-        }catch (LastRoundException ignored) {}
+            assertEquals(3, cloudTile1.pawnCount(), "unexpected number of students in cloud after filling");
+        } catch (LastRoundException ignored) {}
     }
 
     /**
@@ -37,12 +37,17 @@ public class CloudTileTest{
             CloudTile cloudTile = new CloudTile(4, new Bag());
             cloudTile.fill();
             List<Student> students = cloudTile.removeAll();
-            assertTrue(cloudTile.pawnCount() == 0 && students.size() == 4 && students.get(0).getStudentContainer() == null);
+            assertEquals(cloudTile.pawnCount(), 0, "students left in cloud after removeAll()");
+            assertEquals(students.size(), 4, "unexpected number of students removed from cloud");
+            for(Student s : students){
+                assertNull(s.getStudentContainer(), "removed student still thinks he is in a cloud");
+            }
             CloudTile cloudTile1 = new CloudTile(3, new Bag());
             cloudTile1.fill();
             students = cloudTile1.removeAll();
-            assertTrue(cloudTile1.pawnCount() == 0 && students.size() == 3);
-            assertNull(cloudTile1.removeAll());
+            assertEquals(cloudTile1.pawnCount(), 0, "students left in cloud after removeAll()");
+            assertEquals(students.size(), 3, "unexpected number of students removed from cloud");
+            assertNull(cloudTile1.removeAll(), "students were removed from empty cloud");
         } catch (LastRoundException ignored) {}
 
     }

@@ -48,7 +48,7 @@ public class DiningRoom {
      * @throws FullTableException if the table of the same color of the student is full
      * @throws IllegalArgumentException if the student is already in a table, and the table is not full
      */
-    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException {
+    public void placeStudent(Student student) throws FullTableException {
         for(Color c : Color.values()){
             if(student.getColor() == c) getTable(c).placeStudent(student);
         }
@@ -70,6 +70,7 @@ public class DiningRoom {
 
     public Student removeStudentByID (int ID) throws NoSuchElementException {
         Student student = getStudentByID(ID);
+        getTable(student.getColor()).removePawn(student);
         student.setStudentContainer(null);
         return student;
     }

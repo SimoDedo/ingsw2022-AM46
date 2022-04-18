@@ -91,7 +91,6 @@ public class Player {
 
     /**
      * @return a tower taken from the playerBoard's tower space
-     * @throws GameOverException if the last tower is taken
      */
     public Tower takeTower(){ return playerBoard.takeTower(); }
 
@@ -182,12 +181,12 @@ public class Player {
      * @param student the student to place on the dining room
      */
     public void addToDR(Student student) throws FullTableException {
-        playerBoard.getTable(student.getColor()).placeStudent(student);
+        playerBoard.addToDiningRoom(student);
     }
 
     /**
      * Method that removes three students of a given color from the player's dining room. It is only
-     * called by Characeter 12.
+     * called by Character 12.
      *
      * @param color the color of the three students to remove from the dining room
      * @return the
@@ -195,8 +194,9 @@ public class Player {
     public List<Student> removeNFromDR(int numberToRemove, Color color) {
         List<Student> removedStudents = new ArrayList<>();
         for (int i = 0; i < numberToRemove; i++) {
-            try { removedStudents.add(playerBoard.getTable(color).removePawn()); }
-            catch (IndexOutOfBoundsException ioobe) { break; }
+            Student toRemove = playerBoard.getTable(color).removePawn();
+            if(toRemove == null){ break; }
+            removedStudents.add(toRemove);
         }
         return removedStudents;
     }

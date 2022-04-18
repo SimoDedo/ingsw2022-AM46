@@ -1,11 +1,15 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TowerSpaceTest {
 
+
+    /**
+     * Verifies that the takeTower and getTowersPlaced methods work as expected
+     */
     @Test
     public void takeTowerTest(){
         Player p0 = new Player();
@@ -13,7 +17,7 @@ public class TowerSpaceTest {
         ts.takeTower();
         ts.takeTower();
         ts.takeTower();
-        assert(ts.getTowersPlaced() == 3);
+        assertEquals(ts.getTowersPlaced(),3, "wrong number of towers in container");
 
     }
 }

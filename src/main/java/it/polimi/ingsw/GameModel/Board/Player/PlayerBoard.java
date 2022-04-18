@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.HashMap;
@@ -37,12 +38,10 @@ public class PlayerBoard {
      * @throws NoSuchElementException if no student with this ID is found
      */
     public Student getStudentByID(int ID) throws NoSuchElementException {
-        Student student;
-        try {
-            student = entrance.getPawnByID(ID);
-        } catch (NoSuchElementException e) {
-            student = diningRoom.getStudentByID(ID);
-        }
+        Student student = entrance.getPawnByID(ID);;
+
+        if(student == null){ student = diningRoom.getStudentByID(ID); }
+
         return student;
     }
 
@@ -56,7 +55,6 @@ public class PlayerBoard {
 
     /**
      * @return a tower from the towerSpace
-     * @throws GameOverException if the tower was the last
      */
     public Tower takeTower(){
         return towerSpace.takeTower();
@@ -75,8 +73,10 @@ public class PlayerBoard {
      * @param studentID of the student to return
      * @return student of specified ID
      */
-    public Student getStudentFromEntrance(int studentID) {
-        return entrance.getPawnByID(studentID);
+    public Student getStudentFromEntrance(int studentID) throws NoSuchElementException{
+        Student student = entrance.getPawnByID(studentID);
+        if(student == null){ throw new NoSuchElementException();}
+        return student;
     }
 
 
@@ -106,6 +106,14 @@ public class PlayerBoard {
      */
     public void addToEntrance(Student student) {
         entrance.placePawn(student);
+    }
+
+    /**
+     * @param student to add to the dining room (in the corresponding table)
+     * @throws FullTableException if the table of the same color is full
+     */
+    public void addToDiningRoom(Student student) throws FullTableException {
+        diningRoom.placeStudent(student);
     }
 
     /**

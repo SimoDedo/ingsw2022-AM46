@@ -32,9 +32,9 @@ class ProfessorSetTest {
         Player player2 = new Player("caio", TowerColor.BLACK, true, playerConfig);
         professorSet.setOwner(Color.RED, player1);
         professorSet.setOwner(Color.PINK, player2);
-        assertEquals(professorSet.getProfessor(Color.RED).getOwner(), player1);
-        assertEquals(professorSet.getProfessor(Color.PINK).getOwner(), player2);
-        assertNull(professorSet.getProfessor(Color.GREEN).getOwner());
+        assertEquals(professorSet.getProfessor(Color.RED).getOwner(), player1, "professor has not been assigned properly to the player");
+        assertEquals(professorSet.getProfessor(Color.PINK).getOwner(), player2, "professor has not been assigned properly to the player");
+        assertNull(professorSet.getProfessor(Color.GREEN).getOwner(), "unassigned professor has an owner");
     }
 
     /**
@@ -59,6 +59,7 @@ class ProfessorSetTest {
         professorSet.setOwner(Color.BLUE, players.getTeam(TowerColor.BLACK).get(1));
         professorSet.setOwner(Color.GREEN, players.getTeam(TowerColor.WHITE).get(1));
         professorSet.setOwner(Color.YELLOW, players.getTeam(TowerColor.WHITE).get(0));
-        assertTrue(professorSet.getNumberOfProfessors(TowerColor.BLACK) == 3 && professorSet.getNumberOfProfessors(TowerColor.WHITE) == 2);
+        assertEquals(professorSet.getNumberOfProfessors(TowerColor.BLACK),3, "unexpected number of professors owned by black team");
+        assertEquals(professorSet.getNumberOfProfessors(TowerColor.WHITE),2, "unexpected number of professors owned by white team");
     }
 }

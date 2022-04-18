@@ -30,10 +30,15 @@ public class Table extends StudentContainer {
      * @throws FullTableException if the table cannot accept any more students
      * @throws IllegalArgumentException if the color of the student is not correct for the table (should never happen)
      */
-    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException {
-        if(student.getColor() != getColor()){throw new IllegalArgumentException();}
-        if((pawnCount() == 2 && !firstCoin) || (pawnCount() == 5 && !secondCoin) ||
-                (pawnCount() == 8 && thirdCoin)){ getOwner().awardCoin(); }
+    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException{
+        switch(pawnCount()){
+            case 2:
+                if(!firstCoin){ firstCoin = true; getOwner().awardCoin(); } break;
+            case 5:
+                if(!secondCoin){ secondCoin = true; getOwner().awardCoin(); } break;
+            case 8:
+                if(!thirdCoin){ thirdCoin = true; getOwner().awardCoin(); } break;
+        }
         if(pawnCount() == 10){ throw new FullTableException(); }
         placePawn(student);
     }

@@ -14,7 +14,7 @@ class TowerContainerTest {
     void placePawn() {
         TowerSpace towerSpace = new TowerSpace(null, 8, TowerColor.BLACK);
         Tower tower = new Tower(TowerColor.BLACK, null);
-        assertThrows(IllegalArgumentException.class, () ->towerSpace.placePawn(tower));
+        assertThrows(IllegalArgumentException.class, () -> towerSpace.placePawn(tower), "tower was added even if container was full");
     }
 
     /**
