@@ -15,17 +15,16 @@ import java.util.Map;
  */
 public class ResolveStrategyC8 implements ResolveStrategy {
 
+    public ResolveStrategyC8(Player activator){
+        this.activatingPlayer = activator;
+    }
     /**
      * The player who activated the card this turn and will have the 2 bonus points
      */
     private Player activatingPlayer = null;
 
-    /**
-     * Setter for the activating player
-     * @param player The activating player
-     */
-    public void setActivatingPlayer(Player player){
-        activatingPlayer = player;
+    public String getActivatingPlayer(){
+        return activatingPlayer == null ? null : activatingPlayer.getNickname();
     }
 
     /**

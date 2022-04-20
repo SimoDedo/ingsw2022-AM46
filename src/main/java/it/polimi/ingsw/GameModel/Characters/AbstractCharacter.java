@@ -13,7 +13,7 @@ public abstract class AbstractCharacter implements Character {
 
     private int ID, cost;
 
-    private boolean isFirstUse, wasUsedThisTurn;
+    private boolean isFirstUse, wasUsedThisTurn, abilityUsed;
 
     private List<RequestParameter> requestParameters;
 
@@ -24,6 +24,7 @@ public abstract class AbstractCharacter implements Character {
         this.cost = cost;
         this.isFirstUse = true;
         this.wasUsedThisTurn = false;
+        this.abilityUsed = false;
         this.requestParameters = requestParameters;
     }
 
@@ -55,7 +56,11 @@ public abstract class AbstractCharacter implements Character {
      * @param parameterList the list of the consumer's parameters
      */
     public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException {
-        consumer.accept(parameterList);
+        if(!abilityUsed){
+            consumer.accept(parameterList);
+            abilityUsed = true;
+        }
+        else throw  new IllegalStateException("Character ability already used this turn");
     }
 
     /**
@@ -95,6 +100,7 @@ public abstract class AbstractCharacter implements Character {
      */
     public void resetUseState() {
         wasUsedThisTurn = false;
+        abilityUsed = false;
         owner = null;
     }
 

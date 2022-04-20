@@ -2,6 +2,9 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
 
+/**
+ * Class that models presence of NoEntryTiles on an IslandGroup.
+ */
 public class NoEntryTilesSpace {
 
     private NoEntryCharacter noEntryCharacter;
@@ -11,6 +14,10 @@ public class NoEntryTilesSpace {
     public NoEntryTilesSpace(NoEntryCharacter noEntryCharacter) {
         this.noEntryCharacter = noEntryCharacter;
         noEntryTiles = 0;
+    }
+
+    public int getNoEntryTileNumber(){
+        return noEntryTiles;
     }
 
     public boolean hasNoEntryTiles() {

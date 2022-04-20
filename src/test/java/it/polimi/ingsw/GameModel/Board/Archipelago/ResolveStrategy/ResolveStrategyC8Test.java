@@ -31,7 +31,6 @@ class ResolveStrategyC8Test {
      */
     @Test
     void resolveIslandGroup() throws GameOverException {
-        ResolveStrategyC8 resolveStrategyC8 = new ResolveStrategyC8();
         IslandGroup islandGroup = new IslandGroup(true);
         IslandTile islandTileToAdd = new IslandTile(null, false, null);
         islandTileToAdd.placePawn(new Student(Color.RED, null));
@@ -57,7 +56,7 @@ class ResolveStrategyC8Test {
 
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
 
-        resolveStrategyC8.setActivatingPlayer(players.getTowerHolder(TowerColor.BLACK));
+        ResolveStrategyC8 resolveStrategyC8 = new ResolveStrategyC8(players.getTowerHolder(TowerColor.BLACK));
         assertEquals(resolveStrategyC8.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
     }
 }

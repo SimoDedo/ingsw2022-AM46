@@ -1,9 +1,15 @@
 package it.polimi.ingsw.GameModel;
 
+import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyC4;
+import it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyStandard;
+import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard;
+import it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.List;
 
@@ -64,5 +70,25 @@ public class GameExpert extends Game {
      */
     public void useAbility(List<Integer> parameterList) {
         characterManager.useAbility(parameterList);
+    }
+
+    /**
+     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
+     * Determining the winner if this is the last round to be played
+     * Resetting the character used this round
+     * Resetting the strategies
+     * Changing the Phase (????????)
+     */
+    @Override
+    public void endOfRoundOperations() throws GameOverException {
+        super.endOfRoundOperations();
+        characterManager.resetActiveCharacter();
+        if(!(archipelago.getResolveStrategy() instanceof ResolveStrategyStandard))
+            archipelago.setResolveStrategy(new ResolveStrategyStandard());
+        if(!(archipelago.getMoveMotherNatureStrategy() instanceof  MoveMotherNatureStrategyStandard))
+            archipelago.setMotherNatureStrategy(new MoveMotherNatureStrategyStandard());
+        if(!(professorSet.getCheckAndMoveProfessorStrategy() instanceof CheckAndMoveProfessorStrategyStandard))
+            professorSet.setCheckAndMoveProfessorStrategy(new CheckAndMoveProfessorStrategyStandard());
+        return;
     }
 }

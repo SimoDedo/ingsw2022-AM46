@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.PlayerList;
 
+
 import java.util.*;
 
 /**
@@ -41,7 +42,7 @@ public class CharacterManager {
         for (int i = 0; i < 12; i++) {
             characters.add(null);
         }
-        for (int charID : IDs) createCharacter(charID);
+        for (int charID : IDs) createCharacter(charID, bag);
     }
 
     /**
@@ -63,8 +64,8 @@ public class CharacterManager {
      * Method that initializes a character with the given ID and puts it inside the character list.
      * @param ID the ID of the character to create
      */
-    public void createCharacter(int ID) { // is only public for testing purposes
-        characters.set(ID - 1, charFactory.create(ID));
+    public void createCharacter(int ID, Bag bag) { // is only public for testing purposes
+        characters.set(ID - 1, charFactory.create(ID, bag));
     }
 
     /**
@@ -75,11 +76,12 @@ public class CharacterManager {
      * @param ID the ID of the character to use
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player player, int ID) throws IllegalStateException {
+    public List<RequestParameter> useCharacter(Player player, int ID) throws IllegalStateException, IllegalArgumentException {
         for(Character character : characters) {
             if (character != null && character.wasUsedThisTurn())
                 throw new IllegalStateException("You can only use a character at a time");
         }
+        player.takeCoins(characters.get(ID - 1).getCost());
         currentCharacter = characters.get(ID - 1);
         return currentCharacter.useCharacter(player);
     }

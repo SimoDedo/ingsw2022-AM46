@@ -2,9 +2,11 @@ package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.BoardElements.PlaceAndRemoveStudent;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
@@ -37,7 +39,7 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
     @Override
     public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException {
         if (usesLeft > 0) {
-            super.useAbility(consumer, parameterList);
+            consumer.accept(parameterList);
             usesLeft--;
         } else throw new IllegalStateException("Character uses depleted");
     }
@@ -60,7 +62,7 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
         if(students.size() == maxPawns) throw new IllegalArgumentException("The container is full");
         if (students.contains(student)) throw new IllegalArgumentException("The student is already on this card");
         students.add(student);
-        // student.setStudentContainer(this) not viable
+        student.setStudentContainer(this);
     }
 
     /**
@@ -70,8 +72,8 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
      */
     @Override
     public boolean removePawn(Student studentToRemove) {
+        studentToRemove.setStudentContainer(null);
         return students.remove(studentToRemove);
-        // student.setStudentContainer(null) not viable, container is already null
     }
 
     @Override
@@ -111,5 +113,29 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
      */
     public int getSize() {
         return students.size();
+    }
+
+    /**
+     * Getter for a list of IDs of pawns contained in the PawnContainer
+     * @return A new list of Integers containing the IDs
+     */
+    public List<Integer> getPawnIDs() {
+        List<Integer> IDs = new ArrayList<>();
+        for(Student student : students){
+            IDs.add(student.getID());
+        }
+        return IDs;
+    }
+
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getStudentIDsAndColor(){
+        HashMap<Integer, Color> result = new HashMap<>();
+        for(Student student : students){
+            result.put(student.getID(), student.getColor());
+        }
+        return result;
     }
 }

@@ -24,7 +24,7 @@ public class IslandGroup {
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<>();
-        this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
+        this.islandTiles.add(new IslandTile(null, isStarting, this));
     }
 
     public boolean hasMotherNature(){
@@ -177,6 +177,14 @@ public class IslandGroup {
 
     public List<IslandTile> getIslandTiles() {
         return islandTiles;
+    }
+
+    /**
+     * Returns the number of no entry tiles on the IslandGroup
+     * @return The number of no entry tiles on the IslandGroup
+     */
+    public int getNoEntryTileNumber(){
+        return noEntryTilesSpace == null? 0 : noEntryTilesSpace.getNoEntryTileNumber();
     }
 
     /**

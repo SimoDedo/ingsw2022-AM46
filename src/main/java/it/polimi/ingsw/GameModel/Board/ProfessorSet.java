@@ -78,6 +78,14 @@ public class ProfessorSet {
     }
 
     /**
+     * Getter for the checkAndMoveProfessor strategy.
+     * @return the checkAndMoveProfessor strategy.
+     */
+    public CheckAndMoveProfessorStrategy getCheckAndMoveProfessorStrategy() {
+        return checkAndMoveProfessorStrategy;
+    }
+
+    /**
      * Setter for the checkAndMoveProfessor strategy.
      * @param checkAndMoveProfessorStrategy the strategy to set as current
      */

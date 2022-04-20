@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Characters.CharacterFactory;
 import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
@@ -12,19 +13,19 @@ class NoEntryCharacterTest {
     @Test
     void useCharacter() {
         CharacterFactory factory = new CharacterFactory();
-        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5);
+        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
     }
 
     @Test
     void useAbility() {
         CharacterFactory factory = new CharacterFactory();
-        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5);
+        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
     }
 
     @Test
     void noEntryTilesTest() {
         CharacterFactory factory = new CharacterFactory();
-        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5);
+        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
         assertEquals(4, char5.getNoEntryTiles());
         char5.removeNoEntryTile();
         assertEquals(3, char5.getNoEntryTiles());
@@ -44,7 +45,7 @@ class NoEntryCharacterTest {
     @Test
     void resetUseState() {
         CharacterFactory factory = new CharacterFactory();
-        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5);
+        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
         char5.removeNoEntryTile();
         char5.useCharacter(new Player());
         char5.resetUseState();

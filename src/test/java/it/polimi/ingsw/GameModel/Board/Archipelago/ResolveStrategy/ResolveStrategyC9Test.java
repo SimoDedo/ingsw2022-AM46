@@ -29,7 +29,6 @@ class ResolveStrategyC9Test {
      */
     @Test
     void resolveIslandGroup() {
-        ResolveStrategyC9 resolveStrategyC9 = new ResolveStrategyC9();
         IslandGroup islandGroup = new IslandGroup(true);
         IslandTile islandTileToAdd = new IslandTile(null, false, null);
         islandTileToAdd.placePawn(new Student(Color.PINK, null));
@@ -55,7 +54,7 @@ class ResolveStrategyC9Test {
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
-        resolveStrategyC9.setColorToIgnore(Color.RED);
+        ResolveStrategyC9 resolveStrategyC9 = new ResolveStrategyC9(Color.RED);
         assertEquals(resolveStrategyC9.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
     }
 }

@@ -18,6 +18,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
@@ -32,7 +33,7 @@ public class ConsumerSet {
     public ConsumerSet(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet,
                        List<AbstractCharacter> characters) {
 
-        //todo: add exception handling maybe?
+        //todo: add exception handling maybe? Needed LastRoundException on C1 and C11 if last student drawn
 
         consumers.add((list) -> { // C1
             StudentMoverCharacter char1 = (StudentMoverCharacter) characters.get(0);
@@ -73,18 +74,21 @@ public class ConsumerSet {
             Player activator = char7.getOwner();
 
             Student studentFromCharacter = char7.removePawnByID(list.get(0));
-            activator.addToEntrance(studentFromCharacter);
-
             Student studentFromEntrance = activator.removeStudentByID(list.get(1));
+
+            activator.addToEntrance(studentFromCharacter);
             char7.placePawn(studentFromEntrance);
         });
 
         consumers.add((list) -> { // C8
-            archipelago.setResolveStrategy(new ResolveStrategyC8());
+            Player activator = ((StrategyCharacter) characters.get(7)).getOwner();
+            archipelago.setResolveStrategy(new ResolveStrategyC8(activator));
         });
 
         consumers.add((list) -> { // C9
-            archipelago.setResolveStrategy(new ResolveStrategyC9());
+            int colorID = list.get(0);
+            Color color = Arrays.stream(Color.values()).toList().get(colorID);
+            archipelago.setResolveStrategy(new ResolveStrategyC9(color));
         });
 
         consumers.add((list) -> { // C10
@@ -126,14 +130,7 @@ public class ConsumerSet {
         consumers.add((list) -> { // C12
             Color color;
             List<Student> removedStudents = new ArrayList<>();
-            color = switch (list.get(0)) {
-                case 0 -> Color.YELLOW;
-                case 1 -> Color.BLUE;
-                case 2 -> Color.GREEN;
-                case 3 -> Color.RED;
-                case 4 -> Color.PINK;
-                default -> throw new IllegalArgumentException("Invalid color");
-            };
+            color = Arrays.stream(Color.values()).toList().get(list.get(0));
             for (Player player : playerList) {
                 removedStudents.addAll(player.removeNFromDR(3, color));
             }

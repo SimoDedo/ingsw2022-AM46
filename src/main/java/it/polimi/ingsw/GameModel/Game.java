@@ -181,7 +181,7 @@ public class Game {
      */
     public void moveStudentFromEntrance(String nickname, int studentID, int containerID) {
         Player player = getPlayerByNickname(nickname);
-        Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present, and to be tested
+        Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present? to be tested if added
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID) potentialTable.moveStudent(student);
         else {
@@ -225,7 +225,7 @@ public class Game {
             // to avoid long exception chain, exception is thrown in resolve of archipelago.
             // Tower space no longer throws exception, just returns null -> this is because exception was thrown
             // not when last tower was taken, but when the next tower was requested. Now method completes and then
-            // it's checked if game is over.
+            // it's then checked if game is over.
     }
 
     /**
@@ -314,13 +314,13 @@ public class Game {
     /**
      * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
      * Determining the winner if this is the last round to be played
-     * Changing the Phase
+     * Changing the Phase (?????)
      */
-    public TowerColor endOfRoundOperations() throws GameOverException {
+    public void endOfRoundOperations() throws GameOverException {
         if(lastRound)
             throw new GameOverException();
         else {
-            return null; // the game can continue
+            return; // the game can continue
         }
     }
 
