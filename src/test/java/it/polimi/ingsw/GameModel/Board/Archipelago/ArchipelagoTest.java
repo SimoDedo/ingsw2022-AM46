@@ -38,7 +38,7 @@ class ArchipelagoTest {
         int idxOppositeMN = archipelago.getIslandTilesIDs().get(idxIGOppositeMN).get(0);
         Bag bag = new Bag();
         int randCheckIG = idxIGMN;
-        Random random = new Random(89);
+        Random random = new Random(System.currentTimeMillis());
         while (randCheckIG == idxIGMN || randCheckIG == idxIGOppositeMN){
             randCheckIG = random.nextInt(12);
         }
@@ -80,7 +80,7 @@ class ArchipelagoTest {
         assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getNumOfIslandGroups() == 12);
         archipelago.resolveIslandGroup(0, players,professorSet);
         assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
-        Random random = new Random(89);
+        Random random = new Random(System.currentTimeMillis());
         assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)));
     }
 

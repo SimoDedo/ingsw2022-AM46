@@ -8,20 +8,24 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for NoEntryCharacter specific functions
+ */
 class NoEntryCharacterTest {
 
+    /**
+     * Tests character creation of a NoEntryCharacter
+     */
     @Test
     void useCharacter() {
         CharacterFactory factory = new CharacterFactory();
         NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
     }
 
-    @Test
-    void useAbility() {
-        CharacterFactory factory = new CharacterFactory();
-        NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
-    }
 
+    /**
+     * Tests functionality of no entry tiles, ensuring their numbering is correct and consistent
+     */
     @Test
     void noEntryTilesTest() {
         CharacterFactory factory = new CharacterFactory();
@@ -42,6 +46,9 @@ class NoEntryCharacterTest {
         }
     }
 
+    /**
+     * Tests that resetting the useState correctly lets the character be used again
+     */
     @Test
     void resetUseState() {
         CharacterFactory factory = new CharacterFactory();

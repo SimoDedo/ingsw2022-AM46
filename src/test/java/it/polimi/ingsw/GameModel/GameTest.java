@@ -6,6 +6,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
@@ -143,7 +144,7 @@ class GameTest {
      * Tests that with correct input a Student is successfully moved from the Entrance to the Table.
      */
     @Test
-    void moveStudentFromEntranceToDN() {
+    void moveStudentFromEntranceToDN() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -168,7 +169,7 @@ class GameTest {
      * Tests that with correct input a Student is successfully moved from the Entrance to the IslandTile.
      */
     @Test
-    void moveStudentFromEntranceToIslandTIle() {
+    void moveStudentFromEntranceToIslandTIle() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -195,7 +196,7 @@ class GameTest {
      * Otherwise, since it would be a tie, the professor shouldn't change ownership.
      */
     @RepeatedTest(10)
-    void checkAndMoveProfessor() {
+    void checkAndMoveProfessor() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -262,7 +263,7 @@ class GameTest {
      * Then MN is moved to the next IslandGroup, which will be resolved and hold Towers
      */
     @RepeatedTest(10)
-    void resolveIslandGroup() throws GameOverException, InvalidObjectException, LastRoundException {
+    void resolveIslandGroup() throws GameOverException, InvalidObjectException, LastRoundException, FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -296,7 +297,7 @@ class GameTest {
      * Tests that, once 3 students were moved from the entrance, the player is able to take students from a Cloud.
      */
     @RepeatedTest(10)
-    void takeFromCloud() throws LastRoundException {
+    void takeFromCloud() throws LastRoundException, FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);

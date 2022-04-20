@@ -2,6 +2,8 @@ package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -55,7 +57,7 @@ public abstract class AbstractCharacter implements Character {
      * @param consumer the Consumer that acts on the GameModel
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException {
+    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
         if(!abilityUsed){
             consumer.accept(parameterList);
             abilityUsed = true;

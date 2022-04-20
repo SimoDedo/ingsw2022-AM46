@@ -11,6 +11,7 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
@@ -179,11 +180,14 @@ public class Game {
      * @param studentID the ID of the entrance student to move
      * @param containerID the ID of the student container which will host the student
      */
-    public void moveStudentFromEntrance(String nickname, int studentID, int containerID) {
+    public void moveStudentFromEntrance(String nickname, int studentID, int containerID) throws FullTableException {
         Player player = getPlayerByNickname(nickname);
         Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present? to be tested if added
         Table potentialTable = player.getTable(student.getColor());
-        if (potentialTable.getID() == containerID) potentialTable.moveStudent(student);
+        if (potentialTable.getID() == containerID){
+            student.getStudentContainer().removePawn(student);
+            potentialTable.placeStudent(student);
+        }
         else {
             archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
         }

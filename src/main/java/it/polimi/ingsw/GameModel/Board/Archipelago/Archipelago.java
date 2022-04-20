@@ -57,7 +57,7 @@ public class Archipelago {
      * @return A random int between 0 and 11
      */
     private int selectStartingIsland(){
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         return random.nextInt(12);
     }
 

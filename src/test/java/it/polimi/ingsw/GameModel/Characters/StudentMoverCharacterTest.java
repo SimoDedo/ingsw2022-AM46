@@ -11,8 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests specific functions of StudentMoverCharacters
+ */
 class StudentMoverCharacterTest {
 
+    /**
+     * Ensures that uses are correctly kept track of
+     */
     @Test
     void testUseAbility() {
         CharacterFactory factory = new CharacterFactory();
@@ -23,6 +29,9 @@ class StudentMoverCharacterTest {
         assertEquals(char7.getUsesLeft(), 2);
     }
 
+    /**
+     * Tests that uses are correctly reset when needed, along with useState
+     */
     @Test
     void testResetUseState() {
         CharacterFactory factory = new CharacterFactory();
@@ -34,6 +43,9 @@ class StudentMoverCharacterTest {
         assertEquals(char7.getUsesLeft(), 3);
     }
 
+    /**
+     * Tests that placePawn correctly places student inside the card
+     */
     @Test
     void placePawn() {
         CharacterFactory factory = new CharacterFactory();
@@ -44,6 +56,9 @@ class StudentMoverCharacterTest {
         assertEquals(6, char7.getSize());
     }
 
+    /**
+     * Tests that removePawn correctly removes the student from inside the card
+     */
     @Test
     void removePawn() {
         CharacterFactory factory = new CharacterFactory();
@@ -55,6 +70,9 @@ class StudentMoverCharacterTest {
         assertEquals(5, char7.getSize());
     }
 
+    /**
+     * Tests that placePawn correctly places student inside the card given its ID
+     */
     @Test
     void removePawnByID() {
         CharacterFactory factory = new CharacterFactory();
@@ -64,6 +82,9 @@ class StudentMoverCharacterTest {
         assertEquals(5, char7.getSize());
     }
 
+    /**
+     * Tests that removePawn correctly removes the student from inside the card given its ID
+     */
     @Test
     void getPawnByID() {
         CharacterFactory factory = new CharacterFactory();

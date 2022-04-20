@@ -184,7 +184,7 @@ public class IslandGroup {
      * @return The number of no entry tiles on the IslandGroup
      */
     public int getNoEntryTileNumber(){
-        return noEntryTilesSpace == null? 0 : noEntryTilesSpace.getNoEntryTileNumber();
+        return noEntryTilesSpace == null? 0 : noEntryTilesSpace.getNoEntryTiles();
     }
 
     /**
@@ -195,6 +195,9 @@ public class IslandGroup {
         noEntryTilesSpace.addNoEntryTile();
     }
 
+    /**
+     * Removes a NoEntryTile from this IslandGroup.
+     */
     public void removeNoEntryTile() {
         if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
             throw new IllegalStateException("There are already zero no-entry tiles on this group");

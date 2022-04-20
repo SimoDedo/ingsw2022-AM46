@@ -112,8 +112,8 @@ public class PlayerBoard {
      * @param student to add to the dining room (in the corresponding table)
      * @throws FullTableException if the table of the same color is full
      */
-    public void addToDiningRoom(Student student) throws FullTableException {
-        diningRoom.placeStudent(student);
+    public boolean addToDiningRoom(Student student) throws FullTableException {
+        return diningRoom.placeStudent(student);
     }
 
     /**

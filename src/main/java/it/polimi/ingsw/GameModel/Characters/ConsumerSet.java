@@ -9,12 +9,14 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrate
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC9;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyC2;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
@@ -31,9 +33,9 @@ public class ConsumerSet {
     private final List<Consumer<List<Integer>>> consumers = new ArrayList<>();
 
     public ConsumerSet(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet,
-                       List<AbstractCharacter> characters) {
+                       List<AbstractCharacter> characters, CoinBag coinBag) {
 
-        //todo: add exception handling maybe? Needed LastRoundException on C1 and C11 if last student drawn
+        //todo: add exception handling maybe? Needed LastRoundException on C1 and C11 if last student drawn and GameOverException on C3(those done and tested)
 
         consumers.add((list) -> { // C1
             StudentMoverCharacter char1 = (StudentMoverCharacter) characters.get(0);
@@ -41,6 +43,8 @@ public class ConsumerSet {
             IslandTile islandTile = archipelago.getIslandTileByID(list.get(1));
             islandTile.moveStudent(student);
             char1.placePawn(bag.draw());
+            if(bag.pawnCount() == 0)
+                throw  new LastRoundException("No more students in bag");
         });
 
         consumers.add((list) -> { // C2
@@ -50,8 +54,7 @@ public class ConsumerSet {
 
         consumers.add((list) -> { // C3
             IslandGroup islandGroup = archipelago.getIslandTileByID(list.get(0)).getIslandGroup();
-            try { archipelago.resolveIslandGroup(islandGroup, playerList, professorSet); }
-            catch (GameOverException e) { e.printStackTrace(); }
+            archipelago.resolveIslandGroup(islandGroup, playerList, professorSet); //throws GameOverException
         });
 
         consumers.add((list) -> { // C4
@@ -98,7 +101,14 @@ public class ConsumerSet {
 
             try { // entrance -> DR
                 studentFromEntrance = activator.removeStudentByID(list.get(0));
-                try { activator.addToDR(studentFromEntrance); }
+                try { //try adding to DR
+                    if(activator.addToDR(studentFromEntrance)){
+                        try{ //Try awarding coin
+                            coinBag.removeCoin();
+                            activator.awardCoin();
+                        }catch ( ArithmeticException e){e.printStackTrace();}
+                    }
+                }
                 catch (FullTableException fte) { fte.printStackTrace(); }
 
                 studentFromDR = activator.removeStudentByID(list.get(1));
@@ -109,7 +119,14 @@ public class ConsumerSet {
                 activator.addToEntrance(studentFromDR);
 
                 studentFromEntrance = activator.removeStudentByID(list.get(1));
-                try { activator.addToDR(studentFromEntrance); }
+                try { //try adding to DR
+                    if(activator.addToDR(studentFromEntrance)){
+                        try{//Try awarding coin
+                            coinBag.removeCoin();
+                            activator.awardCoin();
+                        }catch (ArithmeticException ae){ae.printStackTrace();}
+                    }
+                }
                 catch (FullTableException fte) { fte.printStackTrace(); }
             }
 
@@ -121,10 +138,19 @@ public class ConsumerSet {
             Player activator = char11.getOwner();
 
             Student student = char11.removePawnByID(list.get(0));
-            try { activator.addToDR(student); }
-            catch (FullTableException fte) { fte.printStackTrace(); }
+            try { //try adding to DR
+                if(activator.addToDR(student)){
+                    try{ //try awarding coin
+                        coinBag.removeCoin();
+                        activator.awardCoin();
+                    }catch ( ArithmeticException ae){ae.printStackTrace();}
+                }
+            } catch (FullTableException e) {e.printStackTrace();}
 
+            professorSet.checkAndMoveProfessor(playerList, student.getColor());
             char11.placePawn(bag.draw());
+            if(bag.pawnCount() == 0)
+                throw  new LastRoundException("No more students in bag");
         });
 
         consumers.add((list) -> { // C12

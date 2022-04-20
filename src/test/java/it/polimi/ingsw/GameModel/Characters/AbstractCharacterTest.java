@@ -91,6 +91,9 @@ class AbstractCharacterTest {
         assertSame(placeholder, char7.getOwner(), "Owner should coincide with player who used it");
     }
 
+    /**
+     * Tests that useAbility method correctly uses consumer given
+     */
     @Test
     void useAbility() {
         CharacterFactory factory = new CharacterFactory();

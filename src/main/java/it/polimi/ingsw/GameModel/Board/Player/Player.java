@@ -194,8 +194,8 @@ public class Player {
      *
      * @param student the student to place on the dining room
      */
-    public void addToDR(Student student) throws FullTableException {
-        playerBoard.addToDiningRoom(student);
+    public boolean addToDR(Student student) throws FullTableException {
+        return playerBoard.addToDiningRoom(student);
     }
 
     /**

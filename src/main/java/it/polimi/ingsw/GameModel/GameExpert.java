@@ -6,11 +6,16 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrate
 import it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyStandard;
 import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.GameModel.Board.Player.Table;
+import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,10 +39,35 @@ public class GameExpert extends Game {
     }
 
     /**
+     * Method for moving a student from the player's entrance to the dining room or to an island.
+     * It checks if the student is actually inside the entrance, if the destination is a dining
+     * room table, or if it is an island tile.
+     * Awards coin to player when it has to.
+     * @param nickname the nickname of the entrance's owner
+     * @param studentID the ID of the entrance student to move
+     * @param containerID the ID of the student container which will host the student
+     */
+    @Override
+    public void moveStudentFromEntrance(String nickname, int studentID, int containerID) throws FullTableException {
+        Player player = players.getByNickname(nickname);
+        Student student = player.getStudentFromEntrance(studentID);
+        Table potentialTable = player.getTable(student.getColor());
+        if (potentialTable.getID() == containerID){
+            student.getStudentContainer().removePawn(student);
+            if(potentialTable.placeStudent(student))
+                awardCoin(nickname);
+        }
+        else {
+            archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
+        }
+        checkAndMoveProfessor(players, student.getColor());
+    }
+
+    /**
      * Creates the characterManager (which creates the 3 characters). Called by the controller once all players are connected.
      */
     public void createCharacters(){
-        characterManager = new CharacterManager(archipelago, bag, players, professorSet);
+        characterManager = new CharacterManager(archipelago, bag, players, professorSet, coinBag);
     }
 
     /**
@@ -45,9 +75,24 @@ public class GameExpert extends Game {
      */
     public void distributeInitialCoins(){
         for(Player player : players){
-            coinBag.removeCoin();
-            player.awardCoin();
+            try{
+                coinBag.removeCoin();
+                player.awardCoin();
+            }catch ( ArithmeticException e){
+                e.printStackTrace();
+            }
         }
+    }
+
+    /**
+     * Awards given player with a coin.
+     * @param nickname the player to award the coin to.
+     */
+    private void awardCoin(String nickname){
+        try{
+            coinBag.removeCoin();
+            players.getByNickname(nickname).awardCoin();
+        }catch ( ArithmeticException e){e.printStackTrace();}
     }
 
     /**
@@ -68,7 +113,7 @@ public class GameExpert extends Game {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) {
+    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException{
         characterManager.useAbility(parameterList);
     }
 
@@ -91,4 +136,41 @@ public class GameExpert extends Game {
             professorSet.setCheckAndMoveProfessorStrategy(new CheckAndMoveProfessorStrategyStandard());
         return;
     }
+
+    //region State observer methods
+
+        //region Player
+        /**
+         * method to observe number of coins of a given player.
+         * @param nickname the player to check
+         * @return the number of coins of the given player
+         */
+        public int getCoins(String nickname){
+            return players.getByNickname(nickname).getCoins();
+        }
+        //endregion
+        //region Characters
+        /**
+         * Method to observe which characters were created for this game.
+         * @return a list of the created character IDs.
+         */
+        public List<Integer> getDrawnCharacterIDs(){
+            List<Integer> charactersIDs = new ArrayList<>();
+            for (int i = 1; i < 13; i++)
+                if (characterManager.getCharacterByID(i) != null)
+                    charactersIDs.add(i);
+            return  charactersIDs;
+        }
+
+        /**
+         * Getter for the ActiveCharacter ID.
+         * @return the ActiveCharacter ID.
+         */
+        public int getActiveCharacterID(){
+            return characterManager.getActiveCharacterID();
+        }
+
+        //endregion
+
+    //endregion
 }

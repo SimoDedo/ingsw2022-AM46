@@ -4,6 +4,8 @@ import it.polimi.ingsw.GameModel.BoardElements.PlaceAndRemoveStudent;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
      * @throws IllegalStateException if the character has no uses left
      */
     @Override
-    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException {
+    public void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
         if (usesLeft > 0) {
             consumer.accept(parameterList);
             usesLeft--;
