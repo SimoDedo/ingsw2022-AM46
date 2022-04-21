@@ -34,7 +34,7 @@ class GameFactoryTest {
 
         GameFactory factory = new GameFactory();
         Game expert = factory.create(4, GameMode.EXPERT);
-        assertSame(expert.getClass(), GameExpert.class);
+        assertSame(expert.getClass(), GameExpert.class, "factory not working as expected: game is not GameExpert type");
     }
 
 }
