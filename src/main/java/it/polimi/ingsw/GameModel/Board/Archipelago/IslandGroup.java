@@ -24,7 +24,7 @@ public class IslandGroup {
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<>();
-        this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
+        this.islandTiles.add(new IslandTile(null, isStarting, this));
     }
 
     public boolean hasMotherNature(){
@@ -180,6 +180,14 @@ public class IslandGroup {
     }
 
     /**
+     * Returns the number of no entry tiles on the IslandGroup
+     * @return The number of no entry tiles on the IslandGroup
+     */
+    public int getNoEntryTileNumber(){
+        return noEntryTilesSpace == null? 0 : noEntryTilesSpace.getNoEntryTiles();
+    }
+
+    /**
      * Adds a NoEntryTile to this IslandGroup.
      */
     public void addNoEntryTile(NoEntryCharacter noEntryCharacter) {
@@ -187,6 +195,9 @@ public class IslandGroup {
         noEntryTilesSpace.addNoEntryTile();
     }
 
+    /**
+     * Removes a NoEntryTile from this IslandGroup.
+     */
     public void removeNoEntryTile() {
         if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
             throw new IllegalStateException("There are already zero no-entry tiles on this group");

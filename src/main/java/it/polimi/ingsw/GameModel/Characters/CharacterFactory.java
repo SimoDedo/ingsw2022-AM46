@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CharacterFactory {
      * @param ID the ID of the Character to create
      * @return the Character object, created with the correct parameters
      */
-    public AbstractCharacter create(int ID){
+    public AbstractCharacter create(int ID, Bag bag){
         AbstractCharacter character = null;
         List<RequestParameter> requestParameters = new ArrayList<>();
         switch (ID){
@@ -28,6 +29,9 @@ public class CharacterFactory {
                 requestParameters.add(RequestParameter.STUDCARD);
                 requestParameters.add(RequestParameter.ISLAND);
                 character = new StudentMoverCharacter(1, 1, 1, 4, requestParameters);
+                for (int i = 0; i < 4; i++)
+                    if(bag != null)
+                        ((StudentMoverCharacter) character).placePawn(bag.draw());
                 break;
             case 2:
                 character = new StrategyCharacter(2, 2, requestParameters);
@@ -50,6 +54,9 @@ public class CharacterFactory {
                 requestParameters.add(RequestParameter.STUDCARD);
                 requestParameters.add(RequestParameter.STUDENTRANCE);
                 character = new StudentMoverCharacter(7, 1, 3, 6, requestParameters);
+                for (int i = 0; i < 6; i++)
+                    if(bag != null)
+                        ((StudentMoverCharacter) character).placePawn(bag.draw());
                 break;
             case 8:
                 character = new StrategyCharacter(8, 2, requestParameters);
@@ -66,6 +73,9 @@ public class CharacterFactory {
             case 11:
                 requestParameters.add(RequestParameter.STUDCARD);
                 character = new StudentMoverCharacter(11, 2, 1, 4, requestParameters);
+                for (int i = 0; i < 4; i++)
+                    if(bag != null)
+                        ((StudentMoverCharacter) character).placePawn(bag.draw());
                 break;
             case 12:
                 requestParameters.add(RequestParameter.COLOR);

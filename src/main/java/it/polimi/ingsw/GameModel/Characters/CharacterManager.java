@@ -2,10 +2,14 @@ package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
+import it.polimi.ingsw.Utils.Exceptions.GameOverException;
+import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
+
 
 import java.util.*;
 
@@ -31,17 +35,17 @@ public class CharacterManager {
      * @param playerList the game's player list
      * @param professorSet the game's professor set
      */
-    public CharacterManager(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet) {
+    public CharacterManager(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet, CoinBag coinbag) {
         this.archipelago = archipelago;
         this.bag = bag;
         this.playerList = playerList;
         this.professorSet = professorSet;
-        consumerSet = new ConsumerSet(archipelago, bag, playerList, professorSet, characters);
+        consumerSet = new ConsumerSet(archipelago, bag, playerList, professorSet, characters, coinbag);
         List<Integer> IDs = selectRandomCharIDs();
         for (int i = 0; i < 12; i++) {
             characters.add(null);
         }
-        for (int charID : IDs) createCharacter(charID);
+        for (int charID : IDs) createCharacter(charID, bag);
     }
 
     /**
@@ -50,21 +54,22 @@ public class CharacterManager {
      * @return a list containing the three integers
      */
     private List<Integer> selectRandomCharIDs() {
-        List<Integer> indices = new ArrayList<>();
-        Random random = new Random(89);
-        while (indices.size() < 3){
+        List<Integer> IDs = new ArrayList<>();
+        Random random = new Random(System.currentTimeMillis());
+        while (IDs.size() < 3){
             Integer next = random.nextInt(12) + 1;
-            indices.add(next);
+            if(! IDs.contains(next))
+                IDs.add(next);
         }
-        return indices;
+        return IDs;
     }
 
     /**
      * Method that initializes a character with the given ID and puts it inside the character list.
      * @param ID the ID of the character to create
      */
-    public void createCharacter(int ID) { // is only public for testing purposes
-        characters.set(ID - 1, charFactory.create(ID));
+    public void createCharacter(int ID, Bag bag) { // is only public for testing purposes
+        characters.set(ID - 1, charFactory.create(ID, bag));
     }
 
     /**
@@ -75,11 +80,12 @@ public class CharacterManager {
      * @param ID the ID of the character to use
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player player, int ID) throws IllegalStateException {
+    public List<RequestParameter> useCharacter(Player player, int ID) throws IllegalStateException, IllegalArgumentException {
         for(Character character : characters) {
             if (character != null && character.wasUsedThisTurn())
                 throw new IllegalStateException("You can only use a character at a time");
         }
+        player.takeCoins(characters.get(ID - 1).getCost());
         currentCharacter = characters.get(ID - 1);
         return currentCharacter.useCharacter(player);
     }
@@ -90,7 +96,7 @@ public class CharacterManager {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) {
+    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
         int currentID = currentCharacter.getCharacterID();
         currentCharacter.useAbility(consumerSet.getConsumer(currentID), parameterList);
     }
@@ -105,6 +111,14 @@ public class CharacterManager {
     }
 
     /**
+     * Getter for the ActiveCharacter ID.
+     * @return the ActiveCharacter ID, -1 if no character is active
+     */
+    public int getActiveCharacterID() {
+        return currentCharacter == null ? -1 : currentCharacter.getCharacterID();
+    }
+
+    /**
      * Resets the character that was used this round, if there was any
      */
     public void resetActiveCharacter(){
@@ -112,5 +126,6 @@ public class CharacterManager {
             if (character != null && character.wasUsedThisTurn())
                 character.resetUseState();
         }
+        currentCharacter = null;
     }
 }

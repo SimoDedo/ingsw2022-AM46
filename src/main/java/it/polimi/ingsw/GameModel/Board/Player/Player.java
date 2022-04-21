@@ -69,16 +69,30 @@ public class Player {
     }
 
     /**
+     * Removes n coins
+     * @param n
+     */
+    public void takeCoins(int n) throws IllegalArgumentException{
+        if(coins - n < 0)
+            throw  new IllegalArgumentException("Can't deduct "+n+" coin since player hasn't enough");
+        coins = coins - n;
+    }
+
+    /**
+     * Return the number of coins
+     * @return the number of coins
+     */
+    public int getCoins() {
+        return coins;
+    }
+
+    /**
      * @param color of the students
      * @return amount of students of the specified color in the dining room
      */
     public int getScore(Color color){
         // assert playerBoard != null;
         return playerBoard.getScore(color);
-    }
-
-    public int getCoins() {
-        return coins;
     }
 
     public int getTowersPlaced() {
@@ -180,8 +194,8 @@ public class Player {
      *
      * @param student the student to place on the dining room
      */
-    public void addToDR(Student student) throws FullTableException {
-        playerBoard.addToDiningRoom(student);
+    public boolean addToDR(Student student) throws FullTableException {
+        return playerBoard.addToDiningRoom(student);
     }
 
     /**

@@ -15,17 +15,17 @@ import java.util.Map;
  */
 public class ResolveStrategyC9 implements ResolveStrategy{
 
+    public ResolveStrategyC9(Color color){
+        this.colorToIgnore = color;
+    }
+
     /**
      * The color who won't add influence
      */
     private Color colorToIgnore = null;
 
-    /**
-     * Setter for the color to ignore
-     * @param colorToIgnore The color to ignore
-     */
-    public void setColorToIgnore(Color colorToIgnore) {
-        this.colorToIgnore = colorToIgnore;
+    public Color getColorToIgnore(){
+        return  colorToIgnore;
     }
 
 

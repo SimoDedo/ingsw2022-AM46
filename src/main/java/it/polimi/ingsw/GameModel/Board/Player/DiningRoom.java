@@ -48,10 +48,13 @@ public class DiningRoom {
      * @throws FullTableException if the table of the same color of the student is full
      * @throws IllegalArgumentException if the student is already in a table, and the table is not full
      */
-    public void placeStudent(Student student) throws FullTableException {
+    public boolean placeStudent(Student student) throws FullTableException {
+        boolean giveCoin = false;
         for(Color c : Color.values()){
-            if(student.getColor() == c) getTable(c).placeStudent(student);
+            if(student.getColor() == c)
+                giveCoin = getTable(c).placeStudent(student);
         }
+        return giveCoin;
     }
 
     /**

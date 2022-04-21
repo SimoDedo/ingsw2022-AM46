@@ -31,7 +31,7 @@ class IslandGroupTest {
     @Test
     void hasMotherNature() {
         IslandGroup islandGroup = new IslandGroup(true);
-        assertTrue(islandGroup.hasMotherNature());
+        assertTrue(islandGroup.hasMotherNature(), "mother nature not found in starting islandGroup");
     }
 
     /**
@@ -40,7 +40,8 @@ class IslandGroupTest {
     @Test
     void getMotherNatureTile() {
         IslandGroup islandGroup = new IslandGroup(true);
-        assertTrue(islandGroup.getMotherNatureTile().hasMotherNature());
+        assertTrue(islandGroup.getMotherNatureTile().hasMotherNature(),
+                "islandTile returned by getMotherNatureTile() does not contain mother nature");
     }
 
     /**
@@ -63,7 +64,9 @@ class IslandGroupTest {
         islandTiles.get(1).placePawn(new Student(Color.PINK, null));
         islandTiles.get(1).placePawn(new Student(Color.PINK, null));
         islandGroup.addIslandTilesAfter(islandTiles);
-        assertTrue(islandGroup.countInfluence(Color.PINK) == 7 && islandGroup.countInfluence(Color.RED) == 3 && islandGroup.countInfluence(Color.BLUE) == 0);
+        assertEquals(7, islandGroup.countInfluence(Color.PINK), "unexpected influence score in islandGroup");
+        assertEquals(3, islandGroup.countInfluence(Color.RED), "unexpected influence score in islandGroup");
+        assertEquals(0, islandGroup.countInfluence(Color.BLUE), "unexpected influence score in islandGroup");
     }
 
     /**
@@ -86,10 +89,10 @@ class IslandGroupTest {
         players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
-        assertEquals(islandGroup.getTowerColor(), TowerColor.BLACK);
+        assertEquals(islandGroup.getTowerColor(), TowerColor.BLACK, "unexpected (or none) tower found in islandGroup");
         islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE));
-        assertEquals(islandGroup.getTowerColor(), TowerColor.WHITE);
-        assertFalse(islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE)));
+        assertEquals(islandGroup.getTowerColor(), TowerColor.WHITE, "unexpected (or none) tower found in islandGroup");
+        assertFalse(islandGroup.conquer(players.getTowerHolder(TowerColor.WHITE)), "islandGroup conquered by team who already owned it");
     }
 
     /**
@@ -99,8 +102,9 @@ class IslandGroupTest {
     void removeIslandTiles() {
         IslandGroup islandGroup = new IslandGroup(true);
         List<IslandTile> islandTiles = islandGroup.removeIslandTiles();
-        assertTrue(islandTiles.get(0) != null && islandTiles.get(0).hasMotherNature());
-        assertFalse(islandGroup.hasIslandTile(islandTiles.get(0)));
+        assertNotNull(islandTiles.get(0), "islandGroup returned no removed tiles");
+        assertTrue(islandTiles.get(0).hasMotherNature(), "starting island tile has no mother nature");
+        assertFalse(islandGroup.hasIslandTile(islandTiles.get(0)), "islandGroup still contains removed island tile");
     }
 
     /**
@@ -115,7 +119,8 @@ class IslandGroupTest {
         islandGroup2.addIslandTilesBefore(islandGroup1.removeIslandTiles());
         islandGroup3.addIslandTilesBefore(islandGroup2.removeIslandTiles());
         islandTiles = islandGroup3.removeIslandTiles();
-        assertTrue(islandTiles.get(0).hasMotherNature() && islandTiles.size() == 3);
+        assertTrue(islandTiles.get(0).hasMotherNature(), "starting island tile has no mother nature");
+        assertEquals(3, islandTiles.size(), "unexpected number of islandTiles removed from islandGroup");
     }
 
     /**
@@ -130,7 +135,8 @@ class IslandGroupTest {
         islandGroup2.addIslandTilesAfter(islandGroup1.removeIslandTiles());
         islandGroup3.addIslandTilesAfter(islandGroup2.removeIslandTiles());
         islandTiles = islandGroup3.removeIslandTiles();
-        assertTrue(islandTiles.get(2).hasMotherNature() && islandTiles.size() == 3);
+        assertTrue(islandTiles.get(2).hasMotherNature(), "starting island tile has no mother nature");
+        assertEquals(3, islandTiles.size(), "unexpected number of islandTiles removed from islandGroup");
     }
 
     /**
@@ -142,7 +148,7 @@ class IslandGroupTest {
         List<IslandTile> islandTiles = new ArrayList<>();
         islandTiles.add(new IslandTile(null, false,null ));
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertTrue(islandGroup.hasIslandTile(islandTiles.get(0)));
+        assertTrue(islandGroup.hasIslandTile(islandTiles.get(0)), "islandTile not found in containing islandGroup");
     }
 
     /**
@@ -155,7 +161,7 @@ class IslandGroupTest {
         islandTiles.add(new IslandTile(null, false,null ));
         islandTiles.get(0).swapTower(new Tower(TowerColor.BLACK, null));
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertSame(islandGroup.getTowerColor(), TowerColor.BLACK);
+        assertSame(islandGroup.getTowerColor(), TowerColor.BLACK, "unexpected tower color in islandGroup");
     }
 
     /**
@@ -174,7 +180,7 @@ class IslandGroupTest {
         islandTile.placePawn(studentToFind);
         islandTiles.add(islandTile);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertEquals(studentToFind, islandGroup.getStudentByID(studentToFind.getID()));
+        assertEquals(studentToFind, islandGroup.getStudentByID(studentToFind.getID()), "unexpected student returned by id lookup");
     }
 
     /**
@@ -189,6 +195,6 @@ class IslandGroupTest {
         islandTiles.add(islandTileToFind);
         islandTiles.add(islandTile1);
         islandGroup.addIslandTilesBefore(islandTiles);
-        assertEquals(islandTileToFind, islandGroup.getIslandTileByID(islandTileToFind.getID()));
+        assertEquals(islandTileToFind, islandGroup.getIslandTileByID(islandTileToFind.getID()), "unexpected islandTile returned by id lookup");
     }
 }

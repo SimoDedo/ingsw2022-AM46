@@ -38,17 +38,17 @@ class ArchipelagoTest {
         int idxOppositeMN = archipelago.getIslandTilesIDs().get(idxIGOppositeMN).get(0);
         Bag bag = new Bag();
         int randCheckIG = idxIGMN;
-        Random random = new Random(89);
+        Random random = new Random(System.currentTimeMillis());
         while (randCheckIG == idxIGMN || randCheckIG == idxIGOppositeMN){
             randCheckIG = random.nextInt(12);
         }
         int randCheck = archipelago.getIslandTilesIDs().get(randCheckIG).get(0);
-        assertTrue(archipelago.getIslandTilesStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getIslandTilesStudentsIDs().get(randCheck).size() == 0);
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxMN).size(), "students unexpectedly found on mother nature island");
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(randCheck).size(), "students unexpectedly found on empty island");
         archipelago.initialStudentPlacement(bag.drawN(10));
-        assertTrue(archipelago.getIslandTilesStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getIslandTilesStudentsIDs().get(idxOppositeMN).size() == 0 &&
-                archipelago.getIslandTilesStudentsIDs().get(randCheck).size() == 1);
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxMN).size(), "students unexpectedly found on mother nature island after draw");
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxOppositeMN).size(), "students unexpectedly found on island opposite to mother nature after draw");
+        assertEquals(1, archipelago.getIslandTilesStudentsIDs().get(randCheck).size(), "no students found in island after draw (1 expected)");
     }
 
     //region Resolve/Conquer/Merge testing
@@ -77,11 +77,12 @@ class ArchipelagoTest {
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getNumOfIslandGroups() == 12);
+        assertNull(archipelago.getTowerColorOfIslandGroup(0), "unexpected tower found in islandGroup after initial creation");
+        assertEquals(12, archipelago.getNumOfIslandGroups(), "unexpected number of island groups initially created");
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
-        Random random = new Random(89);
-        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)));
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected tower found (or none) after resolve");
+        Random random = new Random(System.currentTimeMillis());
+        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)), "unexpected tower found in owner-less island");
     }
 
     /**
@@ -110,18 +111,17 @@ class ArchipelagoTest {
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertNull(archipelago.getTowerColorOfIslandGroup(0));
+        assertNull(archipelago.getTowerColorOfIslandGroup(0), "unexpected tower found ins islandGroup after initial creation");
         archipelago.placeStudent(new Student(Color.PINK, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected (or no) tower found in islandGroup after conquer");
         archipelago.placeStudent(new Student(Color.RED, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected (or no) tower found in islandGroup after conquer");
     }
 
     /**
      * Tests that resolving an Island causes correct team to control the IslandGroup and correctly merges
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupMerge() throws GameOverException {
@@ -148,8 +148,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(2, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size(), "unexpected number of islandTiles in merged islandGroup");
 
     }
 
@@ -182,8 +182,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(11, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after corner merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size(), "unexpected number of islandTiles in merged islandGroup");
 
     }
 
@@ -216,8 +216,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(10, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(11, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups() - 1).size()); //Merge on last IslandGroup, thus check on last after merge
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after corner merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups() - 1).size(), "unexpected number of islandTiles in merged islandGroup"); //Merge on last IslandGroup, thus check on last after merge
     }
 
     /**
@@ -268,10 +268,10 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(5, players,professorSet);
         archipelago.resolveIslandGroup(6, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(6, archipelago.getNumOfIslandGroups());
+        assertEquals(6, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after multiple merges");
         //System.out.println(archipelago.getIslandTilesIDs());
-        assertTrue(archipelago.getIslandTilesIDs().get(5).size() == 4 &&
-                archipelago.getTowerColorOfIslandGroup(5).equals(TowerColor.BLACK));
+        assertEquals(4, archipelago.getIslandTilesIDs().get(5).size(), "unexpected islandGroup size");
+        assertEquals(archipelago.getTowerColorOfIslandGroup(5), TowerColor.BLACK, "unexpected (or none) tower found in islandGroup after conquer");
     }
 
     /**
@@ -304,7 +304,7 @@ class ArchipelagoTest {
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players, professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.WHITE); //Wins white despite Black having 1 student and 1
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.WHITE, "unexpected (or none) tower found in islandGroup after resolve with strategy"); //Wins white despite Black having 1 student and 1
                                                                                                     // tower because of the strategy
     }
     //endregion
@@ -314,6 +314,6 @@ class ArchipelagoTest {
         Archipelago archipelago = new Archipelago();
         Student student = new Student(Color.RED, null);
         archipelago.placeStudent(student, archipelago.getIslandTilesIDs().get(0).get(0));
-        assertEquals(archipelago.getStudentByID(student.getID()), student);
+        assertEquals(archipelago.getStudentByID(student.getID()), student, "wrong student returned after lookup by id");
     }
 }

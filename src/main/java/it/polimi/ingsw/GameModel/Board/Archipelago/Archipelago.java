@@ -57,7 +57,7 @@ public class Archipelago {
      * @return A random int between 0 and 11
      */
     private int selectStartingIsland(){
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         return random.nextInt(12);
     }
 
@@ -207,7 +207,7 @@ public class Archipelago {
      * @param islandTile IslandTile where student must be placed
      */
     public void placeStudent(Student student, IslandTile islandTile){
-        for(IslandGroup islandGroup : islandGroups) { // CHECKME: you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { //you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(islandTile))
                 islandGroup.placeStudent(student, islandTile);
         }
@@ -219,7 +219,7 @@ public class Archipelago {
      * @param islandTileID IslandTile where student must be placed
      */
     public void placeStudent(Student student, int islandTileID){
-        for(IslandGroup islandGroup : islandGroups) { // CHECKME: you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { //you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(getIslandTileByID(islandTileID)))
                 islandGroup.placeStudent(student, getIslandTileByID(islandTileID));
         }
@@ -386,6 +386,17 @@ public class Archipelago {
         return result;
     }
 
+    /**
+     * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
+     * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
+     */
+    public HashMap<Integer, Integer> getNoEntryTiles(){
+        HashMap<Integer, Integer> noEntryTiles = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            noEntryTiles.put(islandGroups.indexOf(islandGroup), islandGroup.getNoEntryTileNumber());
+        }
+        return noEntryTiles;
+    }
     //endregion
 
 }

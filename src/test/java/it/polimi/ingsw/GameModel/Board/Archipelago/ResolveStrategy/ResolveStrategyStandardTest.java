@@ -58,7 +58,8 @@ class ResolveStrategyStandardTest {
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
-        assertEquals(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
+        assertEquals(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK),
+                "unexpected player conquering island");
     }
 
     /**
@@ -92,7 +93,8 @@ class ResolveStrategyStandardTest {
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
         professorSet.setOwner(Color.BLUE, players.getTeam(TowerColor.GREY).get(0));
 
-        assertNull(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet));
+        assertNull(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet),
+                "unexpected winner on tied island (null expected)");
     }
 
     /**
@@ -128,7 +130,8 @@ class ResolveStrategyStandardTest {
 
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
 
-        assertEquals(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
+        assertEquals(resolveStrategyStandard.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK),
+                "unexpected player conquering island");
     }
 
 
