@@ -27,8 +27,8 @@ class PlayerListTest {
         players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
         players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
         players.add(new Player("PIETRO", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
-        assertEquals("Simo", players.getTowerHolder(TowerColor.BLACK).getNickname());
-        assertNull(players.getTowerHolder(TowerColor.WHITE));
+        assertEquals("Simo", players.getTowerHolder(TowerColor.BLACK).getNickname(), "unexpected player holding black towers");
+        assertNull(players.getTowerHolder(TowerColor.WHITE), "unexpected player holding (unassigned) white towers");
     }
 
     /**
@@ -45,7 +45,8 @@ class PlayerListTest {
         players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
         players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
         players.add(new Player("PIETRO", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
-        assertTrue(players.teamSize(TowerColor.BLACK) == 3 && players.teamSize(TowerColor.WHITE) == 0);
+        assertEquals(3, players.teamSize(TowerColor.BLACK), "unexpected team size");
+        assertEquals(0, players.teamSize(TowerColor.WHITE), "unexpected team size");
     }
 
     /**
@@ -65,10 +66,10 @@ class PlayerListTest {
         players.add(player1);
         players.add(player2);
         players.add(player3);
-        assertTrue(players.getTeam(TowerColor.BLACK).contains(player1) &&
-                players.getTeam(TowerColor.BLACK).contains(player2) &&
-                !players.getTeam(TowerColor.BLACK).contains(player3));
-        assertEquals(players.getTeam(TowerColor.BLACK).getTowerHolder(TowerColor.BLACK), player1);
+        assertTrue(players.getTeam(TowerColor.BLACK).contains(player1), "player not found in corresponding team");
+        assertTrue(players.getTeam(TowerColor.BLACK).contains(player2), "player not found in corresponding team");
+        assertFalse(players.getTeam(TowerColor.BLACK).contains(player3), "player not found in corresponding team");
+        assertEquals(players.getTeam(TowerColor.BLACK).getTowerHolder(TowerColor.BLACK), player1, "unexpected player assigned as towerHolder");
     }
 
     /**
@@ -88,6 +89,7 @@ class PlayerListTest {
         players.add(player1);
         players.add(player2);
         players.add(player3);
-        assertTrue(players.getByNickname("Simo").equals(player1) && players.getByNickname("Dani") == null);
+        assertEquals(players.getByNickname("Simo"), player1, "unexpected player returned by nickname lookup");
+        assertNull(players.getByNickname("Dani"), "unexpected player returned by lookup of unassigned nickname");
     }
 }
