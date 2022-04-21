@@ -17,7 +17,7 @@ class MotherNatureTest {
         MotherNature motherNature = new MotherNature(null);
         IslandTile islandTile = new IslandTile(null, false, null);
         islandTile.placeMotherNature(motherNature);
-        assertEquals(motherNature.getIslandTile(), islandTile);
+        assertEquals(motherNature.getIslandTile(), islandTile, "mother nature not found in containing islandTile");
     }
 
 }

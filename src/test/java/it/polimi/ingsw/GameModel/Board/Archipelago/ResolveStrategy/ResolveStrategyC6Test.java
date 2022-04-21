@@ -60,6 +60,7 @@ class ResolveStrategyC6Test {
 
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
 
-        assertEquals(resolveStrategyC6.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.WHITE));
+        assertEquals(resolveStrategyC6.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.WHITE),
+                "unexpected player conquering island. perhaps towers are being mistakenly taken into account?");
     }
 }

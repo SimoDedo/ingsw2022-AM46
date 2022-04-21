@@ -57,6 +57,7 @@ class ResolveStrategyC8Test {
         islandGroup.conquer(players.getTowerHolder(TowerColor.BLACK));
 
         ResolveStrategyC8 resolveStrategyC8 = new ResolveStrategyC8(players.getTowerHolder(TowerColor.BLACK));
-        assertEquals(resolveStrategyC8.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
+        assertEquals(resolveStrategyC8.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK),
+                "unexpected player conquering island. perhaps extra influence is not added?");
     }
 }

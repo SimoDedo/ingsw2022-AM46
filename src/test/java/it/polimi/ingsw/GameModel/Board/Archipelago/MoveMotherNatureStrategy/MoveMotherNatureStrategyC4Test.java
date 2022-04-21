@@ -26,6 +26,6 @@ class MoveMotherNatureStrategyC4Test {
         int idxEndIG =  idxStartIG + 6 > 11 ? idxStartIG + 6 - 12 : idxStartIG + 6;
         int moveCount = 4;
         archipelago.moveMotherNature(archipelago.getIslandTilesIDs().get(idxEndIG).get(0), moveCount);
-        assertEquals(archipelago.getMotherNatureIslandGroupIndex(), idxEndIG);
+        assertEquals(archipelago.getMotherNatureIslandGroupIndex(), idxEndIG, "unexpected mother nature location index after move");
     }
 }

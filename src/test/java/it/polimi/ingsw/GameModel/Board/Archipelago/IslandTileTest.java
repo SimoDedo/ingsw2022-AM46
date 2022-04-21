@@ -25,7 +25,7 @@ class IslandTileTest {
     void placeMotherNature() {
         IslandTile islandTile = new IslandTile(null, false, null);
         islandTile.placeMotherNature(new MotherNature(islandTile));
-        assertTrue(islandTile.hasMotherNature());
+        assertTrue(islandTile.hasMotherNature(), "mother nature not found in island tile after placing");
     }
 
     /**
@@ -34,9 +34,9 @@ class IslandTileTest {
     @Test
     void removeMotherNature() {
         IslandTile islandTile = new IslandTile(null, true, null);
-        assertTrue(islandTile.hasMotherNature());
+        assertTrue(islandTile.hasMotherNature(), "mother nature not found in starting island tile");
         islandTile.removeMotherNature();
-        assertFalse(islandTile.hasMotherNature());
+        assertFalse(islandTile.hasMotherNature(), "mother nature still in tile after removal");
     }
 
     /**
@@ -47,7 +47,7 @@ class IslandTileTest {
         IslandTile islandTile = new IslandTile(null, true, null);
         Tower tower = new Tower(TowerColor.BLACK, null);
         islandTile.swapTower(tower);
-        assertEquals((int) islandTile.getTowerID(), tower.getID());
+        assertEquals((int) islandTile.getTowerID(), tower.getID(), "unexpected tower found in islandTile after swap");
     }
 
     /**
@@ -60,7 +60,7 @@ class IslandTileTest {
         Tower tower1 = new Tower(TowerColor.WHITE, null);
         islandTile.swapTower(tower);
         islandTile.swapTower(tower1);
-        assertSame(islandTile.getTowerColor(), TowerColor.WHITE);
+        assertSame(islandTile.getTowerColor(), TowerColor.WHITE, "unexpected tower color found in islandTile after swap");
     }
 
     /**
@@ -73,7 +73,8 @@ class IslandTileTest {
         Tower tower1 = new Tower(TowerColor.BLACK, null);
         islandTile.swapTower(tower);
         islandTile.swapTower(tower1);
-        assertTrue(islandTile.getTowerID().equals(tower1.getID()) && ! islandTile.getTowerID().equals(tower.getID()) && islandTile.getTowerColor() == tower.getColor());
+        assertTrue(islandTile.getTowerID().equals(tower1.getID()) && ! islandTile.getTowerID().equals(tower.getID()) && islandTile.getTowerColor() == tower.getColor(),
+        "unexpected swap results when swapping towers of the same color");
     }
 
     /**
@@ -88,7 +89,7 @@ class IslandTileTest {
         students.add(new Student(Color.BLUE, islandTile));
         for(Student student : students)
             islandTile.placePawn(student);
-        assertEquals(3, islandTile.countInfluence(Color.BLUE));
+        assertEquals(3, islandTile.countInfluence(Color.BLUE), "unexpected influence counted in islandTile");
     }
 
     /**
@@ -97,6 +98,6 @@ class IslandTileTest {
     @Test
     void countInfluenceZero() {
         IslandTile islandTile = new IslandTile(null, true, null);
-        assertEquals(0, islandTile.countInfluence(Color.BLUE));
+        assertEquals(0, islandTile.countInfluence(Color.BLUE), "unexpected influence counted in islandTile");
     }
 }

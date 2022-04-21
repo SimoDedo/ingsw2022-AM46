@@ -55,6 +55,7 @@ class ResolveStrategyC9Test {
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
         ResolveStrategyC9 resolveStrategyC9 = new ResolveStrategyC9(Color.RED);
-        assertEquals(resolveStrategyC9.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK));
+        assertEquals(resolveStrategyC9.resolveIslandGroup(islandGroup, players, professorSet), players.getTowerHolder(TowerColor.BLACK),
+                "unexpected player conquering island. perhaps blacklisted color is mistakenly counted?");
     }
 }
