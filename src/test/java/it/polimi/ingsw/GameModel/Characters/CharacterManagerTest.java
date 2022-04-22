@@ -298,6 +298,7 @@ class CharacterManagerTest {
     /**
      * Test for C5. EFFECT: sets up the NoEntryTilesSpace on an island of your choice.
      * We place a no entry tile and check it was placed, then place the remaining 3 and check.
+     * Finally, check that resolving doesn't take place and tile is returned.
      */
     @Test
     void useC5() {
@@ -329,14 +330,26 @@ class CharacterManagerTest {
 
         manager.useAbility(parameterList);
 
-        assertEquals(1, archipelago.getNoEntryTiles().get(0));
+        assertEquals(1, archipelago.getNoEntryTiles().get(0),
+                "No entry tile should be placed");
         for (int i = 0; i < 3; i++) {
             manager.resetActiveCharacter();
             manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
             manager.useAbility(parameterList);
         }
-        assertEquals(4, archipelago.getNoEntryTiles().get(0));
+        assertEquals(4, archipelago.getNoEntryTiles().get(0),
+                "Four no entry tile should be placed");
 
+        archipelago.placeStudent(new Student(Color.RED, null), islandTileDest);
+        professorSet.setOwner(Color.RED, playerList.getByNickname("Simo"));
+        archipelago.resolveIslandGroup(0, playerList, professorSet);
+
+        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null,
+                "A no entry tile was placed, thus no resolving should take place");
+        assertEquals(3, archipelago.getNoEntryTiles().get(0),
+                "Three no entry tile should be placed, since one was used");
+        assertEquals(1, ((NoEntryCharacter)manager.getCharacterByID(5)).getNoEntryTiles(),
+                "Tile should be returned to character for later use");
     }
 
     /**

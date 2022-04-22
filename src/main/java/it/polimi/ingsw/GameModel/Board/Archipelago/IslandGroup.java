@@ -201,6 +201,7 @@ public class IslandGroup {
     public void removeNoEntryTile() {
         if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
             throw new IllegalStateException("There are already zero no-entry tiles on this group");
+        noEntryTilesSpace.removeNoEntryTile();
     }
 
     /**
