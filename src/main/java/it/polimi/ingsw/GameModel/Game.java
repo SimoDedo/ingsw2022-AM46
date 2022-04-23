@@ -9,6 +9,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Enum.Phase;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
@@ -16,7 +17,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import java.io.InvalidObjectException;
+
 import java.util.*;
 
 /**
@@ -50,7 +51,7 @@ public class Game {
     /**
      * Boolean to store whether this is the last round to play. Gets set when a LastRoundException is thrown
      */
-    private boolean lastRound;
+    private boolean isLastRound;
 
     /**
      * The configuration of this game
@@ -64,7 +65,7 @@ public class Game {
      * @param gameConfig the game configuration object, created by the GameFactory
      */
     public Game(GameConfig gameConfig) {
-        lastRound = false;
+        isLastRound = false;
         this.gameConfig = gameConfig;
         archipelago.initialStudentPlacement(bag.drawN(10));
         bag.fillRemaining();
@@ -157,7 +158,7 @@ public class Game {
         }
         AssistantCard assistantPlayed = getPlayerByNickname(nickname).playAssistant(assistantID);
         cardsPlayedThisRound.put(getPlayerByNickname(nickname), assistantPlayed);
-        if(getPlayerByNickname(nickname).getDeck().size() == 0 && !lastRound) { //Only throws once, needless to throw for each player (once one is done, it is the lastRound for everyone)
+        if(getPlayerByNickname(nickname).getDeck().size() == 0 && !isLastRound) { //Only throws once, needless to throw for each player (once one is done, it is the lastRound for everyone)
             throw new LastRoundException("Player "+nickname+" has played last assistant");
         }
     }
@@ -211,7 +212,7 @@ public class Game {
      * @param nickname nickname of the Player that is moving Mother Nature
      * @param islandTileID the ID of the IslandTile where the player wants to place Mother Nature
      */
-    public void moveMotherNature(String nickname, int islandTileID) throws InvalidObjectException, GameOverException {
+    public void moveMotherNature(String nickname, int islandTileID) throws IllegalArgumentException, GameOverException {
         archipelago.moveMotherNature(islandTileID, cardsPlayedThisRound.get(players.getByNickname(nickname)).getMovePower());
         resolveIslandGroup(archipelago.getIslandGroupID(islandTileID));
     }
@@ -240,7 +241,7 @@ public class Game {
      * @param nickname the nickname of the player who is taking the students from the cloud
      * @param cloudID the ID of the cloud that the player chose
      */
-    public void takeFromCloud(String nickname, int cloudID) {
+    public void takeFromCloud(String nickname, int cloudID){
         List<Student> studentsTaken = new ArrayList<>(
                 clouds.stream()
                 .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
@@ -312,7 +313,7 @@ public class Game {
      * Method that should be called by the controller when it catches a LastRoundException.
      */
     public  void setLastRound(){
-        lastRound = true;
+        isLastRound = true;
     }
 
     /**
@@ -321,7 +322,7 @@ public class Game {
      * Changing the Phase (?????)
      */
     public void endOfRoundOperations() throws GameOverException {
-        if(lastRound)
+        if(isLastRound)
             throw new GameOverException();
         else {
             return; // the game can continue
@@ -351,10 +352,11 @@ public class Game {
         //region Game
         /**
          * Getter for the current player in the game.
-         * @return the player currently executing their planning/action turn
+         * @return the player currently executing their planning/action turn, null if firstRoundOrder
+         * hasn't been determined yet
          */
         public String getCurrentPlayer() {
-            return turnManager.getCurrentPlayer().getNickname();
+            return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
         } // could be useful to controller
 
         /**
@@ -395,7 +397,14 @@ public class Game {
             return  result;
         }
 
-    //endregion
+        /**
+         * Method to observe the current phase of the game. Needed to let know the controller which order to calculate.
+         * @return the current phase.
+         */
+        public Phase getCurrentPhase(){
+                return turnManager.getCurrentPhase();
+            }
+        //endregion
         //region Player
         /**
          * Returns a list of cards that weren't yet played (thus to be shown to the player)

@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 public class TurnManager {
 
     private Player currentPlayer = null; // usage will have to be specified thoroughly! is it even needed??
+
     private Phase currentPhase = Phase.IDLE;
 
     public List<Player> planningPlayerList = new ArrayList<>(); //set back to private!
-    public  List<Player> actionPlayerList = new ArrayList<>();
 
+    public  List<Player> actionPlayerList = new ArrayList<>();
     /**
      * Note: "clockwise order" here is the order in which Players choose their Wizard deck. The
      * assignWizard function from Game will fill clockwisePlayerList little by little each time it
@@ -131,6 +132,10 @@ public class TurnManager {
             }
             case PLANNING -> currentPhase = Phase.ACTION;
         }
+    }
+
+    public Phase getCurrentPhase() {
+        return currentPhase;
     }
 
 }

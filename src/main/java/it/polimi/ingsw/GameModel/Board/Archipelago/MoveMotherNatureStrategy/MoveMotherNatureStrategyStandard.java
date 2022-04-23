@@ -19,7 +19,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
      * @param islandGroups List containing all the IslandGroups to check legal movement
      */
     @Override
-    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException {
+    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws IllegalArgumentException {
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
         int moveCountNeeded;
@@ -31,7 +31,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
         if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
-            throw new InvalidObjectException(islandTileDestination.toString());
+            throw new IllegalArgumentException(islandTileDestination.toString());
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
             islandTileDestination.placeMotherNature(motherNature);

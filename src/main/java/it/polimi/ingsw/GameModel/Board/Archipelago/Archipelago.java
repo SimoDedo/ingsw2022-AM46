@@ -95,7 +95,7 @@ public class Archipelago {
      * @param islandTileDestinationID Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException, NoSuchElementException {
+    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws IllegalArgumentException, NoSuchElementException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), getIslandTileByID(islandTileDestinationID), moveCount, islandGroups);
     }
 
