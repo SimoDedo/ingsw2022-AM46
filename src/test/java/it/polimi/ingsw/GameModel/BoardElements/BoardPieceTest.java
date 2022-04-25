@@ -13,10 +13,10 @@ class BoardPieceTest {
     @Test
     public void getMaxID(){
         Student student0 = new Student(Color.PINK, null);
-        Student student1 = new Student(Color.PINK, null);
-        Student student2 = new Student(Color.PINK, null);
+        new Student(Color.PINK, null);
+        new Student(Color.PINK, null);
         Professor professor = new Professor(null, Color.PINK);
-        assertEquals(student0.getID(), professor.getID() - 3);
+        assertEquals(student0.getID(), professor.getID() - 3, "IDs have not been assigned sequentially");
     }
 
 }

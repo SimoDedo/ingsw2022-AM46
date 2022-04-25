@@ -4,6 +4,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -47,10 +48,13 @@ public class DiningRoom {
      * @throws FullTableException if the table of the same color of the student is full
      * @throws IllegalArgumentException if the student is already in a table, and the table is not full
      */
-    public void placeStudent(Student student) throws FullTableException, IllegalArgumentException {
+    public boolean placeStudent(Student student) throws FullTableException {
+        boolean giveCoin = false;
         for(Color c : Color.values()){
-            if(student.getColor() == c) getTable(c).placeStudent(student);
+            if(student.getColor() == c)
+                giveCoin = getTable(c).placeStudent(student);
         }
+        return giveCoin;
     }
 
     /**
@@ -69,10 +73,31 @@ public class DiningRoom {
 
     public Student removeStudentByID (int ID) throws NoSuchElementException {
         Student student = getStudentByID(ID);
+        getTable(student.getColor()).removePawn(student);
         student.setStudentContainer(null);
         return student;
     }
 
+    /**
+     * Method to get all the table IDs and their color
+     * @return an HashMap with the table color as key and the Table ID as object
+     */
+    public HashMap<Color, Integer> getTableIDs(){
+        HashMap<Color, Integer> result = new HashMap<>();
+        for (Table table : tables){
+            result.put(table.getColor(), table.getID());
+        }
+        return result;
+    }
+
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(Color color){
+        return getTable(color).getStudentIDsAndColor().keySet().stream().toList();
+    }
 
 
 }

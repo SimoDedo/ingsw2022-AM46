@@ -19,7 +19,7 @@ class CoinBagTest {
         CoinBag coinBag = new CoinBag(initialCoins);
         int numOfCoinsStart = coinBag.getNumOfCoins();
         coinBag.removeCoin();
-        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart - 1);
+        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart - 1, "unexpected number of coins left in bag after removal");
     }
     /**
      * Test that it removes exact number of coins from starting state
@@ -29,7 +29,7 @@ class CoinBagTest {
         CoinBag coinBag = new CoinBag(initialCoins);
         int numOfCoinsStart = coinBag.getNumOfCoins();
         coinBag.removeCoins(10);
-        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart - 10);
+        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart - 10, "unexpected number of coins left in bag after removal");
     }
 
     /**
@@ -38,9 +38,11 @@ class CoinBagTest {
     @Test
     void removeCoinsException(){
         CoinBag coinBag = new CoinBag(initialCoins);
-        assertThrows(ArithmeticException.class, () -> coinBag.removeCoins(coinBag.getNumOfCoins() + 1));
+        assertThrows(ArithmeticException.class, () -> coinBag.removeCoins(coinBag.getNumOfCoins() + 1),
+                "no exception raised when removing more coins than what the bag is holding");
         coinBag.removeCoins(coinBag.getNumOfCoins());
-        assertThrows(ArithmeticException.class, coinBag::removeCoin);
+        assertThrows(ArithmeticException.class, coinBag::removeCoin,
+                "no exception raised when removing coin from empty bag");
     }
 
     /**
@@ -52,7 +54,7 @@ class CoinBagTest {
         int numOfCoinsStart = coinBag.getNumOfCoins();
         coinBag.removeCoin();
         coinBag.addCoin();
-        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart);
+        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart, "either removeCoin or addCoin did not do their job properly");
 
     }
 
@@ -65,6 +67,7 @@ class CoinBagTest {
         int numOfCoinsStart = coinBag.getNumOfCoins();
         coinBag.removeCoins(10);
         coinBag.addCoins(10);
-        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart);
+        assertEquals(coinBag.getNumOfCoins(), numOfCoinsStart,
+                "unexpected number of coins in bag after removal and addition of multiple at a time");
     }
 }

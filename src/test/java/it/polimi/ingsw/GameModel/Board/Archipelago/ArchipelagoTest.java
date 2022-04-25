@@ -2,7 +2,7 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC6;
 import it.polimi.ingsw.GameModel.Board.Bag;
-import it.polimi.ingsw.GameModel.Board.Player.TeamManager;
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.GameConfig;
@@ -26,24 +26,29 @@ class ArchipelagoTest {
 
     /**
      * Test that given random starting island, method correctly distributes students
+     * Creates a new Archipelago, retrieves IslandTile index containing MotherNature and its opposite.
+     * Checks that those are empty, then checks another random IslandTile to see if a student was correctly placed
      */
-    @RepeatedTest(20)
+    @RepeatedTest(10)
     void initialStudentPlacement(){
         Archipelago archipelago = new Archipelago();
-        int idxMN = archipelago.getMotherNatureIslandGroupIndex();
-        int idxOppositeMN = idxMN + 6 > 11 ? idxMN + 6 - 12 : idxMN + 6;
+        int idxIGMN = archipelago.getMotherNatureIslandGroupIndex();
+        int idxIGOppositeMN = idxIGMN + 6 > 11 ? idxIGMN + 6 - 12 : idxIGMN + 6;
+        int idxMN = archipelago.getIslandTilesIDs().get(idxIGMN).get(0); //Only one IslandTile in IslandGroup, which contains MN
+        int idxOppositeMN = archipelago.getIslandTilesIDs().get(idxIGOppositeMN).get(0);
         Bag bag = new Bag();
-        int randCheck = idxMN;
-        Random random = new Random(89);
-        while (randCheck == idxMN || randCheck == idxOppositeMN){
-            randCheck = random.nextInt(12);
+        int randCheckIG = idxIGMN;
+        Random random = new Random(System.currentTimeMillis());
+        while (randCheckIG == idxIGMN || randCheckIG == idxIGOppositeMN){
+            randCheckIG = random.nextInt(12);
         }
-        assertTrue(archipelago.getStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(randCheck).size() == 0);
+        int randCheck = archipelago.getIslandTilesIDs().get(randCheckIG).get(0);
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxMN).size(), "students unexpectedly found on mother nature island");
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(randCheck).size(), "students unexpectedly found on empty island");
         archipelago.initialStudentPlacement(bag.drawN(10));
-        assertTrue(archipelago.getStudentsIDs().get(idxMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(idxOppositeMN).size() == 0 &&
-                archipelago.getStudentsIDs().get(randCheck).size() == 1);
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxMN).size(), "students unexpectedly found on mother nature island after draw");
+        assertEquals(0, archipelago.getIslandTilesStudentsIDs().get(idxOppositeMN).size(), "students unexpectedly found on island opposite to mother nature after draw");
+        assertEquals(1, archipelago.getIslandTilesStudentsIDs().get(randCheck).size(), "no students found in island after draw (1 expected)");
     }
 
     //region Resolve/Conquer/Merge testing
@@ -62,23 +67,22 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null && archipelago.getNumOfIslandGroups() == 12);
+        assertNull(archipelago.getTowerColorOfIslandGroup(0), "unexpected tower found in islandGroup after initial creation");
+        assertEquals(12, archipelago.getNumOfIslandGroups(), "unexpected number of island groups initially created");
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
-        Random random = new Random(89);
-        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)));
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected tower found (or none) after resolve");
+        Random random = new Random(System.currentTimeMillis());
+        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)), "unexpected tower found in owner-less island");
     }
 
     /**
@@ -96,31 +100,28 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
         professorSet.setOwner(Color.RED, players.getTeam(TowerColor.WHITE).get(0));
 
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertNull(archipelago.getTowerColorOfIslandGroup(0));
+        assertNull(archipelago.getTowerColorOfIslandGroup(0), "unexpected tower found ins islandGroup after initial creation");
         archipelago.placeStudent(new Student(Color.PINK, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected (or no) tower found in islandGroup after conquer");
         archipelago.placeStudent(new Student(Color.RED, null),archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK);
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected (or no) tower found in islandGroup after conquer");
     }
 
     /**
      * Tests that resolving an Island causes correct team to control the IslandGroup and correctly merges
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupMerge() throws GameOverException {
@@ -134,13 +135,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -149,8 +148,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(2, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size(), "unexpected number of islandTiles in merged islandGroup");
 
     }
 
@@ -170,13 +169,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -185,8 +182,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(11, players,professorSet);
         archipelago.resolveIslandGroup(1, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size());
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after corner merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(0).size(), "unexpected number of islandTiles in merged islandGroup");
 
     }
 
@@ -206,13 +203,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -221,8 +216,8 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(10, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
         archipelago.resolveIslandGroup(11, players,professorSet);
-        assertEquals(10, archipelago.getNumOfIslandGroups());
-        assertEquals(3, archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups() - 1).size()); //Merge on last IslandGroup, thus check on last after merge
+        assertEquals(10, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after corner merges");
+        assertEquals(3, archipelago.getIslandTilesIDs().get(archipelago.getNumOfIslandGroups() - 1).size(), "unexpected number of islandTiles in merged islandGroup"); //Merge on last IslandGroup, thus check on last after merge
     }
 
     /**
@@ -250,13 +245,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -275,10 +268,10 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(5, players,professorSet);
         archipelago.resolveIslandGroup(6, players,professorSet);
         archipelago.resolveIslandGroup(0, players,professorSet);
-        assertEquals(6, archipelago.getNumOfIslandGroups());
+        assertEquals(6, archipelago.getNumOfIslandGroups(), "unexpected number of islandGroups after multiple merges");
         //System.out.println(archipelago.getIslandTilesIDs());
-        assertTrue(archipelago.getIslandTilesIDs().get(5).size() == 4 &&
-                archipelago.getTowerColorOfIslandGroup(5).equals(TowerColor.BLACK));
+        assertEquals(4, archipelago.getIslandTilesIDs().get(5).size(), "unexpected islandGroup size");
+        assertEquals(archipelago.getTowerColorOfIslandGroup(5), TowerColor.BLACK, "unexpected (or none) tower found in islandGroup after conquer");
     }
 
     /**
@@ -297,13 +290,11 @@ class ArchipelagoTest {
         GameConfig gameConfig = new GameConfig(4);
         gameConfig.getPlayerConfig().setBag(bag);
 
-        HashMap<String, TowerColor> teamConfiguration = new LinkedHashMap<>();
-        teamConfiguration.put("Simo", TowerColor.BLACK);
-        teamConfiguration.put("Greg", TowerColor.BLACK);
-        teamConfiguration.put("Pirovano", TowerColor.WHITE);
-        teamConfiguration.put("Ceruti", TowerColor.WHITE);
-        TeamManager teamManager = new TeamManager();
-        PlayerList players = teamManager.create(gameConfig, teamConfiguration);
+        PlayerList players = new PlayerList();
+        players.add(new Player("Simo", TowerColor.BLACK, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Greg", TowerColor.BLACK, false, gameConfig.getPlayerConfig()));
+        players.add(new Player("Pirovano", TowerColor.WHITE, true, gameConfig.getPlayerConfig()));
+        players.add(new Player("Ceruti", TowerColor.WHITE, false, gameConfig.getPlayerConfig()));
 
         ProfessorSet professorSet = new ProfessorSet();
         professorSet.setOwner(Color.PINK, players.getTeam(TowerColor.BLACK).get(0));
@@ -313,7 +304,7 @@ class ArchipelagoTest {
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.placeStudent(new Student(Color.RED, null), archipelago.getIslandTilesIDs().get(0).get(0));
         archipelago.resolveIslandGroup(0, players, professorSet);
-        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.WHITE); //Wins white despite Black having 1 student and 1
+        assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.WHITE, "unexpected (or none) tower found in islandGroup after resolve with strategy"); //Wins white despite Black having 1 student and 1
                                                                                                     // tower because of the strategy
     }
     //endregion
@@ -323,6 +314,6 @@ class ArchipelagoTest {
         Archipelago archipelago = new Archipelago();
         Student student = new Student(Color.RED, null);
         archipelago.placeStudent(student, archipelago.getIslandTilesIDs().get(0).get(0));
-        assertEquals(archipelago.getStudentByID(student.getID()), student);
+        assertEquals(archipelago.getStudentByID(student.getID()), student, "wrong student returned after lookup by id");
     }
 }

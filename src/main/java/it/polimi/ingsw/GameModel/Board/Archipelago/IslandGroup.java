@@ -8,9 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Model a group of island tiles
@@ -26,7 +24,7 @@ public class IslandGroup {
 
     public IslandGroup(boolean isStarting){
         this.islandTiles = new ArrayList<>();
-        this.islandTiles.add(new IslandTile(null, isStarting, this)); //CHECKME: player null replace with "neutral"?
+        this.islandTiles.add(new IslandTile(null, isStarting, this));
     }
 
     public boolean hasMotherNature(){
@@ -69,7 +67,7 @@ public class IslandGroup {
      * @param player the team who owns the towers on the IslandTile, once Conquer has finished
      * @return true if the towers had to be swapped, false if not
      */
-    public boolean conquer(Player player) throws GameOverException {
+    public boolean conquer(Player player) {
         if(player != null && !player.getTowerColor().equals(this.getTowerColor())){
             for(IslandTile islandTile : islandTiles){
                 Tower towerToPut = player.takeTower();
@@ -182,6 +180,14 @@ public class IslandGroup {
     }
 
     /**
+     * Returns the number of no entry tiles on the IslandGroup
+     * @return The number of no entry tiles on the IslandGroup
+     */
+    public int getNoEntryTileNumber(){
+        return noEntryTilesSpace == null? 0 : noEntryTilesSpace.getNoEntryTiles();
+    }
+
+    /**
      * Adds a NoEntryTile to this IslandGroup.
      */
     public void addNoEntryTile(NoEntryCharacter noEntryCharacter) {
@@ -189,9 +195,13 @@ public class IslandGroup {
         noEntryTilesSpace.addNoEntryTile();
     }
 
+    /**
+     * Removes a NoEntryTile from this IslandGroup.
+     */
     public void removeNoEntryTile() {
         if (noEntryTilesSpace == null || noEntryTilesSpace.getNoEntryTiles() == 0)
             throw new IllegalStateException("There are already zero no-entry tiles on this group");
+        noEntryTilesSpace.removeNoEntryTile();
     }
 
     /**
@@ -219,12 +229,12 @@ public class IslandGroup {
 
     /**
      * Collects all IDs of students in IslandTiles
-     * @return A list of the Students IDs
+     * @return A HashMap with the IslandTile ID as key and a List of Student IDs as Object
      */
-    public List<Integer> getStudentIDs(){
-        List<Integer> studentsIDs = new ArrayList<>();
+    public HashMap<Integer, List<Integer>> getStudentIDs(){
+        HashMap<Integer, List<Integer>> studentsIDs = new LinkedHashMap<>();
         for (IslandTile islandTile : islandTiles){
-            studentsIDs.addAll(islandTile.getPawnIDs());
+            studentsIDs.put(islandTile.getID(), islandTile.getPawnIDs());
         }
         return  studentsIDs;
     }
@@ -254,6 +264,16 @@ public class IslandGroup {
         return islandTiledIDs;
     }
 
-
+    /**
+     * Returns all students contained in all IslandTiles with their color
+     * @return An HashMap with StudentID as key and Color as value
+     */
+    public HashMap<Integer, Color> getStudentIDsAndColor(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(IslandTile islandTile : islandTiles){
+            students.putAll(islandTile.getStudentIDsAndColor());
+        }
+        return students;
+    }
 
 }

@@ -1,6 +1,9 @@
 package it.polimi.ingsw.GameModel.BoardElements;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.Utils.Enum.Color;
+
+import java.util.HashMap;
 
 /**
  * Abstract class which extends PawnContainer, using Students specifically
@@ -52,13 +55,14 @@ public abstract class StudentContainer extends PawnContainer<Student> implements
     }
 
     /**
-     * Removed the first Student in the container.
-     * @return the Student at position 0
+     * Removed the first Student in the container if present
+     * @return the Student at position 0, null if container is empty
      */
     @Override
     public Student removePawn() {
         Student s = super.removePawn();
-        s.setStudentContainer(null);
+        if(s != null)
+            s.setStudentContainer(null);
         return s;
     }
     /**
@@ -73,4 +77,15 @@ public abstract class StudentContainer extends PawnContainer<Student> implements
         placePawn(studentToPlace);
     }
 
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getStudentIDsAndColor(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(Student student : getPawns()){
+            students.put(student.getID(), student.getColor());
+        }
+        return students;
+    }
 }

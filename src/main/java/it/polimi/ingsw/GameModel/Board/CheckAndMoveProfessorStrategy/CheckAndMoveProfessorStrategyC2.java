@@ -20,6 +20,10 @@ public class CheckAndMoveProfessorStrategyC2 implements CheckAndMoveProfessorStr
      */
     private Player activator;
 
+    public String getActivatingPlayer(){
+        return activator == null ? null : activator.getNickname();
+    }
+
     /**
      * Constructor for the strategy. Sets the activator attribute to the player who played C2 in
      * this turn.

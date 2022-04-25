@@ -17,7 +17,7 @@ public class TableTest {
     public void placeStudentTest() throws FullTableException{
         List<Student> studentList = new ArrayList<>();
         Student studentToPlace = new Student(Color.PINK, null);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             studentList.add(new Student(Color.PINK, null));
         }
         Table table = new Table(new Player(), 10, Color.PINK);
@@ -25,9 +25,13 @@ public class TableTest {
             table.placeStudent(student);
         }
         table.placeStudent(studentToPlace);
-        assertThrows(IllegalArgumentException.class, () -> table.placeStudent(studentToPlace));
-        assertThrows(IllegalArgumentException.class, () -> table.placeStudent(new Student(Color.RED, null)));
-        assertEquals(table.getScore(), 6);
+        assertThrows(IllegalArgumentException.class, () -> table.placeStudent(studentToPlace),
+                "table allowed placing a student which it already contained");
+        assertEquals(table.getScore(), 9, "wrong number of students present in the table");
+        table.placeStudent(new Student(Color.PINK, null));
+        assertThrows(FullTableException.class, () -> table.placeStudent(new Student(Color.PINK, null)),
+                "table is allowing to place more students than its maximum amount");
+
 
     }
 }

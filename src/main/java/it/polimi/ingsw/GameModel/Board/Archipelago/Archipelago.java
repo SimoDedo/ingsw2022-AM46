@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrate
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
@@ -56,7 +57,7 @@ public class Archipelago {
      * @return A random int between 0 and 11
      */
     private int selectStartingIsland(){
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         return random.nextInt(12);
     }
 
@@ -94,7 +95,7 @@ public class Archipelago {
      * @param islandTileDestinationID Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException {
+    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException, NoSuchElementException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), getIslandTileByID(islandTileDestinationID), moveCount, islandGroups);
     }
 
@@ -137,7 +138,13 @@ public class Archipelago {
         else {
             Player winner = resolveStrategy.resolveIslandGroup(islandGroup, players, professorSet);
             boolean swapped = conquerIslandGroup(islandGroup, winner);
-            if (swapped) mergeIslandGroup(islandGroup);
+            if (swapped){
+                if(winner.getTowersLeft() == 0)
+                    throw new GameOverException("Player who conquered islandGroup has used all towers");
+                mergeIslandGroup(islandGroup);
+                if(getNumOfIslandGroups() <= 3)
+                    throw new GameOverException("There are only 3 groups of islands left");
+            }
         }
     }
 
@@ -149,13 +156,7 @@ public class Archipelago {
      */
     public void resolveIslandGroup(int islandGroupIndex, PlayerList players, ProfessorSet professorSet)
             throws GameOverException {
-        if (islandGroups.get(islandGroupIndex).hasNoEntryTiles())
-            islandGroups.get(islandGroupIndex).removeNoEntryTile();
-        else {
-            Player winner = resolveStrategy.resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
-            boolean swapped = conquerIslandGroup(islandGroups.get(islandGroupIndex), winner);
-            if (swapped) mergeIslandGroup(islandGroups.get(islandGroupIndex));
-        }
+        resolveIslandGroup(islandGroups.get(islandGroupIndex), players, professorSet);
     }
 
     /**
@@ -163,7 +164,7 @@ public class Archipelago {
      * @param islandGroup The IslandGroup to conquer
      * @param player The tower holder of the team who conquers the IslandGroup
      */
-    private boolean conquerIslandGroup(IslandGroup islandGroup, Player player) throws GameOverException {
+    public boolean conquerIslandGroup(IslandGroup islandGroup, Player player){
         return islandGroup.conquer(player);
     }
 
@@ -171,8 +172,7 @@ public class Archipelago {
      * Merges given IslandGroup with nearby IslandGroups
      * @param islandGroupToMerge The IslandGroup to merge
      */
-    private void mergeIslandGroup(IslandGroup islandGroupToMerge) throws GameOverException {
-        if (getNumOfIslandGroups() == 4) throw new GameOverException();
+    public void mergeIslandGroup(IslandGroup islandGroupToMerge){
         int idxToMerge = islandGroups.indexOf(islandGroupToMerge);
         TowerColor tcToMerge = islandGroupToMerge.getTowerColor();
 
@@ -207,7 +207,7 @@ public class Archipelago {
      * @param islandTile IslandTile where student must be placed
      */
     public void placeStudent(Student student, IslandTile islandTile){
-        for(IslandGroup islandGroup : islandGroups) { // CHECKME: you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { //you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(islandTile))
                 islandGroup.placeStudent(student, islandTile);
         }
@@ -219,7 +219,7 @@ public class Archipelago {
      * @param islandTileID IslandTile where student must be placed
      */
     public void placeStudent(Student student, int islandTileID){
-        for(IslandGroup islandGroup : islandGroups) { // CHECKME: you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
+        for(IslandGroup islandGroup : islandGroups) { //you could just call islandTile.placeStudent without checking anything, this just delegates the action to the islandgroup which actually contains the tile
             if(islandGroup.hasIslandTile(getIslandTileByID(islandTileID)))
                 islandGroup.placeStudent(student, getIslandTileByID(islandTileID));
         }
@@ -245,7 +245,7 @@ public class Archipelago {
     }
     //endregion
 
-    //region State observer methods using IDs
+    //region Getters
     /**
      * Finds a Student with a given ID
      * @param ID The ID of the student
@@ -263,34 +263,6 @@ public class Archipelago {
             throw new NoSuchElementException("No Student with such ID in IslandGroups");
         else
             return studentToReturn;
-    }
-
-    /**
-     * Searches all IslandGroup to find which student each contains
-     * @return A HashMap containing as Key the idx of the IslandGroup, as value the list of StudentIDs
-     */
-    public HashMap<Integer, List<Integer>> getStudentsIDs(){
-        HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
-        for(IslandGroup islandGroup : islandGroups){
-            studentIDs.put(islandGroups.indexOf(islandGroup),islandGroup.getStudentIDs());
-        }
-        return studentIDs;
-    }
-
-    /**
-     * Returns the (current) index of the IslandGroup containing MotherNature
-     * @return The (current) index of the IslandGroup containing MotherNature
-     */
-    public int getMotherNatureIslandGroupIndex(){
-        for(IslandGroup islandGroup : islandGroups){
-            if(islandGroup.hasMotherNature())
-                return islandGroups.indexOf(islandGroup);
-        }
-        return -1;
-    }
-
-    public int getNumOfIslandGroups() {
-        return islandGroups.size();
     }
 
     /**
@@ -312,6 +284,44 @@ public class Archipelago {
             return islandTileToReturn;
     }
 
+    public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
+        return islandGroups.get(islandGroupIndex).getTowerColor();
+    }
+
+    public ResolveStrategy getResolveStrategy() {
+        return resolveStrategy;
+    }
+
+    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
+        return moveMotherNatureStrategy;
+    }
+    //endregion
+
+    //region State observer methods
+    /**
+     * Returns all students contained in all islands with their color
+     * @return An HashMap with StudentID as key and Color as value
+     */
+    public  HashMap<Integer, Color> getStudentIDs(){
+        HashMap<Integer, Color> students = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            students.putAll(islandGroup.getStudentIDsAndColor());
+        }
+        return students;
+    }
+
+    /**
+     * Searches all IslandTiles to find which students each contains
+     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     */
+    public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
+        HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            studentIDs.putAll(islandGroup.getStudentIDs());
+        }
+        return studentIDs;
+    }
+
     /**
      * For each IslandGroup finds the IDs of its IslandTiles
      * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
@@ -324,18 +334,69 @@ public class Archipelago {
         return  islandTilesIDs;
     }
 
-    public TowerColor getTowerColorOfIslandGroup(int islandGroupIndex){
-        return islandGroups.get(islandGroupIndex).getTowerColor();
+    /**
+     * Return the number of IslandGroups
+     * @return the number of IslandGroups
+     */
+    public int getNumOfIslandGroups() {
+        return islandGroups.size();
     }
 
-    public ResolveStrategy getResolveStrategy() {
-        return resolveStrategy;
+    /**
+     * Given the ID of an IslandTile, returns the index of the IslandGroup which contains it
+     * @param islandTileID The ID of the IslandTile to check
+     * @return The ID of the IslandGroup
+     * @throws NoSuchElementException If no IslandTile with given ID exists
+     */
+    public int getIslandGroupID(int islandTileID) throws NoSuchElementException{
+        IslandTile islandTile = getIslandTileByID(islandTileID);
+        for(IslandGroup islandGroup : islandGroups){
+            if(islandGroup.hasIslandTile(islandTile))
+                return islandGroups.indexOf(islandGroup);
+        }
+        throw new NoSuchElementException("There is no IslandGroup for given IslandTIle");    //This should not get called,
+                                                                                            // get getIslandTileByID already throws exception if no IslandTile
     }
 
-    public MoveMotherNatureStrategy getMoveMotherNatureStrategy() {
-        return moveMotherNatureStrategy;
+    /**
+     * Returns the (current) index of the IslandGroup containing MotherNature
+     * @return The (current) index of the IslandGroup containing MotherNature
+     */
+    public int getMotherNatureIslandGroupIndex(){
+        return islandGroups.indexOf(getMotherNatureIslandGroup());
     }
 
+    /**
+     * Returns the IslandTile ID of the IslandTile which contains MotherNature
+     * @return the IslandTile ID of the IslandTile which contains MotherNature
+     */
+    public int getMotherNatureIslandTileIndex(){
+        return getMotherNatureIslandTile().getID();
+    }
+
+    /**
+     * Returns the IslandGroups indexes along with the TowerColor of the Team who has towers.
+     * The color is null when no Team holds the IslandGroup
+     * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
+     */
+    public HashMap<Integer, TowerColor> getIslandGroupsOwner(){
+        HashMap<Integer, TowerColor> result = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups)
+            result.put(islandGroups.indexOf(islandGroup), islandGroup.getTowerColor());
+        return result;
+    }
+
+    /**
+     * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
+     * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
+     */
+    public HashMap<Integer, Integer> getNoEntryTiles(){
+        HashMap<Integer, Integer> noEntryTiles = new HashMap<>();
+        for(IslandGroup islandGroup : islandGroups){
+            noEntryTiles.put(islandGroups.indexOf(islandGroup), islandGroup.getNoEntryTileNumber());
+        }
+        return noEntryTiles;
+    }
     //endregion
 
 }

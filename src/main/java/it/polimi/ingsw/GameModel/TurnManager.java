@@ -78,6 +78,18 @@ public class TurnManager {
     }
 
     /**
+     * Returns current order
+     * @return a list of nicknames ordered
+     */
+    public List<String> getCurrentOrder(){
+        List<String> order = new ArrayList<>();
+        List<Player> orderToReturn = currentPhase.equals(Phase.PLANNING) ? planningPlayerList : actionPlayerList;
+        for(Player player : orderToReturn)
+            order.add(player.getNickname());
+        return order;
+    }
+
+    /**
      * Method that sets the planning order clockwise starting from a given player.
      * @param startingPlayer player from which to start the planning turn
      * @throws NoSuchElementException the parameter startingPlayer is not a valid player
@@ -115,7 +127,7 @@ public class TurnManager {
         switch (currentPhase) {
             case IDLE, ACTION -> {
                 currentPhase = Phase.PLANNING;
-                determinePlanningOrder();
+                //determinePlanningOrder(); already a method in game that calls determinePlanningOrder, why also here? am I missing smth?
             }
             case PLANNING -> currentPhase = Phase.ACTION;
         }

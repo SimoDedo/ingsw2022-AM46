@@ -79,11 +79,14 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     }
 
     /**
-     * removes the first pawn in the list
-     * @return the removed pawn
+     * Removes the first pawn in the list if present
+     * @return the removed pawn, null if no pawn was contained
      */
     public T removePawn() {
-        return pawns.remove(0);
+        if (pawns.size() > 0)
+            return pawns.remove(0);
+        else
+            return null;
     }
 
     /**

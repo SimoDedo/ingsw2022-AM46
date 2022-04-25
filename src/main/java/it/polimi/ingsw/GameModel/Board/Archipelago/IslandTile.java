@@ -82,7 +82,8 @@ public class IslandTile extends StudentContainer {
     public Tower swapTower(Tower tower) {
         Tower temp = this.tower;
         this.tower = tower;
-        this.setOwner(tower.getOwner());
+        if(tower != null)
+            this.setOwner(tower.getOwner());
         return temp;
     }
 
@@ -116,6 +117,8 @@ public class IslandTile extends StudentContainer {
         }
         return score;
     }
+
+
 
 
 }

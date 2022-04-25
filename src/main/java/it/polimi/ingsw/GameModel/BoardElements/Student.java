@@ -47,7 +47,7 @@ public class Student extends BoardPiece{
      * Setter for StudentContainer
      * @param studentContainer the future container of this student
      */
-    public void setStudentContainer(StudentContainer studentContainer) {
+    public void setStudentContainer(PlaceAndRemoveStudent studentContainer) {
         this.studentContainer = studentContainer;
     }
 

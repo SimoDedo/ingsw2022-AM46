@@ -9,9 +9,7 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Player {
 
@@ -52,7 +50,7 @@ public class Player {
      * @param assistantID unique ID of the assistant to play
      * @return the assistant which has been removed from the deck
      */
-    public AssistantCard playAssistant(int assistantID) {
+    public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
         return wizard.playAssistant(assistantID);
     }
 
@@ -71,16 +69,30 @@ public class Player {
     }
 
     /**
+     * Removes n coins
+     * @param n
+     */
+    public void takeCoins(int n) throws IllegalArgumentException{
+        if(coins - n < 0)
+            throw  new IllegalArgumentException("Can't deduct "+n+" coin since player hasn't enough");
+        coins = coins - n;
+    }
+
+    /**
+     * Return the number of coins
+     * @return the number of coins
+     */
+    public int getCoins() {
+        return coins;
+    }
+
+    /**
      * @param color of the students
      * @return amount of students of the specified color in the dining room
      */
     public int getScore(Color color){
         // assert playerBoard != null;
         return playerBoard.getScore(color);
-    }
-
-    public int getCoins() {
-        return coins;
     }
 
     public int getTowersPlaced() {
@@ -93,9 +105,8 @@ public class Player {
 
     /**
      * @return a tower taken from the playerBoard's tower space
-     * @throws GameOverException if the last tower is taken
      */
-    public Tower takeTower() throws GameOverException { return playerBoard.takeTower(); }
+    public Tower takeTower(){ return playerBoard.takeTower(); }
 
     /**
      * puts a tower back to the tower space
@@ -105,7 +116,7 @@ public class Player {
         playerBoard.placeTower(tower);
     }
 
-    public WizardType getWizardType() { return wizard.getType(); }
+    public WizardType getWizardType() { return wizard == null ? null : wizard.getType(); }
 
     /**
      * @return true if this player holds towers in his playerBoard
@@ -183,13 +194,13 @@ public class Player {
      *
      * @param student the student to place on the dining room
      */
-    public void addToDR(Student student) throws FullTableException {
-        playerBoard.getTable(student.getColor()).placeStudent(student);
+    public boolean addToDR(Student student) throws FullTableException {
+        return playerBoard.addToDiningRoom(student);
     }
 
     /**
      * Method that removes three students of a given color from the player's dining room. It is only
-     * called by Characeter 12.
+     * called by Character 12.
      *
      * @param color the color of the three students to remove from the dining room
      * @return the
@@ -197,10 +208,56 @@ public class Player {
     public List<Student> removeNFromDR(int numberToRemove, Color color) {
         List<Student> removedStudents = new ArrayList<>();
         for (int i = 0; i < numberToRemove; i++) {
-            try { removedStudents.add(playerBoard.getTable(color).removePawn()); }
-            catch (IndexOutOfBoundsException ioobe) { break; }
+            Student toRemove = playerBoard.getTable(color).removePawn();
+            if(toRemove == null){ break; }
+            removedStudents.add(toRemove);
         }
         return removedStudents;
     }
+
+    //region State observer method
+
+    /**
+     * Returns a list of cards that weren't yet played (thus to be shown to the player)
+     * @return a list of cards IDs
+     */
+    public List<Integer> getCardsLeft(){
+        return wizard.getCardsLeft();
+    }
+
+    /**
+     * Method to observe all the students in the entrance and their color
+     * @return HashMap with the student ID as key and its color as object
+     */
+    public HashMap<Integer, Color> getEntranceStudentsIDs(){
+        return playerBoard.getEntranceStudentsIDs();
+    }
+
+    /**
+     * Method to get all the table IDs and their color
+     * @return an HashMap with the table color as key and the Table ID as object
+     */
+    public HashMap<Color, Integer> getTableIDs(){
+        return playerBoard.getTableIDs();
+    }
+
+    /**
+     * Method to observe all the students in a table
+     * @param color The color of the table
+     * @return List with the student IDs in the requested table
+     */
+    public List<Integer> getTableStudentsIDs(Color color){
+        return playerBoard.getTableStudentsIDs(color);
+    }
+
+    /**
+     * Returns the amount of towers contained in the TowerSpace
+     * @return the amount of towers contained in the TowerSpace
+     */
+    public int getTowersLeft(){
+        return playerBoard.getTowersLeft();
+    }
+
+    //endregion
 
 }

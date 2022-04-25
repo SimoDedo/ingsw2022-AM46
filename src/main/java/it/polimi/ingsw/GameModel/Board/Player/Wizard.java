@@ -32,7 +32,7 @@ public class Wizard {
      */
     public AssistantCard playAssistant(int assistantID) throws NoSuchElementException {
         AssistantCard assistant = deck.stream().filter(card -> card.getID() == assistantID).
-                findAny().orElseThrow(NoSuchElementException::new);
+                findAny().orElseThrow(() -> new NoSuchElementException("Already played this assistant in previous turn"));
         deck.removeIf(card -> card.getID() == assistantID);
         return assistant;
     }
@@ -43,5 +43,16 @@ public class Wizard {
 
     public List<AssistantCard> getDeck() {
         return deck;
+    }
+
+    /**
+     * Returns a list of cards that weren't yet played (thus to be shown to the player)
+     * @return a list of cards IDs
+     */
+    public List<Integer> getCardsLeft(){
+        List<Integer> cardsLeft = new ArrayList<>();
+        for (AssistantCard assistantCard : deck)
+            cardsLeft.add(assistantCard.getID());
+        return cardsLeft;
     }
 }

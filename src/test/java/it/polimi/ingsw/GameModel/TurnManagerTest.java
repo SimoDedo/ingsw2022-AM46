@@ -15,7 +15,7 @@ import java.util.Map;
 public class TurnManagerTest {
 
     /**
-     * Tests that players are stored in the correct order. Used in other tests
+     * Tests that players are stored in the correct order. Used in other tests (?)
      */
     @Test
     public void testStartingPlanningOrder() {
@@ -37,11 +37,14 @@ public class TurnManagerTest {
         String nick2 = turnManager.getCurrentPlayer().getNickname();
         turnManager.nextTurn();
         String nick3 = turnManager.getCurrentPlayer().getNickname();
-        assertNotSame(nick1, nick2);
-        assertNotSame(nick2, nick3);
-        assertNotSame(nick3, nick1);
+        assertNotSame(nick1, nick2, "turn 1 and turn 2 share the same current player");
+        assertNotSame(nick2, nick3, "turn 2 and turn 3 share the same current player");
+        assertNotSame(nick3, nick1, "turn 3 and turn 1 share the same current player");
     }
 
+    /**
+     * verifies that players are picked in the correct order (depending on what assistant they played this round)
+     */
     @Test
     public void testDeterminePlanningOrder() {
         Bag bag = new Bag();
@@ -70,13 +73,16 @@ public class TurnManagerTest {
         turnManager.determinePlanningOrder();
         turnManager.nextPhase(); // 2nd planning phase
 
-        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 1");
         turnManager.nextTurn();
-        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 2");
         turnManager.nextTurn();
-        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 3");
     }
 
+    /**
+     *
+     */
     @Test
     public void testDetermineActionOrder() {
         Bag bag = new Bag();
@@ -102,13 +108,16 @@ public class TurnManagerTest {
         turnManager.determineActionOrder(cardsPlayedThisRound);
         turnManager.nextPhase(); // action phase
 
-        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 1");
         turnManager.nextTurn();
-        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 2");
         turnManager.nextTurn();
-        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 3");
     }
 
+    /**
+     * testing that order is chosen properly even if multiple players play an assistant with the same turn order weight
+     */
     @Test
     public void desperateActionOrder() {
         Bag bag = new Bag();
@@ -141,15 +150,15 @@ public class TurnManagerTest {
         turnManager.determineActionOrder(cardsPlayedThisRound);
         turnManager.nextPhase(); // action phase
 
-        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player2.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 1");
         turnManager.nextTurn();
-        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player3.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 2");
         turnManager.nextTurn();
-        assertSame(player4.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player4.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 3");
         turnManager.nextTurn();
-        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player1.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 4");
         turnManager.nextTurn();
-        assertSame(player5.getNickname(), turnManager.getCurrentPlayer().getNickname());
+        assertSame(player5.getNickname(), turnManager.getCurrentPlayer().getNickname(), "unexpected player for turn 5");
     }
 
 }

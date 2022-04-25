@@ -9,6 +9,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class ProfessorSet {
     public int getNumberOfProfessors(TowerColor towerColor) {
         int score = 0;
         for (Professor prof : professors) {
-            if (prof.getOwner().getTowerColor().equals(towerColor)) score++;
+            if (prof.getOwner()!= null && prof.getOwner().getTowerColor().equals(towerColor)) score++;
         }
         return score;
     }
@@ -77,11 +78,36 @@ public class ProfessorSet {
     }
 
     /**
+     * Getter for the checkAndMoveProfessor strategy.
+     * @return the checkAndMoveProfessor strategy.
+     */
+    public CheckAndMoveProfessorStrategy getCheckAndMoveProfessorStrategy() {
+        return checkAndMoveProfessorStrategy;
+    }
+
+    /**
      * Setter for the checkAndMoveProfessor strategy.
      * @param checkAndMoveProfessorStrategy the strategy to set as current
      */
     public void setCheckAndMoveProfessorStrategy(CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy) {
         this.checkAndMoveProfessorStrategy = checkAndMoveProfessorStrategy;
     }
+
+    //region State Observer methods
+
+    /**
+     * Method to observe which Professor is owned by who
+     * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+     */
+    public HashMap<Color, String> getProfessorsOwner(){
+        HashMap<Color, String> result = new HashMap<>();
+        for (Professor professor : professors){
+            String owner = professor.getOwner() == null ? null : professor.getOwner().getNickname();
+            result.put(professor.getColor(), owner);
+        }
+        return result;
+    }
+
+    //endregion
 
 }

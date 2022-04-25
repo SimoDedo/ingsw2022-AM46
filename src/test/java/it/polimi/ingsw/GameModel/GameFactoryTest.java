@@ -20,7 +20,7 @@ class GameFactoryTest {
         teamComposition.put("pirovano", TowerColor.BLACK);
 
         GameFactory factory = new GameFactory();
-        Game normal = factory.create(4, GameMode.NORMAL, teamComposition);
+        Game normal = factory.create(4, GameMode.NORMAL);
         assertSame(normal.getClass(), Game.class);
     }
 
@@ -33,19 +33,8 @@ class GameFactoryTest {
         teamComposition.put("pirovano", TowerColor.BLACK);
 
         GameFactory factory = new GameFactory();
-        Game expert = factory.create(4, GameMode.EXPERT, teamComposition);
-        assertSame(expert.getClass(), GameExpert.class);
+        Game expert = factory.create(4, GameMode.EXPERT);
+        assertSame(expert.getClass(), GameExpert.class, "factory not working as expected: game is not GameExpert type");
     }
 
-    @Test
-    void gameCreationError() {
-        Map<String, TowerColor> teamComposition = new LinkedHashMap<>();
-        teamComposition.put("pietro", TowerColor.WHITE);
-        teamComposition.put("simo", TowerColor.WHITE);
-        teamComposition.put("greg", TowerColor.WHITE);
-        teamComposition.put("pirovano", TowerColor.BLACK);
-
-        GameFactory factory = new GameFactory();
-        assertThrows(Exception.class, () -> factory.create(4, GameMode.NORMAL, teamComposition));
-    }
 }
