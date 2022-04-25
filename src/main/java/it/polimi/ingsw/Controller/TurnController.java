@@ -27,11 +27,8 @@ public class TurnController {
         return game.getCurrentPlayer();
     }
 
-    public boolean isPlayerTurn(String nickname){
-        if(game == null || getCurrentPlayer() == null) //If game hasn't started, thus in login phase
-            return true; //Any player can be choosing, so it is "any player's turn
-        else
-            return nickname.equals(game.getCurrentPlayer());
+    public Phase getCurrentPhase(){
+        return game.getCurrentPhase();
     }
 
     /**

@@ -56,6 +56,15 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
     }
 
     /**
+     * Return the maximum number of times the ability can be used.
+     * @return maxUses.
+     */
+    @Override
+    public int getMaxUses() {
+        return maxUses;
+    }
+
+    /**
      * Places Student on the character.
      * @param student student to be placed inside this container
      */

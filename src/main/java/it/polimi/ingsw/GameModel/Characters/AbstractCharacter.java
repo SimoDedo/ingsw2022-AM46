@@ -114,4 +114,12 @@ public abstract class AbstractCharacter implements Character {
         return owner;
     }
 
+    /**
+     * Return the maximum number of times the ability can be used.
+     * @return always 1. If specific character have different max uses the method will be overridden.
+     */
+    public int getMaxUses(){
+        return 1;
+    }
+
 }

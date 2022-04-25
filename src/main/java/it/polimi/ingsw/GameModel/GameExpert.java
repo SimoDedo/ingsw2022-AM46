@@ -64,6 +64,16 @@ public class GameExpert extends Game {
     }
 
     /**
+     * This method progresses the turn, updating currentPlayer.
+     */
+    @Override
+    public void nextTurn() throws IllegalStateException{
+        super.nextTurn();
+        characterManager.resetActiveCharacter();
+    }
+
+
+    /**
      * Creates the characterManager (which creates the 3 characters). Called by the controller once all players are connected.
      */
     public void createCharacters(){
@@ -122,7 +132,6 @@ public class GameExpert extends Game {
      * Determining the winner if this is the last round to be played
      * Resetting the character used this round
      * Resetting the strategies
-     * Changing the Phase (????????)
      */
     @Override
     public void endOfRoundOperations() throws GameOverException {
@@ -168,6 +177,14 @@ public class GameExpert extends Game {
          */
         public int getActiveCharacterID(){
             return characterManager.getActiveCharacterID();
+        }
+
+        /**
+         * Return the maximum number of times the ability of the active character can be used.
+         * @return the maximum number of times the ability of the active character can be used.
+         */
+        public int getActiveCharacterMaxUses(){
+            return characterManager.getActiveCharacterMaxUses();
         }
 
         //endregion

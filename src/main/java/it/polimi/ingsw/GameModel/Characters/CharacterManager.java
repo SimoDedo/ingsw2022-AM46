@@ -119,6 +119,14 @@ public class CharacterManager {
     }
 
     /**
+     * Return the maximum number of times the ability of the active character can be used.
+     * @return the maximum number of times the ability of the active character can be used.
+     */
+    public int getActiveCharacterMaxUses(){
+        return currentCharacter == null ? 0 : currentCharacter.getMaxUses();
+    }
+
+    /**
      * Resets the character that was used this round, if there was any
      */
     public void resetActiveCharacter(){
