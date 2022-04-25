@@ -228,8 +228,8 @@ public class Game {
             //TODO: not really a todo, just wanted someone to see this:
             // to avoid long exception chain, exception is thrown in resolve of archipelago.
             // Tower space no longer throws exception, just returns null -> this is because exception was thrown
-            // not when last tower was taken, but when the next tower was requested. Now method completes and then
-            // it's then checked if game is over.
+            // not when the last tower was taken, but when the next tower was requested. Now the method completes
+            // its job and then it is checked whether the game is over.
     }
 
     /**
@@ -287,7 +287,7 @@ public class Game {
     public void pushThisRoundInLastRound() {
         cardsPlayedLastRound.clear();
         cardsPlayedLastRound.putAll(cardsPlayedThisRound);
-        cardsPlayedThisRound.clear();;
+        cardsPlayedThisRound.clear();
     }
 
     public void refillClouds() throws LastRoundException{
@@ -444,7 +444,7 @@ public class Game {
          * @return An HashMap containing the nickname of the Player and the Wizard chosen
          */
         public HashMap<String, WizardType> getPlayersWizardType(){
-            HashMap<String, WizardType> result = new HashMap<String, WizardType>();
+            HashMap<String, WizardType> result = new HashMap<>();
             for(Player player : players){
                 result.put(player.getNickname(), player.getWizardType());
             }

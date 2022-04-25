@@ -125,10 +125,10 @@ public class TurnManagerTest {
         PlayerConfig config = new PlayerConfig(3);
         config.setBag(bag);
         Player player1 = new Player("1-pietro", TowerColor.WHITE, false, config);
-        Player player2 = new Player("2-simo", TowerColor.WHITE, true, config);
-        Player player3 = new Player("3-greg", TowerColor.BLACK, false, config);
-        Player player4 = new Player("4-margara <3", TowerColor.BLACK, true, config);
-        Player player5 = new Player("5-ceruti", TowerColor.GREY, true, config);
+        Player player2 = new Player("Simo", TowerColor.WHITE, true, config);
+        Player player3 = new Player("Greg", TowerColor.BLACK, false, config);
+        Player player4 = new Player("Margara <3", TowerColor.BLACK, true, config);
+        Player player5 = new Player("Ceruti", TowerColor.GREY, true, config);
 
         TurnManager turnManager = new TurnManager();
         turnManager.addPlayerClockwise(player5);

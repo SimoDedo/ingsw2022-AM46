@@ -6,7 +6,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.*;
 

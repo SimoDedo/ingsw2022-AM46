@@ -370,7 +370,7 @@ public class Archipelago {
      * Returns the IslandTile ID of the IslandTile which contains MotherNature
      * @return the IslandTile ID of the IslandTile which contains MotherNature
      */
-    public int getMotherNatureIslandTileIndex(){
+    public int getMotherNatureIslandTileIndex() {
         return getMotherNatureIslandTile().getID();
     }
 

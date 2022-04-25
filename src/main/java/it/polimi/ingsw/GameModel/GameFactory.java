@@ -1,9 +1,6 @@
 package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.Utils.Enum.GameMode;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-
-import java.util.Map;
 
 
 public class GameFactory {

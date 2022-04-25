@@ -4,7 +4,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.Utils.Enum.Color;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

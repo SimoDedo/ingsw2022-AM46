@@ -5,10 +5,6 @@ import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 public class Table extends StudentContainer {
     private boolean firstCoin, secondCoin, thirdCoin;
     private final Color color;

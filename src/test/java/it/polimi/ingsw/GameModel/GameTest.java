@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
@@ -9,13 +8,11 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
-import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.InvalidObjectException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -243,12 +240,13 @@ class GameTest {
         game.playAssistant("Simo", 10);
 
         int islandTileMN = game.getMotherNatureIslandTileID();
-        int destinationIG = game.getIslandTilesIDs().entrySet().
-                stream().
-                filter(entry -> entry.getValue().contains(islandTileMN)).
-                findAny().
-                get(). //always present
-                        getKey();
+        int destinationIG = game.getIslandTilesIDs().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().contains(islandTileMN))
+                .findAny()
+                // always present!
+                .orElseThrow(NoSuchElementException::new)
+                .getKey();
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int destinationIT = game.getIslandTilesIDs().get(destinationIG).get(0);
@@ -277,12 +275,13 @@ class GameTest {
         Map.Entry<Integer, Color> studentToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream().toList().get(0);
         //Select random student from entrance along with their color (thus an entry)
         int islandTileMN = game.getMotherNatureIslandTileID();
-        int destinationIG = game.getIslandTilesIDs().entrySet().
-                stream().
-                filter(entry -> entry.getValue().contains(islandTileMN)).
-                findAny().
-                get(). //always present
-                        getKey();
+        int destinationIG = game.getIslandTilesIDs().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().contains(islandTileMN))
+                .findAny()
+                // always present!
+                .orElseThrow(NoSuchElementException::new)
+                .getKey();
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int island = game.getIslandTilesIDs().get(destinationIG).get(0);
@@ -556,7 +555,7 @@ class GameTest {
         assertThrows(LastRoundException.class, () -> game.playAssistant("Simo", 10),
                 "When last card is played LastRoundException needs to be thrown");
         game.setLastRound(); //Operation done by controller when receiving Exception above
-        assertThrows(GameOverException.class, () -> game.endOfRoundOperations(),
+        assertThrows(GameOverException.class, game::endOfRoundOperations,
                 "At the end of the round game should end since it is the last round");
         assertEquals(TowerColor.BLACK, game.determineWinner(),
                 "Winner should be team black");
@@ -589,13 +588,13 @@ class GameTest {
             game.playAssistant("Simo", i);
         }
 
-        assertThrows(LastRoundException.class, () -> game.refillClouds(),
+        assertThrows(LastRoundException.class, game::refillClouds,
                 "When all students have been drawn LastRoundException should be thrown");
         game.setLastRound(); //Operation done by controller when receiving Exception above
         game.disableClouds(); //Operation done by controller when receiving Exception above
         assertEquals(0, game.getCloudStudentsIDs(game.getCloudIDs().get((new Random().nextInt(4)))).size(),
                 "Any random cloud should be empty (disabled)");
-        assertThrows(GameOverException.class, () -> game.endOfRoundOperations(),
+        assertThrows(GameOverException.class, game::endOfRoundOperations,
                 "At the end of the round game should end since it is the last round");
         assertEquals(TowerColor.BLACK, game.determineWinner(),
                 "Winner should be team black");

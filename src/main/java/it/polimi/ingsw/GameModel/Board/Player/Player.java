@@ -7,7 +7,6 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.*;
 
@@ -69,8 +68,8 @@ public class Player {
     }
 
     /**
-     * Removes n coins
-     * @param n
+     * Method for removing a number n of coins.
+     * @param n the number of coins to remove
      */
     public void takeCoins(int n) throws IllegalArgumentException{
         if(coins - n < 0)

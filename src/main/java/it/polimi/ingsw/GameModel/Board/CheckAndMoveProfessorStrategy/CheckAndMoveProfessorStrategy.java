@@ -4,8 +4,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import java.util.List;
-
 /**
  * Interface for the checkAndMoveProfessor strategy. All strategies should implement this interface.
  */

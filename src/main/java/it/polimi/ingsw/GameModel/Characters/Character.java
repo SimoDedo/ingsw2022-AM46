@@ -26,7 +26,7 @@ public interface Character {
      * @param consumer the Consumer that acts on the GameModel
      * @param parameterList the list of the consumer's parameters
      */
-    void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList) throws IllegalAccessException;
+    void useAbility(Consumer<List<Integer>> consumer, List<Integer> parameterList);
 
     /**
      * Returns the ID of the Character

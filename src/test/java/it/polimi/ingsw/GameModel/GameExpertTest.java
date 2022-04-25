@@ -11,7 +11,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -100,7 +99,7 @@ class GameExpertTest {
 
         game.createCharacters();
         for (int i = 0; i < 3; i++) //Give enough coin for every possible character
-        game.players.getByNickname("Simo").awardCoin();
+            game.players.getByNickname("Simo").awardCoin();
         game.useCharacter("Simo", game.getDrawnCharacterIDs().get(0));
         assertEquals(game.getDrawnCharacterIDs().get(0), game.getActiveCharacterID(),
                 "Active character should be the one selected");

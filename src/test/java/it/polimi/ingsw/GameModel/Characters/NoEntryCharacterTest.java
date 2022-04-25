@@ -37,8 +37,10 @@ class NoEntryCharacterTest {
         assertEquals(4, char5.getNoEntryTiles());
         assertThrows(IllegalStateException.class, char5::addNoEntryTile);
         try {
-            while (true) {
+            int i = 10;
+            while (i > 0) {
                 char5.removeNoEntryTile();
+                i--;
             }
         } catch (Exception e) {
             assertEquals(char5.getNoEntryTiles(), 0);

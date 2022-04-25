@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -71,11 +70,10 @@ class IslandGroupTest {
 
     /**
      *  Tests that team correctly conquers
-     * @throws FullTeamException not used
      * @throws GameOverException not used
      */
     @Test
-    void conquer() throws FullTeamException, GameOverException {
+    void conquer() throws GameOverException {
         IslandGroup islandGroup = new IslandGroup(true);
         Bag bag = new Bag();
         bag.fillRemaining();

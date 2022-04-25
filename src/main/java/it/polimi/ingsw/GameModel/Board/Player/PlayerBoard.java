@@ -6,7 +6,6 @@ import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +37,7 @@ public class PlayerBoard {
      * @throws NoSuchElementException if no student with this ID is found
      */
     public Student getStudentByID(int ID) throws NoSuchElementException {
-        Student student = entrance.getPawnByID(ID);;
+        Student student = entrance.getPawnByID(ID);
 
         if(student == null){ student = diningRoom.getStudentByID(ID); }
 

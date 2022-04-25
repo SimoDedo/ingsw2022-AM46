@@ -13,8 +13,6 @@ import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
