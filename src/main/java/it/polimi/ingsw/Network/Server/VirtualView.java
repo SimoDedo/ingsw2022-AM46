@@ -2,11 +2,11 @@ package it.polimi.ingsw.Network.Server;
 
 import java.net.Socket;
 
-public class VirtualClient implements Runnable{
+public class VirtualView implements Runnable{
     Socket socket;
     int id;
 
-    public VirtualClient(Socket socket, int id){
+    public VirtualView(Socket socket, int id){
         this.socket = socket;
         this.id = id;
     }

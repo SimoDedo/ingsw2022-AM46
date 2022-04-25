@@ -49,7 +49,7 @@ public class ConnectionSocket implements Runnable{
         while(this.active){
             try {
                 Socket connection = serverSocket.accept();
-                executor.submit(new VirtualClient(connection, clientID));
+                executor.submit(new VirtualView(connection, clientID));
                 clientID++;
             } catch (IOException e){
                 System.err.println(e.getMessage());
