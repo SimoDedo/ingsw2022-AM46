@@ -36,6 +36,7 @@ Made by:
 | Client & view             |    🟡    |
 | CLI                       |    🔴    |
 | GUI                       |    🔴    |
+
 🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
 
 ### Made with
