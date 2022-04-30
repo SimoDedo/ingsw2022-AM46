@@ -56,9 +56,9 @@ public class TurnController {
      * @throws IllegalStateException thrown when all player have taken their turn. Controller catching this
      * should then change phase.
      */
-    public void nextTurn() throws  IllegalStateException{
-        game.nextTurn();
+    public void nextTurn() throws IllegalStateException{
         studentsMovedByCurrentPlayer = 0;
+        game.nextTurn();
     }
 
     /**

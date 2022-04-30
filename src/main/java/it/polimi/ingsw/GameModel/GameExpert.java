@@ -187,6 +187,14 @@ public class GameExpert extends Game {
             return characterManager.getActiveCharacterMaxUses();
         }
 
+        /**
+         * Returns the number of times the ability of the active character can still be used.
+         * @return the number of times the ability of the active character can still be used.
+         */
+        public int getActiveCharacterUsesLeft(){
+            return characterManager.getActiveCharacterUsesLeft();
+        }
+
         //endregion
 
     //endregion

@@ -43,7 +43,7 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
         if (usesLeft > 0) {
             consumer.accept(parameterList);
             usesLeft--;
-        } else throw new IllegalStateException("Character uses depleted");
+        } else throw new IllegalStateException("Character has no more uses left!");
     }
 
     /**
@@ -62,6 +62,15 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
     @Override
     public int getMaxUses() {
         return maxUses;
+    }
+
+    /**
+     * Getter for the number of uses left.
+     * @return the number of uses left
+     */
+    @Override
+    public int getUsesLeft() {
+        return usesLeft;
     }
 
     /**
@@ -108,14 +117,6 @@ public class StudentMoverCharacter extends AbstractCharacter implements PlaceAnd
                 .filter(student -> student.getID() == ID)
                 .findAny()
                 .orElseThrow(() -> new NoSuchElementException("No such element in container"));
-    }
-
-    /**
-     * Getter for the number of uses left.
-     * @return the number of uses left
-     */
-    public Object getUsesLeft() {
-        return usesLeft;
     }
 
     /**

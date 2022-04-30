@@ -97,6 +97,11 @@ public class CharacterManager {
      * @param parameterList the list of the consumer's parameters
      */
     public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
+        if(currentCharacter == null)
+            throw new IllegalStateException("No character was activated!");
+        else if(currentCharacter.getUsesLeft() <= 0)
+            throw new IllegalStateException("Character has no more uses lef!");
+
         int currentID = currentCharacter.getCharacterID();
         currentCharacter.useAbility(consumerSet.getConsumer(currentID), parameterList);
     }
@@ -124,6 +129,14 @@ public class CharacterManager {
      */
     public int getActiveCharacterMaxUses(){
         return currentCharacter == null ? 0 : currentCharacter.getMaxUses();
+    }
+
+    /**
+     * Returns the number of times the ability of the active character can still be used.
+     * @return the number of times the ability of the active character can still be used.
+     */
+    public int getActiveCharacterUsesLeft(){
+        return currentCharacter == null ? 0 : currentCharacter.getUsesLeft();
     }
 
     /**
