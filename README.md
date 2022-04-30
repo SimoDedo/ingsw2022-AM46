@@ -30,12 +30,13 @@ Made by:
 | Advanced game             |    🟢    |
 | AF1: 4 players            |    🟢    |
 | AF2: 12 characters        |    🟢    |
-| AF3: parallel matches     |    🟡    |
+| AF3: parallel matches     |    🟢    |
 | Controller & virtual view |    🟡    |
 | Communication protocol    |    🟡    |
-| Client & view             |    🔴    |
+| Client & view             |    🟡    |
 | CLI                       |    🔴    |
 | GUI                       |    🔴    |
+🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
 
 ### Made with
 - Development kit: [JDK 17](https://www.oracle.com/java/technologies/downloads/)
@@ -61,30 +62,30 @@ The project will include:
 # Active development
 ## Roadmap
 - **Setup**
-  - [x] ~~Create this GitHub repo~~
-  - [x] ~~Set up the structure of README.md~~
+  - [x] Create this GitHub repo
+  - [x] Set up the structure of README.md
 
 - **Game design**
-  - [ ] Initial UML draft
-    - [x] ~~Game rules diagram~~
-    - [ ] MVC diagram
-    - [ ] Communication protocol diagram
+  - [x] Initial UML draft
+    - [x] Game rules diagram
+    - [x] MVC diagram
+    - [x] Communication protocol diagram
   - [ ] Complete UML diagram
   - [ ] Final UML diagram, automatically generated from code
   - [ ] GUI design
   
 - **Implementation**
-  - [x] ~~Game rules~~
-  - [x] ~~Board elements and pawns~~
-  - [x] ~~Archipelago~~
-  - [x] ~~Players and teams~~
-  - [x] ~~Expert mode: characters~~
-  - [ ] Advanced features
-    - [x] ~~AF1: 4-players game~~
-    - [x] ~~AF2: all 12 characters~~
-    - [ ] AF3: Parallel matches
-  - [ ] Unit testing for the model
-  - [ ] Controller
+  - [x] Game rules
+  - [x] Board elements and pawns
+  - [x] Archipelago
+  - [x] Players and teams
+  - [x] Expert mode: characters
+  - [x] Advanced features
+    - [x] AF1: 4-players game
+    - [x] AF2: all 12 characters
+    - [x] AF3: Parallel matches
+  - [x] Unit testing for the model
+  - [x] Controller
   - [ ] Virtual view
   - [ ] View
   - [ ] Communication protocol
@@ -112,7 +113,9 @@ The project will include:
   + **0.6.1**: 90% model implementation, 70% test coverage
 + **0.7.0**: rebuilt Characters, removed Team in favor of TeamManager, minor fixes
   + **0.7.1**: initial design of the Controller; 95% model implementation, 80% test coverage 
-
++ **0.8.0**: complete MVC diagram and communication protocol
+  + **0.8.1**: complete Controller and Message classes
+  + **0.8.2**: complete ServerHandler and AF3
 ---
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
