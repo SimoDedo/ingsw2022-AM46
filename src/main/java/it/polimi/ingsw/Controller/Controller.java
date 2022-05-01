@@ -9,6 +9,7 @@ import it.polimi.ingsw.Network.Message.Error.IllegalSelectionError;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
 import it.polimi.ingsw.Network.Message.Info.*;
 import it.polimi.ingsw.Network.Message.UserAction.*;
+import it.polimi.ingsw.Network.Server.MatchServer;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
@@ -23,6 +24,8 @@ import java.util.NoSuchElementException;
  * Class that models the controller of the MVC pattern.
  */
 public class Controller {
+
+    private final MatchServer server;
 
     private final TurnController turnController;
 
@@ -54,13 +57,17 @@ public class Controller {
      */
     private final HashMap<String, UserActionType> expectedUserAction;
 
+    private boolean initialized;
+
     private boolean gameStarted;
+
     private boolean isLastRound;
 
     /**
      * Constructor for the controller. Creates a controller in its starting state, waiting for someone to login.
      */
-    public Controller(){
+    public Controller(MatchServer server){
+        this.server = server;
         gameStarted = false;
         isLastRound = false;
         players = new ArrayList<>();
@@ -115,6 +122,7 @@ public class Controller {
                         GameMode gameMode = ((GameSettingsUserAction) userAction).getGameMode();
                         selectGameSettings(n, gameMode);
                         createGame();
+                        initialized = true;
                     }
                     case TOWER_COLOR -> {
                         TowerColor towerColor = ((TowerColorUserAction) userAction).getTowerColor();
@@ -158,12 +166,12 @@ public class Controller {
      * main request/userAction loop with user starts.
      * @param nickname nickname of the player trying to join the game. Assumed unique.
      */
-    private void loginHandle(String nickname){ //Check on username uniqueness done by SERVER (needs to be unique between ALL games and controllers. Assumed here unique.)
+    public void loginHandle(String nickname){ //Check on username uniqueness done by SERVER (needs to be unique between ALL games and controllers. Assumed here unique.)
         if(players.size() == 0){ //If first to login
             players.add(nickname);
 
             expectedUserAction.put(nickname, UserActionType.GAME_SETTINGS);
-            sendInfoToUser(nickname, new LoginInfo(players));
+            sendInfoToUser(nickname, new GameJoinInfo(players));
         }
         else{
             if(numOfPlayers != 0 && gameMode != null){ //If first player has chosen game settings
@@ -246,15 +254,15 @@ public class Controller {
      * Method to send a request to the user. It asks the server to do this operation.
      * @param info the info to send.
      */
-    private void sendInfoToUser(String nickname , Info info){
-        //TODO: server.sendToUser()
+    private void sendInfoToUser(String nickname, Info info){
+        server.sendMessage(nickname, info);
     }
     /**
      * Method to send a request to all users. It asks the server to do this operation.
      * @param info the info to send.
      */
     private void sendInfoToAllUsers(Info info){
-        //TODO: server.sendToAllUsers()
+        server.sendAll(info);
     }
 
     /**
@@ -262,7 +270,15 @@ public class Controller {
      * @param error error to send
      */
     public void sendErrorToUser(String nickname, Error error){
-        //TODO: server.sendToUser()
+        server.sendMessage(nickname, error);
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public boolean isFull() {
+        return numOfPlayers == players.size();
     }
 
     //endregion

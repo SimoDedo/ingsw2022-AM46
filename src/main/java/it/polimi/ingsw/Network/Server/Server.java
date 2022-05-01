@@ -1,51 +1,20 @@
 package it.polimi.ingsw.Network.Server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.HashMap;
-import java.util.Map;
+import it.polimi.ingsw.Network.Message.UserAction.LoginUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.UserAction;
+
+import java.net.InetAddress;
 
 /**
- * This class models an instance of a server, which is tasked with communicating with the players
- * through the VirtualView class.
+ * Interface for all the server classes in the project. Servers have common methods based on having
+ * similar functions, for example handling client login, registering and unregistering clients, and
+ * more.
  */
-public class Server {
+public interface Server {
 
-    private boolean full = false;
+    void parseAction(ConnectionThread connectionThread, UserAction clientAction);
 
-    /**
-     * HashMap for storing the client IDs associated with each connected virtual view on the server.
-     */
-    private Map<VirtualView, Integer> viewIDs = new HashMap<>();
+    void handleLogin(ConnectionThread connectionThread, LoginUserAction loginAction);
 
-    /**
-     * Constructor for the Server class.
-     */
-    public Server(int port) {
-
-    }
-
-    public void registerView() {
-
-    }
-
-    public void singleSend() {
-
-    }
-
-    public void sendAll() {
-
-    }
-
-    public void sendAllExcept() {
-
-    }
-
-    public void parseAction() {
-
-    }
-
-    public void playerDisconnected() {
-
-    }
+    void close();
 }
