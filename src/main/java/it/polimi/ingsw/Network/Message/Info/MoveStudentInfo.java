@@ -9,7 +9,7 @@ public class MoveStudentInfo extends Info{
     private int leftToMove;
 
     public MoveStudentInfo(int movedStudentID, int destinationID, int leftToMove) {
-        super("Students successfully moved!");
+        super("Student successfully moved!");
         this.movedStudentID = movedStudentID;
         this.destinationID = destinationID;
         this.leftToMove = leftToMove;

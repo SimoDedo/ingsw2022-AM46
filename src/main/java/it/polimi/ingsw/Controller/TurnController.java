@@ -37,13 +37,15 @@ public class TurnController {
     public void startGame(){
         game.determineFirstRoundOrder();
     }
-
     /**
-     * Called when a student is moved from entrance. It adds one to the counter of the students moved, and returns it.
+     * Called when a student is moved from entrance. It adds one to the counter of the students moved
      * @return the students moved by the current player.
      */
+    public void moveStudent(){
+       studentsMovedByCurrentPlayer++;
+    }
+
     public int studentMoved(){
-        studentsMovedByCurrentPlayer++;
         return studentsMovedByCurrentPlayer;
     }
 

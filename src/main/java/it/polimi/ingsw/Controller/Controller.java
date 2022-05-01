@@ -78,6 +78,21 @@ public class Controller {
         expectedUserAction = new HashMap<>();
     }
 
+    /**
+     * Constructor for the controller. Creates a controller in its starting state, waiting for someone to login.
+     */
+    public Controller(){
+        this.server = null;
+        gameStarted = false;
+        isLastRound = false;
+        players = new ArrayList<>();
+        numOfPlayers = 0;
+        playersReady = 0;
+        turnController = new TurnController();
+        gameFactory = new GameFactory();
+        expectedUserAction = new HashMap<>();
+    }
+
 
     //region Network
     /**
@@ -177,7 +192,7 @@ public class Controller {
             if(numOfPlayers != 0 && gameMode != null){ //If first player has chosen game settings
                 if(players.size() < numOfPlayers){ //If there is still space in the game
                     players.add(nickname);
-                    expectedUserAction.put(nickname, UserActionType.GAME_SETTINGS);
+                    expectedUserAction.put(nickname, UserActionType.TOWER_COLOR);
                     sendInfoToUser(nickname, new GameSettingInfo( numOfPlayers, gameMode));
                 }
                 else { //If there is no more space
@@ -231,38 +246,25 @@ public class Controller {
         }
     }
 
-    /*/**
-     * Method that parses a generic message and sends it correctly.
-     * @param message the generic message to send.
-     */
-    /*private void sendToUser(Message message){
-        if(message instanceof EndGameInfo){
-            sendEndGameToUsers((EndGameInfo) message);
-        }
-        else if(message instanceof CharacterInfo){
-            sendCharacterRequestToUser((CharacterInfo) message);
-        }
-        else if(message instanceof Info){
-            sendInfoToUser((Info) message);
-        }
-        else if(message instanceof Error){
-            sendErrorToUser((Error) message);
-        }
-    }*/
-
     /**
      * Method to send a request to the user. It asks the server to do this operation.
      * @param info the info to send.
      */
-    private void sendInfoToUser(String nickname, Info info){
-        server.sendMessage(nickname, info);
+    private void sendInfoToUser(String nickname , Info info){
+        if(server != null)
+            server.sendMessage(nickname, info);
+        else
+            System.out.println(info);
     }
     /**
      * Method to send a request to all users. It asks the server to do this operation.
      * @param info the info to send.
      */
     private void sendInfoToAllUsers(Info info){
-        server.sendAll(info);
+        if(server != null)
+            server.sendAll(info);
+        else
+            System.out.println(info);
     }
 
     /**
@@ -270,7 +272,10 @@ public class Controller {
      * @param error error to send
      */
     public void sendErrorToUser(String nickname, Error error){
-        server.sendMessage(nickname, error);
+        if(server != null)
+            server.sendMessage(nickname, error);
+        else
+            System.out.println(error);
     }
 
     public boolean isInitialized() {
@@ -415,10 +420,10 @@ public class Controller {
             sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
             return;
         }
-        turnController.studentMoved();
+        turnController.moveStudent();
 
         sendInfoToAllUsers(new MoveStudentInfo(studentID, destinationID, turnController.getStudentsToMove()));
-        if(turnController.studentMoved() == turnController.getStudentsToMove()){
+        if(turnController.studentMoved() < turnController.getStudentsToMove()){
             //If more students to move, expects another student moved
             expectedUserAction.put(nickname, UserActionType.MOVE_STUDENT);
         }
@@ -597,19 +602,27 @@ public class Controller {
 
     //endregion
 
+    //region testing methods
     /**
      * Used in testing.
      * Allows to skip the controller state to be expecting a certain move.
      * @param nickname User who we are expecting an action from
      * @param expectedUserAction UserAction expected of the user
      */
-    protected void debugSetExpectedUserAction(String nickname, UserActionType expectedUserAction){
-        if(nickname == null){
-            this.expectedUserAction.clear();
-        }
-        else{
-            this.expectedUserAction.put(nickname, expectedUserAction);
-        }
+    protected void setExpectedUserAction(String nickname, UserActionType expectedUserAction){
+        this.expectedUserAction.put(nickname, expectedUserAction);
     }
 
+    protected HashMap<String, UserActionType> getExpectedUserAction() {
+        return expectedUserAction;
+    }
+
+    protected void  clearExpectedUserAction(){
+        this.expectedUserAction.clear();
+    }
+
+    protected Game getGame(){
+        return game;
+    }
+    //endregion
 }
