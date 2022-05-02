@@ -11,6 +11,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class is the first to be created server-side, and it in turn creates a server socket which
@@ -35,11 +38,18 @@ public class LobbyServer implements Server {
 
     private Set<ConnectionThread> connections = new HashSet<>();
 
+    private ExecutorService executor;
+
     /**
      * Constructor for a LobbyServer object. The constructor will create a first socket to which all
      * clients connect first, to later establish the server they will be bound to.
      */
     public LobbyServer() {
+        executor = Executors.newCachedThreadPool();
+
+    }
+
+    public void startServer(){
         try {
             mainSocket = new ServerSocket(mainPort);
             IP = mainSocket.getInetAddress();
@@ -55,6 +65,7 @@ public class LobbyServer implements Server {
             try {
                 tempSocket = mainSocket.accept();
                 ConnectionThread newConnection = new ConnectionThread(tempSocket, this);
+                executor.execute(newConnection);
                 connections.add(newConnection);
             } catch (IOException ioe) {
                 System.err.println("IO error: " + ioe);
@@ -105,6 +116,7 @@ public class LobbyServer implements Server {
             connectionThread.sendMessage(new LoginError("Nickname already taken. Choose another one!"));
         }
         else {
+            registerClient(IP, loginAction.getNickname());
             MatchServer serverToConnect = null;
             for (MatchServer server : matchServers) {
                 if (server.isInitialized() && !server.isFull()) {
@@ -114,6 +126,7 @@ public class LobbyServer implements Server {
             }
             if (serverToConnect == null) {
                 serverToConnect = new MatchServer(this, createMatchPort());
+                executor.execute(serverToConnect);
                 matchServers.add(serverToConnect);
             }
             connectionThread.sendMessage(new ServerLoginInfo(IP, serverToConnect.getPort()));
@@ -121,6 +134,10 @@ public class LobbyServer implements Server {
             connections.remove(connectionThread);
             serverToConnect.await(connectionThread.getInetAddress(), loginAction.getNickname());
         }
+    }
+
+    public void deleteMatch(MatchServer matchServer){
+        matchServers.remove(matchServer);
     }
 
     public void registerClient(InetAddress IP, String nickname) {

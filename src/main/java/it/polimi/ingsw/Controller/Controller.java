@@ -193,7 +193,8 @@ public class Controller {
                 if(players.size() < numOfPlayers){ //If there is still space in the game
                     players.add(nickname);
                     expectedUserAction.put(nickname, UserActionType.TOWER_COLOR);
-                    sendInfoToUser(nickname, new GameSettingInfo( numOfPlayers, gameMode));
+                    sendInfoToUser(nickname, new GameJoinInfo(players));
+                    sendInfoToUser(nickname, new GameSettingInfo(numOfPlayers, gameMode));
                 }
                 else { //If there is no more space
                     sendErrorToUser(nickname, new LoginError("Lobby is complete!"));
@@ -283,7 +284,7 @@ public class Controller {
     }
 
     public boolean isFull() {
-        return numOfPlayers == players.size();
+        return numOfPlayers != 0 && numOfPlayers == players.size();
     }
 
     //endregion

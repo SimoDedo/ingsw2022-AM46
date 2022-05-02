@@ -13,12 +13,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class models an instance of a server, which is tasked with communicating with the players
  * through the VirtualView class.
  */
-public class MatchServer implements Server {
+public class MatchServer implements Server, Runnable {
 
     private LobbyServer lobbyServer;
 
@@ -48,6 +50,8 @@ public class MatchServer implements Server {
      */
     private Map<String, VirtualView> viewMap = new HashMap<>();
 
+    private ExecutorService executor;
+
     /**
      * Constructor for the MatchServer class.
      */
@@ -55,9 +59,14 @@ public class MatchServer implements Server {
         this.lobbyServer = lobbyServer;
         this.controller = new Controller(this);
         this.port = port;
+        executor = Executors.newCachedThreadPool();
+    }
+
+    @Override
+    public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server now listening on port " + port);
+            System.out.println("Match Server now listening on port " + port);
         } catch (IOException ioe) {
             System.err.println("Match server socket binding operation failed: ");
             ioe.printStackTrace();
@@ -68,7 +77,7 @@ public class MatchServer implements Server {
             try {
                 tempSocket = serverSocket.accept();
                 ConnectionThread newConnection = new ConnectionThread(tempSocket, this);
-                // object newConnection ignored for now
+                executor.execute(newConnection);
             } catch (IOException ioe) {
                 System.err.println("IO error while accepting connection: ");
                 ioe.printStackTrace();
@@ -112,6 +121,7 @@ public class MatchServer implements Server {
         for (ConnectionThread connection : connectionMap.values()) {
             connection.close();
         }
+        lobbyServer.deleteMatch(this);
     }
 
     /**

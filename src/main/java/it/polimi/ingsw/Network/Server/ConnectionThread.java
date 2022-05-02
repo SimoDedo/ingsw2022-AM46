@@ -25,7 +25,7 @@ public class ConnectionThread implements Runnable {
 
     private ObjectOutputStream outputStream;
 
-    private boolean active;
+    private boolean active = true;
 
     public ConnectionThread(Socket clientSocket, Server server) {
         this.socket = clientSocket;
@@ -94,6 +94,9 @@ public class ConnectionThread implements Runnable {
             server.parseAction(this, action);
         } catch (Exception e) { // what exceptions are thrown here?
             e.printStackTrace();
+            close(); //FIXME: this avoids endless exception prints when client is closed, but probably not best way to handle it
+            if(server instanceof MatchServer)
+                server.close(); //If one disconnects, all disconnected from match
         }
     }
 

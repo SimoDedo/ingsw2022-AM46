@@ -20,4 +20,6 @@ public class TowerColorInfo extends Info{
     public TowerColor getTowerColorChosen() {
         return towerColorChosen;
     }
+
+
 }

@@ -142,8 +142,6 @@ class ControllerTest {
         }
         assertEquals(UserActionType.MOVE_MOTHER_NATURE, controller.getExpectedUserAction().get(firstPlayer),
                 "The first player, when all students were moved, is expected to move mother nature");
-
-        //controller.receiveUserAction(new MoveMotherNatureUserAction(firstPlayer, game.getMotherNatureIslandTileID() + 1 ));
     }
 
 }
