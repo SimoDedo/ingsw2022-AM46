@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Client;
+package it.polimi.ingsw.Network.Client;
 
 import it.polimi.ingsw.Network.Message.Message;
 
@@ -7,7 +7,5 @@ import it.polimi.ingsw.Network.Message.Message;
  */
 public class ActionHandler {
 
-    public void printSimpleMessage(Message m){
 
-    }
 }

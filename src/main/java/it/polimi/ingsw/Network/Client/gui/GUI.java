@@ -1,6 +1,6 @@
-package it.polimi.ingsw.Client.gui;
+package it.polimi.ingsw.Network.Client.gui;
 
-import it.polimi.ingsw.Client.UI;
+import it.polimi.ingsw.Network.Client.UI;
 
 import java.beans.PropertyChangeEvent;
 

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Client;
+package it.polimi.ingsw.Network.Client;
 import java.beans.PropertyChangeListener;
 
 
