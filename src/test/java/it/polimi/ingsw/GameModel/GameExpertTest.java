@@ -61,7 +61,7 @@ class GameExpertTest {
 
         game.createCharacters();
 
-        System.out.println("Characters drawn: " + game.getDrawnCharacterIDs()); //To visualize randomness
+        // System.out.println("Characters drawn: " + game.getDrawnCharacterIDs());
         assertEquals(3, game.getDrawnCharacterIDs().stream().distinct().toList().size(),
                 "Always 3 different characters should be drawn");
     }

@@ -29,7 +29,6 @@ import java.util.*;
  */
 public class Game {
 
-    private final Player neutralPlayer = new Player();
     protected Bag bag = new Bag();
     protected Archipelago archipelago = new Archipelago();
     private List<CloudTile> clouds = new ArrayList<>();
