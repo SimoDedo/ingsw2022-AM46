@@ -17,6 +17,7 @@ import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Class that extends Game. It is created instead of Game in an Expert match.
@@ -123,7 +124,9 @@ public class GameExpert extends Game {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException{
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
         characterManager.useAbility(parameterList);
     }
 

@@ -364,7 +364,9 @@ public class Controller {
             ((GameExpert) game).distributeInitialCoins();
             ((GameExpert) game).createCharacters();
         }
+
         game.refillClouds();
+
 
         //At start of game, first player (randomly drawn by model) is expected to play an assistant
         expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT);
@@ -481,6 +483,7 @@ public class Controller {
         }
         catch (NoSuchElementException e){
             sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
+            return;
             //TODO: other exceptions should be thrown and handled
         }
 
@@ -488,7 +491,7 @@ public class Controller {
         try { //If there is a next player that has to play its Action phase, sends request to him
             turnController.nextTurn();
             expectedUserAction.clear();
-            expectedUserAction.put(nickname, UserActionType.MOVE_STUDENT);
+            expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT);
             sendInfoToAllUsers(new NextTurnInfo(turnController.getCurrentPlayer()));
         }
         catch (IllegalStateException phaseDone){ //If instead all players have played, phase is switched
@@ -536,7 +539,8 @@ public class Controller {
         try {
             ((GameExpert) game).useAbility(parameters);
         }
-        catch (IllegalStateException | LastRoundException | GameOverException e){
+        catch (NoSuchElementException | IllegalArgumentException | IllegalStateException
+                | LastRoundException | GameOverException e){
             if(e instanceof  GameOverException){
                 gameOverOperations();
                 return;

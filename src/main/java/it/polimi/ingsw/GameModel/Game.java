@@ -246,7 +246,7 @@ public class Game {
                 clouds.stream()
                 .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
                 .findAny()
-                .orElseThrow(NoSuchElementException::new)
+                .orElseThrow(() -> new NoSuchElementException("No cloud with such ID exists"))
                 .removeAll());
 
         getPlayerByNickname(nickname).addToEntrance(studentsTaken);

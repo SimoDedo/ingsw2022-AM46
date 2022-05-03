@@ -96,7 +96,9 @@ public class CharacterManager {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
         if(currentCharacter == null)
             throw new IllegalStateException("No character was activated!");
         else if(currentCharacter.getUsesLeft() <= 0)

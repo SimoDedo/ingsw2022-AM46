@@ -243,12 +243,12 @@ class GameTest {
         game.playAssistant("Simo", 10);
 
         int islandTileMN = game.getMotherNatureIslandTileID();
-        int destinationIG = game.getIslandTilesIDs().entrySet().
-                stream().
-                filter(entry -> entry.getValue().contains(islandTileMN)).
-                findAny().
-                get(). //always present
-                        getKey();
+        int destinationIG = game.getIslandTilesIDs().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().contains(islandTileMN))
+                .findAny()
+                .get()//always present
+                .getKey();
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int destinationIT = game.getIslandTilesIDs().get(destinationIG).get(0);

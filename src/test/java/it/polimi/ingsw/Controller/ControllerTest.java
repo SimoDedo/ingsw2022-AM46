@@ -118,7 +118,10 @@ class ControllerTest {
                 "Only one player should be expected to take any action");
     }
 
-    @RepeatedTest(100)
+    /**
+     * Tests that action phase operations can be sequentially taken without fail.
+     */
+    @Test
     void actionPhaseTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
@@ -142,6 +145,77 @@ class ControllerTest {
         }
         assertEquals(UserActionType.MOVE_MOTHER_NATURE, controller.getExpectedUserAction().get(firstPlayer),
                 "The first player, when all students were moved, is expected to move mother nature");
+
+        int mnIsland = game.getMotherNatureIslandTileID();
+        int destinationIG = game.getIslandTilesIDs().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().contains(mnIsland))
+                .findAny()
+                .get()//always present
+                .getKey();
+        destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
+        int destinationIT = game.getIslandTilesIDs().get(destinationIG).get(0);
+
+        controller.receiveUserAction(new MoveMotherNatureUserAction(firstPlayer ,destinationIT));
+        assertEquals(UserActionType.TAKE_FROM_CLOUD, controller.getExpectedUserAction().get(firstPlayer),
+                "The first player, after moving mother nature, is expected choose a cloud");
+
+        int cloudId = game.getCloudIDs().get(0);
+        controller.receiveUserAction(new TakeFromCloudUserAction(firstPlayer, cloudId));
+        assertNull(controller.getExpectedUserAction().get(firstPlayer),
+                "The first player, after taking from cloud, is not expected to do an action");
     }
+
+    /**
+     * Tests that when a round ends it correctly notifies the next phase and that the correct player is
+     * expected to play the next assistant
+     */
+    @Test
+    void endOfRoundTest(){
+        Controller controller = new Controller();
+        controller.receiveUserAction(new LoginUserAction("Simo"));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new LoginUserAction("Greg"));
+        controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK)); //Tower color choosing
+        controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
+        controller.receiveUserAction(new WizardUserAction("Simo", WizardType.MAGE)); //Mage choosing
+        controller.receiveUserAction(new WizardUserAction("Greg", WizardType.SAMURAI));
+        Game game = controller.getGame();
+        String firstPlayer = game.getCurrentPlayer();
+        controller.receiveUserAction(new PlayAssistantUserAction(firstPlayer, 4));
+        controller.receiveUserAction(new PlayAssistantUserAction(game.getCurrentPlayer(), 5));
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                assertEquals(UserActionType.MOVE_STUDENT, controller.getExpectedUserAction().get(game.getCurrentPlayer()),
+                        "The first player (who played the lowest card) is expected to move student number " + (i+1));
+                int studID = game.getEntranceStudentsIDs(game.getCurrentPlayer()).keySet().stream().toList().get(0);
+                int islandID = game.getIslandTilesIDs().values().stream().toList().get(0).get(0);
+                controller.receiveUserAction(new MoveStudentUserAction(game.getCurrentPlayer(), studID, islandID));
+            }
+            assertEquals(UserActionType.MOVE_MOTHER_NATURE, controller.getExpectedUserAction().get(game.getCurrentPlayer()),
+                    "The first player, when all students were moved, is expected to move mother nature");
+
+            int mnIsland = game.getMotherNatureIslandTileID();
+            int destinationIG = game.getIslandTilesIDs().entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().contains(mnIsland))
+                    .findAny()
+                    .get()//always present
+                    .getKey();
+            destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
+            int destinationIT = game.getIslandTilesIDs().get(destinationIG).get(0);
+
+            controller.receiveUserAction(new MoveMotherNatureUserAction(game.getCurrentPlayer() ,destinationIT));
+
+            int cloudId = game.getCloudIDs().get(i);
+            controller.receiveUserAction(new TakeFromCloudUserAction(game.getCurrentPlayer(), cloudId));
+        }
+
+        assertEquals(UserActionType.PLAY_ASSISTANT, controller.getExpectedUserAction().get(firstPlayer),
+                "After round is over, next planning phase should start with player who played lowest assistant");
+
+    }
+
+
 
 }
