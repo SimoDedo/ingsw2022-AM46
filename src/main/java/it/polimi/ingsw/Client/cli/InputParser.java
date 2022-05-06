@@ -31,23 +31,6 @@ public class InputParser {
         return input.nextInt();
     }
 
-    public void parseCommand(String input){
-
-        String command = readLine();
-
-        switch (command){
-            case "": case "\n": break;
-            case "help": cli.displayHelp(); break;
-            case "choose cloud": cli.requestCloud(); break;
-            case "move": cli.requestMove(); break;
-            case "play assistant": cli.requestAssistant(); break;
-            case "play character": cli.requestCharacter(); break;
-            case "standings": cli.standings(); break;
-            case "end turn": cli.requestEndTurn(); break;
-            default: cli.displayMessage("Invalid command - please type help for a list of available commands."); break;
-
-        }
-    }
 
 
 }
