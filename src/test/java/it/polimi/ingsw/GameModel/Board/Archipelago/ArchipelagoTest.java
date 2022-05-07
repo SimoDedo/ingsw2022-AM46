@@ -54,7 +54,7 @@ class ArchipelagoTest {
      * Tests that resolving an Island causes correct team to control the IslandGroup
      * @throws GameOverException not tested
      */
-    @Test
+    @RepeatedTest(10)
     void resolveIslandGroup() throws GameOverException {
         Archipelago archipelago = new Archipelago();
         archipelago.placeStudent(new Student(Color.PINK, null),archipelago.getIslandTilesIDs().get(0).get(0));
@@ -80,7 +80,7 @@ class ArchipelagoTest {
         archipelago.resolveIslandGroup(0, players,professorSet);
         assertEquals(archipelago.getTowerColorOfIslandGroup(0), TowerColor.BLACK, "unexpected tower found (or none) after resolve");
         Random random = new Random(System.currentTimeMillis());
-        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11 + 1)), "unexpected tower found in owner-less island");
+        assertNull(archipelago.getTowerColorOfIslandGroup(random.nextInt(11) + 1), "unexpected tower found in owner-less island");
     }
 
     /**
