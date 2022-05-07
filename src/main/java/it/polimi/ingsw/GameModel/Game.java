@@ -516,7 +516,7 @@ public class Game {
 
         /**
          * Searches all IslandTiles to find which students each contains
-         * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+         * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
          */
         public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
             return archipelago.getIslandTilesStudentsIDs();
@@ -543,7 +543,7 @@ public class Game {
      * The color is null when no Team holds the IslandGroup
      * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
      */
-        public HashMap<Integer, TowerColor> getIslandGroupsOwner(){
+        public HashMap<Integer, TowerColor> getIslandGroupsOwners(){
         return archipelago.getIslandGroupsOwner();
     }
 

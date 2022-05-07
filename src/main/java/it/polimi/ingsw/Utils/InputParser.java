@@ -1,17 +1,13 @@
-package it.polimi.ingsw.Client.cli;
-
-import it.polimi.ingsw.Client.Client;
+package it.polimi.ingsw.Utils;
 
 import java.util.Scanner;
 
 public class InputParser {
 
-    private final CLI cli;
     private final Scanner input;
 
 
-    public InputParser(CLI cli){
-        this.cli = cli;
+    public InputParser(){
         this.input = new Scanner(System.in);
     }
 
@@ -24,7 +20,7 @@ public class InputParser {
     public int readNumber() {
         synchronized (input) {
             while(!input.hasNextInt()){
-                cli.displayMessage("Invalid input - please input an integer.");
+                System.out.println("Invalid input - please input an integer.");
             }
             input.next();
         }

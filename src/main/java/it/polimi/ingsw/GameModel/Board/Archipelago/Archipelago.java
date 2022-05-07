@@ -312,7 +312,7 @@ public class Archipelago {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();

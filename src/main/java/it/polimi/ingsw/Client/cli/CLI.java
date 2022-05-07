@@ -5,12 +5,15 @@ import it.polimi.ingsw.Client.UI;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Phase;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.InputParser;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 public class CLI implements UI {
 
@@ -18,12 +21,33 @@ public class CLI implements UI {
     private final Client client;
     private final InputParser parser;
     private final Game game;
+    private final HashMap<Integer, Integer> cloudMap = new HashMap<>();
 
     public CLI(Client client, InputParser parser, Game game){
         output = new PrintStream(System.out);
         this.client = client;
         this.parser = parser;
         this.game = game;
+        for(int cloudID : game.getCloudIDs()){
+            cloudMap.put(game.getCloudIDs().indexOf(cloudID), cloudID);
+        }
+    }
+
+
+    private String studentFrequencyString(List<Color> students){
+        HashMap<Color, Integer> frequencyMap = new HashMap<>();
+        for(Color c : students){
+            if(frequencyMap.containsKey(c)){
+                frequencyMap.put(c, frequencyMap.get(c) + 1);
+            } else {
+                frequencyMap.put(c, 1);
+            }
+        }
+        StringBuilder colorFrequency = new StringBuilder();
+        for(Color c : frequencyMap.keySet()){
+            colorFrequency.append(String.format("%d %s students\n", frequencyMap.get(c), c));
+        }
+        return colorFrequency.toString();
     }
 
     @Override
@@ -68,13 +92,13 @@ public class CLI implements UI {
 
     public void displayHelp(String context){
         switch (context){
-            case "": case "\n": break;
-            case "choose cloud": displayMessage("Type the ID of the cloud you would like to choose."); break;
+            case "": case "\n": 
+            case "choose cloud": displayMessage("Type the ID of the cloud you would like to choose."); 
             case "move": displayMessage("Type the ID of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
-                    "In case the destination is an island, you must also specify the ID."); break;
-            case "play assistant": displayMessage("Type the ID of the assistant you would like to play."); break;
-            case "play character": displayMessage("Type the ID of the character you would like to purchase."); break;
-            default: displayMessage("Invalid command - please type help for a list of available commands."); break;
+                    "In case the destination is an island, you must also specify the ID."); 
+            case "play assistant": displayMessage("Type the ID of the assistant you would like to play."); 
+            case "play character": displayMessage("Type the ID of the character you would like to purchase."); 
+            default: displayMessage("Invalid command - please type help for a list of available commands."); 
         }
 
     }
@@ -105,15 +129,14 @@ public class CLI implements UI {
     public void parseCommand(){
         String command = parser.readLine();
         switch (command){
-            case "": case "\n": break;
-            case "help": displayHelp(); break;
-            case "choose cloud": requestCloud(); break;
-            case "move": requestMove(); break;
-            case "play assistant": requestAssistant(); break;
-            case "play character": requestCharacter(); break;
-            case "standings": standings(); break;
-            case "end turn": requestEndTurn(); break;
-            default: displayInvalid(); break;
+            case "help"-> displayHelp(); 
+            case "choose cloud"-> requestCloud(); 
+            case "move"-> requestMove(); 
+            case "play assistant"-> requestAssistant(); 
+            case "play character"-> requestCharacter(); 
+            case "standings"-> standings(); 
+            case "end turn"-> requestEndTurn(); 
+            default-> displayInvalid(); 
         }
     }
 
@@ -139,44 +162,64 @@ public class CLI implements UI {
 
     public void displayEntrance(String nickname){
 
-        HashMap<Integer, Color> entranceIDs = game.getEntranceStudentsIDs(nickname);
+        String studentFrequency = studentFrequencyString(new ArrayList<>(game.getEntranceStudentsIDs(nickname).values()));
         if(nickname.equals(client.getNickname())){ nickname = "your"; } else nickname += "'s";
 
-        StringBuilder entranceInfo = new StringBuilder(String.format("These are the students in %s entrance", nickname));
-
-        for(int ID : entranceIDs.keySet()){
-            displayMessage(String.format("Student %s with ID %d", entranceIDs.get(ID), ID));
-        }
+        displayMessage(String.format("These are the students in %s entrance:", nickname));
+        displayMessage(studentFrequency);
 
     }
 
     public void displayIslands(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
+        HashMap<Integer, List<Integer>> islandTileStudentIDs = game.getIslandTilesStudentsIDs();
+        HashMap<Integer, Color> archipelagoStudentColors = game.getArchipelagoStudentIDs();
+        HashMap<Integer, TowerColor> towerInfo = game.getIslandGroupsOwners();
 
 
-        StringBuilder islandGroupInfo = new StringBuilder("These are the Island Groups and the IDs of the Island Tiles they contain:\n");
+        StringBuilder toPrint = new StringBuilder("These are the Island Groups and the students they contain:\n");
 
         for(int islandGroupIdx : islandGroups.keySet()){
+            List<Color> students = new ArrayList<>();
+            if(towerInfo.get(islandGroupIdx) == null) {
+                toPrint.append(String.format("\nIsland group %d contains the following students: \n", islandGroupIdx));
+            } else {
+                toPrint.append(String.format("\nIsland group %d contains a %s tower and the following students: \n", islandGroupIdx, towerInfo.get(islandGroupIdx)));
+            }
 
-            islandGroupInfo.append(String.format("Island group %d contains the following Island Tile IDs: ", islandGroupIdx));
-            for(int islandTileID : islandGroups.get(islandGroupIdx)){
-                islandGroupInfo.append(String.format(" %d,", islandTileID));
+            for(int islandTileID : islandGroups.get(islandGroupIdx)) {
+                for (int studentID : islandTileStudentIDs.get(islandTileID)) {
+                    students.add(archipelagoStudentColors.get(studentID));
+                }
+                toPrint.append(studentFrequencyString(students));
             }
         }
-        displayMessage(islandGroupInfo.toString());
+        displayMessage(toPrint.toString());
     }
 
 
     public void displayTables(String nickname){
 
-        StringBuilder tableInfo = new StringBuilder("These are the tables ");
+        if(nickname.equals(client.getNickname())){ nickname = "your"; } else nickname += "'s";
+
+        StringBuilder toPrint = new StringBuilder("These are %s tables:\n");
 
         for(Color c : Color.values()) {
-
-            game.getTableStudentsIDs(nickname, c);
+            toPrint.append(String.format("%s table: %d students\n", c, game.getTableStudentsIDs(nickname, c).size()));
         }
 
+        displayMessage(toPrint.toString());
+    }
 
+
+    public void displayClouds(){
+        StringBuilder toPrint = new StringBuilder("These are the clouds and the students they contain:\n\n");
+        for(int cloudIdx : cloudMap.keySet()){
+            toPrint.append(String.format("Cloud %d contains the following students:\n", cloudIdx));
+
+            toPrint.append(studentFrequencyString(new ArrayList<>(game.getCloudStudentsIDs(cloudMap.get(cloudIdx)).values())));
+        }
+        displayMessage(toPrint.toString());
     }
 
 

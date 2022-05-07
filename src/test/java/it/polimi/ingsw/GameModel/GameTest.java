@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
@@ -9,13 +8,11 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
-import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.InvalidObjectException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -289,7 +286,7 @@ class GameTest {
         game.moveStudentFromEntrance("Simo", studentToMove.getKey(), island);
         game.moveMotherNature("Simo", island);
 
-        assertEquals(TowerColor.BLACK, game.getIslandGroupsOwner().get(destinationIG),
+        assertEquals(TowerColor.BLACK, game.getIslandGroupsOwners().get(destinationIG),
                 "The island should be conquered by team who owns the only student placed");
     }
 
