@@ -2,10 +2,12 @@ package it.polimi.ingsw.GameModel.Board.Archipelago;
 
 import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
 
+import java.io.Serializable;
+
 /**
  * Class that models presence of NoEntryTiles on an IslandGroup.
  */
-public class NoEntryTilesSpace {
+public class NoEntryTilesSpace implements Serializable {
 
     /**
      * The noEntryTile character who created the space.

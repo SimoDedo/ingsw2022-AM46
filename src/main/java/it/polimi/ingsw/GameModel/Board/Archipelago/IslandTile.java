@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.BoardElements.*;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class IslandTile extends StudentContainer {

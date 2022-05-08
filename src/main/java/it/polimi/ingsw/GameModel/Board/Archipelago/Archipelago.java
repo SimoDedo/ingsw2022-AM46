@@ -13,13 +13,14 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.InvalidObjectException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class that models all the islands on the table.
  * It contains a list of IslandGroup to model the merged IslandTiles.
  */
-public class Archipelago {
+public class Archipelago implements Serializable {
 
     /**
      * List that contains all the IslandGroups. The order of the list is used to merge and render the islands
@@ -29,12 +30,12 @@ public class Archipelago {
     /**
      * Strategy to apply when resolving an island
      */
-    private ResolveStrategy resolveStrategy;
+    transient private ResolveStrategy resolveStrategy;
 
     /**
      * Strategy to apply when moving MotherNature
      */
-    private MoveMotherNatureStrategy moveMotherNatureStrategy;
+    transient private MoveMotherNatureStrategy moveMotherNatureStrategy;
 
     //region Creation
     /**

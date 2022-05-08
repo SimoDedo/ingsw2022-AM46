@@ -13,6 +13,6 @@ public abstract class Error extends Message {
 
     @Override
     public String toString() {
-        return ("Error description: "+ errorDescription);
+        return ( errorDescription);
     }
 }

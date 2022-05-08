@@ -11,13 +11,14 @@ import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class that stores and manages Characters, directing their activation and giving them the Consumer
  * objects which act as their abilities.
  */
-public class CharacterManager {
+public class CharacterManager  implements Serializable {
 
     private Archipelago archipelago;
     private Bag bag;
@@ -25,8 +26,8 @@ public class CharacterManager {
     private ProfessorSet professorSet;
     private List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
-    private CharacterFactory charFactory = new CharacterFactory();
-    private ConsumerSet consumerSet;
+    transient private CharacterFactory charFactory = new CharacterFactory();
+    transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.
@@ -55,7 +56,7 @@ public class CharacterManager {
      */
     private List<Integer> selectRandomCharIDs() {
         List<Integer> IDs = new ArrayList<>();
-        Random random = new Random(System.currentTimeMillis());
+        Random random = new Random();
         while (IDs.size() < 3){
             Integer next = random.nextInt(12) + 1;
             if(! IDs.contains(next))

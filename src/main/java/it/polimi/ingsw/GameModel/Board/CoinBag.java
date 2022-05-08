@@ -1,6 +1,8 @@
 package it.polimi.ingsw.GameModel.Board;
 
-public class CoinBag {
+import java.io.Serializable;
+
+public class CoinBag implements Serializable {
 
     private int coins;
 

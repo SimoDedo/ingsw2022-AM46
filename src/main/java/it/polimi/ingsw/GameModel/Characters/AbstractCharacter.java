@@ -5,13 +5,14 @@ import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * This abstract class implements the common methods shared by all the different types of Character.
  */
-public abstract class AbstractCharacter implements Character {
+public abstract class AbstractCharacter implements Character, Serializable {
 
     private int ID, cost;
 

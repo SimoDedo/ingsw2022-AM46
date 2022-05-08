@@ -8,16 +8,15 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Network.Server.Server;
+import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -28,7 +27,7 @@ import java.util.*;
  * islands and Mother nature; the Players owning a board and a deck; the CharacterManager storing and
  * activating Characters; the TurnManager that decides the turn order and the current player.
  */
-public class Game {
+public class Game implements ObservableByClient, Serializable {
 
     private final Player neutralPlayer = new Player();
     protected Bag bag = new Bag();
@@ -351,11 +350,31 @@ public class Game {
     //region State observer methods
 
         //region Game
+
+
         /**
-         * Getter for the current player in the game.
-         * @return the player currently executing their planning/action turn, null if firstRoundOrder
-         * hasn't been determined yet
+         * Getter for the number of players selected for this game
+         * @return the number of players
          */
+        @Override
+        public int getNumOfPlayers(){
+            return gameConfig.getNumOfPlayers();
+        }
+
+        /**
+         * Getter for the game mode selected for this game
+         * @return the game mode selected for this game
+         */
+        @Override
+        public GameMode getGameMode(){
+            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
+        }
+
+        /**
+             * Getter for the current player in the game.
+             * @return the player currently executing their planning/action turn, null if firstRoundOrder
+             * hasn't been determined yet
+             */
         public String getCurrentPlayer() {
             return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
         } // could be useful to controller
@@ -547,9 +566,6 @@ public class Game {
         public HashMap<Integer, TowerColor> getIslandGroupsOwner(){
         return archipelago.getIslandGroupsOwner();
     }
-
-        //endregion
-        //region CharacterManager
 
         //endregion
 

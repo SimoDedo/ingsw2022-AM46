@@ -2,7 +2,9 @@ package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
 
-public class PlayerConfig {
+import java.io.Serializable;
+
+public class PlayerConfig implements Serializable {
 
     private int maxTowers,
     initialEntranceSize,

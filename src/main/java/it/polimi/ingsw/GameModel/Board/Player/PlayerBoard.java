@@ -8,11 +8,12 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class PlayerBoard {
+public class PlayerBoard implements Serializable {
     private TowerSpace towerSpace = null;
     private Entrance entrance;
     private DiningRoom diningRoom;
