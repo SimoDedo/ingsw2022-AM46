@@ -50,4 +50,16 @@ public class Client {
     public boolean requestAssistant(int assistantID) {
         return true;
     }
+
+    public boolean requestTowerColor(String readLineFromSelection) {
+        return true;
+    }
+
+    public boolean requestGameMode(int readBoundNumber) {
+        return true;
+    }
+
+    public boolean requestWizard(String readLineFromSelection) {
+        return true;
+    }
 }

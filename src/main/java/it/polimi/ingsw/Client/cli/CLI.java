@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CLI implements UI {
 
@@ -126,36 +127,37 @@ public class CLI implements UI {
 
     }
 
-    public void displayHelp(){
-        Phase phase = client.getPhase();
-        displayMessage("List of available commands:\nhelp - display this menu\nstandings - display current game standings");
-        switch (phase) {
-            case IDLE -> displayMessage("");
-            case PLANNING -> displayMessage("""
-                    cloud - Type the ID of the cloud you would like to choose.
-                    move - Type the ID of the student you would like to move, followed by 1 or 2 to specify the type of destination (table or island). In case the destination is an island, you must also specify the ID.
-                    """);
-            case ACTION -> displayMessage("""
-                    play assistant - Type the ID of the assistant you would like to play.
-                    play character - Type the ID of the character you would like to purchase.
-                    end turn - request end turn.
-                    """
-            );
-        }
+    public void requestTowerColor(){
+        displayMessage("Please choose a tower color from the following: " + Arrays.toString(game.getAvailableTowerColors().toArray()));
+        if(client.requestTowerColor(parser.readLineFromSelection(game.getAvailableTowerColors().stream().map(o->o.toString().toLowerCase()).collect(Collectors.toList())))){
+            displayMessage("Tower color selected successfully");
+        } else displayMessage("Cannot choose selected tower color at this time. Command discarded.");
     }
 
-    // not really used atm but could be cool (used in student color selection)
-    public void displayHelp(String context){
-        switch (context){
-            case "choose cloud" -> displayMessage("Type the number of the cloud you would like to choose.");
-            case "move" -> displayMessage("Type the color of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
-                    "In case the destination is an island, you must also specify the ID."); 
-            case "play assistant" -> displayMessage("Type the ID of the assistant you would like to play.");
-            case "play character" -> displayMessage("Type the ID of the character you would like to purchase.");
-            case "color" -> displayMessage("Type the color of the student you would like to select.\nAvailable colors: yellow, blue, green, red, pink");
-        }
+    public void requestGameMode(){
+        displayMessage("Please type 1 for normal or 2 for hard.");
+        if(client.requestGameMode(parser.readBoundNumber(1, 2))){
+            displayMessage("Game mode successfully selected");
+        } else displayMessage("Cannot choose selected game mode at this time. Command discarded.");
+    }
+
+    public void requestPlayerNumber(){
+        displayMessage("Please type the number of players this game will have.");
+        if(client.requestGameMode(parser.readBoundNumber(2, 4))){
+            displayMessage("Player number successfully selected.");
+        } else displayMessage("Cannot choose selected number of players at this time. Command discarded.");
 
     }
+
+
+    public void requestWizard (){
+        displayMessage("Please choose a type of wizard from the following: " + Arrays.toString(game.getAvailableWizards().toArray()));
+        if(client.requestWizard(parser.readLineFromSelection(game.getAvailableWizards().stream().map(o->o.toString().toLowerCase()).collect(Collectors.toList())))){
+            displayMessage("Wizard selected successfully");
+        } else displayMessage("Cannot choose selected wizard at this time. Command discarded.");
+
+    }
+
 
     public void requestAssistant(){
         if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.ACTION){
@@ -212,6 +214,36 @@ public class CLI implements UI {
         }
     }
 
+    public void displayHelp(){
+        Phase phase = client.getPhase();
+        displayMessage("List of available commands:\nhelp - display this menu\nstandings - display current game standings");
+        switch (phase) {
+            case IDLE -> displayMessage("");
+            case PLANNING -> displayMessage("""
+                    cloud - Type the ID of the cloud you would like to choose.
+                    move - Type the ID of the student you would like to move, followed by 1 or 2 to specify the type of destination (table or island). In case the destination is an island, you must also specify the ID.
+                    """);
+            case ACTION -> displayMessage("""
+                    play assistant - Type the ID of the assistant you would like to play.
+                    play character - Type the ID of the character you would like to purchase.
+                    end turn - request end turn.
+                    """
+            );
+        }
+    }
+
+    // not really used atm but could be cool (I lied it's used in student color selection)
+    public void displayHelp(String context){
+        switch (context){
+            case "choose cloud" -> displayMessage("Type the number of the cloud you would like to choose.");
+            case "move" -> displayMessage("Type the color of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
+                    "In case the destination is an island, you must also specify the ID.");
+            case "play assistant" -> displayMessage("Type the ID of the assistant you would like to play.");
+            case "play character" -> displayMessage("Type the ID of the character you would like to purchase.");
+            case "color" -> displayMessage("Type the color of the student you would like to select.\nAvailable colors: yellow, blue, green, red, pink");
+        }
+
+    }
 
     public void displayUnavailable(){
         displayMessage("You cannot execute this command at this time.");

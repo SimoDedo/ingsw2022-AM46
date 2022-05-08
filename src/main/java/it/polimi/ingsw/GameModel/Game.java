@@ -42,6 +42,9 @@ public class Game {
     private CoinBag coinBag = new CoinBag(20);
     private CharacterManager characterManager = new CharacterManager(archipelago, bag, players, professorSet, coinBag);
 
+    private List<TowerColor> availableTowerColors = List.of(TowerColor.values());
+    private List<WizardType> availableWizards = List.of(WizardType.values());
+
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
      */
@@ -109,6 +112,8 @@ public class Game {
             boolean isTowerHolder = players.getTowerHolder(towerColor) == null;
             players.add(new Player(nickname, towerColor,isTowerHolder, gameConfig.getPlayerConfig()));
             turnManager.addPlayerClockwise(players.getByNickname(nickname));
+            //hmmmmmmm
+            if(players.getTeam(towerColor).size() == teamSize) availableTowerColors.remove(towerColor);
         }
     }
 
@@ -122,6 +127,8 @@ public class Game {
         if (getWizardTypes().contains(wizardType)) throw new IllegalArgumentException("Wizard type already chosen");
         Player player = getPlayerByNickname(nickname);
         player.pickWizard(wizardType);
+        availableWizards.remove(wizardType);
+
     }
 
     /**
@@ -234,7 +241,7 @@ public class Game {
             // to avoid long exception chain, exception is thrown in resolve of archipelago.
             // Tower space no longer throws exception, just returns null -> this is because exception was thrown
             // not when last tower was taken, but when the next tower was requested. Now method completes and then
-            // it's then checked if game is over.
+            // it's then checked if game is over. nice :D
     }
 
     /**
@@ -354,6 +361,15 @@ public class Game {
     //region State observer methods
 
     //region Game
+
+    public List<TowerColor> getAvailableTowerColors(){
+        return availableTowerColors;
+    }
+
+    public List<WizardType> getAvailableWizards(){
+        return availableWizards;
+    }
+
     /**
      * Getter for the current player in the game.
      * @return the player currently executing their planning/action turn, null if firstRoundOrder
