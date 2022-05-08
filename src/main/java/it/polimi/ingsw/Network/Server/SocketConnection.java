@@ -1,25 +1,25 @@
 package it.polimi.ingsw.Network.Server;
 
 import it.polimi.ingsw.Network.Message.Message;
+import it.polimi.ingsw.Network.Message.UserAction.PingUserAction;
 import it.polimi.ingsw.Network.Message.UserAction.UserAction;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Class that manages a connection from a client. All messages will be forwarded to the server which
  * owns this connection, which also has a reference to the server socket coupled with the client socket
  * in this class.
  */
-public class ConnectionThread implements Runnable {
+public class SocketConnection implements Runnable {
 
     protected Socket socket;
 
     private Server server;
-
-    // private ExecutorService executorService;
 
     private ObjectInputStream inputStream;
 
@@ -27,10 +27,11 @@ public class ConnectionThread implements Runnable {
 
     private boolean active = true;
 
-    public ConnectionThread(Socket clientSocket, Server server) {
+    public SocketConnection(Socket clientSocket, Server server) {
         this.socket = clientSocket;
         this.server = server;
         try {
+            socket.setSoTimeout(2000); //2 seconds time out, client needs to keep heartbeat
             inputStream = new ObjectInputStream(socket.getInputStream());
             outputStream = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ioe) {
@@ -77,8 +78,14 @@ public class ConnectionThread implements Runnable {
         try {
             socket.close();
         } catch (IOException ioe) {
-            System.err.println("Error while closing connection thread: ");
+            System.err.println("Error while closing socket connection: ");
             ioe.printStackTrace();
+        }
+    }
+
+    public void closeMatch(){
+        if(server instanceof MatchServer) {
+            server.close(); //If one disconnects, all disconnected from match
         }
     }
 
@@ -91,12 +98,14 @@ public class ConnectionThread implements Runnable {
         try {
             Object message = inputStream.readObject();
             action = (UserAction) message;
-            server.parseAction(this, action);
-        } catch (Exception e) { // what exceptions are thrown here?
-            e.printStackTrace();
-            close(); //FIXME: this avoids endless exception prints when client is closed, but probably not best way to handle it
+            if(!(action instanceof PingUserAction))
+                server.parseAction(this, action);
+        } catch (IOException | ClassNotFoundException e) {
+            //e.printStackTrace();
             if(server instanceof MatchServer)
-                server.close(); //If one disconnects, all disconnected from match
+                closeMatch();
+            else
+                close();
         }
     }
 

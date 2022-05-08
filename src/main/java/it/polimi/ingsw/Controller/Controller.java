@@ -8,6 +8,7 @@ import it.polimi.ingsw.Network.Message.Error.IllegalActionError;
 import it.polimi.ingsw.Network.Message.Error.IllegalSelectionError;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
 import it.polimi.ingsw.Network.Message.Info.*;
+import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Network.Server.MatchServer;
 import it.polimi.ingsw.Utils.Enum.*;
@@ -136,7 +137,6 @@ public class Controller {
                         int n = ((GameSettingsUserAction) userAction).getNumOfPlayers();
                         GameMode gameMode = ((GameSettingsUserAction) userAction).getGameMode();
                         selectGameSettings(n, gameMode);
-                        createGame();
                         initialized = true;
                     }
                     case TOWER_COLOR -> {
@@ -186,15 +186,19 @@ public class Controller {
             players.add(nickname);
 
             expectedUserAction.put(nickname, UserActionType.GAME_SETTINGS);
-            sendInfoToUser(nickname, new GameJoinInfo(players));
+            //sendInfoToUser(nickname, new GameJoinInfo(players));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.GAME_SETTINGS,
+                    "You are the first player to connect, please choose the settings for this game"));
         }
         else{
             if(numOfPlayers != 0 && gameMode != null){ //If first player has chosen game settings
                 if(players.size() < numOfPlayers){ //If there is still space in the game
                     players.add(nickname);
                     expectedUserAction.put(nickname, UserActionType.TOWER_COLOR);
-                    sendInfoToUser(nickname, new GameJoinInfo(players));
-                    sendInfoToUser(nickname, new GameSettingInfo(numOfPlayers, gameMode));
+                    //sendInfoToUser(nickname, new GameJoinInfo(players));
+                    //sendInfoToUser(nickname, new GameSettingInfo(numOfPlayers, gameMode));
+                    sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TOWER_COLOR,
+                            "Choose your tower color"));
                 }
                 else { //If there is no more space
                     sendErrorToUser(nickname, new LoginError("Lobby is complete!"));
@@ -269,6 +273,17 @@ public class Controller {
     }
 
     /**
+     * Method to send a request to all users. It asks the server to do this operation.
+     * @param update the info to send.
+     */
+    private void sendUpdateToAllUsers(Update update){
+        if(server != null)
+            server.sendAll(update);
+        else
+            System.out.println(update);
+    }
+
+    /**
      * Method to send errors
      * @param error error to send
      */
@@ -301,8 +316,12 @@ public class Controller {
         turnController.setNumOfPlayers(numOfPlayers);
         this.gameMode = gameMode;
 
+        createGame();
+
         expectedUserAction.put(players.get(0), UserActionType.TOWER_COLOR);
-        sendInfoToUser(players.get(0), new GameSettingInfo(numOfPlayers, gameMode)); //Sent to first who connected, which is the ONLY player connected right now
+        //sendInfoToUser(players.get(0), new GameSettingInfo(numOfPlayers, gameMode)); //Sent to first who connected, which is the ONLY player connected right now
+        sendUpdateToAllUsers(new Update(game, players.get(0), UserActionType.TOWER_COLOR,
+                "Choose your tower color"));
     }
 
     /**
@@ -329,7 +348,10 @@ public class Controller {
         }
 
         expectedUserAction.put(nickname, UserActionType.WIZARD);
-        sendInfoToUser(nickname, new TowerColorInfo(nickname, towerColor));
+        //sendInfoToUser(nickname, new TowerColorInfo(nickname, towerColor));
+        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.WIZARD,
+                "Choose your wizard"));
+
     }
 
     /**
@@ -348,18 +370,20 @@ public class Controller {
 
         expectedUserAction.remove(nickname); //Not expecting any action from this player now, he should be waiting for his first turn
         playersReady++;
-        sendInfoToUser(nickname, new WizardInfo(nickname, wizardType));
+        //sendInfoToUser(nickname, new WizardInfo(nickname, wizardType));
+        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.NEXT_TURN_WAIT,
+                "Wait for all players to have chosen!"));
     }
 
     /**
      * Starts the actual game. Returns the first play assistant request to the (random) first player.
      */
     private void startGame(){
-        sendInfoToAllUsers(new GameStartInfo());
+        //sendInfoToAllUsers(new GameStartInfo());
         turnController.startGame();
         gameStarted = true;
 
-        sendInfoToAllUsers(new NextPhaseInfo(turnController.getCurrentPhase()));
+        //sendInfoToAllUsers(new NextPhaseInfo(turnController.getCurrentPhase()));
         if(gameMode == GameMode.EXPERT){
             ((GameExpert) game).distributeInitialCoins();
             ((GameExpert) game).createCharacters();
@@ -370,7 +394,9 @@ public class Controller {
 
         //At start of game, first player (randomly drawn by model) is expected to play an assistant
         expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT);
-        sendInfoToAllUsers(new NextTurnInfo(turnController.getCurrentPlayer()));
+        //sendInfoToAllUsers(new NextTurnInfo(turnController.getCurrentPlayer()));
+        sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT,
+                "Choose assistant to play"));
     }
 
     /**
@@ -551,7 +577,7 @@ public class Controller {
             else{
                 sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
             }
-            //TODO: other exceptions should be thrown and handled
+            //TODO: other exceptions should be thrown and handled. done? to check
         }
         sendInfoToUser(nickname, new UseAbilityInfo(((GameExpert) game).getActiveCharacterID(), ((GameExpert) game).getActiveCharacterUsesLeft()));
     }

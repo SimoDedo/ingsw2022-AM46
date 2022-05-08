@@ -11,7 +11,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,7 +23,7 @@ public class LobbyServer implements Server {
 
     private boolean active = true;
 
-    private Map<InetAddress, String> registeredNicks = new HashMap<>();
+    private Map<String, InetAddress> registeredNicks = new HashMap<>();
 
     private InetAddress IP;
 
@@ -36,7 +35,7 @@ public class LobbyServer implements Server {
 
     private Set<MatchServer> matchServers = new HashSet<>();
 
-    private Set<ConnectionThread> connections = new HashSet<>();
+    private Set<SocketConnection> connections = new HashSet<>();
 
     private ExecutorService executor;
 
@@ -46,7 +45,6 @@ public class LobbyServer implements Server {
      */
     public LobbyServer() {
         executor = Executors.newCachedThreadPool();
-
     }
 
     public void startServer(){
@@ -64,7 +62,7 @@ public class LobbyServer implements Server {
             Socket tempSocket;
             try {
                 tempSocket = mainSocket.accept();
-                ConnectionThread newConnection = new ConnectionThread(tempSocket, this);
+                SocketConnection newConnection = new SocketConnection(tempSocket, this);
                 executor.execute(newConnection);
                 connections.add(newConnection);
             } catch (IOException ioe) {
@@ -86,7 +84,7 @@ public class LobbyServer implements Server {
      */
     public void close() {
         setActive(false);
-        for (ConnectionThread connection : connections) {
+        for (SocketConnection connection : connections) {
             connection.close();
         }
         for (MatchServer server : matchServers) {
@@ -102,21 +100,22 @@ public class LobbyServer implements Server {
     }
 
     @Override
-    public void parseAction(ConnectionThread connectionThread, UserAction userAction) {
+    public void parseAction(SocketConnection socketConnection, UserAction userAction) {
         if (userAction.getUserActionType() == UserActionType.LOGIN) {
-            handleLogin(connectionThread, (LoginUserAction) userAction);
+            handleLogin(socketConnection, (LoginUserAction) userAction);
         }
         else {
-            connectionThread.sendMessage(new LoginError("Sending user action to a lobby server; log in first!"));
+            socketConnection.sendMessage(new LoginError("Sending user action to a lobby server; log in first!"));
         }
     }
 
-    public void handleLogin(ConnectionThread connectionThread, LoginUserAction loginAction) {
-        if (registeredNicks.containsValue(loginAction.getNickname())) {
-            connectionThread.sendMessage(new LoginError("Nickname already taken. Choose another one!"));
+    public void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction) {
+        if (registeredNicks.containsKey(loginAction.getNickname())) {
+            socketConnection.sendMessage(new LoginError("Nickname already taken. Choose another one!"));
         }
         else {
-            registerClient(IP, loginAction.getNickname());
+            System.out.println("\"" + loginAction.getNickname() + "\" connected to lobby server");
+            registerClient(loginAction.getNickname(), socketConnection.getInetAddress());
             MatchServer serverToConnect = null;
             for (MatchServer server : matchServers) {
                 if (server.isInitialized() && !server.isFull()) {
@@ -129,10 +128,10 @@ public class LobbyServer implements Server {
                 executor.execute(serverToConnect);
                 matchServers.add(serverToConnect);
             }
-            connectionThread.sendMessage(new ServerLoginInfo(IP, serverToConnect.getPort()));
-            connectionThread.close();
-            connections.remove(connectionThread);
-            serverToConnect.await(connectionThread.getInetAddress(), loginAction.getNickname());
+            serverToConnect.await(loginAction.getNickname(), socketConnection.getInetAddress());
+            socketConnection.sendMessage(new ServerLoginInfo(IP, serverToConnect.getPort()));
+            socketConnection.close();
+            connections.remove(socketConnection);
         }
     }
 
@@ -140,11 +139,11 @@ public class LobbyServer implements Server {
         matchServers.remove(matchServer);
     }
 
-    public void registerClient(InetAddress IP, String nickname) {
-        registeredNicks.put(IP, nickname);
+    public void registerClient(String nickname, InetAddress IP) {
+        registeredNicks.put(nickname, IP);
     }
 
-    public void unregisterClient(InetAddress IP, String nickname) {
-        registeredNicks.remove(IP, nickname);
+    public void unregisterClient(String nickname, InetAddress IP) {
+        registeredNicks.remove(nickname, IP);
     }
 }

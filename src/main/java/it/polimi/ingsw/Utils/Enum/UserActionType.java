@@ -5,6 +5,7 @@ public enum UserActionType {
     GAME_SETTINGS,
     TOWER_COLOR,
     WIZARD,
+    NEXT_TURN_WAIT,
     PLAY_ASSISTANT,
     MOVE_STUDENT,
     MOVE_MOTHER_NATURE,

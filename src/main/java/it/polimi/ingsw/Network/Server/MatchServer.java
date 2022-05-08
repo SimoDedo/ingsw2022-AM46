@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,12 +39,12 @@ public class MatchServer implements Server, Runnable {
     /**
      * HashMap for storing the future client connections which will be accepted on this server.
      */
-    private Map<InetAddress, String> awaitingMap = new HashMap<>();
+    private Map<String, InetAddress> awaitingMap = new HashMap<>();
 
     /**
      * HashMap for storing the connections on the server associated with each nickname.
      */
-    private Map<String, ConnectionThread> connectionMap = new HashMap<>();
+    private Map<String, SocketConnection> connectionMap = new HashMap<>();
 
     /**
      * HashMap for storing the VirtualViews associated with each nickname.
@@ -76,11 +77,16 @@ public class MatchServer implements Server, Runnable {
             Socket tempSocket;
             try {
                 tempSocket = serverSocket.accept();
-                ConnectionThread newConnection = new ConnectionThread(tempSocket, this);
+                SocketConnection newConnection = new SocketConnection(tempSocket, this);
                 executor.execute(newConnection);
             } catch (IOException ioe) {
-                System.err.println("IO error while accepting connection: ");
-                ioe.printStackTrace();
+                if(isActive()){
+                    System.err.println("IO error while accepting connection: ");
+                    ioe.printStackTrace();
+                }
+                else{
+                    System.err.println("Closing match server on port " + port);
+                }
             }
         }
     }
@@ -116,10 +122,23 @@ public class MatchServer implements Server, Runnable {
         return port;
     }
 
-    public void close() {
+    public synchronized void close() {
         setActive(false);
-        for (ConnectionThread connection : connectionMap.values()) {
-            connection.close();
+        HashMap<String, SocketConnection> copy = new HashMap<>(connectionMap);
+        for(Map.Entry<String, SocketConnection> entry : copy.entrySet()){
+            SocketConnection connection= entry.getValue();
+            String nickname = entry.getKey();
+            if(connection.isActive()){
+                connection.close();
+                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname +"\"");
+            }
+            unregisterClient(connection.getInetAddress(), nickname, connection);
+        }
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            System.err.println("Error while closing match thread: ");
+            e.printStackTrace();
         }
         lobbyServer.deleteMatch(this);
     }
@@ -133,65 +152,66 @@ public class MatchServer implements Server, Runnable {
      * @param IP the IP of the client that connected to the lobby server
      * @param nickname the nickname provided to the lobby server
      */
-    public void await(InetAddress IP, String nickname) {
-        awaitingMap.put(IP, nickname);
+    public void await(String nickname, InetAddress IP) {
+        awaitingMap.put(nickname, IP);
     }
 
     public void sendMessage(String nickname, Message message) {
-        ConnectionThread connectionThread = connectionMap.get(nickname);
-        connectionThread.sendMessage(message);
+        SocketConnection socketConnection = connectionMap.get(nickname);
+        socketConnection.sendMessage(message);
     }
 
     public void sendAll(Message message) {
-        for (ConnectionThread connectionThread : connectionMap.values()) {
-            connectionThread.sendMessage(message);
+        for (SocketConnection socketConnection : connectionMap.values()) {
+            socketConnection.sendMessage(message);
         }
     }
 
     public void sendAllExcept(String nickname, Message message) {
-        for (Map.Entry<String, ConnectionThread> entry : connectionMap.entrySet()) {
+        for (Map.Entry<String, SocketConnection> entry : connectionMap.entrySet()) {
             if (!entry.getKey().equals(nickname)) entry.getValue().sendMessage(message);
         }
     }
 
     @Override
-    public void parseAction(ConnectionThread connectionThread, UserAction userAction) {
+    public synchronized void parseAction(SocketConnection socketConnection, UserAction userAction) {
         if (userAction.getUserActionType() == UserActionType.LOGIN) {
-            handleLogin(connectionThread, (LoginUserAction) userAction);
+            handleLogin(socketConnection, (LoginUserAction) userAction);
         } else {
             controller.receiveUserAction(userAction);
         }
     }
 
-    public void handleLogin(ConnectionThread connectionThread, LoginUserAction loginAction) {
-        InetAddress IP = connectionThread.getInetAddress();
+    public void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction) {
+        InetAddress IP = socketConnection.getInetAddress();
         String nickname = loginAction.getNickname();
-        if (awaitingMap.containsKey(IP) && awaitingMap.get(IP).equals(nickname)) {
+        if (awaitingMap.containsKey(nickname) && awaitingMap.containsValue(IP) && awaitingMap.get(nickname).equals(IP)){
             if (!isFull()) {
-                registerClient(IP, nickname, connectionThread);
+                System.out.println("\"" + loginAction.getNickname() + "\" connected to match server on port " + port);
+                registerClient(IP, nickname, socketConnection);
                 controller.loginHandle(nickname);
                 viewMap.put(nickname, new VirtualView());
             } else {
-                connectionThread.sendMessage(new LoginError("The server is full!"));
-                connectionThread.close();
+                socketConnection.sendMessage(new LoginError("The server is full!"));
+                socketConnection.close();
             }
 
-        } else if (connectionMap.containsKey(nickname) && connectionMap.get(nickname).equals(connectionThread)) {
-            connectionThread.sendMessage(new LoginError("User already logged in!"));
+        } else if (connectionMap.containsKey(nickname) && connectionMap.get(nickname).equals(socketConnection)) {
+            socketConnection.sendMessage(new LoginError("User already logged in!"));
         }
         else {
-            connectionThread.sendMessage(new LoginError("User didn't connect to the lobby first!"));
-            connectionThread.close();
+            socketConnection.sendMessage(new LoginError("User didn't connect to the lobby first!"));
+            socketConnection.close();
         }
     }
 
-    public void registerClient(InetAddress IP, String nickname, ConnectionThread connectionThread) {
-        connectionMap.put(nickname, connectionThread);
-        lobbyServer.registerClient(IP, nickname);
+    public void registerClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
+        connectionMap.put(nickname, socketConnection);
+        lobbyServer.registerClient(nickname, IP);
     }
 
-    public void unregisterClient(InetAddress IP, String nickname, ConnectionThread connectionThread) {
-        connectionMap.remove(nickname, connectionThread);
-        lobbyServer.unregisterClient(IP, nickname);
+    public void unregisterClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
+        connectionMap.remove(nickname, socketConnection);
+        lobbyServer.unregisterClient(nickname, IP);
     }
 }
