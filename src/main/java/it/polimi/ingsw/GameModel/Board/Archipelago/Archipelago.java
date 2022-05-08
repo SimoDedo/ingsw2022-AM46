@@ -386,6 +386,7 @@ public class Archipelago {
         return result;
     }
 
+    //FIXME: maybe Hashmap<Integer, Boolean> would do the job? can you stack noEntry tiles?
     /**
      * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
      * @return The IslandGroups indexes along with the number of NoEntryTiles each contains

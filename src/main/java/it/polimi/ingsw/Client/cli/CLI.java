@@ -2,6 +2,7 @@ package it.polimi.ingsw.Client.cli;
 
 import it.polimi.ingsw.Client.Client;
 import it.polimi.ingsw.Client.UI;
+import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Phase;
@@ -22,6 +23,10 @@ public class CLI implements UI {
     private final InputParser parser;
     private final Game game;
     private final HashMap<Integer, Integer> cloudMap = new HashMap<>();
+    // probably useful to create a constants class in utils with this information instead of hard coding it here
+    private final HashMap<Integer, String> characterDescriptions = new HashMap<>();
+
+
 
     public CLI(Client client, InputParser parser, Game game){
         output = new PrintStream(System.out);
@@ -31,8 +36,26 @@ public class CLI implements UI {
         for(int cloudID : game.getCloudIDs()){
             cloudMap.put(game.getCloudIDs().indexOf(cloudID), cloudID);
         }
+        populateCharacterDescriptions();
     }
 
+    private void populateCharacterDescriptions(){
+
+        characterDescriptions.put(1, "In setup, draw 4 Students and place them on this card. EFFECT: Take 1 Student from this card and place it on an Island of your choice. Then, draw a new Student from the Bag and place it on this card.");
+        characterDescriptions.put(2, "EFFECT: During this turn, you take control of any number of Professors even if you have the same number of Students as the player who currently controls them.");
+        characterDescriptions.put(3, "EFFECT: Choose an Island and resolve the Island as if Mother Nature had ended her movement there. Mother Nature will still move and the Island where she ends her movement will also be resolved.");
+        characterDescriptions.put(4, "EFFECT: You may move Mother Nature up to 2 additional Islands than is indicated by the Assistant card you've played.");
+        characterDescriptions.put(5, "In Setup, put the 4 No Entry tiles on this card. EFFECT: Place a No Entry tile on an Island of your choice. The first time Mother Nature ends her movement there, put the No Entry tile back onto this card. DO NOT calculate influence on that Island, or place any Towers.");
+        characterDescriptions.put(6, "EFFECT: When resolving a Conquering on an Island, Towers do not count towards influence.");
+        characterDescriptions.put(7, "In Setup, draw 6 Students and place them on this card.You may take up to 3 Students from this card and replace them with the same number of students from your entrance.");
+        characterDescriptions.put(8, "EFFECT: During the influence calculation this turn, you count as having 2 more influence.");
+        characterDescriptions.put(9, "EFFECT: Choose a color of Student: during the influence calculation this turn, that color adds no influence.\n");
+        characterDescriptions.put(10, "You may exchange up to 2 Students between your Entrance and your Dining Room.");
+        characterDescriptions.put(11, "In Setup, draw 4 Students and place them on this card. Take 1 Student  from this card and place it in your Dining Room. Then, draw a new Student from the Bag and place it on this card.");
+        characterDescriptions.put(12, "Choose a type of Student: every player (including yourself) must return 3 Students of that type from their Dining Room to the bag. If any player has fewer than 3 Students of that type, return as many Students as they have.");
+
+
+    }
 
     private String studentFrequencyString(List<Color> students){
         HashMap<Color, Integer> frequencyMap = new HashMap<>();
@@ -114,7 +137,7 @@ public class CLI implements UI {
         int destinationID;
         if(client.getPhase() == Phase.PLANNING) {
             displayEntrance(client.getNickname());
-            displayMessage("Type the ID of the student you would like to move:");
+            displayMessage("Type the color of the student you would like to move:");
 
             boolean valid = true; // obv temporary + add message if the int is out of range + add option to exit?
             do {
@@ -141,7 +164,9 @@ public class CLI implements UI {
     }
 
 
-    public void requestCharacter(){}
+    public void requestCharacter(){
+        displayCharacters();
+    }
 
 
     public void displayUnavailable(){
@@ -157,24 +182,36 @@ public class CLI implements UI {
     }
 
 
-    public void standings(){}
+    public void standings(){
+        displayArchipelago();
+        displayClouds();
+        displayCharacters();
+        for(String nickname : game.getPlayerOrder()) {
+            displayEntrance(nickname);
+            displayTables(nickname);
+        }
+        displayHand();
+    }
 
 
     public void displayEntrance(String nickname){
 
-        String studentFrequency = studentFrequencyString(new ArrayList<>(game.getEntranceStudentsIDs(nickname).values()));
         if(nickname.equals(client.getNickname())){ nickname = "your"; } else nickname += "'s";
 
-        displayMessage(String.format("These are the students in %s entrance:", nickname));
-        displayMessage(studentFrequency);
+        StringBuilder toPrint = new StringBuilder(String.format("These are the students in %s entrance:", nickname));
+        toPrint.append(studentFrequencyString(new ArrayList<>(game.getEntranceStudentsIDs(nickname).values())));
+
+        displayMessage(toPrint.toString());
 
     }
 
-    public void displayIslands(){
+
+    public void displayArchipelago(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         HashMap<Integer, List<Integer>> islandTileStudentIDs = game.getIslandTilesStudentsIDs();
         HashMap<Integer, Color> archipelagoStudentColors = game.getArchipelagoStudentIDs();
         HashMap<Integer, TowerColor> towerInfo = game.getIslandGroupsOwners();
+        HashMap<Integer, Integer> noEntryTiles = game.getNoEntryTiles();
 
 
         StringBuilder toPrint = new StringBuilder("These are the Island Groups and the students they contain:\n");
@@ -193,6 +230,10 @@ public class CLI implements UI {
                 }
                 toPrint.append(studentFrequencyString(students));
             }
+            if(noEntryTiles.containsKey(islandGroupIdx)){
+                toPrint.append("There is also a no entry tile present in this island group.");
+            }
+
         }
         displayMessage(toPrint.toString());
     }
@@ -222,6 +263,22 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
+
+    public void displayCharacters(){
+        StringBuilder toPrint = new StringBuilder("These are the characters which have been picked for this game:");
+        for(int ID : game.getCurrentCharacterIDs())
+            toPrint.append(String.format("Character %d: %s", ID, characterDescriptions.get(ID)));
+        if(game.getCurrentCharacterIDs().size() > 0) displayMessage(toPrint.toString());
+    }
+
+    public void displayHand(){
+        StringBuilder toPrint = new StringBuilder("These are the Assistant cards still in your hand:");
+        for(int c : game.getCardsLeft(client.getNickname())){
+            toPrint.append(String.format("Card %d with move power %d", c, (c + 1)/2));
+        }
+
+        displayMessage(toPrint.toString());
+    }
 
     public void requestEndTurn(){}
 
