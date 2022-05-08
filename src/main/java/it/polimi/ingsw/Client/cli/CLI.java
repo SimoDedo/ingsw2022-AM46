@@ -12,9 +12,7 @@ import it.polimi.ingsw.Utils.InputParser;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CLI implements UI {
 
@@ -22,6 +20,9 @@ public class CLI implements UI {
     private final Client client;
     private final InputParser parser;
     private final Game game;
+    /**
+     * maps user-friendly ints to actual cloud IDs
+     */
     private final HashMap<Integer, Integer> cloudMap = new HashMap<>();
     // probably useful to create a constants class in utils with this information instead of hard coding it here
     private final HashMap<Integer, String> characterDescriptions = new HashMap<>();
@@ -54,7 +55,6 @@ public class CLI implements UI {
         characterDescriptions.put(11, "In Setup, draw 4 Students and place them on this card. Take 1 Student  from this card and place it in your Dining Room. Then, draw a new Student from the Bag and place it on this card.");
         characterDescriptions.put(12, "Choose a type of Student: every player (including yourself) must return 3 Students of that type from their Dining Room to the bag. If any player has fewer than 3 Students of that type, return as many Students as they have.");
 
-
     }
 
     private String studentFrequencyString(List<Color> students){
@@ -71,6 +71,38 @@ public class CLI implements UI {
             colorFrequency.append(String.format("%d %s students\n", frequencyMap.get(c), c));
         }
         return colorFrequency.toString();
+    }
+
+    private Color selectStudentColor(){
+        Color color = null;
+        displayMessage("Type the color of the student you would like to move:");
+        String c = parser.readLine();
+        do {
+            try {
+                if (c.equals("help")) {displayHelp("color"); continue;}
+                color = Color.valueOf(c.toUpperCase());
+
+            } catch (IllegalArgumentException e) {
+                displayInvalid();
+            }
+        } while (color == null);
+
+        return color;
+    }
+
+
+    public void parseCommand(){
+        String command = parser.readLine();
+        switch (command){
+            case "help"-> displayHelp();
+            case "choose cloud"-> requestCloud();
+            case "move"-> requestMove();
+            case "play assistant"-> requestAssistant();
+            case "play character"-> requestCharacter();
+            case "standings"-> standings();
+            case "end turn"-> requestEndTurn();
+            default-> displayInvalid();
+        }
     }
 
     @Override
@@ -112,60 +144,72 @@ public class CLI implements UI {
         }
     }
 
-
+    // not really used atm but could be cool (used in student color selection)
     public void displayHelp(String context){
         switch (context){
-            case "": case "\n": 
-            case "choose cloud": displayMessage("Type the ID of the cloud you would like to choose."); 
-            case "move": displayMessage("Type the ID of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
+            case "choose cloud" -> displayMessage("Type the number of the cloud you would like to choose.");
+            case "move" -> displayMessage("Type the color of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
                     "In case the destination is an island, you must also specify the ID."); 
-            case "play assistant": displayMessage("Type the ID of the assistant you would like to play."); 
-            case "play character": displayMessage("Type the ID of the character you would like to purchase."); 
-            default: displayMessage("Invalid command - please type help for a list of available commands."); 
+            case "play assistant" -> displayMessage("Type the ID of the assistant you would like to play.");
+            case "play character" -> displayMessage("Type the ID of the character you would like to purchase.");
+            case "color" -> displayMessage("Type the color of the student you would like to select.\nAvailable colors: yellow, blue, green, red, pink");
         }
 
     }
 
+    public void requestAssistant(){
+        if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.ACTION){
+            displayHand();
+            displayMessage("Type the number of the assistant you would like to play.");
+            if(client.requestAssistant(parser.readNumberFromSelection(game.getCardsLeft(client.getNickname())))){
+                displayMessage("Assistant card played successfully, mother nature moved.");
+            } else displayMessage("Cannot play assistant at this time. Command discarded.");
+        }
+    }
 
     public void requestCloud(){
-        displayMessage("Type the ID of the cloud you would like to choose.");
+        if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.PLANNING){
+            displayClouds();
+            displayMessage("Type the number of the cloud you would like to choose.");
+            if(client.requestCloud(parser.readBoundNumber(0, cloudMap.size() - 1))){
+                displayMessage("Cloud selected successfully.");
+            } else displayMessage("Cannot choose cloud at this time. Command discarded.");
+        } else displayUnavailable();
     }
 
 
     public void requestMove(){
-        int studentID;
-        int destinationID;
-        if(client.getPhase() == Phase.PLANNING) {
+        if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.ACTION){
             displayEntrance(client.getNickname());
-            displayMessage("Type the color of the student you would like to move:");
+            Color color = selectStudentColor();
+            displayMessage("Select destination type:\n1: Dining Room\n2: Islands");
+            if(parser.readBoundNumber(1, 2) == 2){
+                displayArchipelago();
+                displayMessage("Select the island group number you would like to place your student in:");
+                if(client.requestMove(color, parser.readBoundNumber(0, game.getIslandTilesIDs().size() - 1))){
+                    displayMessage("Student moved!");
+                } else displayMessage("Illegal movement. Command discarded.");
 
-            boolean valid = true; // obv temporary + add message if the int is out of range + add option to exit?
-            do {
-                studentID = parser.readNumber();
-            } while(!valid);
-
-
+            } else {
+                if (client.requestMove(color)) {
+                    displayMessage("Student moved!");
+                } else displayMessage("Illegal movement. Command discarded.");
+            }
         } else displayUnavailable();
-
     }
 
-    public void parseCommand(){
-        String command = parser.readLine();
-        switch (command){
-            case "help"-> displayHelp(); 
-            case "choose cloud"-> requestCloud(); 
-            case "move"-> requestMove(); 
-            case "play assistant"-> requestAssistant(); 
-            case "play character"-> requestCharacter(); 
-            case "standings"-> standings(); 
-            case "end turn"-> requestEndTurn(); 
-            default-> displayInvalid(); 
-        }
-    }
 
 
     public void requestCharacter(){
-        displayCharacters();
+        if(Objects.equals(game.getCurrentPlayer(), client.getNickname())) {
+            displayCharacters();
+            if(client.requestCharacter(parser.readNumberFromSelection(game.getCurrentCharacterIDs()))){
+                displayMessage("Character hired successfully.");
+            } else {
+                displayMessage("Unable to hire character. Do you have enough coins?");
+            }
+
+        }
     }
 
 
@@ -177,9 +221,7 @@ public class CLI implements UI {
         displayMessage("Unrecognized command - please type help for a list of available commands.");
     }
 
-    public void requestAssistant(){
 
-    }
 
 
     public void standings(){
@@ -238,7 +280,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-
+    //TODO display coins
     public void displayTables(String nickname){
 
         if(nickname.equals(client.getNickname())){ nickname = "your"; } else nickname += "'s";
@@ -263,7 +305,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-
+    //TODO display cost and overcharge
     public void displayCharacters(){
         StringBuilder toPrint = new StringBuilder("These are the characters which have been picked for this game:");
         for(int ID : game.getCurrentCharacterIDs())
