@@ -8,12 +8,13 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Model a group of island tiles
  */
-public class IslandGroup {
+public class IslandGroup implements Serializable {
     /**
      * IslandTiles that compose the IslandGroup
      */

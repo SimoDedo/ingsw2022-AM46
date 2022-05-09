@@ -2,10 +2,10 @@ package it.polimi.ingsw.Utils.Enum;
 
 public enum UserActionType {
     LOGIN,
-    NUM_OF_PLAYERS,
-    GAME_MODE,
+    GAME_SETTINGS,
     TOWER_COLOR,
     WIZARD,
+    NEXT_TURN_WAIT,
     PLAY_ASSISTANT,
     MOVE_STUDENT,
     MOVE_MOTHER_NATURE,

@@ -4,6 +4,7 @@ import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.Phase;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  * order and action order in the Planning and Action phases of the game.
  *
  */
-public class TurnManager {
+public class TurnManager implements Serializable {
 
     private Player currentPlayer = null; // usage will have to be specified thoroughly! is it even needed??
 

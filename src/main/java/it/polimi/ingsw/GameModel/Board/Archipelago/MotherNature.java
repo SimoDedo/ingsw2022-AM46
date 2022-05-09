@@ -1,9 +1,11 @@
 package it.polimi.ingsw.GameModel.Board.Archipelago;
 
+import java.io.Serializable;
+
 /**
  * Class that represents MotherNature pawn in game
  */
-public class MotherNature {
+public class MotherNature implements Serializable {
 
     /**
      * contains the IslandTile which currently holds MotherNature

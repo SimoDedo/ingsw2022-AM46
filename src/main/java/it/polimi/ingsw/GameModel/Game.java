@@ -9,17 +9,15 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.GameModel.Characters.CharacterManager;
-import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Network.Server.Server;
+import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -30,15 +28,15 @@ import java.util.*;
  * islands and Mother nature; the Players owning a board and a deck; the CharacterManager storing and
  * activating Characters; the TurnManager that decides the turn order and the current player.
  */
-public class Game {
+public class Game implements ObservableByClient, Serializable {
 
     private final Player neutralPlayer = new Player();
     protected Bag bag = new Bag();
     protected Archipelago archipelago = new Archipelago();
-    private List<CloudTile> clouds = new ArrayList<>();
+    private final List<CloudTile> clouds = new ArrayList<>();
     protected ProfessorSet professorSet = new ProfessorSet();
     protected PlayerList players = new PlayerList();
-    private TurnManager turnManager = new TurnManager();
+    private final TurnManager turnManager = new TurnManager();
     private CoinBag coinBag = new CoinBag(20);
     private CharacterManager characterManager = new CharacterManager(archipelago, bag, players, professorSet, coinBag);
 
@@ -48,12 +46,12 @@ public class Game {
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
      */
-    private LinkedHashMap<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
+    private final LinkedHashMap<Player, AssistantCard> cardsPlayedThisRound = new LinkedHashMap<>();
 
     /**
      * Linked hashmap that stores the Assistant cards played last round, and by whom they were played. Used for rendering
      */
-    private Map<Player, AssistantCard> cardsPlayedLastRound = new LinkedHashMap<>();
+    private final Map<Player, AssistantCard> cardsPlayedLastRound = new LinkedHashMap<>();
 
     /**
      * Boolean to store whether this is the last round to play. Gets set when a LastRoundException is thrown
@@ -63,7 +61,7 @@ public class Game {
     /**
      * The configuration of this game
      */
-    private GameConfig gameConfig;
+    private final GameConfig gameConfig;
 
     /**
      * Constructor for Game. Places 10 students across the Archipelago, fills the bag with the
@@ -252,12 +250,12 @@ public class Game {
      * @param nickname the nickname of the player who is taking the students from the cloud
      * @param cloudID the ID of the cloud that the player chose
      */
-    public void takeFromCloud(String nickname, int cloudID){
+    public void takeFromCloud(String nickname, int cloudID) throws NoSuchElementException{
         List<Student> studentsTaken = new ArrayList<>(
                 clouds.stream()
                 .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
                 .findAny()
-                .orElseThrow(NoSuchElementException::new)
+                .orElseThrow(() -> new NoSuchElementException("No cloud with such ID exists"))
                 .removeAll());
 
         getPlayerByNickname(nickname).addToEntrance(studentsTaken);
@@ -299,7 +297,7 @@ public class Game {
     public void pushThisRoundInLastRound() {
         cardsPlayedLastRound.clear();
         cardsPlayedLastRound.putAll(cardsPlayedThisRound);
-        cardsPlayedThisRound.clear();;
+        cardsPlayedThisRound.clear();
     }
 
     public void refillClouds() throws LastRoundException{
@@ -331,6 +329,7 @@ public class Game {
      * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
      * Determining the winner if this is the last round to be played
      * Changing the Phase (?????)
+     * @throws GameOverException if it is the last round
      */
     public void endOfRoundOperations() throws GameOverException {
         if(isLastRound)
@@ -368,6 +367,24 @@ public class Game {
 
     public List<WizardType> getAvailableWizards(){
         return availableWizards;
+    }
+
+    /**
+     * Getter for the number of players selected for this game
+     * @return the number of players
+     */
+    @Override
+    public int getNumOfPlayers(){
+        return gameConfig.getNumOfPlayers();
+    }
+
+    /**
+     * Getter for the game mode selected for this game
+     * @return the game mode selected for this game
+     */
+    @Override
+    public GameMode getGameMode(){
+        return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
     }
 
     /**
@@ -468,39 +485,39 @@ public class Game {
         return players.getTowerHolder(towerColor).getTowersLeft();
     }
 
-    /**
-     * Method used to observe which player chose which wizard
-     * @return An HashMap containing the nickname of the Player and the Wizard chosen
-     */
-    public HashMap<String, WizardType> getPlayersWizardType(){
-        HashMap<String, WizardType> result = new HashMap<String, WizardType>();
-        for(Player player : players){
-            result.put(player.getNickname(), player.getWizardType());
+        /**
+         * Method used to observe which player chose which wizard
+         * @return An HashMap containing the nickname of the Player and the Wizard chosen
+         */
+        public HashMap<String, WizardType> getPlayersWizardType(){
+            HashMap<String, WizardType> result = new HashMap<>();
+            for(Player player : players){
+                result.put(player.getNickname(), player.getWizardType());
+            }
+            return  result;
         }
-        return  result;
-    }
-    //endregion
-    //region ProfessorSet
-    /**
-     * Method to observe which Professor is owned by who
-     * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
-     */
-    public HashMap<Color, String> getProfessorsOwner(){
-        return  professorSet.getProfessorsOwner();
-    }
-    //endregion
-    //region Clouds
-    /**
-     * Returns a list containing all the IDs of CloudTiles
-     * @return a list containing all the IDs of CloudTiles
-     */
-    public List<Integer> getCloudIDs(){
-        List<Integer> cloudIDs = new ArrayList<>();
-        for(CloudTile cloudTile : clouds){
-            cloudIDs.add(cloudTile.getID());
+        //endregion
+        //region ProfessorSet
+        /**
+         * Method to observe which Professor is owned by who
+         * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+         */
+        public HashMap<Color, String> getProfessorsOwner(){
+            return  professorSet.getProfessorsOwner();
         }
-        return  cloudIDs;
-    }
+        //endregion
+        //region Clouds
+        /**
+         * Returns a list containing all the IDs of CloudTiles
+         * @return a list containing all the IDs of CloudTiles
+         */
+        public List<Integer> getCloudIDs(){
+            List<Integer> cloudIDs = new ArrayList<>();
+            for(CloudTile cloudTile : clouds){
+                cloudIDs.add(cloudTile.getID());
+            }
+            return  cloudIDs;
+        }
 
     /**
      * Return all the IDs of students contained in a given cloud along with their color

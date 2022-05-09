@@ -2,6 +2,7 @@ package it.polimi.ingsw.GameModel.BoardElements;
 
 import it.polimi.ingsw.GameModel.Board.Player.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**

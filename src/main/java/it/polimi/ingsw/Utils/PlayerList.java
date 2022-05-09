@@ -12,7 +12,7 @@ import java.util.List;
 public class PlayerList extends ArrayList<Player> {
 
     /**
-     * Override of the add method in ArrayList<>. Returns false if the player about to be added
+     * Override of the add method in ArrayList. Returns false if the player about to be added
      * has the same nickname as some other player already inside the list, otherwise it adds the
      * player into the list normally. Neutral players are excluded from this rule.
      *

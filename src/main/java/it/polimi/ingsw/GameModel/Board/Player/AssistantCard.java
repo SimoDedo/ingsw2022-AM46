@@ -1,6 +1,8 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-public class AssistantCard {
+import java.io.Serializable;
+
+public class AssistantCard implements Serializable {
     final private int turnOrder, movePower, ID;
 
     public AssistantCard(int turnOrder, int movePower) {

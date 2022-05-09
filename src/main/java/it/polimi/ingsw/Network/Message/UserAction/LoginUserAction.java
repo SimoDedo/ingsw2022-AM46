@@ -8,7 +8,7 @@ public class LoginUserAction extends UserAction{
 
     public LoginUserAction(String sender) throws IllegalArgumentException{
         super(sender, UserActionType.LOGIN);
-        if(sender == null || sender == "") {
+        if(sender == null || sender.equals("")) {
             throw new IllegalArgumentException("Invalid nickname");
         }
         this.nickname = sender;

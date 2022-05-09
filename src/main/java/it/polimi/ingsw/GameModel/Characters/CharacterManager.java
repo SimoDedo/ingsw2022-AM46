@@ -11,6 +11,7 @@ import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * Class that stores and manages Characters, directing their activation and giving them the Consumer
  * objects which act as their abilities.
  */
-public class CharacterManager {
+public class CharacterManager  implements Serializable {
 
     private Archipelago archipelago;
     private Bag bag;
@@ -27,8 +28,8 @@ public class CharacterManager {
     private ProfessorSet professorSet;
     private List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
-    private CharacterFactory charFactory = new CharacterFactory();
-    private ConsumerSet consumerSet;
+    transient private CharacterFactory charFactory = new CharacterFactory();
+    transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.
@@ -57,7 +58,7 @@ public class CharacterManager {
      */
     private List<Integer> selectRandomCharIDs() {
         List<Integer> IDs = new ArrayList<>();
-        Random random = new Random(System.currentTimeMillis());
+        Random random = new Random();
         while (IDs.size() < 3){
             Integer next = random.nextInt(12) + 1;
             if(! IDs.contains(next))
@@ -98,7 +99,14 @@ public class CharacterManager {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
+        if(currentCharacter == null)
+            throw new IllegalStateException("No character was activated!");
+        else if(currentCharacter.getUsesLeft() <= 0)
+            throw new IllegalStateException("Character has no more uses lef!");
+
         int currentID = currentCharacter.getCharacterID();
         currentCharacter.useAbility(consumerSet.getConsumer(currentID), parameterList);
     }
@@ -118,6 +126,22 @@ public class CharacterManager {
      */
     public int getActiveCharacterID() {
         return currentCharacter == null ? -1 : currentCharacter.getCharacterID();
+    }
+
+    /**
+     * Return the maximum number of times the ability of the active character can be used.
+     * @return the maximum number of times the ability of the active character can be used.
+     */
+    public int getActiveCharacterMaxUses(){
+        return currentCharacter == null ? 0 : currentCharacter.getMaxUses();
+    }
+
+    /**
+     * Returns the number of times the ability of the active character can still be used.
+     * @return the number of times the ability of the active character can still be used.
+     */
+    public int getActiveCharacterUsesLeft(){
+        return currentCharacter == null ? 0 : currentCharacter.getUsesLeft();
     }
 
     /**

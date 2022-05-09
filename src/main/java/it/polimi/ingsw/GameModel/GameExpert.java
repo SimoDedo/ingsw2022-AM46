@@ -17,6 +17,7 @@ import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Class that extends Game. It is created instead of Game in an Expert match.
@@ -62,6 +63,16 @@ public class GameExpert extends Game {
         }
         checkAndMoveProfessor(players, student.getColor());
     }
+
+    /**
+     * This method progresses the turn, updating currentPlayer.
+     */
+    @Override
+    public void nextTurn() throws IllegalStateException{
+        super.nextTurn();
+        characterManager.resetActiveCharacter();
+    }
+
 
     /**
      * Creates the characterManager (which creates the 3 characters). Called by the controller once all players are connected.
@@ -113,7 +124,9 @@ public class GameExpert extends Game {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException{
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
         characterManager.useAbility(parameterList);
     }
 
@@ -122,7 +135,6 @@ public class GameExpert extends Game {
      * Determining the winner if this is the last round to be played
      * Resetting the character used this round
      * Resetting the strategies
-     * Changing the Phase (????????)
      */
     @Override
     public void endOfRoundOperations() throws GameOverException {
@@ -168,6 +180,22 @@ public class GameExpert extends Game {
          */
         public int getActiveCharacterID(){
             return characterManager.getActiveCharacterID();
+        }
+
+        /**
+         * Return the maximum number of times the ability of the active character can be used.
+         * @return the maximum number of times the ability of the active character can be used.
+         */
+        public int getActiveCharacterMaxUses(){
+            return characterManager.getActiveCharacterMaxUses();
+        }
+
+        /**
+         * Returns the number of times the ability of the active character can still be used.
+         * @return the number of times the ability of the active character can still be used.
+         */
+        public int getActiveCharacterUsesLeft(){
+            return characterManager.getActiveCharacterUsesLeft();
         }
 
         //endregion

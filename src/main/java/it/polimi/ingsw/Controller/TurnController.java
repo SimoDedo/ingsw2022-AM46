@@ -27,11 +27,8 @@ public class TurnController {
         return game.getCurrentPlayer();
     }
 
-    public boolean isPlayerTurn(String nickname){
-        if(game == null || getCurrentPlayer() == null) //If game hasn't started, thus in login phase
-            return true; //Any player can be choosing, so it is "any player's turn
-        else
-            return nickname.equals(game.getCurrentPlayer());
+    public Phase getCurrentPhase(){
+        return game.getCurrentPhase();
     }
 
     /**
@@ -40,13 +37,15 @@ public class TurnController {
     public void startGame(){
         game.determineFirstRoundOrder();
     }
-
     /**
-     * Called when a student is moved from entrance. It adds one to the counter of the students moved, and returns it.
+     * Called when a student is moved from entrance. It adds one to the counter of the students moved
      * @return the students moved by the current player.
      */
+    public void moveStudent(){
+       studentsMovedByCurrentPlayer++;
+    }
+
     public int studentMoved(){
-        studentsMovedByCurrentPlayer++;
         return studentsMovedByCurrentPlayer;
     }
 
@@ -59,9 +58,9 @@ public class TurnController {
      * @throws IllegalStateException thrown when all player have taken their turn. Controller catching this
      * should then change phase.
      */
-    public void nextTurn() throws  IllegalStateException{
-        game.nextTurn();
+    public void nextTurn() throws IllegalStateException{
         studentsMovedByCurrentPlayer = 0;
+        game.nextTurn();
     }
 
     /**

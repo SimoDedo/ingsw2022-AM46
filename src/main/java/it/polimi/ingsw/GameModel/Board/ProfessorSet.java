@@ -8,6 +8,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.PlayerList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * This class contains the Professors and offers useful methods to retrieve the right professor or
  * change their ownership.
  */
-public class ProfessorSet {
+public class ProfessorSet implements Serializable {
 
     private final List<Professor> professors = new ArrayList<>();
     //note: an arraylist is slightly overkill, but it's better to keep it this way and eventually downgrade it to a set after the view is done
@@ -24,7 +25,7 @@ public class ProfessorSet {
     /**
      * Strategy for determining how players conquer professors or snatch them from other players.
      */
-    private CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy = new CheckAndMoveProfessorStrategyStandard();
+    transient private CheckAndMoveProfessorStrategy checkAndMoveProfessorStrategy = new CheckAndMoveProfessorStrategyStandard();
 
     public ProfessorSet() {
         for (Color color : Color.values()) {
