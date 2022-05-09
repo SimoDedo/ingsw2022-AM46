@@ -2,18 +2,17 @@ package it.polimi.ingsw.Client.cli;
 
 import it.polimi.ingsw.Client.Client;
 import it.polimi.ingsw.Client.UI;
-import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Phase;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.InputParser;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 public class CLI implements UI {
 
@@ -97,7 +96,7 @@ public class CLI implements UI {
         switch (command){
             case "help"-> displayHelp();
             case "choose cloud"-> requestCloud();
-            case "move"-> requestMove();
+            case "move"-> requestMoveFromEntrance();
             case "play assistant"-> requestAssistant();
             case "play character"-> requestCharacter();
             case "standings"-> standings();
@@ -108,6 +107,7 @@ public class CLI implements UI {
 
     @Override
     public void displayLogin() {
+        displayMessage("Placeholder welcome message");
 
     }
 
@@ -126,6 +126,16 @@ public class CLI implements UI {
     public void propertyChange(PropertyChangeEvent evt) {
 
     }
+
+    public void requestLogin(){
+        displayMessage("Please input a nickname:");
+        String nickname = parser.readLine();
+        if(client.requestLogin(nickname)){
+            displayMessage("Nickname successfully set.");
+        } else displayMessage("Unable to set nickname at this time. Please try again");
+
+    }
+
 
     public void requestTowerColor(){
         displayMessage("Please choose a tower color from the following: " + Arrays.toString(game.getAvailableTowerColors().toArray()));
@@ -180,26 +190,34 @@ public class CLI implements UI {
     }
 
 
-    public void requestMove(){
+    /**
+     *
+     */
+    public void requestMoveFromEntrance(){
         if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.ACTION){
             displayEntrance(client.getNickname());
             Color color = selectStudentColor();
-            displayMessage("Select destination type:\n1: Dining Room\n2: Islands");
+            HashMap<Integer, List<Integer>> islandTileIDs = game.getIslandTilesIDs();
+            HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(client.getNickname());
+
+            displayMessage("Select destination type:\n1: Islands\n2: Dining Room");
             if(parser.readBoundNumber(1, 2) == 2){
                 displayArchipelago();
                 displayMessage("Select the island group number you would like to place your student in:");
-                if(client.requestMove(color, parser.readBoundNumber(0, game.getIslandTilesIDs().size() - 1))){
+                if(client.requestMove(color, islandTileIDs.get(parser.readBoundNumber(0, islandTileIDs.size() - 1)).get(0))){
                     displayMessage("Student moved!");
                 } else displayMessage("Illegal movement. Command discarded.");
 
             } else {
-                if (client.requestMove(color)) {
+                if (client.requestMove(color, game.getTableIDs(client.getNickname()).get(color))) {
                     displayMessage("Student moved!");
                 } else displayMessage("Illegal movement. Command discarded.");
             }
         } else displayUnavailable();
     }
 
+
+    
 
 
     public void requestCharacter(){
