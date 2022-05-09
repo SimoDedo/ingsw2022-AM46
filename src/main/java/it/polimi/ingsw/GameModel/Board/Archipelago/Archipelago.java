@@ -313,7 +313,7 @@ public class Archipelago implements Serializable {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
@@ -387,6 +387,7 @@ public class Archipelago implements Serializable {
         return result;
     }
 
+    //FIXME: maybe Hashmap<Integer, Boolean> would do the job? can you stack noEntry tiles?
     /**
      * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
      * @return The IslandGroups indexes along with the number of NoEntryTiles each contains

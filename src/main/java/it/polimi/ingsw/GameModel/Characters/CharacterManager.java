@@ -13,6 +13,8 @@ import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Class that stores and manages Characters, directing their activation and giving them the Consumer
@@ -151,5 +153,12 @@ public class CharacterManager  implements Serializable {
                 character.resetUseState();
         }
         currentCharacter = null;
+    }
+
+    /**
+     * @return a list of IDs of the 3 characters that were randomly chosen for this game
+     */
+    public List<Integer> getCurrentCharacterIDs() {
+        return characters.stream().filter(Objects::nonNull).map(AbstractCharacter::getCharacterID).collect(Collectors.toList());
     }
 }

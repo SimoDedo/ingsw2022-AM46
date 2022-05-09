@@ -12,7 +12,7 @@ public class AssistantCard implements Serializable {
     }
 
     /**
-     * @return the unique ID for this assistant, which also corresponds to how much it can move mother nature
+     * @return the unique ID for this assistant, which also corresponds to its turn order weight
      */
     public int getID() {
         return ID;
