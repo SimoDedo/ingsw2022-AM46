@@ -164,7 +164,7 @@ public interface ObservableByClient {
          * The color is null when no Team holds the IslandGroup
          * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
          */
-        HashMap<Integer, TowerColor> getIslandGroupsOwner();
+        HashMap<Integer, TowerColor> getIslandGroupsOwners();
 
         //endregion
 
