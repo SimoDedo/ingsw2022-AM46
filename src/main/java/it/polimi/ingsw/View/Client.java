@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -29,6 +30,7 @@ public class Client {
     private String nickname;
 
     private Update lastUpdate;
+    private ObservableByClient game;
 
     private Socket socket;
     private OutputStream out;
@@ -74,7 +76,7 @@ public class Client {
 
         ServerLoginInfo serverLoginInfo = null;
         while (serverLoginInfo == null){ //Asks for login username (until valid one is given)
-            nickname = UI.askNickname();
+            nickname = UI.requestNickname();
             serverLoginInfo = tryLobbyLogin();
         }
         UI.setNickname(nickname);
@@ -228,15 +230,16 @@ public class Client {
     }
 
     private void askAction(Update update){
+        UI.setGame(update.getGame());
         switch (update.getNextUserAction()){
             case GAME_SETTINGS -> {
-                askQueue.execute(() -> UI.askGameSettings());
+                askQueue.execute(() -> UI.requestGameSettings());
             }
             case TOWER_COLOR -> {
-                askQueue.execute(() -> UI.askTowerColor(update.getGame().getNumOfPlayers())); //TODO: give a list of available towers?
+                askQueue.execute(() -> UI.requestTowerColor()); //TODO: give a list of available towers?
             }
             case WIZARD -> {
-                askQueue.execute(() -> UI.askWizard());
+                askQueue.execute(() -> UI.requestWizard());
             }
             case NEXT_TURN_WAIT -> {
                 UI.showText("Please wait for your turn...");
@@ -299,13 +302,14 @@ public class Client {
     //endregion
 
     //region Network send/receive
-    public void sendUserAction(UserAction userAction){
+    public boolean sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
         } catch (IOException e) {
             UI.showError("Unable to write to server.");
             reset();
         }
+        return true;
     }
 
     private Message receiveMessage(){

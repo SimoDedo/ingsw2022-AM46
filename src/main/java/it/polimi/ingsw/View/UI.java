@@ -1,5 +1,7 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.GameModel.ObservableByClient;
+
 import java.util.Map;
 
 public interface UI {
@@ -10,13 +12,15 @@ public interface UI {
 
     void setNickname(String nickname);
 
-    String askNickname();
+    void setGame(ObservableByClient game);
 
-    void askGameSettings();
+    String requestNickname();
 
-    void askTowerColor(int numOfPlayers);
+    void requestGameSettings();
 
-    void askWizard();
+    void requestTowerColor();
+
+    void requestWizard();
 
     void showText(String text);
 

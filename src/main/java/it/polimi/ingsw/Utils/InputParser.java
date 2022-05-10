@@ -50,7 +50,7 @@ public class InputParser {
     public String readLineFromSelection(List<String> choices){
         String line = readLine();
         while(!choices.contains(line)){
-            System.out.println("The number must be one of the following: " + Arrays.toString(choices.toArray()));
+            System.out.println("The string must be one of the following: " + Arrays.toString(choices.toArray()));
             line = readLine();
         }
         return line;

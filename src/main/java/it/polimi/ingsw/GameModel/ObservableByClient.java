@@ -14,6 +14,18 @@ public interface ObservableByClient {
         //region Game
 
         /**
+         * Getter for the tower colors left to choose
+         * @return list of available TowerColors
+         */
+        List<TowerColor> getAvailableTowerColors();
+
+        /**
+         * Getter for the wizard types left to choose
+         * @return list of available WizardTypes
+         */
+        List<WizardType> getAvailableWizards();
+
+        /**
          * Getter for the number of players selected for this game
          * @return the number of players
          */
@@ -165,6 +177,20 @@ public interface ObservableByClient {
          * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
          */
         HashMap<Integer, TowerColor> getIslandGroupsOwners();
+
+        /**
+         * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
+         * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
+         */
+        HashMap<Integer, Integer> getNoEntryTiles();
+
+        //endregion
+        //region CharacterManager
+        /**
+         * Getter for the IDs of the available characters
+         * @return a list of IDs of the 3 characters that were randomly chosen for this game
+         */
+        List<Integer> getCurrentCharacterIDs();
 
         //endregion
 

@@ -362,10 +362,18 @@ public class Game implements ObservableByClient, Serializable {
 
     //region Game
 
+    /**
+     * Getter for the tower colors left to choose
+     * @return list of available TowerColors
+     */
     public List<TowerColor> getAvailableTowerColors(){
         return availableTowerColors;
     }
 
+    /**
+     * Getter for the wizard types left to choose
+     * @return list of available WizardTypes
+     */
     public List<WizardType> getAvailableWizards(){
         return availableWizards;
     }
@@ -596,6 +604,7 @@ public class Game implements ObservableByClient, Serializable {
     //endregion
     //region CharacterManager
     /**
+     * Getter for the IDs of the available characters
     * @return a list of IDs of the 3 characters that were randomly chosen for this game
     */
     public List<Integer> getCurrentCharacterIDs(){
