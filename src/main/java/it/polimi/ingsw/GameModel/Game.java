@@ -3,15 +3,12 @@ package it.polimi.ingsw.GameModel;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
-import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
-import it.polimi.ingsw.GameModel.Characters.CharacterManager;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Phase;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -42,12 +39,6 @@ public class Game implements ObservableByClient, Serializable {
     protected ProfessorSet professorSet = new ProfessorSet();
     protected PlayerList players = new PlayerList();
     private final TurnManager turnManager = new TurnManager();
-    private TurnManager turnManager = new TurnManager();
-    private CoinBag coinBag = new CoinBag(20);
-    private CharacterManager characterManager = new CharacterManager(archipelago, bag, players, professorSet, coinBag);
-
-    private List<TowerColor> availableTowerColors = List.of(TowerColor.values());
-    private List<WizardType> availableWizards = List.of(WizardType.values());
 
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
@@ -68,6 +59,8 @@ public class Game implements ObservableByClient, Serializable {
      * The configuration of this game
      */
     private final GameConfig gameConfig;
+
+
 
     /**
      * Constructor for Game. Places 10 students across the Archipelago, fills the bag with the
@@ -116,8 +109,6 @@ public class Game implements ObservableByClient, Serializable {
             boolean isTowerHolder = players.getTowerHolder(towerColor) == null;
             players.add(new Player(nickname, towerColor,isTowerHolder, gameConfig.getPlayerConfig()));
             turnManager.addPlayerClockwise(players.getByNickname(nickname));
-            //hmmmmmmm
-            if(players.getTeam(towerColor).size() == teamSize) availableTowerColors.remove(towerColor);
         }
     }
 
@@ -131,8 +122,6 @@ public class Game implements ObservableByClient, Serializable {
         if (getWizardTypes().contains(wizardType)) throw new IllegalArgumentException("Wizard type already chosen");
         Player player = getPlayerByNickname(nickname);
         player.pickWizard(wizardType);
-        availableWizards.remove(wizardType);
-
     }
 
     /**
@@ -261,7 +250,7 @@ public class Game implements ObservableByClient, Serializable {
                 clouds.stream()
                 .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
                 .findAny()
-                .orElseThrow(NoSuchElementException::new)
+                .orElseThrow(() -> new NoSuchElementException("Cloud was already taken!"))
                 .removeAll());
 
         getPlayerByNickname(nickname).addToEntrance(studentsTaken);
@@ -366,52 +355,32 @@ public class Game implements ObservableByClient, Serializable {
     //region State observer methods
 
     //region Game
-
-    public List<TowerColor> getAvailableTowerColors(){
-        return availableTowerColors;
-    }
-
-    public List<WizardType> getAvailableWizards(){
-        return availableWizards;
+    /**
+     * Getter for the number of players selected for this game
+     * @return the number of players
+     */
+    @Override
+    public int getNumOfPlayers(){
+        return gameConfig.getNumOfPlayers();
     }
 
     /**
-     * Getter for the current player in the game.
-     * @return the player currently executing their planning/action turn, null if firstRoundOrder
-     * hasn't been determined yet
+     * Getter for the game mode selected for this game
+     * @return the game mode selected for this game
      */
+    @Override
+    public GameMode getGameMode(){
+        return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
+    }
+
+    /**
+         * Getter for the current player in the game.
+         * @return the player currently executing their planning/action turn, null if firstRoundOrder
+         * hasn't been determined yet
+         */
     public String getCurrentPlayer() {
         return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
     } // could be useful to controller
-        //region Game
-
-
-        /**
-         * Getter for the number of players selected for this game
-         * @return the number of players
-         */
-        @Override
-        public int getNumOfPlayers(){
-            return gameConfig.getNumOfPlayers();
-        }
-
-        /**
-         * Getter for the game mode selected for this game
-         * @return the game mode selected for this game
-         */
-        @Override
-        public GameMode getGameMode(){
-            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
-        }
-
-        /**
-             * Getter for the current player in the game.
-             * @return the player currently executing their planning/action turn, null if firstRoundOrder
-             * hasn't been determined yet
-             */
-        public String getCurrentPlayer() {
-            return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
-        } // could be useful to controller
 
     /**
      * Returns current player order
@@ -458,6 +427,25 @@ public class Game implements ObservableByClient, Serializable {
     public Phase getCurrentPhase(){
             return turnManager.getCurrentPhase();
         }
+
+    public List<TowerColor> getAvailableTowerColors(){
+        List<TowerColor> availableTowerColors = Arrays.stream(TowerColor.values()).toList();
+        availableTowerColors.remove(TowerColor.NEUTRAL);
+        if(gameConfig.getNumOfPlayers() != 3)
+            availableTowerColors.remove(TowerColor.GREY);
+        for (TowerColor towerColor : TowerColor.values()){
+            if(players.getTeam(towerColor).size() == gameConfig.getNumOfPlayers() / 2)
+                availableTowerColors.remove(towerColor);
+        }
+        return availableTowerColors;
+    }
+
+    public List<WizardType> getAvailableWizards(){
+        List<WizardType> availableWizardTypes = Arrays.stream(WizardType.values()).toList();
+        for (Player player : players)
+            availableWizardTypes.remove(player.getWizardType());
+        return availableWizardTypes;
+    }
     //endregion
     //region Player
     /**
@@ -585,11 +573,20 @@ public class Game implements ObservableByClient, Serializable {
     }
 
     /**
+     * Returns the IslandGroup index of the IslandGroup which contains MotherNature
+     * @return the IslandGroup index of the IslandGroup which contains MotherNature
+     */
+    @Override
+    public int getMotherNatureIslandGroupIdx() {
+        return archipelago.getMotherNatureIslandGroupIndex();
+    }
+
+    /**
      * Returns the IslandTile ID of the IslandTile which contains MotherNature
      * @return the IslandTile ID of the IslandTile which contains MotherNature
      */
     public int getMotherNatureIslandTileID(){
-        return archipelago.getMotherNatureIslandTileIndex();
+        return archipelago.getMotherNatureIslandTileID();
     }
 
     /**
@@ -611,16 +608,32 @@ public class Game implements ObservableByClient, Serializable {
 
     //endregion
     //region CharacterManager
-    /**
-    * @return a list of IDs of the 3 characters that were randomly chosen for this game
-    */
-    public List<Integer> getCurrentCharacterIDs(){
-        return characterManager.getCurrentCharacterIDs();
+
+    @Override
+    public int getCoins(String nickname) {
+        return 0;
     }
 
+    @Override
+    public List<Integer> getDrawnCharacterIDs() {
+        return null;
+    }
 
+    @Override
+    public int getActiveCharacterID() {
+        return 0;
+    }
+
+    @Override
+    public int getActiveCharacterMaxUses() {
+        return 0;
+    }
+
+    @Override
+    public int getActiveCharacterUsesLeft() {
+        return 0;
+    }
     //endregion
-        //endregion
 
     //endregion
 }

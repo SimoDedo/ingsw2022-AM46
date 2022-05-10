@@ -2,7 +2,6 @@ package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.Utils.Enum.*;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,6 +58,11 @@ public interface ObservableByClient {
          * @return the current phase.
          */
         Phase getCurrentPhase();
+
+        List<TowerColor> getAvailableTowerColors();
+
+        List<WizardType> getAvailableWizards();
+
         //endregion
 
         //region Player
@@ -153,6 +157,8 @@ public interface ObservableByClient {
          */
         HashMap<Integer, List<Integer>> getIslandTilesIDs();
 
+        int getMotherNatureIslandGroupIdx();
+
         /**
          * Returns the IslandTile ID of the IslandTile which contains MotherNature
          * @return the IslandTile ID of the IslandTile which contains MotherNature
@@ -164,9 +170,49 @@ public interface ObservableByClient {
          * The color is null when no Team holds the IslandGroup
          * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
          */
-        HashMap<Integer, TowerColor> getIslandGroupsOwner();
+        HashMap<Integer, TowerColor> getIslandGroupsOwners();
+
+        /**
+         * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
+         * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
+         */
+        public HashMap<Integer, Integer> getNoEntryTiles();
 
         //endregion
 
-    //endregion
+        //region Characters
+        /**
+         * method to observe number of coins of a given player.
+         * @param nickname the player to check
+         * @return the number of coins of the given player
+         */
+        public int getCoins(String nickname);
+
+        /**
+         * Method to observe which characters were created for this game.
+         * @return a list of the created character IDs.
+         */
+        public List<Integer> getDrawnCharacterIDs();
+
+        /**
+         * Getter for the ActiveCharacter ID.
+         * @return the ActiveCharacter ID.
+         */
+        public int getActiveCharacterID();
+
+        /**
+         * Return the maximum number of times the ability of the active character can be used.
+         * @return the maximum number of times the ability of the active character can be used.
+         */
+        public int getActiveCharacterMaxUses();
+
+        /**
+         * Returns the number of times the ability of the active character can still be used.
+         * @return the number of times the ability of the active character can still be used.
+         */
+        public int getActiveCharacterUsesLeft();
+
+        //endregion
+
+        //endregion
 }
