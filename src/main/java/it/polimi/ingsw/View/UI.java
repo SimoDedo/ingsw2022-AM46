@@ -22,6 +22,10 @@ public interface UI {
 
     void requestWizard();
 
+    void requestMoveFromEntrance();
+
+    void requestCloud();
+
     void showText(String text);
 
     void showInfo(String info);
@@ -29,4 +33,6 @@ public interface UI {
     void showError(String error);
 
     void reset();
+
+
 }

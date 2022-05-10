@@ -167,6 +167,7 @@ public class CLI implements UI {
 
     @Override
     public void showText(String text) {
+        displayMessage(text);
 
     }
 
@@ -255,32 +256,17 @@ public class CLI implements UI {
         client.sendUserAction(characterRequest);
     }
 
-    public void displayHelp(){
+    public void requestEndTurn(){
 
-    }
+        displayMessage("Would you like to end your turn?\n1: end turn\n2: play character (???)");
 
-    // not really used atm but could be cool
-    public void displayHelp(String context){
-        switch (context){
-            case "choose cloud" -> displayMessage("Type the number of the cloud you would like to choose.");
-            case "move" -> displayMessage("Type the color of the student, followed by either 1 or 2 to specify the type of destination (table or island)." +
-                    "In case the destination is an island, you must also specify the ID.");
-            case "play assistant" -> displayMessage("Type the ID of the assistant you would like to play.");
-            case "play character" -> displayMessage("Type the ID of the character you would like to purchase.");
-            case "color" -> displayMessage("Type the color of the student you would like to select.\nAvailable colors: yellow, blue, green, red, pink");
+        int endTurnSelection = parser.readBoundNumber(1, 2);
+
+        if(endTurnSelection == 1){
+            UserAction endTurnRequest = new EndTurnUserAction(nickname);
+            client.sendUserAction(endTurnRequest);
         }
-
     }
-
-    public void displayUnavailable(){
-        displayMessage("You cannot execute this command at this time.");
-    }
-
-    public void displayInvalid(){
-        displayMessage("Unrecognized command - please type help for a list of available commands.");
-    }
-
-
 
 
     public void standings(){
@@ -292,6 +278,23 @@ public class CLI implements UI {
             displayTables(nickname);
         }
         displayHand();
+    }
+
+
+    public void displayHelp(){
+
+    }
+
+    // not really used atm but could be cool
+    public void displayHelp(String context){
+    }
+
+    public void displayUnavailable(){
+        displayMessage("You cannot execute this command at this time.");
+    }
+
+    public void displayInvalid(){
+        displayMessage("Unrecognized command - please type help for a list of available commands.");
     }
 
 
@@ -342,6 +345,7 @@ public class CLI implements UI {
     //TODO display coins
     public void displayTables(String nickname){
 
+
         if(nickname.equals(this.nickname)){ nickname = "your"; } else nickname += "'s";
 
         StringBuilder toPrint = new StringBuilder("These are %s tables:\n\n");
@@ -381,6 +385,6 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void requestEndTurn(){}
+
 
 }

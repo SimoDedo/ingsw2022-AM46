@@ -252,13 +252,13 @@ public class Client {
             case MOVE_STUDENT -> {
                 if(update.getGame().getGameMode() == GameMode.EXPERT)
                     UI.showText("Asks if character or move");
-                //UI.askMoveStudent
+                UI.requestMoveFromEntrance();
             }
             case MOVE_MOTHER_NATURE -> {
                 //UI.moveMotherNature
             }
             case TAKE_FROM_CLOUD -> {
-                //UI.takeFromCloud
+                UI.requestCloud();
             }
             case USE_ABILITY -> {
                 //
@@ -302,14 +302,13 @@ public class Client {
     //endregion
 
     //region Network send/receive
-    public boolean sendUserAction(UserAction userAction){
+    public void sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
         } catch (IOException e) {
-            UI.showError("Unable to write to server.");
+            UI.showError("Unable to write to server. Command discarded.");
             reset();
         }
-        return true;
     }
 
     private Message receiveMessage(){

@@ -50,4 +50,11 @@ public class Table extends StudentContainer {
         return pawnCount();
     }
 
+    public int getCoinsLeft() {
+        if (firstCoin) return 3;
+        else if(secondCoin) return 2;
+        else if(thirdCoin) return 1;
+        else return 0;
+    }
+
 }
