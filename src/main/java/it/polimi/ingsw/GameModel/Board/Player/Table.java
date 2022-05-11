@@ -5,17 +5,14 @@ import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 
 public class Table extends StudentContainer {
-    private boolean firstCoin, secondCoin, thirdCoin;
+    private final Boolean[] coins = {false, false, false};
     private final Color color;
 
     public Table(Player player, int maxPawns, Color c) {
         super(player, maxPawns);
-        firstCoin = secondCoin = thirdCoin = false;
         color = c;
     }
 
@@ -34,12 +31,9 @@ public class Table extends StudentContainer {
     public boolean placeStudent(Student student) throws FullTableException, IllegalArgumentException{
         boolean giveCoin = false;
         switch(pawnCount()){
-            case 2:
-                if(!firstCoin){ firstCoin = true; giveCoin = true; } break;
-            case 5:
-                if(!secondCoin){ secondCoin = true; giveCoin = true; } break;
-            case 8:
-                if(!thirdCoin){ thirdCoin = true; giveCoin = true; } break;
+            case 2 -> { if(!coins[0]){ coins[0] = true; giveCoin = true; } }
+            case 5 -> { if(!coins[1]){ coins[1] = true; giveCoin = true; } }
+            case 8 -> { if(!coins[2]){ coins[3] = true; giveCoin = true; } }
         }
         if(pawnCount() == 10){ throw new FullTableException(); }
         placePawn(student);
@@ -51,10 +45,11 @@ public class Table extends StudentContainer {
     }
 
     public int getCoinsLeft() {
-        if (firstCoin) return 3;
-        else if(secondCoin) return 2;
-        else if(thirdCoin) return 1;
-        else return 0;
+        int sum = 0;
+        for(boolean b : coins){
+            sum += b ? 1 : 0;
+        }
+        return sum;
     }
 
 }

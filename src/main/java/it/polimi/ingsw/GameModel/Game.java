@@ -9,6 +9,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
 import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
@@ -514,6 +515,10 @@ public class Game implements ObservableByClient, Serializable {
         public HashMap<Color, String> getProfessorsOwner(){
             return  professorSet.getProfessorsOwner();
         }
+
+        public int getCoinsLeft(String nickname, Color color){
+            return getPlayerByNickname(nickname).getCoinsLeft(color);
+        }
         //endregion
         //region Clouds
         /**
@@ -562,7 +567,7 @@ public class Game implements ObservableByClient, Serializable {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         return archipelago.getIslandTilesStudentsIDs();
@@ -609,6 +614,10 @@ public class Game implements ObservableByClient, Serializable {
     */
     public List<Integer> getCurrentCharacterIDs(){
         return characterManager.getCurrentCharacterIDs();
+    }
+
+    public AbstractCharacter getCharacterByID(int ID){
+        return characterManager.getCharacterByID(ID);
     }
 
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel;
 
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
 import it.polimi.ingsw.Utils.Enum.*;
 
 import java.io.Serializable;
@@ -107,6 +108,10 @@ public interface ObservableByClient {
          */
         int getTowersLeft(TowerColor towerColor);
 
+
+        int getCoinsLeft(String nickname, Color color);
+
+
         /**
          * Method used to observe which player chose which wizard
          * @return An HashMap containing the nickname of the Player and the Wizard chosen
@@ -191,6 +196,8 @@ public interface ObservableByClient {
          * @return a list of IDs of the 3 characters that were randomly chosen for this game
          */
         List<Integer> getCurrentCharacterIDs();
+
+        AbstractCharacter getCharacterByID(int ID);
 
         //endregion
 

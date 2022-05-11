@@ -247,6 +247,7 @@ public class Client {
             }
             case PLAY_ASSISTANT -> {
                 UI.showText("Play your assistant wohoo!!!");
+                UI.requestAssistant();
                 //UI.askAssistant
             }
             case MOVE_STUDENT -> {
@@ -306,7 +307,7 @@ public class Client {
         try {
             outObj.writeObject(userAction);
         } catch (IOException e) {
-            UI.showError("Unable to write to server. Command discarded.");
+            UI.showError("Unable to write to server.");
             reset();
         }
     }

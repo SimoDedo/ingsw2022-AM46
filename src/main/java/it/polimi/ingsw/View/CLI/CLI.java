@@ -25,8 +25,6 @@ public class CLI implements UI {
      * maps user-friendly ints to actual cloud IDs
      */
     private final HashMap<Integer, Integer> cloudMap = new HashMap<>();
-    // probably useful to create a constants class in utils with this information instead of hard coding it here
-    private final HashMap<Integer, String> characterDescriptions = new HashMap<>();
 
 
 
@@ -37,30 +35,15 @@ public class CLI implements UI {
         for(int cloudID : game.getCloudIDs()){
             cloudMap.put(game.getCloudIDs().indexOf(cloudID), cloudID);
         }
-        populateCharacterDescriptions();
     }
 
-    private void populateCharacterDescriptions(){
 
-        characterDescriptions.put(1, "In setup, draw 4 Students and place them on this card. EFFECT: Take 1 Student from this card and place it on an Island of your choice. Then, draw a new Student from the Bag and place it on this card.");
-        characterDescriptions.put(2, "EFFECT: During this turn, you take control of any number of Professors even if you have the same number of Students as the player who currently controls them.");
-        characterDescriptions.put(3, "EFFECT: Choose an Island and resolve the Island as if Mother Nature had ended her movement there. Mother Nature will still move and the Island where she ends her movement will also be resolved.");
-        characterDescriptions.put(4, "EFFECT: You may move Mother Nature up to 2 additional Islands than is indicated by the Assistant card you've played.");
-        characterDescriptions.put(5, "In Setup, put the 4 No Entry tiles on this card. EFFECT: Place a No Entry tile on an Island of your choice. The first time Mother Nature ends her movement there, put the No Entry tile back onto this card. DO NOT calculate influence on that Island, or place any Towers.");
-        characterDescriptions.put(6, "EFFECT: When resolving a Conquering on an Island, Towers do not count towards influence.");
-        characterDescriptions.put(7, "In Setup, draw 6 Students and place them on this card.You may take up to 3 Students from this card and replace them with the same number of students from your entrance.");
-        characterDescriptions.put(8, "EFFECT: During the influence calculation this turn, you count as having 2 more influence.");
-        characterDescriptions.put(9, "EFFECT: Choose a color of Student: during the influence calculation this turn, that color adds no influence.");
-        characterDescriptions.put(10, "You may exchange up to 2 Students between your Entrance and your Dining Room.");
-        characterDescriptions.put(11, "In Setup, draw 4 Students and place them on this card. Take 1 Student  from this card and place it in your Dining Room. Then, draw a new Student from the Bag and place it on this card.");
-        characterDescriptions.put(12, "Choose a type of Student: every player (including yourself) must return 3 Students of that type from their Dining Room to the bag. If any player has fewer than 3 Students of that type, return as many Students as they have.");
-
-    }
 
     @Override
     public void askTryConnecting() {
 
     }
+
 
     @Override
     public Map<String, String> askServerInfo() {
@@ -211,6 +194,9 @@ public class CLI implements UI {
         client.sendUserAction(cloudRequest);
     }
 
+    public void requestMotherNature(){
+
+    }
 
     public void requestMoveFromEntrance(){
         HashMap<Integer, List<Integer>> islandTileIDs = game.getIslandTilesIDs();
@@ -258,11 +244,11 @@ public class CLI implements UI {
 
     public void requestEndTurn(){
 
-        displayMessage("Would you like to end your turn?\n1: end turn\n2: play character (???)");
+        displayMessage("Would you to play a character before ending your turn? y/n");
 
-        int endTurnSelection = parser.readBoundNumber(1, 2);
+        String endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
 
-        if(endTurnSelection == 1){
+        if(endTurnSelection.equals("n")){
             UserAction endTurnRequest = new EndTurnUserAction(nickname);
             client.sendUserAction(endTurnRequest);
         }
@@ -309,7 +295,7 @@ public class CLI implements UI {
 
     }
 
-
+    //TODO: display mother nature
     public void displayArchipelago(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         HashMap<Integer, List<Integer>> islandTileStudentIDs = game.getIslandTilesStudentsIDs();
@@ -342,7 +328,6 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    //TODO display coins
     public void displayTables(String nickname){
 
 
@@ -351,7 +336,8 @@ public class CLI implements UI {
         StringBuilder toPrint = new StringBuilder("These are %s tables:\n\n");
 
         for(Color c : Color.values()) {
-            toPrint.append(String.format("%s table: %d students\n", c, game.getTableStudentsIDs(nickname, c).size()));
+            toPrint.append(String.format("%s table: %d students and %d coins\n",
+                    c, game.getTableStudentsIDs(nickname, c).size(), game.getCoinsLeft(nickname, c)));
         }
 
         displayMessage(toPrint.toString());
@@ -368,12 +354,14 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    //TODO display cost and overcharge
+
     public void displayCharacters(){
         StringBuilder toPrint = new StringBuilder("These are the characters which have been picked for this game:\n\n");
         for(int ID : game.getCurrentCharacterIDs())
-            toPrint.append(String.format("Character %d: %s\n", ID, characterDescriptions.get(ID)));
+            toPrint.append(String.format("Character %d\ncost:%d\ndescription: %s\n",
+                    ID, game.getCharacterByID(ID).getCost(), Characters.values()[ID]));
         if(game.getCurrentCharacterIDs().size() > 0) displayMessage(toPrint.toString());
+
     }
 
     public void displayHand(){

@@ -22,6 +22,8 @@ public interface UI {
 
     void requestWizard();
 
+    void requestAssistant();
+
     void requestMoveFromEntrance();
 
     void requestCloud();
