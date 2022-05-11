@@ -151,7 +151,7 @@ public class GameExpert extends Game {
 
     //region State observer methods
 
-        //region Player
+        //region Characters
         /**
          * method to observe number of coins of a given player.
          * @param nickname the player to check
@@ -160,8 +160,7 @@ public class GameExpert extends Game {
         public int getCoins(String nickname){
             return players.getByNickname(nickname).getCoins();
         }
-        //endregion
-        //region Characters
+
         /**
          * Method to observe which characters were created for this game.
          * @return a list of the created character IDs.

@@ -257,7 +257,7 @@ public class Game implements ObservableByClient, Serializable {
                 clouds.stream()
                 .filter(cloud -> cloud.getID() == cloudID && cloud.isSelectable())
                 .findAny()
-                .orElseThrow(() -> new NoSuchElementException("No cloud with such ID exists"))
+                .orElseThrow(() -> new NoSuchElementException("Cloud was already taken!"))
                 .removeAll());
 
         getPlayerByNickname(nickname).addToEntrance(studentsTaken);
@@ -451,6 +451,25 @@ public class Game implements ObservableByClient, Serializable {
     public Phase getCurrentPhase(){
             return turnManager.getCurrentPhase();
         }
+
+    public List<TowerColor> getAvailableTowerColors(){
+        List<TowerColor> availableTowerColors = Arrays.stream(TowerColor.values()).toList();
+        availableTowerColors.remove(TowerColor.NEUTRAL);
+        if(gameConfig.getNumOfPlayers() != 3)
+            availableTowerColors.remove(TowerColor.GREY);
+        for (TowerColor towerColor : TowerColor.values()){
+            if(players.getTeam(towerColor).size() == gameConfig.getNumOfPlayers() / 2)
+                availableTowerColors.remove(towerColor);
+        }
+        return availableTowerColors;
+    }
+
+    public List<WizardType> getAvailableWizards(){
+        List<WizardType> availableWizardTypes = Arrays.stream(WizardType.values()).toList();
+        for (Player player : players)
+            availableWizardTypes.remove(player.getWizardType());
+        return availableWizardTypes;
+    }
     //endregion
     //region Player
     /**
@@ -582,11 +601,20 @@ public class Game implements ObservableByClient, Serializable {
     }
 
     /**
+     * Returns the IslandGroup index of the IslandGroup which contains MotherNature
+     * @return the IslandGroup index of the IslandGroup which contains MotherNature
+     */
+    @Override
+    public int getMotherNatureIslandGroupIdx() {
+        return archipelago.getMotherNatureIslandGroupIndex();
+    }
+
+    /**
      * Returns the IslandTile ID of the IslandTile which contains MotherNature
      * @return the IslandTile ID of the IslandTile which contains MotherNature
      */
     public int getMotherNatureIslandTileID(){
-        return archipelago.getMotherNatureIslandTileIndex();
+        return archipelago.getMotherNatureIslandTileID();
     }
 
     /**
@@ -621,6 +649,16 @@ public class Game implements ObservableByClient, Serializable {
     }
 
 
+    @Override
+    public int getActiveCharacterMaxUses() {
+        return 0;
+    }
+
+    @Override
+    public int getActiveCharacterUsesLeft() {
+        return 0;
+    }
     //endregion
+
     //endregion
 }

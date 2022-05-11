@@ -170,6 +170,8 @@ public interface ObservableByClient {
          */
         HashMap<Integer, List<Integer>> getIslandTilesIDs();
 
+        int getMotherNatureIslandGroupIdx();
+
         /**
          * Returns the IslandTile ID of the IslandTile which contains MotherNature
          * @return the IslandTile ID of the IslandTile which contains MotherNature
@@ -201,5 +203,5 @@ public interface ObservableByClient {
 
         //endregion
 
-    //endregion
+        //endregion
 }
