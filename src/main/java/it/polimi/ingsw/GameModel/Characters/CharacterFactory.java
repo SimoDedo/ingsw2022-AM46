@@ -67,7 +67,7 @@ public class CharacterFactory {
                 break;
             case 10:
                 requestParameters.add(RequestParameter.STUDENT_ENTRANCE);
-                requestParameters.add(RequestParameter.STUDENT_DININGROOM);
+                requestParameters.add(RequestParameter.STUDENT_DINING_ROOM);
                 character = new StudentMoverCharacter(10, 1, 2, 0, requestParameters);
                 break;
             case 11:

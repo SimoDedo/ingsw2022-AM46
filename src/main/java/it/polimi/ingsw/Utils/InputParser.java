@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Utils;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Scanner;
 
 public class InputParser {
@@ -38,7 +38,7 @@ public class InputParser {
         return number;
     }
 
-    public int readNumberFromSelection(List<Integer> choices){
+    public int readNumberFromSelection(Collection<Integer> choices){
         int number = readNumber();
         while(!choices.contains(number)){
             System.out.println("The number must be one of the following: " + Arrays.toString(choices.toArray()));
@@ -47,7 +47,7 @@ public class InputParser {
         return number;
     }
 
-    public String readLineFromSelection(List<String> choices){
+    public String readLineFromSelection(Collection<String> choices){
         String line = readLine();
         while(!choices.contains(line)){
             System.out.println("The string must be one of the following: " + Arrays.toString(choices.toArray()));

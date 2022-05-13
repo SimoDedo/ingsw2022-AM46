@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.CLI;
 
 
+import it.polimi.ingsw.GameModel.Characters.StudentMoverCharacter;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.*;
@@ -67,7 +68,9 @@ public class CLI implements UI {
     }
 
     private String studentFrequencyString(List<Color> students){
+
         HashMap<Color, Integer> frequencyMap = new HashMap<>();
+
         for(Color c : students){
             if(frequencyMap.containsKey(c)){
                 frequencyMap.put(c, frequencyMap.get(c) + 1);
@@ -75,22 +78,64 @@ public class CLI implements UI {
                 frequencyMap.put(c, 1);
             }
         }
+
         StringBuilder colorFrequency = new StringBuilder();
         for(Color c : frequencyMap.keySet()){
-            colorFrequency.append(String.format("%d %s students\n", frequencyMap.get(c), c));
+            colorFrequency.append(String.format("%d %s students, ", frequencyMap.get(c), c));
         }
+
+        colorFrequency.append("\n");
         return colorFrequency.toString();
+    }
+
+    private int selectStudentFromContainer(String type, int characterID){
+        int studentID;
+        Color colorSelection;
+        HashMap<Integer, Color> studentIDs;
+
+        if(type.equals("entrance")){
+            studentIDs = game.getEntranceStudentsIDs(nickname);
+
+        } else if(type.equals("diningRoom")){
+            //FIXME
+            // missing getter in game interface??
+            studentIDs = game.getEntranceStudentsIDs(nickname);
+        } else {
+            //character
+            StudentMoverCharacter studentContainerCharacter = (StudentMoverCharacter) game.getCharacterByID(characterID);
+            studentIDs = studentContainerCharacter.getStudentIDsAndColor();
+        }
+
+        colorSelection = Color.valueOf(parser.readLineFromSelection(studentIDs.values().stream()
+                .map(Object::toString).collect(Collectors.toList())));
+        studentID = studentIDs.entrySet().stream().filter(o -> o.getValue() == colorSelection)
+                .map(Map.Entry::getKey).findAny().orElse(-1);
+
+        return studentID;
+    }
+
+
+    private Color selectColor(){
+        //print colors?
+        return Color.valueOf(parser.readLineFromSelection(Arrays.stream(Color.values())
+                .map(Object::toString).collect(Collectors.toList())));
+    }
+
+
+    private int selectIslandTileFromIdx(){
+        return game.getIslandTilesIDs().get(parser.readBoundNumber(0, game.getIslandTilesIDs().size())).get(0);
+
     }
 
     public void setGame(ObservableByClient game){
         this.game = game;
     }
 
+
     public void displayLogin() {
         displayMessage("Placeholder welcome message");
 
     }
-
 
 
     public void displayMessage(String message) {
@@ -110,6 +155,7 @@ public class CLI implements UI {
 
         client.sendUserAction(towerColorRequest);
     }
+
 
     public void requestGameSettings(){
 
@@ -148,27 +194,6 @@ public class CLI implements UI {
         client.sendUserAction(wizardRequest);
     }
 
-    @Override
-    public void showText(String text) {
-        displayMessage(text);
-
-    }
-
-    @Override
-    public void showInfo(String info) {
-
-    }
-
-    @Override
-    public void showError(String error) {
-
-    }
-
-    @Override
-    public void reset() {
-
-    }
-
 
     public void requestAssistant(){
 
@@ -194,22 +219,27 @@ public class CLI implements UI {
         client.sendUserAction(cloudRequest);
     }
 
-    public void requestMotherNature(){
+    public void requestMoveMotherNature(){
+        HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
+        int assistantPlayed = game.getCardsPlayedThisRound().get(nickname);
 
+        displayMessage(String.format("Type the number of spaces mother nature should move (max %d):", (assistantPlayed + 1) / 2));
+
+        int steps = parser.readBoundNumber(1, (assistantPlayed + 1) / 2);
+        int dstIslandID = islandGroups.get(game.getMotherNatureIslandGroupIdx() + steps).get(0);
+
+        UserAction moveMotherNatureRequest = new MoveMotherNatureUserAction(nickname, dstIslandID);
+
+        client.sendUserAction(moveMotherNatureRequest);
     }
 
     public void requestMoveFromEntrance(){
         HashMap<Integer, List<Integer>> islandTileIDs = game.getIslandTilesIDs();
         HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(nickname);
-
+        
         displayEntrance(nickname);
-        // lambda maps the contents of the array of available Colors to String to check against user input, then converts back
-        Color colorSelection = Color.valueOf(parser.readLineFromSelection(studentIDs.values().stream()
-                .map(Object::toString).collect(Collectors.toList())));
-        // lambda looks for an entry with value equal to color in studentIDs, then returns the corresponding studentID if present, -1 otherwise
-        // NOTE: should never actually assign the -1 since the chosen color is guaranteed to be present
-        int studentID = studentIDs.entrySet().stream().filter(o -> o.getValue() == colorSelection)
-                .map(Map.Entry::getKey).findAny().orElse(-1);
+        displayMessage("Select a student from your entrance:");
+        int studentID = selectStudentFromContainer("entrance", -1);
         int destinationID;
 
         displayMessage("Select destination type:\n1: Islands\n2: Dining Room");
@@ -218,11 +248,11 @@ public class CLI implements UI {
             displayArchipelago();
             displayMessage("Select the island group number you would like to place your student in:");
 
-            destinationID = islandTileIDs.get(parser.readBoundNumber(0, islandTileIDs.size() - 1)).get(0);
+            destinationID = selectIslandTileFromIdx();
 
         } else {
 
-            destinationID = game.getTableIDs(nickname).get(colorSelection);
+            destinationID = game.getTableIDs(nickname).get(studentIDs.get(studentID));
 
         }
 
@@ -241,6 +271,61 @@ public class CLI implements UI {
 
         client.sendUserAction(characterRequest);
     }
+
+    // TODO: look at this again
+    public void requestCharacterAbility(List<RequestParameter> requestedParameters, int characterID){
+        
+
+        List<Integer> parameters = new ArrayList<>();
+
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_CARD)) {
+            displayCharacters();
+            displayMessage("Please select a student from the character you activated:");
+            int charStudentID = selectStudentFromContainer("", characterID);
+            parameters.add(charStudentID);
+        }
+
+        if(requestedParameters.contains(RequestParameter.ISLAND)) {
+            displayArchipelago();
+            displayMessage("Please select an island group:");
+
+            int islandGroupIdxSelection = selectIslandTileFromIdx();
+
+            parameters.add(islandGroupIdxSelection);
+
+        }
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_ENTRANCE)){
+            displayEntrance(nickname);
+            displayMessage("Please select student from your entrance:");
+
+            int entranceStudentID = selectStudentFromContainer("entrance", -1);
+
+            parameters.add(entranceStudentID);
+
+        }
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_DINING_ROOM)){
+            displayDiningRoom(nickname);
+            displayMessage("Please select a student from your dining room:");
+
+            int drStudentID = selectStudentFromContainer("diningRoom", -1);
+            parameters.add(drStudentID);
+        }
+
+        if(requestedParameters.contains(RequestParameter.COLOR)){
+            displayMessage("Please choose a color:");
+
+            int colorSelection = selectColor().ordinal();
+            parameters.add(colorSelection);
+        }
+
+        UserAction moveStudentRequest = new UseAbilityUserAction(nickname, parameters);
+
+        client.sendUserAction(moveStudentRequest);
+    }
+
 
     public void requestEndTurn(){
 
@@ -261,7 +346,7 @@ public class CLI implements UI {
         displayCharacters();
         for(String nickname : game.getPlayerOrder()) {
             displayEntrance(nickname);
-            displayTables(nickname);
+            displayDiningRoom(nickname);
         }
         displayHand();
     }
@@ -295,7 +380,7 @@ public class CLI implements UI {
 
     }
 
-    //TODO: display mother nature
+
     public void displayArchipelago(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         HashMap<Integer, List<Integer>> islandTileStudentIDs = game.getIslandTilesStudentsIDs();
@@ -325,10 +410,11 @@ public class CLI implements UI {
             }
 
         }
+        toPrint.append(String.format("Mother nature is in island group %d", game.getMotherNatureIslandGroupIdx()));
         displayMessage(toPrint.toString());
     }
 
-    public void displayTables(String nickname){
+    public void displayDiningRoom(String nickname){
 
 
         if(nickname.equals(this.nickname)){ nickname = "your"; } else nickname += "'s";
@@ -357,9 +443,19 @@ public class CLI implements UI {
 
     public void displayCharacters(){
         StringBuilder toPrint = new StringBuilder("These are the characters which have been picked for this game:\n\n");
-        for(int ID : game.getCurrentCharacterIDs())
+        for(int ID : game.getCurrentCharacterIDs()) {
+
             toPrint.append(String.format("Character %d\ncost:%d\ndescription: %s\n",
                     ID, game.getCharacterByID(ID).getCost(), Characters.values()[ID]));
+
+            if(ID == 1 || ID == 7 || ID == 11){
+                StudentMoverCharacter c = (StudentMoverCharacter) game.getCharacterByID(ID);
+                List<Color> studentFrequencyList = c.getStudentIDsAndColor().values().stream().toList();
+                toPrint.append("Students contained in this character: ");
+                toPrint.append(studentFrequencyString(studentFrequencyList));
+            }
+            toPrint.append("\n");
+        }
         if(game.getCurrentCharacterIDs().size() > 0) displayMessage(toPrint.toString());
 
     }
@@ -375,4 +471,26 @@ public class CLI implements UI {
 
 
 
+    @Override
+    public void showText(String text) {
+        displayMessage(text);
+
+    }
+
+    @Override
+    public void showInfo(String info) {
+
+    }
+
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
+
 }
+

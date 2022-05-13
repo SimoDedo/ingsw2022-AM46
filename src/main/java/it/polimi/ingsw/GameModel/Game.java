@@ -112,8 +112,7 @@ public class Game implements ObservableByClient, Serializable {
             boolean isTowerHolder = players.getTowerHolder(towerColor) == null;
             players.add(new Player(nickname, towerColor,isTowerHolder, gameConfig.getPlayerConfig()));
             turnManager.addPlayerClockwise(players.getByNickname(nickname));
-            //hmmmmmmm
-            if(players.getTeam(towerColor).size() == teamSize) availableTowerColors.remove(towerColor);
+
         }
     }
 
@@ -127,7 +126,6 @@ public class Game implements ObservableByClient, Serializable {
         if (getWizardTypes().contains(wizardType)) throw new IllegalArgumentException("Wizard type already chosen");
         Player player = getPlayerByNickname(nickname);
         player.pickWizard(wizardType);
-        availableWizards.remove(wizardType);
 
     }
 
@@ -363,21 +361,6 @@ public class Game implements ObservableByClient, Serializable {
 
     //region Game
 
-    /**
-     * Getter for the tower colors left to choose
-     * @return list of available TowerColors
-     */
-    public List<TowerColor> getAvailableTowerColors(){
-        return availableTowerColors;
-    }
-
-    /**
-     * Getter for the wizard types left to choose
-     * @return list of available WizardTypes
-     */
-    public List<WizardType> getAvailableWizards(){
-        return availableWizards;
-    }
 
     /**
      * Getter for the number of players selected for this game
@@ -649,12 +632,12 @@ public class Game implements ObservableByClient, Serializable {
     }
 
 
-    @Override
+
     public int getActiveCharacterMaxUses() {
         return 0;
     }
 
-    @Override
+
     public int getActiveCharacterUsesLeft() {
         return 0;
     }
