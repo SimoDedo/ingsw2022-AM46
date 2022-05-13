@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
+import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.PlayerConfig;
@@ -30,12 +31,15 @@ public class Player implements Serializable {
     }
 
     /**
-     * Constructor for neutral player (i.e. island and bag owner)... there is  probably a better way to do it?
+     * Constructor for neutral player (i.e. island and bag owner) for testing purposes.
      */
     public Player() {
         nickname = "NEUTRAL";
-        playerBoard = null;
-        isTowerHolder = false;
+        this.towerColor = TowerColor.NEUTRAL;
+        isTowerHolder = true;
+        PlayerConfig playerConfig = new PlayerConfig(2);
+        playerConfig.setBag(new Bag());
+        playerBoard = new PlayerBoard(this, towerColor, true, playerConfig);
     }
 
     /**
@@ -69,13 +73,13 @@ public class Player implements Serializable {
     }
 
     /**
-     * Method for removing a number n of coins.
+     * Method for removing n coins from this user.
      * @param n the number of coins to remove
      */
-    public void takeCoins(int n) throws IllegalArgumentException{
+    public void takeCoins(int n) throws IllegalArgumentException {
         if(coins - n < 0)
-            throw  new IllegalArgumentException("Can't deduct "+n+" coin since player hasn't enough");
-        coins = coins - n;
+            throw  new IllegalArgumentException("Can't deduct " + n + " coins, " + nickname + " doesn't have enough coins!");
+        coins -= n;
     }
 
     /**
