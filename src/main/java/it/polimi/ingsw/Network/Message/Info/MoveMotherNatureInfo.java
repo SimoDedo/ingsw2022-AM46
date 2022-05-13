@@ -2,7 +2,7 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class MoveMotherNatureInfo extends Info{
 
-    private int islandID;
+    private final int islandID;
 
     public MoveMotherNatureInfo(int islandID) {
         super("Mother nature successfully moved!");

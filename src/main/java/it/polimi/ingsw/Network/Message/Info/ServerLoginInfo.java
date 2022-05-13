@@ -4,8 +4,8 @@ import java.net.InetAddress;
 
 public class ServerLoginInfo extends Info {
 
-    private InetAddress IP;
-    private int port;
+    private final InetAddress IP;
+    private final int port;
 
     public ServerLoginInfo(InetAddress IP, int port) {
         super("Please connect to server using address and port: ");

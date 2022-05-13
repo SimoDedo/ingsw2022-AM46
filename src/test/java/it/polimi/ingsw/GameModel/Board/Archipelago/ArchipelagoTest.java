@@ -153,7 +153,6 @@ class ArchipelagoTest {
 
     /**
      * Tests that resolving an Island causes correct team to control the IslandGroup and correctly merges when island at corners
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupMergeCorner() throws GameOverException {
@@ -187,7 +186,6 @@ class ArchipelagoTest {
 
     /**
      * Tests that resolving an Island causes correct team to control the IslandGroup and correctly merges when island at corners
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupMergeCorner2() throws GameOverException {
@@ -220,7 +218,6 @@ class ArchipelagoTest {
 
     /**
      * Tests that resolving an Island causes correct team to control the IslandGroup and correctly merges multiple island on a complex situation
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupMergeMany() throws GameOverException {
@@ -274,7 +271,6 @@ class ArchipelagoTest {
 
     /**
      * Resolves IslandGroup using a strategy (C6)
-     * @throws GameOverException
      */
     @Test
     void resolveIslandGroupStrategy() throws GameOverException {

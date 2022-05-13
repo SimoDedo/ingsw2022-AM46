@@ -2,9 +2,9 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class PlayAssistantInfo extends Info{
 
-    private String nickname;
+    private final String nickname;
 
-    private int assistantPlayed;
+    private final int assistantPlayed;
 
     public PlayAssistantInfo(String nickname, int assistantPlayed) {
         super("Assistant successfully played");

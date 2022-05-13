@@ -4,7 +4,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 public class WinnerInfo extends Info{
 
-    private TowerColor winner;
+    private final TowerColor winner;
 
     public WinnerInfo(TowerColor winner) {
         super("The winning team is: ");

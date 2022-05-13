@@ -3,18 +3,15 @@ package it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import org.junit.jupiter.api.Test;
 
-import java.io.InvalidObjectException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveMotherNatureStrategyTest {
 
     /**
      * Tests that method correctly throws exception if movement is not allowed
-     * @throws InvalidObjectException not tested
      */
     @Test
-    void moveMotherNatureException() throws InvalidObjectException {
+    void moveMotherNatureException() {
         Archipelago archipelago = new Archipelago();
 
         int idxStartIG = archipelago.getMotherNatureIslandGroupIndex();
@@ -27,10 +24,9 @@ class MoveMotherNatureStrategyTest {
 
     /**
      * Tests that method correctly lets player move MotherNature
-     * @throws InvalidObjectException not tested
      */
     @Test
-    void moveMotherNature() throws InvalidObjectException {
+    void moveMotherNature() {
         Archipelago archipelago = new Archipelago();
 
         int idxStartIG = archipelago.getMotherNatureIslandGroupIndex();

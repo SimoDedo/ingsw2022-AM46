@@ -12,7 +12,6 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class Archipelago implements Serializable {
     /**
      * List that contains all the IslandGroups. The order of the list is used to merge and render the islands
      */
-    private List<IslandGroup> islandGroups;
+    private final List<IslandGroup> islandGroups;
 
     /**
      * Strategy to apply when resolving an island
@@ -87,7 +86,7 @@ public class Archipelago implements Serializable {
      * @param islandTileDestination Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws InvalidObjectException {
+    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 

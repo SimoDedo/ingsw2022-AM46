@@ -6,7 +6,7 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public abstract class UserAction extends Message {
 
-    private UserActionType userActionType;
+    private final UserActionType userActionType;
 
     public UserAction(String sender, UserActionType userActionType) {
         super(sender);

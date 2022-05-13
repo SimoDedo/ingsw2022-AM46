@@ -11,10 +11,10 @@ import java.io.Serializable;
  */
 public class GameConfig implements Serializable {
 
-    private int numOfPlayers,
-    numOfClouds,
-    cloudSize;
-    private PlayerConfig playerConfig;
+    private final int numOfPlayers;
+    private final int numOfClouds;
+    private int cloudSize;
+    private final PlayerConfig playerConfig;
 
     public GameConfig(int numOfPlayers) {
         this.numOfPlayers = numOfPlayers;

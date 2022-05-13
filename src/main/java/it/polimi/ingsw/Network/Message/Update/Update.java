@@ -1,26 +1,25 @@
 package it.polimi.ingsw.Network.Message.Update;
 
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class Update extends Message {
 
-    ObservableByClient game;
+    final ObservableByClient game;
 
     /**
      * String that represents the player who should take the action requested in this update.
      * All other players will treat use this update only to show information
      */
-    String actionTakingPlayer;
+    final String actionTakingPlayer;
 
     /**
      * The action that is expected from the action taking player.
      */
-    UserActionType nextUserAction;
+    final UserActionType nextUserAction;
 
-    String info;
+    final String info;
 
     public Update(ObservableByClient game, String actionTakingPlayer, UserActionType nextUserAction, String info) {
         super("Server");

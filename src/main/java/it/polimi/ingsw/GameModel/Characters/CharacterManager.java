@@ -13,7 +13,6 @@ import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -22,14 +21,14 @@ import java.util.stream.Collectors;
  */
 public class CharacterManager  implements Serializable {
 
-    private Archipelago archipelago;
-    private Bag bag;
-    private PlayerList playerList;
-    private ProfessorSet professorSet;
-    private List<AbstractCharacter> characters = new ArrayList<>(12);
+    private final Archipelago archipelago;
+    private final Bag bag;
+    private final PlayerList playerList;
+    private final ProfessorSet professorSet;
+    private final List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
-    transient private CharacterFactory charFactory = new CharacterFactory();
-    transient private ConsumerSet consumerSet;
+    final transient private CharacterFactory charFactory = new CharacterFactory();
+    final transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.

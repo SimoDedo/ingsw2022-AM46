@@ -16,7 +16,7 @@ public class CheckAndMoveProfessorStrategyC2 implements CheckAndMoveProfessorStr
      * Player who activated and paid for C2. This player will win the professor in the case of a
      * draw.
      */
-    private Player activator;
+    private final Player activator;
 
     public String getActivatingPlayer(){
         return activator == null ? null : activator.getNickname();

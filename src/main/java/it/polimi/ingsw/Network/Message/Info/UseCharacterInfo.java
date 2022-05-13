@@ -6,11 +6,11 @@ import java.util.List;
 
 public class UseCharacterInfo extends Info{
 
-    private int characterActivated;
+    private final int characterActivated;
 
-    private int maxUses;
+    private final int maxUses;
 
-    private List<RequestParameter> requestParameters;
+    private final List<RequestParameter> requestParameters;
 
     public UseCharacterInfo(int characterActivated, int maxUses, List<RequestParameter> requestParameters) {
         super("Character successfully used!");

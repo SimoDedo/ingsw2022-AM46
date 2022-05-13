@@ -11,7 +11,7 @@ public class Wizard implements Serializable {
 
     private final WizardType type;
 
-    int deckSize = 10;
+    final int deckSize = 10;
     private final List<AssistantCard> deck = new ArrayList<>();
 
     /**

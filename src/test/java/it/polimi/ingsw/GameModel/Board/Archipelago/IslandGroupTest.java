@@ -7,7 +7,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.FullTeamException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 import static org.junit.jupiter.api.Assertions.*;

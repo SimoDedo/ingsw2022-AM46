@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  */
 public class GameExpert extends Game {
 
-    private CoinBag coinBag;
+    private final CoinBag coinBag;
     private CharacterManager characterManager;
 
     /**

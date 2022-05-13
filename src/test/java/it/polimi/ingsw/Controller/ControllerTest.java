@@ -1,13 +1,11 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,7 +148,7 @@ class ControllerTest {
         int destinationIG = game.getIslandTilesIDs().entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().contains(mnIsland))
-                .findAny()
+                .findAny() //always present
                 .get()//always present
                 .getKey();
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;

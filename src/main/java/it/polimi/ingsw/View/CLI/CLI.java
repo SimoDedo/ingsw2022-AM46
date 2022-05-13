@@ -26,7 +26,7 @@ public class CLI implements UI {
 
     private String nickname;
 
-    private Client client;
+    private final Client client;
 
     private LinkedHashSet<String> infoCommandList;
     private LinkedHashSet<String> gameCommandList;

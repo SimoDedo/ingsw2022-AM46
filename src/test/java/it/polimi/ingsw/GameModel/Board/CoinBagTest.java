@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CoinBagTest {
 
-    int initialCoins = 20;
+    final int initialCoins = 20;
 
     /**
      * Test that it only removes one coin from starting state

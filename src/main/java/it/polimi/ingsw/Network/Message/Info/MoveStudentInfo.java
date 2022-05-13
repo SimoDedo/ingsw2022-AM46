@@ -2,11 +2,11 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class MoveStudentInfo extends Info{
 
-    private int movedStudentID;
+    private final int movedStudentID;
 
-    private int destinationID;
+    private final int destinationID;
 
-    private int leftToMove;
+    private final int leftToMove;
 
     public MoveStudentInfo(int movedStudentID, int destinationID, int leftToMove) {
         super("Student successfully moved!");

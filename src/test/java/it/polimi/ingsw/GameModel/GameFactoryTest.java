@@ -1,11 +1,7 @@
 package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.Utils.Enum.GameMode;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
 import org.junit.jupiter.api.Test;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 

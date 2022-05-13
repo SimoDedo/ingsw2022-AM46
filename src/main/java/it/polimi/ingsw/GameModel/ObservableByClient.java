@@ -1,9 +1,7 @@
 package it.polimi.ingsw.GameModel;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -202,7 +200,7 @@ public interface ObservableByClient {
          * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
          * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
          */
-        public HashMap<Integer, Integer> getNoEntryTiles();
+        HashMap<Integer, Integer> getNoEntryTiles();
 
         //endregion
 
@@ -212,31 +210,31 @@ public interface ObservableByClient {
          * @param nickname the player to check
          * @return the number of coins of the given player
          */
-        public int getCoins(String nickname);
+        int getCoins(String nickname);
 
         /**
          * Method to observe which characters were created for this game.
          * @return a list of the created character IDs.
          */
-        public List<Integer> getDrawnCharacterIDs();
+        List<Integer> getDrawnCharacterIDs();
 
         /**
          * Getter for the ActiveCharacter ID.
          * @return the ActiveCharacter ID.
          */
-        public int getActiveCharacterID();
+        int getActiveCharacterID();
 
         /**
          * Return the maximum number of times the ability of the active character can be used.
          * @return the maximum number of times the ability of the active character can be used.
          */
-        public int getActiveCharacterMaxUses();
+        int getActiveCharacterMaxUses();
 
         /**
          * Returns the number of times the ability of the active character can still be used.
          * @return the number of times the ability of the active character can still be used.
          */
-        public int getActiveCharacterUsesLeft();
+        int getActiveCharacterUsesLeft();
 
         //endregion
 

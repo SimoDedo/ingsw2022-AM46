@@ -4,7 +4,7 @@ import java.util.List;
 
 public class GameJoinInfo extends Info{
 
-    private List<String> loggedPlayers;
+    private final List<String> loggedPlayers;
 
     public GameJoinInfo(List<String> loggedPlayers) {
         super("Login successful!");

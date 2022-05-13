@@ -4,7 +4,7 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class UseCharacterUserAction extends UserAction{
 
-    private int characterID;
+    private final int characterID;
 
     public UseCharacterUserAction(String sender, int characterID) throws  IllegalArgumentException{
         super(sender, UserActionType.USE_CHARACTER);

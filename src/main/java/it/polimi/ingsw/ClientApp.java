@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ClientApp {
     public static void main(String[] args){
-        Boolean defaultServer = false;
+        boolean defaultServer = false;
         String UI = null;
 
         for (int i = 0; i < args.length; i++) {

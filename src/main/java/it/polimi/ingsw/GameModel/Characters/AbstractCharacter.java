@@ -14,11 +14,12 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractCharacter implements Character, Serializable {
 
-    private int ID, cost;
+    private final int ID;
+    private int cost;
 
     private boolean isFirstUse, wasUsedThisTurn, abilityUsed;
 
-    private List<RequestParameter> requestParameters;
+    private final List<RequestParameter> requestParameters;
 
     private Player owner;
 

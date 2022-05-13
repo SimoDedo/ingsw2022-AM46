@@ -22,7 +22,7 @@ public class ResolveStrategyC9 implements ResolveStrategy{
     /**
      * The color who won't add influence
      */
-    private Color colorToIgnore;
+    private final Color colorToIgnore;
 
     public Color getColorToIgnore(){
         return  colorToIgnore;

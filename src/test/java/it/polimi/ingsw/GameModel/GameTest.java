@@ -11,7 +11,6 @@ import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import java.io.InvalidObjectException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -228,7 +227,7 @@ class GameTest {
      * Then we move MN to the next IslandGroup (always a legal move) and check if it actually contains MN
      */
     @RepeatedTest(10)
-    void moveMotherNature() throws LastRoundException, GameOverException, InvalidObjectException {
+    void moveMotherNature() throws LastRoundException, GameOverException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -260,7 +259,7 @@ class GameTest {
      * Then MN is moved to the next IslandGroup, which will be resolved and hold Towers
      */
     @RepeatedTest(10)
-    void resolveIslandGroup() throws GameOverException, InvalidObjectException, LastRoundException, FullTableException {
+    void resolveIslandGroup() throws GameOverException, LastRoundException, FullTableException {
         GameFactory gameFactory = new GameFactory();
         Game game = gameFactory.create(4, GameMode.NORMAL);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -282,7 +281,7 @@ class GameTest {
                         .filter(en -> en.getValue() == color)
                         .toList()
                         .stream()
-                        .map(ent -> ent.getKey())
+                        .map(Map.Entry::getKey)
                         .toList();
                 tableID = game.getTableIDs("Simo").get(color);
                 break;

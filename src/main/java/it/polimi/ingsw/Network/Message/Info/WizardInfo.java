@@ -4,9 +4,9 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 
 public class WizardInfo extends Info{
 
-    private String nickname;
+    private final String nickname;
 
-    private WizardType wizardType;
+    private final WizardType wizardType;
 
     public WizardInfo(String nickname, WizardType wizardType) {
         super("Wizard successfully chosen!");

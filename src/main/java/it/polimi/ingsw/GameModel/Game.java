@@ -9,10 +9,6 @@ import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.*;
-import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
@@ -32,11 +28,11 @@ import java.util.*;
 public class Game implements ObservableByClient, Serializable {
 
     private final Player neutralPlayer = new Player();
-    protected Bag bag = new Bag();
-    protected Archipelago archipelago = new Archipelago();
+    protected final Bag bag = new Bag();
+    protected final Archipelago archipelago = new Archipelago();
     private final List<CloudTile> clouds = new ArrayList<>();
-    protected ProfessorSet professorSet = new ProfessorSet();
-    protected PlayerList players = new PlayerList();
+    protected final ProfessorSet professorSet = new ProfessorSet();
+    protected final PlayerList players = new PlayerList();
     private final TurnManager turnManager = new TurnManager();
 
     /**
@@ -538,7 +534,7 @@ public class Game implements ObservableByClient, Serializable {
      * @return An HashMap containing the nickname of the Player and the Wizard chosen
      */
     public HashMap<String, WizardType> getPlayersWizardType(){
-        HashMap<String, WizardType> result = new HashMap<String, WizardType>();
+        HashMap<String, WizardType> result = new HashMap<>();
         for(Player player : players){
             result.put(player.getNickname(), player.getWizardType());
         }

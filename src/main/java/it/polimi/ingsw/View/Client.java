@@ -1,6 +1,5 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -38,7 +37,7 @@ public class Client {
     private ExecutorService infoQueue;
     private Ping ping;
     private ExecutorService pingExecutor;
-    private Thread mainThread;
+    private final Thread mainThread;
 
     public Client(Boolean usesDefaultServer, String chosenUI){
         if(chosenUI != null){

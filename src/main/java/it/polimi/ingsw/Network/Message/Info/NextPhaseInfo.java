@@ -4,7 +4,7 @@ import it.polimi.ingsw.Utils.Enum.Phase;
 
 public class NextPhaseInfo extends Info{
 
-    private Phase nextPhase;
+    private final Phase nextPhase;
 
     public NextPhaseInfo(Phase nextPhase) {
         super(" phase is starting");

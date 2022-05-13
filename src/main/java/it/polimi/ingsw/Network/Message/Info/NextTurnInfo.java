@@ -2,7 +2,7 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class NextTurnInfo extends Info{
 
-    private String nextPlayer;
+    private final String nextPlayer;
 
     public NextTurnInfo(String nextPlayer) {
         super("Next player to play is: ");

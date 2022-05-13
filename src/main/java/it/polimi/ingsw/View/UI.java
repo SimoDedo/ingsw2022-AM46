@@ -1,14 +1,9 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
-import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Command;
-import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
 
-import java.beans.PropertyChangeEvent;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public interface UI {
 
@@ -36,60 +31,60 @@ public interface UI {
 
     void reset();
 
-    public void displayLogin();
+    void displayLogin();
 
-    public void displayBoard();
+    void displayBoard();
 
 
-    public void displayMessage(String message);
+    void displayMessage(String message);
 
     void displayMessage(String message, String color);
 
-    public void requestLogin();
+    void requestLogin();
 
-    public void requestTowerColor();
+    void requestTowerColor();
 
-    public void requestGameMode();
+    void requestGameMode();
 
-    public void requestPlayerNumber();
+    void requestPlayerNumber();
 
-    public void requestWizard ();
+    void requestWizard ();
 
-    public void requestAssistant();
+    void requestAssistant();
 
     void requestMoveFromEntrance();
 
-    public void requestMotherNature();
+    void requestMotherNature();
 
-    public void requestCloud();
+    void requestCloud();
 
-    public void requestCharacter();
+    void requestCharacter();
 
-    public void displayHelp();
+    void displayHelp();
 
-    public void displayHelp(String context);
+    void displayHelp(String context);
 
-    public void displayUnavailable();
+    void displayUnavailable();
 
-    public void displayInvalid();
+    void displayInvalid();
 
-    public void standings();
+    void standings();
 
-    public void displayEntrance(String nickname);
+    void displayEntrance(String nickname);
 
-    public void displayArchipelago();
+    void displayArchipelago();
 
-    public void displayTables(String nickname);
+    void displayTables(String nickname);
 
-    public void displayClouds();
+    void displayClouds();
 
-    public void displayCharacters();
+    void displayCharacters();
 
-    public void displayHand(String nickname);
+    void displayHand(String nickname);
 
-    public void enableCommand(Command command);
+    void enableCommand(Command command);
 
-    public void disableCommand(Command command);
+    void disableCommand(Command command);
 
     void notifyServerResponse();
 

@@ -4,7 +4,6 @@ import it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup;
 import it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile;
 import it.polimi.ingsw.GameModel.Board.Archipelago.MotherNature;
 
-import java.io.InvalidObjectException;
 import java.util.List;
 
 /**

@@ -5,7 +5,7 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class GameSettingsUserAction extends UserAction{
 
-    private int numOfPlayers;
+    private final int numOfPlayers;
 
     GameMode gameMode;
 

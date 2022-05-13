@@ -7,7 +7,7 @@ import java.util.List;
 
 public class UseAbilityUserAction extends UserAction{
 
-    private List<Integer> requestedParameters;
+    private final List<Integer> requestedParameters;
 
     public UseAbilityUserAction(String sender, List<Integer> requestedParameters) {
         super(sender, UserActionType.USE_ABILITY);

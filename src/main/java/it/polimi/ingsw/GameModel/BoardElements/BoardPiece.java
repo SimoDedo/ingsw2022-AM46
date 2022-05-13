@@ -15,7 +15,7 @@ public abstract class BoardPiece implements Serializable {
     /**
      * ID of the concrete BoardPiece
      */
-    public int boardPieceID;
+    public final int boardPieceID;
 
     /**
      * Creates BoardPiece, assigning it an ID

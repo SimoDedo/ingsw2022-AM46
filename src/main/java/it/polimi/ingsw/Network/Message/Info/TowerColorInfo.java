@@ -3,9 +3,9 @@ package it.polimi.ingsw.Network.Message.Info;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 public class TowerColorInfo extends Info{
-    private String nickname;
+    private final String nickname;
 
-    private TowerColor towerColorChosen;
+    private final TowerColor towerColorChosen;
 
     public TowerColorInfo(String nickname, TowerColor towerColorChosen) {
         super("Tower color successfully chosen!");

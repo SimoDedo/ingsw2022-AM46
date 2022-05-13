@@ -2,9 +2,9 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class UseAbilityInfo extends Info{
 
-    private int characterActivated;
+    private final int characterActivated;
 
-    private int usesLeft;
+    private final int usesLeft;
 
     public UseAbilityInfo(int characterActivated, int usesLeft) {
         super("Ability successfully used!");

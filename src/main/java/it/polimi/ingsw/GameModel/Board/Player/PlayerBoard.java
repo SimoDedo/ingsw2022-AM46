@@ -14,8 +14,8 @@ import java.util.NoSuchElementException;
 
 public class PlayerBoard implements Serializable {
     private TowerSpace towerSpace = null;
-    private Entrance entrance;
-    private DiningRoom diningRoom;
+    private final Entrance entrance;
+    private final DiningRoom diningRoom;
 
 
 

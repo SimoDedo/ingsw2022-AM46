@@ -7,8 +7,6 @@ import it.polimi.ingsw.Network.Message.UserAction.UserAction;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Class that manages a connection from a client. All messages will be forwarded to the server which
@@ -17,9 +15,9 @@ import java.util.concurrent.TimeoutException;
  */
 public class SocketConnection implements Runnable {
 
-    protected Socket socket;
+    protected final Socket socket;
 
-    private Server server;
+    private final Server server;
 
     private ObjectInputStream inputStream;
 

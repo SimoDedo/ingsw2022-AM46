@@ -21,7 +21,7 @@ public class ResolveStrategyC8 implements ResolveStrategy {
     /**
      * The player who activated the card this turn and will have the 2 bonus points
      */
-    private Player activatingPlayer;
+    private final Player activatingPlayer;
 
     public String getActivatingPlayer(){
         return activatingPlayer == null ? null : activatingPlayer.getNickname();

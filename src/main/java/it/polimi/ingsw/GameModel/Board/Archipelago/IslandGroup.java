@@ -17,7 +17,7 @@ public class IslandGroup implements Serializable {
     /**
      * IslandTiles that compose the IslandGroup
      */
-    private List<IslandTile> islandTiles;
+    private final List<IslandTile> islandTiles;
 
     private NoEntryTilesSpace noEntryTilesSpace;
 

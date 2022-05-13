@@ -4,7 +4,7 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class PlayAssistantUserAction  extends UserAction{
 
-    private int assistantID;
+    private final int assistantID;
 
     public PlayAssistantUserAction(String sender, int assistantID) throws IllegalArgumentException{
         super(sender, UserActionType.PLAY_ASSISTANT);

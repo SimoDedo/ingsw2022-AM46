@@ -4,9 +4,9 @@ import it.polimi.ingsw.Utils.Enum.GameMode;
 
 public class GameSettingInfo extends Info{
 
-    private int numOfPlayersChosen;
+    private final int numOfPlayersChosen;
 
-    private GameMode gameModeChosen;
+    private final GameMode gameModeChosen;
 
     public GameSettingInfo(int numOfPlayersChosen, GameMode gameModeChosen) {
         super("Game settings chosen for this game:");

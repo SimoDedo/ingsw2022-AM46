@@ -2,7 +2,7 @@ package it.polimi.ingsw.Network.Message.Info;
 
 public class TakeFromCloudInfo extends Info{
 
-    private int cloudIDChosen;
+    private final int cloudIDChosen;
 
     public TakeFromCloudInfo(int cloudIDChosen) {
         super("Successfully taken students from cloud!");

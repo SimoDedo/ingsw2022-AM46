@@ -23,21 +23,21 @@ public class LobbyServer implements Server {
 
     private boolean active = true;
 
-    private Map<String, InetAddress> registeredNicks = new HashMap<>();
+    private final Map<String, InetAddress> registeredNicks = new HashMap<>();
 
     private InetAddress IP;
 
-    private int mainPort = 4646;
+    private final int mainPort = 4646;
 
     private int maxPort = mainPort + 1;
 
     private ServerSocket mainSocket;
 
-    private Set<MatchServer> matchServers = new HashSet<>();
+    private final Set<MatchServer> matchServers = new HashSet<>();
 
-    private Set<SocketConnection> connections = new HashSet<>();
+    private final Set<SocketConnection> connections = new HashSet<>();
 
-    private ExecutorService executor;
+    private final ExecutorService executor;
 
     /**
      * Constructor for a LobbyServer object. The constructor will create a first socket to which all

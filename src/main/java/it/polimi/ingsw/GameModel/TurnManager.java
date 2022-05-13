@@ -20,7 +20,7 @@ public class TurnManager implements Serializable {
 
     private Phase currentPhase = Phase.IDLE;
 
-    public List<Player> planningPlayerList = new ArrayList<>(); //set back to private!
+    public final List<Player> planningPlayerList = new ArrayList<>(); //set back to private!
 
     public  List<Player> actionPlayerList = new ArrayList<>();
     /**
@@ -28,7 +28,7 @@ public class TurnManager implements Serializable {
      * assignWizard function from Game will fill clockwisePlayerList little by little each time it
      * is called.
      */
-    private List<Player> clockwisePlayerList = new ArrayList<>();
+    private final List<Player> clockwisePlayerList = new ArrayList<>();
 
     public TurnManager() {}
 

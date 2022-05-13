@@ -39,7 +39,6 @@ public class TurnController {
     }
     /**
      * Called when a student is moved from entrance. It adds one to the counter of the students moved
-     * @return the students moved by the current player.
      */
     public void moveStudent(){
        studentsMovedByCurrentPlayer++;

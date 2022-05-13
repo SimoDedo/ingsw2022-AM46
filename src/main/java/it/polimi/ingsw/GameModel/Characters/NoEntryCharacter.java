@@ -13,7 +13,7 @@ public class NoEntryCharacter extends AbstractCharacter {
     private List<RequestParameter> requestParameters;
 
     private int noEntryTiles;
-    private int maxNoEntryTiles;
+    private final int maxNoEntryTiles;
 
     public NoEntryCharacter(int ID, int cost, int maxNoEntryTiles, List<RequestParameter> requestParameters) {
         super(ID, cost, requestParameters);
