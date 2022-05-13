@@ -63,6 +63,12 @@ public interface ObservableByClient {
 
         List<WizardType> getAvailableWizards();
 
+        /**
+         * Returns the team that has won the game.
+         * @return the towerColor of the team who has won the game
+         */
+        TowerColor getWinner();
+
         //endregion
 
         //region Player

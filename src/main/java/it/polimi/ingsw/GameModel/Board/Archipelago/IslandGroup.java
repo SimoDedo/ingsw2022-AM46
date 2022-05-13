@@ -41,11 +41,10 @@ public class IslandGroup implements Serializable {
      * @throws NoSuchElementException if there is no island tile that contains Mother Nature in this group
      */
     public IslandTile getMotherNatureTile() throws NoSuchElementException {
-        IslandTile temp = null;
         for(IslandTile islandTile : islandTiles){
-            if(islandTile.hasMotherNature())
-                temp = islandTile;
-            return temp;
+            if(islandTile.hasMotherNature()){
+                return islandTile;
+            }
         }
         throw new NoSuchElementException("No tile in this IslandGroup has Mother Nature");
     }

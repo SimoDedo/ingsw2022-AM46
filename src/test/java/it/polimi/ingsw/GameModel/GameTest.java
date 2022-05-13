@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InvalidObjectException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -271,7 +272,23 @@ class GameTest {
         game.assignWizard("Simo", WizardType.MAGE);
         game.playAssistant("Simo", 10);
 
-        Map.Entry<Integer, Color> studentToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream().toList().get(0);
+        List<Integer> studentsToMove = new ArrayList<>();
+        int tableID = 0;
+        for(Color color : Color.values()){
+            long count = game.getEntranceStudentsIDs("Simo").entrySet().stream()
+                    .filter(e -> e.getValue() == color)
+                    .count();
+            if(count > 1){
+                studentsToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream()
+                        .filter(en -> en.getValue() == color)
+                        .toList()
+                        .stream()
+                        .map(ent -> ent.getKey())
+                        .toList();
+                tableID = game.getTableIDs("Simo").get(color);
+                break;
+            }
+        }
         //Select random student from entrance along with their color (thus an entry)
         int islandTileMN = game.getMotherNatureIslandTileID();
         int destinationIG = game.getIslandTilesIDs().entrySet().
@@ -283,9 +300,10 @@ class GameTest {
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int island = game.getIslandTilesIDs().get(destinationIG).get(0);
-        game.moveStudentFromEntrance("Simo", studentToMove.getKey(), island);
-        game.moveMotherNature("Simo", island);
+        game.moveStudentFromEntrance("Simo", studentsToMove.get(0), tableID);
+        game.moveStudentFromEntrance("Simo", studentsToMove.get(1), island);
 
+        game.moveMotherNature("Simo", island);
         assertEquals(TowerColor.BLACK, game.getIslandGroupsOwners().get(destinationIG),
                 "The island should be conquered by team who owns the only student placed");
     }

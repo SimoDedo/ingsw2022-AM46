@@ -60,6 +60,7 @@ public class Game implements ObservableByClient, Serializable {
      */
     private final GameConfig gameConfig;
 
+    private TowerColor winner;
 
 
     /**
@@ -77,6 +78,7 @@ public class Game implements ObservableByClient, Serializable {
 
         for (int i = 0; i < gameConfig.getNumOfClouds(); i++)
             clouds.add(new CloudTile(gameConfig.getCloudSize(), bag));
+        winner = null;
     }
 
     /**
@@ -192,11 +194,11 @@ public class Game implements ObservableByClient, Serializable {
         if (potentialTable.getID() == containerID){
             student.getStudentContainer().removePawn(student);
             potentialTable.placeStudent(student);
+            checkAndMoveProfessor(players, student.getColor());
         }
         else {
             archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
         }
-        checkAndMoveProfessor(players, student.getColor());
     }
 
     /**
@@ -327,6 +329,7 @@ public class Game implements ObservableByClient, Serializable {
      * @throws GameOverException if it is the last round
      */
     public void endOfRoundOperations() throws GameOverException {
+        pushThisRoundInLastRound();
         if(isLastRound)
             throw new GameOverException();
         else {
@@ -348,7 +351,8 @@ public class Game implements ObservableByClient, Serializable {
                 currentlyWinning = professorSet.determineStrongestPlayer(player, currentlyWinning); //TODO: what if same number of professors? maybe impossible, maybe better to check
             }
         }
-        return currentlyWinning.getTowerColor();
+        winner = currentlyWinning.getTowerColor();
+        return winner;
     }
 
 
@@ -445,6 +449,14 @@ public class Game implements ObservableByClient, Serializable {
         for (Player player : players)
             availableWizardTypes.remove(player.getWizardType());
         return availableWizardTypes;
+    }
+
+    /**
+     * Returns the team that has won the game.
+     * @return the towerColor of the team who has won the game
+     */
+    public TowerColor getWinner(){
+        return winner;
     }
     //endregion
     //region Player

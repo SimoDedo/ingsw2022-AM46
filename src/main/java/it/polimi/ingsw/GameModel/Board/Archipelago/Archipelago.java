@@ -371,7 +371,7 @@ public class Archipelago implements Serializable {
      * Returns the IslandTile ID of the IslandTile which contains MotherNature
      * @return the IslandTile ID of the IslandTile which contains MotherNature
      */
-    public int getMotherNatureIslandTileIndex(){
+    public int getMotherNatureIslandTileID(){
         return getMotherNatureIslandTile().getID();
     }
 

@@ -31,7 +31,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
         if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
-            throw new IllegalArgumentException(islandTileDestination.toString());
+            throw new IllegalArgumentException("Move power is not enough to make this move!");
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
             islandTileDestination.placeMotherNature(motherNature);
