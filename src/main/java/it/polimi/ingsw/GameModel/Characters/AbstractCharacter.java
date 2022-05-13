@@ -5,13 +5,14 @@ import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * This abstract class implements the common methods shared by all the different types of Character.
  */
-public abstract class AbstractCharacter implements Character {
+public abstract class AbstractCharacter implements Character, Serializable {
 
     private int ID, cost;
 
@@ -112,6 +113,22 @@ public abstract class AbstractCharacter implements Character {
      */
     public Player getOwner() {
         return owner;
+    }
+
+    /**
+     * Return the maximum number of times the ability can be used.
+     * @return always 1. If specific character have different max uses the method will be overridden.
+     */
+    public int getMaxUses(){
+        return 1;
+    }
+
+    /**
+     * Return the maximum number of times the ability can be used.
+     * @return always 1. If specific character have different max uses the method will be overridden.
+     */
+    public int getUsesLeft(){
+        return abilityUsed ? 0 : 1;
     }
 
 }

@@ -7,5 +7,5 @@ import java.io.InvalidObjectException;
 import java.util.List;
 
 public interface MoveMotherNatureStrategy {
-    void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException;
+    void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws IllegalArgumentException;
 }

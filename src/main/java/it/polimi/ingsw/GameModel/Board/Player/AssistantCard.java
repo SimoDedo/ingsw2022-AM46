@@ -1,6 +1,8 @@
 package it.polimi.ingsw.GameModel.Board.Player;
 
-public class AssistantCard {
+import java.io.Serializable;
+
+public class AssistantCard implements Serializable {
     final private int turnOrder, movePower, ID;
 
     public AssistantCard(int turnOrder, int movePower) {
@@ -10,7 +12,7 @@ public class AssistantCard {
     }
 
     /**
-     * @return the unique ID for this assistant, which also corresponds to how much it can move mother nature
+     * @return the unique ID for this assistant, which also corresponds to its turn order weight
      */
     public int getID() {
         return ID;

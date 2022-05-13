@@ -17,10 +17,10 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
      * @param islandTileDestination IslandTile where MotherNature should end
      * @param moveCount Number of moves allowed
      * @param islandGroups List containing all the IslandGroups to check legal movement
-     * @throws InvalidObjectException when the destination island is not within reach
+     * @throws IllegalArgumentException when the destination island is not within reach
      */
     @Override
-    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws InvalidObjectException {
+    public void moveMotherNature(IslandTile islandTileStarting, IslandTile islandTileDestination, int moveCount, List<IslandGroup> islandGroups) throws IllegalArgumentException {
         //the first part of the algorithm can be moved inside a helper function, and StrategyC4 can inherit from standard to avoid code repetition
         int startingIslandGroupNumber = 0;
         int endingIslandGroupNumber = 0;
@@ -33,7 +33,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
         if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
-            throw new InvalidObjectException(islandTileDestination.toString());
+            throw new IllegalArgumentException("Move power is not enough to make this move!");
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
             islandTileDestination.placeMotherNature(motherNature);

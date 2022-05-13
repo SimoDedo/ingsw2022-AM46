@@ -34,7 +34,8 @@ public class ConsumerSet {
     public ConsumerSet(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet,
                        List<AbstractCharacter> characters, CoinBag coinBag) {
 
-        //todo: add exception handling maybe? Needed LastRoundException on C1 and C11 if last student drawn and GameOverException on C3(those done and tested)
+        //todo: add exception handling maybe? mostly done (added in throw list of useAbility in characterManager)
+        // but will need gameplay testing to ensure no crashing on wrong actions taken when using ability
 
         consumers.add((list) -> { // C1
             StudentMoverCharacter char1 = (StudentMoverCharacter) characters.get(0);

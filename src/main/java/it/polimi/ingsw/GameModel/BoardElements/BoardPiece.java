@@ -1,10 +1,12 @@
 package it.polimi.ingsw.GameModel.BoardElements;
 
+import java.io.Serializable;
+
 /**
  * Abstract class from which most game elements derive. Offers unique IDs.
  */
 
-public abstract class BoardPiece {
+public abstract class BoardPiece implements Serializable {
     /**
      * Static attribute shared among all BoardPieces. Stores highest ID that hasn't been used yet
      */
