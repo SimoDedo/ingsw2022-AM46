@@ -8,10 +8,12 @@ Online implementation of the tabletop game [Eriantys](https://craniointernationa
 - [Overview](#overview)
     + [Made with](#made-with)
     + [Specification](#specification)
+<!--- 
 - [The project](#the-project)
     + [Structure](#structure)
     + [Game rules](#game-rules)
     + [Network](#network)
+-->
 - [Active development](#active-development)
   * [Roadmap](#roadmap)
   * [Changelog](#changelog)
@@ -24,18 +26,18 @@ Made by:
 - **Simone de Donato** (account: [**@SimoDedo**](https://www.github.com/simodedo), personal code: **10677578**, e-mail: **simone.dedonato@mail.polimi.it**)
 - **Gregorio Dimaglie** (account: [**@MizuGreg**](https://www.github.com/mizugreg), personal code: **10705277**, e-mail: **gregorio.dimaglie@mail.polimi.it**)
 
-| Feature                   | Progress |
-|:--------------------------|:--------:|
-| Game rules                |    🟢    |
-| Advanced game             |    🟢    |
-| AF1: 4 players            |    🟢    |
-| AF2: 12 characters        |    🟢    |
-| AF3: parallel matches     |    🟢    |
-| Controller & virtual view |    🟡    |
-| Communication protocol    |    🟡    |
-| Client & view             |    🟡    |
-| CLI                       |    🔴    |
-| GUI                       |    🔴    |
+| Feature                  | Progress |
+|:-------------------------|:--------:|
+| Game rules               |    🟢    |
+| Advanced game            |    🟢    |
+| AF1: 4 players           |    🟢    |
+| AF2: 12 characters       |    🟢    |
+| AF3: parallel matches    |    🟢    |
+| Controller               |    🟢    |
+| Communication protocol   |    🟢    |
+| Client & view            |    🟡    |
+| CLI                      |    🟡    |
+| GUI                      |    🟡    |
 
 🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
 
@@ -50,6 +52,7 @@ The project will include:
 - source code of the **implementation**: game rules, networking, CLI, GUI, additional specifications etc.
 - source code of the **unit tests**.
 
+<!---
 # The project
 ### Structure
 *WIP*
@@ -57,6 +60,7 @@ The project will include:
 *WIP*
 ### Network
 *WIP*
+-->
 
 ---
 
@@ -71,9 +75,9 @@ The project will include:
     - [x] Game rules diagram
     - [x] MVC diagram
     - [x] Communication protocol diagram
-  - [ ] Complete UML diagram
+  - [x] Complete UML diagram
   - [ ] Final UML diagram, automatically generated from code
-  - [ ] GUI design
+  - [x] GUI design
   
 - **Implementation**
   - [x] Game rules
@@ -87,10 +91,9 @@ The project will include:
     - [x] AF3: Parallel matches
   - [x] Unit testing for the model
   - [x] Controller
-  - [ ] Virtual view
-  - [ ] View
-  - [ ] Communication protocol
-  - [ ] CLI
+  - [x] Client
+  - [x] Communication protocol
+  - [x] CLI
   - [ ] GUI
 
 - **Finalization**
@@ -116,7 +119,11 @@ The project will include:
   + **0.7.1**: initial design of the Controller; 95% model implementation, 80% test coverage 
 + **0.8.0**: complete MVC diagram and communication protocol
   + **0.8.1**: complete Controller and Message classes
-  + **0.8.2**: complete ServerHandler and AF3
+  + **0.8.2**: complete LobbyServer and AF3
+  + **0.8.3**: complete MatchServer
+  + **0.8.4**: rebuilt network messages
++ **0.9.0**: created Client class and UI interface 
+  + **0.9.1**: build CLI 
 ---
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
