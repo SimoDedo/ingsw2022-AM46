@@ -11,5 +11,6 @@ public enum UserActionType {
     MOVE_MOTHER_NATURE,
     TAKE_FROM_CLOUD,
     USE_CHARACTER,
-    USE_ABILITY
+    USE_ABILITY,
+    END_GAME
 }

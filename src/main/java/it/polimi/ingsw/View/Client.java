@@ -1,19 +1,17 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Network.Message.Update.Update;
-import it.polimi.ingsw.Network.Message.UserAction.LoginUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.UserAction;
-import it.polimi.ingsw.Utils.Enum.GameMode;
+import it.polimi.ingsw.Network.Message.UserAction.*;
+import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.CLI.CLI;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +38,7 @@ public class Client {
     private ExecutorService infoQueue;
     private Ping ping;
     private ExecutorService pingExecutor;
+    private Thread mainThread;
 
     public Client(Boolean usesDefaultServer, String chosenUI){
         if(chosenUI != null){
@@ -53,6 +52,7 @@ public class Client {
         serverIP = "127.0.0.1";
         serverPort = 4646;
         this.usesDefaultServer = usesDefaultServer;
+        mainThread = new Thread(() -> UI.parseCommand());
     }
 
 
@@ -83,6 +83,7 @@ public class Client {
         disconnectFromLobby();
         matchLogin(serverIP, serverLoginInfo.getPort());
         startPing(); //Starts heartbeat with match server
+
 
         while (true){
             parseMessage( receiveMessage() );
@@ -205,8 +206,8 @@ public class Client {
     //region Parsing
     private void parseMessage(Message message){
         if (message instanceof Error){
-            UI.showError(message.toString());
             parseUpdate(lastUpdate);
+            UI.showError(message.toString());
         }
         else if (message instanceof Update){
             parseUpdate((Update) message);
@@ -218,47 +219,72 @@ public class Client {
     }
 
     private void parseUpdate(Update update){
-        if(update.getActionTakingPlayer().equals(nickname) && update.getNextUserAction() != null){
+        UI.update(update.getGame());
+        if(nickname.equals(update.getActionTakingPlayer()) && update.getNextUserAction() != null){
             lastUpdate = update;
             askAction(update);
         }
         else {
             showInfo(update);
         }
+        if(mainThread.isAlive()){
+            UI.displayAvailableCommands();
+        }
+        UI.notifyServerResponse();
     }
 
     private void askAction(Update update){
         switch (update.getNextUserAction()){
-            case GAME_SETTINGS -> {
+            //During setup, action are requested in a different thread to allow info on others' actions to be received
+            case GAME_SETTINGS -> { //TODO: use "request" functions
                 askQueue.execute(() -> UI.askGameSettings());
             }
             case TOWER_COLOR -> {
-                askQueue.execute(() -> UI.askTowerColor(update.getGame().getNumOfPlayers())); //TODO: give a list of available towers?
+                askQueue.execute(() -> UI.askTowerColor(update.getGame().getNumOfPlayers()));
             }
             case WIZARD -> {
                 askQueue.execute(() -> UI.askWizard());
             }
+            //No input is accepted when here, client is waiting for others to complete their selection (and receive PLAY_ASSISTANT)
+            //Commands are enabled but main thread isn't started yet. Commands are "pre-loaded".
             case NEXT_TURN_WAIT -> {
-                UI.showText("Please wait for your turn...");
-                //TODO: Disable buttons/don't read input ecc..
+                UI.showInfo("Please wait for all players to be ready and for your turn to start...");
+                UI.enableCommand(Command.QUIT);
+                UI.enableCommand(Command.HELP);
+                UI.enableCommand(Command.CARDS);
+                UI.enableCommand(Command.TABLE);
+                UI.enableCommand(Command.ORDER);
             }
+            //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
+            //The possible actions are enabled and disabled by the client.
             case PLAY_ASSISTANT -> {
-                UI.showText("Play your assistant wohoo!!!");
-                //UI.askAssistant
+                UI.disableCommand(Command.CLOUD);
+                UI.enableCommand(Command.ASSISTANT);
+                if(!mainThread.isAlive())
+                    mainThread.start();
+                UI.standings();
+                UI.showInfo("It is now your planning phase turn! Choose an assistant.");
             }
             case MOVE_STUDENT -> {
-                if(update.getGame().getGameMode() == GameMode.EXPERT)
-                    UI.showText("Asks if character or move");
-                //UI.askMoveStudent
+                UI.disableCommand(Command.ASSISTANT);
+                UI.enableCommand(Command.MOVE);
+                UI.standings();
+                UI.showInfo("It is now your action phase turn! Move students");
             }
             case MOVE_MOTHER_NATURE -> {
-                //UI.moveMotherNature
+                UI.disableCommand(Command.MOVE);
+                UI.enableCommand(Command.MOTHER_NATURE);
+                UI.standings();
+                UI.showInfo("Move mother nature.");
             }
             case TAKE_FROM_CLOUD -> {
-                //UI.takeFromCloud
+                UI.disableCommand(Command.MOTHER_NATURE);
+                UI.enableCommand(Command.CLOUD);
+                UI.standings();
+                UI.showInfo("Choose a cloud.");
             }
             case USE_ABILITY -> {
-                //
+
             }
         }
     }
@@ -268,30 +294,48 @@ public class Client {
         //Allows information about other players action while user is selecting (useful for parallel login)
         switch (update.getNextUserAction()){
             case TOWER_COLOR -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() + " connected and is choosing color"));
+                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() + " connected and is choosing a tower color"));
             }
             case WIZARD -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" chose its color" ));
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing wizard" ));
+                infoQueue.execute(() -> UI.showInfo(
+                        update.getActionTakingPlayer() +" chose color" ));
+                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing a wizard" ));
             }
             case NEXT_TURN_WAIT -> {
-                if(update.getGame().getPlayersWizardType().values().stream().filter(Objects::nonNull).toList().size() < update.getGame().getNumOfPlayers())
-                    infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now waiting for its turn" ));
+                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is ready!" ));
             }
             case PLAY_ASSISTANT -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing its assistant" ));
+                UI.disableCommand(Command.ASSISTANT);
+                UI.disableCommand(Command.CLOUD);
+                if(!mainThread.isAlive())
+                    mainThread.start();
+                UI.standings();
+                UI.showInfo(update.getActionTakingPlayer() +" is now choosing an assistant" );
             }
             case MOVE_STUDENT -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing which student to move" ));
+                UI.disableCommand(Command.ASSISTANT);
+                UI.disableCommand(Command.CLOUD);
+                UI.standings();
+                UI.showInfo(update.getActionTakingPlayer() +" is now choosing which student to move" );
             }
             case MOVE_MOTHER_NATURE -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing where to move mother nature" ));
+                UI.standings();
+                UI.showInfo(update.getActionTakingPlayer() +" is now choosing where to move mother nature" );
             }
             case TAKE_FROM_CLOUD -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing a cloud" ));
+                UI.standings();
+                UI.showInfo(update.getActionTakingPlayer() +" is now choosing a cloud" );
             }
             case USE_ABILITY -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" has now activated a character" ));
+                UI.showInfo(update.getActionTakingPlayer() +" has now activated a character" );
+            }
+            case END_GAME -> {
+                for(Command command : Command.values()){
+                    if(command != Command.QUIT)
+                        UI.disableCommand(command);
+                }
+                UI.standings();
+                UI.showInfo("TEAM " + update.getGame().getWinner() + " HAS WON!!");
             }
         }
 
@@ -343,5 +387,75 @@ public class Client {
             UI = new CLI(this); //FIXME: GUI here
         socket = null;
         start();
+    }
+
+
+
+
+    //pietro
+    public Phase getPhase(){
+        return Phase.IDLE;
+
+    }
+
+    public String getNickname(){
+        return nickname;
+    }
+
+
+    public boolean requestLogin(String nickname) {
+        return true;
+    }
+
+    public boolean requestGameMode(int readBoundNumber) {
+        return true;
+    }
+
+    public boolean requestTowerColor(String readLineFromSelection) {
+        TowerColor towerColor = TowerColor.valueOf(readLineFromSelection.toUpperCase());
+        sendUserAction(new TowerColorUserAction(nickname, towerColor));
+        return true;
+    }
+
+    public boolean requestWizard(String readLineFromSelection) {
+        return true;
+    }
+
+    public boolean requestAssistant(int assistantID) {
+        sendUserAction(new PlayAssistantUserAction(nickname, assistantID));
+        return true;
+    }
+
+    /**
+     * used to move students from source to any location
+     * @param studentColor of the student to move
+     * @return true if move is allowed
+     */
+    public boolean requestMove(Color studentColor, int destinationID){
+        int studentID = -1;
+        HashMap<Integer, Color> studentIDs = lastUpdate.getGame().getEntranceStudentsIDs(getNickname());
+        for(Map.Entry<Integer, Color> entry : studentIDs.entrySet()){
+            if (entry.getValue() == studentColor) { studentID = entry.getKey(); break; }
+        }
+        if(studentID == -1){ UI.displayMessage("No student of selected color in entrance"); return false; }
+        UserAction request = new MoveStudentUserAction(getNickname(), studentID, destinationID);
+        sendUserAction(request);
+        // send request and verify
+        return true;
+
+    }
+
+    public boolean requestMotherNature(int islandID){
+        sendUserAction(new MoveMotherNatureUserAction(nickname, islandID));
+        return true;
+    }
+
+    public boolean requestCloud(int readBoundNumber) {
+        sendUserAction(new TakeFromCloudUserAction(nickname, readBoundNumber));
+        return true;
+    }
+
+    public boolean requestCharacter(int characterID) {
+        return true;
     }
 }

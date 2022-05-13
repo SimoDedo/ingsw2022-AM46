@@ -1,7 +1,9 @@
 package it.polimi.ingsw.GameModel;
 
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +32,24 @@ public interface ObservableByClient {
          * hasn't been determined yet
          */
         String getCurrentPlayer();
+
+        /**
+         * Getter for the nickname of connected players
+         * @return a list with the nickname of connected players
+         */
+        List<String> getPlayers();
+
+        /**
+         * Getter for the teams
+         * @return a hashmap with a nickname as key and the tower color as value
+         */
+        HashMap<String, TowerColor> getPlayerTeams();
+
+        /**
+         * Getter for the wizards chosen
+         * @return a hashmap with a nickname as key and the wizard as value
+         */
+        HashMap<String, WizardType> getPlayerWizard();
 
         /**
          * Returns current player order

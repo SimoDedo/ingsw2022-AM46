@@ -20,13 +20,19 @@ public class InputParser {
     }
 
     public int readNumber() {
-        synchronized (input) {
-            while(!input.hasNextInt()){
+        boolean found = false;
+        int number = 0;
+        while(!found){
+            String input = readLine();
+            try {
+                number = Integer.parseInt(input);
+                found = true;
+            }
+            catch (NumberFormatException e){
                 System.out.println("Invalid input - please input an integer.");
             }
-            input.next();
         }
-        return input.nextInt();
+        return number;
     }
 
     public int readBoundNumber(int lo, int hi) {

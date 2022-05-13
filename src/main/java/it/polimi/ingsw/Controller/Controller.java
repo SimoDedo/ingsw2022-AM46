@@ -625,7 +625,7 @@ public class Controller {
      */
     private void gameOverOperations(){
         TowerColor winner = game.determineWinner();
-        sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.END_GAME,
+        sendUpdateToAllUsers(new Update(game, null, UserActionType.END_GAME,
                 "Winner has been determined, end game"));
     }
 

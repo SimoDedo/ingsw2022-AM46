@@ -387,6 +387,39 @@ public class Game implements ObservableByClient, Serializable {
     } // could be useful to controller
 
     /**
+     * Getter for the nickname of connected players
+     * @return a list with the nickname of connected players
+     */
+    public List<String> getPlayers(){
+        List<String> nicknames = new ArrayList<>();
+        for(Player player : players)
+            nicknames.add(player.getNickname());
+        return nicknames;
+    }
+
+    /**
+     * Getter for the teams
+     * @return a hashmap with a nickname as key and the tower color as value
+     */
+    public HashMap<String, TowerColor> getPlayerTeams(){
+        HashMap<String, TowerColor> teams = new HashMap<>();
+        for(Player player : players)
+            teams.put(player.getNickname(), player.getTowerColor());
+        return teams;
+    }
+
+    /**
+     * Getter for the wizards chosen
+     * @return a hashmap with a nickname as key and the wizard as value
+     */
+    public HashMap<String, WizardType> getPlayerWizard(){
+        HashMap<String, WizardType> wizards = new HashMap<>();
+        for(Player player : players)
+            wizards.put(player.getNickname(), player.getWizardType());
+        return wizards;
+    }
+
+    /**
      * Returns current player order
      * @return a list of nicknames ordered
      */
