@@ -465,6 +465,10 @@ public class Game implements ObservableByClient, Serializable {
             return turnManager.getCurrentPhase();
         }
 
+    /**
+     * Returns the tower colors selectable
+     * @return the tower colors selectable
+     */
     public List<TowerColor> getAvailableTowerColors(){
         List<TowerColor> availableTowerColors = Arrays.stream(TowerColor.values()).toList();
         availableTowerColors.remove(TowerColor.NEUTRAL);
@@ -477,11 +481,28 @@ public class Game implements ObservableByClient, Serializable {
         return availableTowerColors;
     }
 
+    /**
+     * Returns the wizards selectable
+     * @return the wizards selectable
+     */
     public List<WizardType> getAvailableWizards(){
         List<WizardType> availableWizardTypes = Arrays.stream(WizardType.values()).toList();
         for (Player player : players)
             availableWizardTypes.remove(player.getWizardType());
         return availableWizardTypes;
+    }
+
+    /**
+     * Returns how many towers are left to be placed for each team
+     * @return a hashmap with tower color as key and the number of towers left as key
+     */
+    public HashMap<TowerColor, Integer> getTowersLeft(){
+        HashMap<TowerColor, Integer> towersLeft = new HashMap<>();
+        for (Player player : players){
+            if(player.isTowerHolder())
+                towersLeft.put(player.getTowerColor(), player.getTowersLeft());
+        }
+        return towersLeft;
     }
 
     /**

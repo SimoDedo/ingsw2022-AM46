@@ -26,7 +26,7 @@ public class CLI implements UI {
 
     private String nickname;
 
-    private Client client;
+    private final Client client;
 
     private LinkedHashSet<String> infoCommandList;
     private LinkedHashSet<String> gameCommandList;
@@ -542,16 +542,16 @@ public class CLI implements UI {
             System.out.print("\033[1A"); //Move cursor up to not leave empty line
             displayTables(nickname);
         }
+        displayTowersLeft();
         displayPlayedCards();
         //displayHand(); //screen gets too busy
     }
 
     public void displayTurnInfo(){
-        StringBuilder toPrint = new StringBuilder("Phase: ");
-        toPrint.append(game.getCurrentPhase());
-        toPrint.append(" | Turn of: ");
-        toPrint.append(game.getCurrentPlayer());
-        displayMessage(toPrint.toString());
+        String toPrint = "Phase: " + game.getCurrentPhase() +
+                " | Turn of: " +
+                game.getCurrentPlayer();
+        displayMessage(toPrint);
     }
 
 
@@ -578,8 +578,12 @@ public class CLI implements UI {
 
         for(int islandGroupIdx : islandGroups.keySet()){
             List<Color> students = new ArrayList<>();
-            toPrint.append(String.format("\nIsland group %d: ", islandGroupIdx));
-
+            toPrint.append(String.format("\nIsland %d ", islandGroupIdx));
+            if(islandGroupIdx < 10)
+                toPrint.append(" ");
+            toPrint.append("(");
+            toPrint.append("X".repeat(islandGroups.get(islandGroupIdx).size())); //One X for each island tile in island group
+            toPrint.append("): ");
             for(int islandTileID : islandGroups.get(islandGroupIdx)) {
                 for (int studentID : islandTileStudentIDs.get(islandTileID)) {
                     students.add(archipelagoStudentColors.get(studentID));
@@ -611,7 +615,7 @@ public class CLI implements UI {
         for(Color c : Color.values()) {
             toPrint.append(String.format(colorMapping.get(c) + "%s: %d " + RESET, c, game.getTableStudentsIDs(nickname, c).size()));
             if(game.getProfessorsOwner().get(c) != null && game.getProfessorsOwner().get(c).equals(nickname))
-                toPrint.append(colorMapping.get(c) + "Professor " + RESET);
+                toPrint.append(colorMapping.get(c)).append("Professor ").append(RESET);
         }
 
         displayMessage(toPrint.toString());
@@ -642,7 +646,7 @@ public class CLI implements UI {
         if(nickname.equals(client.getNickname())){ nickToWrite = "your"; } else nickToWrite += "'s";
         StringBuilder toPrint = new StringBuilder("These are the ASSISTANTS still in " + nickToWrite + " hand:\n");
         for(int c : game.getCardsLeft(nickname)){
-            toPrint.append(String.format("\nCard %d with move power %d", c, (c + 1)/2));
+            toPrint.append(String.format("\nAssistant %d with move power %d", c, (c + 1)/2));
         }
         displayMessage(toPrint.toString());
     }
@@ -653,7 +657,7 @@ public class CLI implements UI {
 
         StringBuilder toPrint = new StringBuilder("Players: ");
         for(String nickname : game.getPlayerOrder()){
-            toPrint.append(nickname + " - Tower " + towers.get(nickname) + ", Wizard " + wizards.get(nickname) + " | ");
+            toPrint.append(nickname).append(" - ").append(towers.get(nickname)).append(", ").append(wizards.get(nickname)).append(" | ");
         }
         toPrint.deleteCharAt(toPrint.lastIndexOf("| "));
         displayMessage(toPrint.toString());
@@ -663,7 +667,7 @@ public class CLI implements UI {
         StringBuilder toPrint = new StringBuilder("This is the current " + game.getCurrentPhase() + " phase order:\n");
         int i = 1;
         for(String nickname : game.getPlayerOrder()){
-            toPrint.append(i+"-"+nickname+" ");
+            toPrint.append(i).append("-").append(nickname).append(" ");
             i++;
         }
         displayMessage(toPrint.toString());
@@ -672,8 +676,10 @@ public class CLI implements UI {
     public void displayPlayedCards(){
         StringBuilder toPrint = new StringBuilder("These are the ASSISTANTS currently played:\n");
         for(String nickname : game.getCardsPlayedThisRound().keySet()){
-            toPrint.append(nickname+": " + game.getCardsPlayedThisRound().get(nickname) +"\n");
+            toPrint.append(nickname).append(": ").append(game.getCardsPlayedThisRound().get(nickname)).append(" | ");
         }
+        if(toPrint.lastIndexOf("| ") != -1)
+            toPrint.deleteCharAt(toPrint.lastIndexOf("| "));
         displayMessage(toPrint.toString());
     }
 
@@ -683,14 +689,31 @@ public class CLI implements UI {
         }
     }
 
+    public void displayTowersLeft(){
+        HashMap<TowerColor, Integer> towersLeft = game.getTowersLeft();
+        StringBuilder toPrint = new StringBuilder();
+        for(TowerColor towerColor : TowerColor.values()){
+            if(towersLeft.get(towerColor) != null){
+                toPrint.append("Team ").append(towerColor).append(" has ").append(towersLeft.get(towerColor));
+                if (towersLeft.get(towerColor) == 1) {
+                    toPrint.append(" tower left\n");
+                } else {
+                    toPrint.append(" towers left\n");
+                }
+            }
+        }
+        toPrint.deleteCharAt(toPrint.lastIndexOf("\n"));
+        displayMessage(toPrint.toString());
+    }
+
     public void displayAvailableCommands(){
         StringBuilder toPrint = new StringBuilder(
                 "These are the available " + CYAN + "info " + RESET + "and " + RED + "game " + RESET + "commands right now:\n");
         for(String command : infoCommandList){
-            toPrint.append(CYAN + command + RESET + ", " );
+            toPrint.append(CYAN).append(command).append(RESET).append(", ");
         }
         for(String command : gameCommandList){
-            toPrint.append(RED + command + RESET + ", ");
+            toPrint.append(RED).append(command).append(RESET).append(", ");
         }
         toPrint.deleteCharAt(toPrint.lastIndexOf(", "));
         displayMessage(toPrint.toString());

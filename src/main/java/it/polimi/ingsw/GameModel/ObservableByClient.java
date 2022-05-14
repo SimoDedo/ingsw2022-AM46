@@ -79,9 +79,23 @@ public interface ObservableByClient {
          */
         Phase getCurrentPhase();
 
+        /**
+         * Returns the tower colors selectable
+         * @return the tower colors selectable
+         */
         List<TowerColor> getAvailableTowerColors();
 
+        /**
+         * Returns the wizards selectable
+         * @return the wizards selectable
+         */
         List<WizardType> getAvailableWizards();
+
+        /**
+         * Returns how many towers are left to be placed for each team
+         * @return a hashmap with tower color as key and the number of towers left as key
+         */
+        HashMap<TowerColor, Integer> getTowersLeft();
 
         /**
          * Returns the team that has won the game.
