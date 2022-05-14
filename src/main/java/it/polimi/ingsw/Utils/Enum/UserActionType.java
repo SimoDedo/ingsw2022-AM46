@@ -12,5 +12,6 @@ public enum UserActionType {
     TAKE_FROM_CLOUD,
     USE_CHARACTER,
     USE_ABILITY,
-    END_GAME
+    END_GAME,
+    END_TURN
 }

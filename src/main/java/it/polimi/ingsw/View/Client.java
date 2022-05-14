@@ -84,7 +84,6 @@ public class Client {
         matchLogin(serverIP, serverLoginInfo.getPort());
         startPing(); //Starts heartbeat with match server
 
-
         while (true){
             parseMessage( receiveMessage() );
         }
@@ -387,75 +386,5 @@ public class Client {
             UI = new CLI(this); //FIXME: GUI here
         socket = null;
         start();
-    }
-
-
-
-
-    //pietro
-    public Phase getPhase(){
-        return Phase.IDLE;
-
-    }
-
-    public String getNickname(){
-        return nickname;
-    }
-
-
-    public boolean requestLogin(String nickname) {
-        return true;
-    }
-
-    public boolean requestGameMode(int readBoundNumber) {
-        return true;
-    }
-
-    public boolean requestTowerColor(String readLineFromSelection) {
-        TowerColor towerColor = TowerColor.valueOf(readLineFromSelection.toUpperCase());
-        sendUserAction(new TowerColorUserAction(nickname, towerColor));
-        return true;
-    }
-
-    public boolean requestWizard(String readLineFromSelection) {
-        return true;
-    }
-
-    public boolean requestAssistant(int assistantID) {
-        sendUserAction(new PlayAssistantUserAction(nickname, assistantID));
-        return true;
-    }
-
-    /**
-     * used to move students from source to any location
-     * @param studentColor of the student to move
-     * @return true if move is allowed
-     */
-    public boolean requestMove(Color studentColor, int destinationID){
-        int studentID = -1;
-        HashMap<Integer, Color> studentIDs = lastUpdate.getGame().getEntranceStudentsIDs(getNickname());
-        for(Map.Entry<Integer, Color> entry : studentIDs.entrySet()){
-            if (entry.getValue() == studentColor) { studentID = entry.getKey(); break; }
-        }
-        if(studentID == -1){ UI.displayMessage("No student of selected color in entrance"); return false; }
-        UserAction request = new MoveStudentUserAction(getNickname(), studentID, destinationID);
-        sendUserAction(request);
-        // send request and verify
-        return true;
-
-    }
-
-    public boolean requestMotherNature(int islandID){
-        sendUserAction(new MoveMotherNatureUserAction(nickname, islandID));
-        return true;
-    }
-
-    public boolean requestCloud(int readBoundNumber) {
-        sendUserAction(new TakeFromCloudUserAction(nickname, readBoundNumber));
-        return true;
-    }
-
-    public boolean requestCharacter(int characterID) {
-        return true;
     }
 }

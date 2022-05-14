@@ -259,6 +259,9 @@ public class Player implements Serializable {
         return playerBoard.getTowersLeft();
     }
 
+
+    public int getCoinsLeft(Color color){ return playerBoard.getCoinsLeft(color); }
+
     //endregion
 
 }

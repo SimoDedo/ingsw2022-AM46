@@ -8,6 +8,12 @@ import it.polimi.ingsw.Network.Message.UserAction.WizardUserAction;
 import it.polimi.ingsw.Utils.CommandString;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.InputParser;
+
+import it.polimi.ingsw.GameModel.Characters.StudentMoverCharacter;
+import it.polimi.ingsw.GameModel.ObservableByClient;
+import it.polimi.ingsw.Network.Message.UserAction.*;
+import it.polimi.ingsw.Utils.Enum.*;
+import it.polimi.ingsw.Utils.InputParser;
 import it.polimi.ingsw.View.Client;
 import it.polimi.ingsw.View.UI;
 
@@ -16,6 +22,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Utils.AnsiColors.*;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CLI implements UI {
     private final PrintStream output;
@@ -23,9 +32,7 @@ public class CLI implements UI {
     private ObservableByClient game;
 
     private Scanner sysIn;
-
     private String nickname;
-
     private final Client client;
 
     private LinkedHashSet<String> infoCommandList;
@@ -177,7 +184,8 @@ public class CLI implements UI {
 
     @Override
     public void showText(String text) {
-        System.out.println(text+"\n");
+        displayMessage(text);
+
     }
 
     public void showInfo(String info){
@@ -256,6 +264,32 @@ public class CLI implements UI {
         return colorFrequency.toString();
     }
 
+    private int selectStudentFromContainer(String type, int characterID){
+        int studentID;
+        Color colorSelection;
+        HashMap<Integer, Color> studentIDs;
+
+        if(type.equals("entrance")){
+            studentIDs = game.getEntranceStudentsIDs(nickname);
+
+        } else if(type.equals("diningRoom")){
+            //FIXME
+            // missing getter in game interface??
+            studentIDs = game.getEntranceStudentsIDs(nickname);
+        } else {
+            //character
+            StudentMoverCharacter studentContainerCharacter = (StudentMoverCharacter) game.getCharacterByID(characterID);
+            studentIDs = studentContainerCharacter.getStudentIDsAndColor();
+        }
+
+        colorSelection = Color.valueOf(parser.readLineFromSelection(studentIDs.values().stream()
+                .map(Object::toString).collect(Collectors.toList())));
+        studentID = studentIDs.entrySet().stream().filter(o -> o.getValue() == colorSelection)
+                .map(Map.Entry::getKey).findAny().orElse(-1);
+
+        return studentID;
+    }
+
     private Color selectStudentColor(){
         Color color = null;
         displayMessage("Type the color of the student you would like to move:");
@@ -272,6 +306,18 @@ public class CLI implements UI {
 
         return color;
     }
+
+    private Color selectColor(){
+        //print colors?
+        return Color.valueOf(parser.readLineFromSelection(Arrays.stream(Color.values())
+                .map(Object::toString).collect(Collectors.toList())));
+    }
+
+    private int selectIslandTileFromIdx(){
+        return game.getIslandTilesIDs().get(parser.readBoundNumber(0, game.getIslandTilesIDs().size())).get(0);
+
+    }
+
 
     public void enableCommand(Command command){
         if(command.isGameCommand())
@@ -372,55 +418,74 @@ public class CLI implements UI {
 
 
     public void requestLogin(){
-        displayMessage("Please input a nickname:");
-        String nickname = parser.readLine();
-        if(client.requestLogin(nickname)){
-            displayMessage("Nickname successfully set.");
-        } else displayMessage("Unable to set nickname at this time. Please try again");
+        //TODO: resolve
+    }
 
+    @Override
+    public String requestNickname() {
+        displayMessage("Please input a nickname:");
+
+        String nickname = parser.readLine();
+        UserAction loginRequest = new LoginUserAction(nickname);
+
+        client.sendUserAction(loginRequest);
+
+        return nickname;
     }
 
 
     public void requestTowerColor(){
         displayMessage("Please choose a tower color from the following: " + Arrays.toString(game.getAvailableTowerColors().toArray()));
-        if(client.requestTowerColor(parser.readLineFromSelection(game.getAvailableTowerColors().stream().map(o->o.toString().toLowerCase()).collect(Collectors.toList())))){
-            displayMessage("Tower color selected successfully");
-        } else displayMessage("Cannot choose selected tower color at this time. Command discarded.");
+        // lambda maps the contents of the array of available TowerColors to String to check against user input, then converts back
+        TowerColor towerColorSelection = TowerColor.valueOf(parser.readLineFromSelection(game.getAvailableTowerColors().stream()
+                .map(o->o.toString().toLowerCase()).collect(Collectors.toList())).toUpperCase());
+        UserAction towerColorRequest = new TowerColorUserAction(nickname, towerColorSelection);
+
+        client.sendUserAction(towerColorRequest);
     }
 
-    public void requestGameMode(){
+    public void requestGameSettings(){
+        GameMode gameMode = requestGameMode();
+        int numOfPlayers = requestPlayerNumber();
+
+        UserAction gameSettingsRequest = new GameSettingsUserAction(nickname, numOfPlayers, gameMode);
+
+        client.sendUserAction(gameSettingsRequest);
+    }
+
+    private GameMode requestGameMode(){
+
         displayMessage("Please type 1 for normal or 2 for hard.");
-        if(client.requestGameMode(parser.readBoundNumber(1, 2))){
-            displayMessage("Game mode successfully selected");
-        } else displayMessage("Cannot choose selected game mode at this time. Command discarded.");
+        return GameMode.values()[parser.readBoundNumber(1, 2)];
     }
 
-    public void requestPlayerNumber(){
-        displayMessage("Please type the number of players this game will have.");
-        if(client.requestGameMode(parser.readBoundNumber(2, 4))){
-            displayMessage("Player number successfully selected.");
-        } else displayMessage("Cannot choose selected number of players at this time. Command discarded.");
+    private int requestPlayerNumber(){
 
+        displayMessage("Please type the number of players this game will have.");
+        return parser.readBoundNumber(2, 4);
     }
 
 
     public void requestWizard (){
         displayMessage("Please choose a type of wizard from the following: " + Arrays.toString(game.getAvailableWizards().toArray()));
-        if(client.requestWizard(parser.readLineFromSelection(game.getAvailableWizards().stream().map(o->o.toString().toLowerCase()).collect(Collectors.toList())))){
-            displayMessage("Wizard selected successfully");
-        } else displayMessage("Cannot choose selected wizard at this time. Command discarded.");
 
+        // lambda maps the contents of the array of available TowerColors to String to check against user input, then converts back
+        WizardType wizardSelection = WizardType.valueOf(parser.readLineFromSelection(game.getAvailableWizards().stream()
+                .map(o->o.toString().toLowerCase()).collect(Collectors.toList())).toUpperCase());
+        UserAction wizardRequest = new WizardUserAction(nickname, wizardSelection);
+
+        client.sendUserAction(wizardRequest);
     }
 
 
     public void requestAssistant(){
-        if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.PLANNING){
-            displayHand(this.nickname);
-            displayMessage("Type the number of the assistant you would like to play.");
-            if(client.requestAssistant(parser.readNumberFromSelection(game.getCardsLeft(client.getNickname())))){
-                displayMessage("Assistant card played successfully.");
-            } else displayMessage("Cannot play assistant at this time. Command discarded.");
-        }
+        displayHand(this.nickname);
+        displayMessage("Type the number of the assistant you would like to play.");
+
+        int assistantIDSelection = parser.readNumberFromSelection(game.getCardsLeft(nickname));
+        UserAction assistantRequest = new PlayAssistantUserAction(nickname, assistantIDSelection);
+
+        client.sendUserAction(assistantRequest);
     }
 
 
@@ -428,26 +493,31 @@ public class CLI implements UI {
      *
      */
     public void requestMoveFromEntrance(){
-        if(game.getCurrentPlayer().equals(client.getNickname()) && game.getCurrentPhase() == Phase.ACTION){
-            displayEntrance(client.getNickname());
-            Color color = selectStudentColor();
-            HashMap<Integer, List<Integer>> islandTileIDs = game.getIslandTilesIDs();
-            HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(client.getNickname());
+        HashMap<Integer, List<Integer>> islandTileIDs = game.getIslandTilesIDs();
+        HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(nickname);
 
-            displayMessage("Select destination type:\n1: Islands\n2: Dining Room");
-            if(parser.readBoundNumber(1, 2) == 1){
-                displayArchipelago();
-                displayMessage("Select the island group number you would like to place your student in:");
-                if(client.requestMove(color, islandTileIDs.get(parser.readBoundNumber(0, islandTileIDs.size() - 1)).get(0))){
-                    displayMessage("Student moved!");
-                } else displayMessage("Illegal movement. Command discarded.");
+        displayEntrance(nickname);
+        displayMessage("Select a student from your entrance:");
+        int studentID = selectStudentFromContainer("entrance", -1);
+        int destinationID;
 
-            } else {
-                if (client.requestMove(color, game.getTableIDs(client.getNickname()).get(color))) {
-                    displayMessage("Student moved!");
-                } else displayMessage("Illegal movement. Command discarded.");
-            }
-        } else displayUnavailable();
+        displayMessage("Select destination type:\n1: Islands\n2: Dining Room");
+        if(parser.readBoundNumber(1, 2) == 1){
+
+            displayArchipelago();
+            displayMessage("Select the island group number you would like to place your student in:");
+
+            destinationID = selectIslandTileFromIdx();
+
+        } else {
+
+            destinationID = game.getTableIDs(nickname).get(studentIDs.get(studentID));
+
+        }
+
+        UserAction moveStudentRequest = new MoveStudentUserAction(nickname, studentID, destinationID);
+
+        client.sendUserAction(moveStudentRequest);
     }
 
     public void requestMotherNature(){
@@ -457,6 +527,20 @@ public class CLI implements UI {
         if(client.requestMotherNature(islandTileIDs.get(parser.readBoundNumber(0, islandTileIDs.size() - 1)).get(0))){
             displayMessage("Mother nature moved!");
         } else displayMessage("Illegal movement. Command discarded.");
+    }
+
+    public void requestMoveMotherNature(){
+        HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
+        int assistantPlayed = game.getCardsPlayedThisRound().get(nickname);
+
+        displayMessage(String.format("Type the number of spaces mother nature should move (max %d):", (assistantPlayed + 1) / 2));
+
+        int steps = parser.readBoundNumber(1, (assistantPlayed + 1) / 2);
+        int dstIslandID = islandGroups.get(game.getMotherNatureIslandGroupIdx() + steps).get(0);
+
+        UserAction moveMotherNatureRequest = new MoveMotherNatureUserAction(nickname, dstIslandID);
+
+        client.sendUserAction(moveMotherNatureRequest);
     }
 
 
@@ -471,18 +555,91 @@ public class CLI implements UI {
         } else displayUnavailable();
     }
 
+    public void requestCloud(){
 
+        displayClouds();
+        displayMessage("Type the number of the cloud you would like to choose.");
+
+        int cloudSelection = cloudMap.get(parser.readBoundNumber(0, cloudMap.size() - 1));
+        UserAction cloudRequest = new TakeFromCloudUserAction(nickname, cloudSelection);
+
+        client.sendUserAction(cloudRequest);
+    }
 
 
     public void requestCharacter(){
-        if(Objects.equals(game.getCurrentPlayer(), client.getNickname())) {
-            displayCharacters();
-            if(client.requestCharacter(parser.readNumberFromSelection(game.getDrawnCharacterIDs()))){
-                displayMessage("Character hired successfully.");
-            } else {
-                displayMessage("Unable to hire character. Do you have enough coins?");
-            }
+        displayCharacters();
 
+        int characterID = parser.readNumberFromSelection(game.getCurrentCharacterIDs());
+        UserAction characterRequest = new UseCharacterUserAction(nickname, characterID);
+
+        client.sendUserAction(characterRequest);
+    }
+
+    // TODO: look at this again
+    public void requestCharacterAbility(List<RequestParameter> requestedParameters, int characterID){
+
+
+        List<Integer> parameters = new ArrayList<>();
+
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_CARD)) {
+            displayCharacters();
+            displayMessage("Please select a student from the character you activated:");
+            int charStudentID = selectStudentFromContainer("", characterID);
+            parameters.add(charStudentID);
+        }
+
+        if(requestedParameters.contains(RequestParameter.ISLAND)) {
+            displayArchipelago();
+            displayMessage("Please select an island group:");
+
+            int islandGroupIdxSelection = selectIslandTileFromIdx();
+
+            parameters.add(islandGroupIdxSelection);
+
+        }
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_ENTRANCE)){
+            displayEntrance(nickname);
+            displayMessage("Please select student from your entrance:");
+
+            int entranceStudentID = selectStudentFromContainer("entrance", -1);
+
+            parameters.add(entranceStudentID);
+
+        }
+
+        if(requestedParameters.contains(RequestParameter.STUDENT_DINING_ROOM)){
+            displayDiningRoom(nickname);
+            displayMessage("Please select a student from your dining room:");
+
+            int drStudentID = selectStudentFromContainer("diningRoom", -1);
+            parameters.add(drStudentID);
+        }
+
+        if(requestedParameters.contains(RequestParameter.COLOR)){
+            displayMessage("Please choose a color:");
+
+            int colorSelection = selectColor().ordinal();
+            parameters.add(colorSelection);
+        }
+
+        UserAction moveStudentRequest = new UseAbilityUserAction(nickname, parameters);
+
+        client.sendUserAction(moveStudentRequest);
+    }
+
+
+    public void requestEndTurn(){
+
+        displayMessage("Would you to play a character before ending your turn? y/n");
+
+        String endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
+
+        if(endTurnSelection.equals("n")){
+            UserAction endTurnRequest = new EndTurnUserAction(nickname);
+            client.sendUserAction(endTurnRequest);
         }
     }
 
@@ -540,7 +697,7 @@ public class CLI implements UI {
         for(String nickname : game.getPlayers()) {
             displayEntrance(nickname);
             System.out.print("\033[1A"); //Move cursor up to not leave empty line
-            displayTables(nickname);
+            displayDiningRoom(nickname);
         }
         displayTowersLeft();
         displayPlayedCards();
@@ -557,7 +714,7 @@ public class CLI implements UI {
 
     public void displayEntrance(String nickname){
         String nickToWrite = nickname;
-        if(nickname.equals(client.getNickname())){ nickToWrite = "your"; } else nickToWrite += "'s";
+        if(nickname.equals(this.nickname)){ nickToWrite = "your"; } else nickToWrite += "'s";
 
         StringBuilder toPrint = new StringBuilder(String.format("These are the students in %s ENTRANCE:\n", nickToWrite));
         toPrint.append(studentFrequencyString(new ArrayList<>(game.getEntranceStudentsIDs(nickname).values())));
@@ -606,9 +763,9 @@ public class CLI implements UI {
     }
 
     //TODO display coins
-    public void displayTables(String nickname){
+    public void displayDiningRoom(String nickname){
         String nickToWrite = nickname;
-        if(nickname.equals(client.getNickname())){ nickToWrite = "your"; } else nickToWrite += "'s";
+        if(nickname.equals(this.nickname)){ nickToWrite = "your"; } else nickToWrite += "'s";
 
         StringBuilder toPrint = new StringBuilder(String.format("These are %s TABLES:\n", nickToWrite));
 
@@ -643,7 +800,7 @@ public class CLI implements UI {
 
     public void displayHand(String nickname){
         String nickToWrite = nickname;
-        if(nickname.equals(client.getNickname())){ nickToWrite = "your"; } else nickToWrite += "'s";
+        if(nickname.equals(this.nickname)){ nickToWrite = "your"; } else nickToWrite += "'s";
         StringBuilder toPrint = new StringBuilder("These are the ASSISTANTS still in " + nickToWrite + " hand:\n");
         for(int c : game.getCardsLeft(nickname)){
             toPrint.append(String.format("\nAssistant %d with move power %d", c, (c + 1)/2));
@@ -719,7 +876,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void requestEndTurn(){}
+
 
     private void mapColors(){
         colorMapping = new HashMap<>();

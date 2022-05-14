@@ -100,5 +100,9 @@ public class DiningRoom implements Serializable {
         return getTable(color).getStudentIDsAndColor().keySet().stream().toList();
     }
 
+    public int getCoinsLeft(Color color){
+        return getTable(color).getCoinsLeft();
+    }
+
 
 }

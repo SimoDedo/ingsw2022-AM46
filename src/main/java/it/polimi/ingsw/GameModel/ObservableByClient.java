@@ -1,9 +1,12 @@
 package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
 import it.polimi.ingsw.Utils.Enum.*;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -139,6 +142,10 @@ public interface ObservableByClient {
          */
         int getTowersLeft(TowerColor towerColor);
 
+
+        int getCoinsLeft(String nickname, Color color);
+
+
         /**
          * Method used to observe which player chose which wizard
          * @return An HashMap containing the nickname of the Player and the Wizard chosen
@@ -216,7 +223,7 @@ public interface ObservableByClient {
          * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
          * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
          */
-        public HashMap<Integer, Integer> getNoEntryTiles();
+        HashMap<Integer, Integer> getNoEntryTiles();
 
         //endregion
 
@@ -251,6 +258,14 @@ public interface ObservableByClient {
          * @return the number of times the ability of the active character can still be used.
          */
         public int getActiveCharacterUsesLeft();
+
+        /**
+         * Getter for the IDs of the available characters
+         * @return a list of IDs of the 3 characters that were randomly chosen for this game
+         */
+        List<Integer> getCurrentCharacterIDs();
+
+        AbstractCharacter getCharacterByID(int ID);
 
         //endregion
 

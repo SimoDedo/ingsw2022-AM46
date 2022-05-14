@@ -17,7 +17,7 @@ public enum RequestParameter {
     ISLAND,
     CLOUD,
     //Requested by some CHARACTERS
-    STUDENT_DININGROOM,
+    STUDENT_DINING_ROOM,
     STUDENT_CARD,
     COLOR
 }

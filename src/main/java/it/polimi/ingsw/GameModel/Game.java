@@ -3,16 +3,16 @@ package it.polimi.ingsw.GameModel;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
+import it.polimi.ingsw.GameModel.Characters.CharacterManager;
+import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
-import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
@@ -39,6 +39,8 @@ public class Game implements ObservableByClient, Serializable {
     protected ProfessorSet professorSet = new ProfessorSet();
     protected PlayerList players = new PlayerList();
     private final TurnManager turnManager = new TurnManager();
+    private CoinBag coinBag = new CoinBag(20);
+    private CharacterManager characterManager = new CharacterManager(archipelago, bag, players, professorSet, coinBag);
 
     /**
      * Linked hashmap that stores the Assistant cards played this round, and by whom they were played.
@@ -232,11 +234,6 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void resolveIslandGroup(int islandGroupID) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroupID, players, professorSet);
-            //TODO: not really a todo, just wanted someone to see this:
-            // to avoid long exception chain, exception is thrown in resolve of archipelago.
-            // Tower space no longer throws exception, just returns null -> this is because exception was thrown
-            // not when last tower was taken, but when the next tower was requested. Now method completes and then
-            // it's then checked if game is over. nice :D
     }
 
     /**
@@ -378,10 +375,10 @@ public class Game implements ObservableByClient, Serializable {
     }
 
     /**
-         * Getter for the current player in the game.
-         * @return the player currently executing their planning/action turn, null if firstRoundOrder
-         * hasn't been determined yet
-         */
+     * Getter for the current player in the game.
+     * @return the player currently executing their planning/action turn, null if firstRoundOrder
+     * hasn't been determined yet
+     */
     public String getCurrentPlayer() {
         return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
     } // could be useful to controller
@@ -556,39 +553,43 @@ public class Game implements ObservableByClient, Serializable {
         return players.getTowerHolder(towerColor).getTowersLeft();
     }
 
-    /**
-     * Method used to observe which player chose which wizard
-     * @return An HashMap containing the nickname of the Player and the Wizard chosen
-     */
-    public HashMap<String, WizardType> getPlayersWizardType(){
-        HashMap<String, WizardType> result = new HashMap<String, WizardType>();
-        for(Player player : players){
-            result.put(player.getNickname(), player.getWizardType());
+        /**
+         * Method used to observe which player chose which wizard
+         * @return An HashMap containing the nickname of the Player and the Wizard chosen
+         */
+        public HashMap<String, WizardType> getPlayersWizardType(){
+            HashMap<String, WizardType> result = new HashMap<>();
+            for(Player player : players){
+                result.put(player.getNickname(), player.getWizardType());
+            }
+            return  result;
         }
-        return  result;
+
+    public int getCoinsLeft(String nickname, Color color){
+        return getPlayerByNickname(nickname).getCoinsLeft(color);
     }
-    //endregion
-    //region ProfessorSet
-    /**
-     * Method to observe which Professor is owned by who
-     * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
-     */
-    public HashMap<Color, String> getProfessorsOwner(){
-        return  professorSet.getProfessorsOwner();
-    }
-    //endregion
-    //region Clouds
-    /**
-     * Returns a list containing all the IDs of CloudTiles
-     * @return a list containing all the IDs of CloudTiles
-     */
-    public List<Integer> getCloudIDs(){
-        List<Integer> cloudIDs = new ArrayList<>();
-        for(CloudTile cloudTile : clouds){
-            cloudIDs.add(cloudTile.getID());
+        //endregion
+        //region ProfessorSet
+        /**
+         * Method to observe which Professor is owned by who
+         * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+         */
+        public HashMap<Color, String> getProfessorsOwner(){
+            return  professorSet.getProfessorsOwner();
         }
-        return  cloudIDs;
-    }
+        //endregion
+        //region Clouds
+        /**
+         * Returns a list containing all the IDs of CloudTiles
+         * @return a list containing all the IDs of CloudTiles
+         */
+        public List<Integer> getCloudIDs(){
+            List<Integer> cloudIDs = new ArrayList<>();
+            for(CloudTile cloudTile : clouds){
+                cloudIDs.add(cloudTile.getID());
+            }
+            return  cloudIDs;
+        }
 
     /**
      * Return all the IDs of students contained in a given cloud along with their color
@@ -624,7 +625,7 @@ public class Game implements ObservableByClient, Serializable {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         return archipelago.getIslandTilesStudentsIDs();
@@ -698,6 +699,18 @@ public class Game implements ObservableByClient, Serializable {
     @Override
     public int getActiveCharacterUsesLeft() {
         return 0;
+    }
+
+    /**
+     * Getter for the IDs of the available characters
+     * @return a list of IDs of the 3 characters that were randomly chosen for this game
+     */
+    public List<Integer> getCurrentCharacterIDs(){
+        return characterManager.getCurrentCharacterIDs();
+    }
+
+    public AbstractCharacter getCharacterByID(int ID){
+        return characterManager.getCharacterByID(ID);
     }
     //endregion
 

@@ -1,6 +1,9 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
+
+import java.util.Map;
+import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.Command;
 import it.polimi.ingsw.Utils.Enum.Phase;
@@ -20,13 +23,21 @@ public interface UI {
 
     void setNickname(String nickname);
 
-    String askNickname();
+    void setGame(ObservableByClient game);
 
-    void askGameSettings();
+    String requestNickname();
 
-    void askTowerColor(int numOfPlayers);
+    void requestGameSettings();
 
-    void askWizard();
+    void requestTowerColor();
+
+    void requestWizard();
+
+    void requestAssistant();
+
+    void requestMoveFromEntrance();
+
+    void requestCloud();
 
     void showText(String text);
 
@@ -47,21 +58,13 @@ public interface UI {
 
     public void requestLogin();
 
-    public void requestTowerColor();
-
     public void requestGameMode();
 
     public void requestPlayerNumber();
 
-    public void requestWizard ();
-
-    public void requestAssistant();
-
-    void requestMoveFromEntrance();
 
     public void requestMotherNature();
 
-    public void requestCloud();
 
     public void requestCharacter();
 
