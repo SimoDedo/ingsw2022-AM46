@@ -33,7 +33,7 @@ public class Table extends StudentContainer {
         switch(pawnCount()){
             case 2 -> { if(!coins[0]){ coins[0] = true; giveCoin = true; } }
             case 5 -> { if(!coins[1]){ coins[1] = true; giveCoin = true; } }
-            case 8 -> { if(!coins[2]){ coins[3] = true; giveCoin = true; } }
+            case 8 -> { if(!coins[2]){ coins[2] = true; giveCoin = true; } }
         }
         if(pawnCount() == 10){ throw new FullTableException(); }
         placePawn(student);
@@ -47,7 +47,7 @@ public class Table extends StudentContainer {
     public int getCoinsLeft() {
         int sum = 0;
         for(boolean b : coins){
-            sum += b ? 1 : 0;
+            sum += b ? 0 : 1;
         }
         return sum;
     }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.Utils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class InputParser {
@@ -54,8 +55,9 @@ public class InputParser {
     }
 
     public String readLineFromSelection(Collection<String> choices){
+        choices = choices.stream().map(String::toUpperCase).toList();
         String line = readLine();
-        while(!choices.contains(line)){
+        while(!choices.contains(line.toUpperCase())){
             System.out.println("The string must be one of the following: " + Arrays.toString(choices.toArray()));
             line = readLine();
         }

@@ -1,15 +1,8 @@
 package it.polimi.ingsw.GameModel;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
-import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
 import it.polimi.ingsw.Utils.Enum.*;
 
-import java.util.ArrayList;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public interface ObservableByClient {
 
@@ -59,6 +52,13 @@ public interface ObservableByClient {
          * @return a list of nicknames ordered
          */
         List<String> getPlayerOrder();
+
+        /**
+         * Returns the max amount of island groups a given player can move
+         * @param nickname the player who can move the returned number of steps
+         * @return the max amount of island groups a given player can move
+         */
+        int getActualMovePower(String nickname);
 
         /**
          * Method used to observe cards played this round. Returned according to current order (planning or action).
@@ -223,7 +223,7 @@ public interface ObservableByClient {
          * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
          * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
          */
-        HashMap<Integer, Integer> getNoEntryTiles();
+        HashMap<Integer, Integer> getNoEntryTilesArchipelago();
 
         //endregion
 
@@ -233,39 +233,58 @@ public interface ObservableByClient {
          * @param nickname the player to check
          * @return the number of coins of the given player
          */
-        public int getCoins(String nickname);
+        int getCoins(String nickname);
 
         /**
          * Method to observe which characters were created for this game.
          * @return a list of the created character IDs.
          */
-        public List<Integer> getDrawnCharacterIDs();
+        List<Integer> getDrawnCharacterIDs();
 
         /**
          * Getter for the ActiveCharacter ID.
-         * @return the ActiveCharacter ID.
+         * @return the ActiveCharacter ID. -1 if no character is active.
          */
-        public int getActiveCharacterID();
+        int getActiveCharacterID();
 
         /**
          * Return the maximum number of times the ability of the active character can be used.
          * @return the maximum number of times the ability of the active character can be used.
          */
-        public int getActiveCharacterMaxUses();
+        int getActiveCharacterMaxUses();
 
         /**
          * Returns the number of times the ability of the active character can still be used.
          * @return the number of times the ability of the active character can still be used.
          */
-        public int getActiveCharacterUsesLeft();
+        int getActiveCharacterUsesLeft();
 
         /**
-         * Getter for the IDs of the available characters
-         * @return a list of IDs of the 3 characters that were randomly chosen for this game
+         * Getter for the students contained on a given character.
+         * @param ID the ID of the character requested
+         * @return a hash map containing the ID of the students as key and their color as value.
+         * If no students are contained, the map will be empty
          */
-        List<Integer> getCurrentCharacterIDs();
+        HashMap<Integer, Color> getCharacterStudents(int ID);
 
-        AbstractCharacter getCharacterByID(int ID);
+        /**
+         * Getter for the current cost of the character.
+         * @param ID the ID of the character requested
+         * @return the cost
+         */
+        int getCharacterCost(int ID);
+
+        /**
+         * Getter for the number of entry tiles left on the character
+         * @return the number of entry tiles left on the character
+         */
+        int getNoEntryTilesCharacter(int ID);
+
+        /**
+         * Gets the current requested parameters for the active character
+         * @return the current requested parameters for the active character
+         */
+        List<RequestParameter> getCurrentRequestParameters();
 
         //endregion
 

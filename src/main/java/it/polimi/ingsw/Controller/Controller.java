@@ -128,6 +128,7 @@ public class Controller {
                     !expectedUserAction.get(nickname).equals(userAction.getUserActionType())) {
                 //User is always expected to send a certain user action to progress game.
                 //The only exception are Login and Character actions (accounted and treated separately above)
+                System.out.println(userAction.getUserActionType());
                 sendErrorToUser(nickname, new IllegalActionError("Action taken is not a valid action. A " +
                         expectedUserAction.get(nickname) + " is expected"));
             }
@@ -186,15 +187,15 @@ public class Controller {
             players.add(nickname);
 
             expectedUserAction.put(nickname, UserActionType.GAME_SETTINGS);
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.GAME_SETTINGS,
-                    "You are the first player to connect, please choose the settings for this game"));
+            sendUpdateToAllUsers(new Update(game, null, null,nickname, UserActionType.GAME_SETTINGS,
+                    "You are the first player to connect, choose the settings for this game"));
         }
         else{
             if(numOfPlayers != 0 && gameMode != null){ //If first player has chosen game settings
                 if(players.size() < numOfPlayers){ //If there is still space in the game
                     players.add(nickname);
                     expectedUserAction.put(nickname, UserActionType.TOWER_COLOR);
-                    sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TOWER_COLOR,
+                    sendUpdateToAllUsers(new Update(game, null, null, nickname, UserActionType.TOWER_COLOR,
                             "Choose your tower color"));
                 }
                 else { //If there is no more space
@@ -203,8 +204,6 @@ public class Controller {
             }
             else{ //If he has yet to choose game settings
                 sendErrorToUser(nickname, new LoginError("Lobby has not yet chosen game settings."));
-                //TODO: return error to server: it should put this user in a queue and add him to the first game which
-                // is ready (assuming multiple games, if not the queue can be kept in controller)
             }
         }
     }
@@ -316,8 +315,8 @@ public class Controller {
         createGame();
 
         expectedUserAction.put(players.get(0), UserActionType.TOWER_COLOR);
-        sendUpdateToAllUsers(new Update(game, players.get(0), UserActionType.TOWER_COLOR,
-                "Choose your tower color"));
+        sendUpdateToAllUsers(new Update(game, players.get(0), UserActionType.GAME_SETTINGS,
+                players.get(0), UserActionType.TOWER_COLOR, "Choose your tower color"));
     }
 
     /**
@@ -344,7 +343,7 @@ public class Controller {
         }
 
         expectedUserAction.put(nickname, UserActionType.WIZARD);
-        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.WIZARD,
+        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TOWER_COLOR, nickname, UserActionType.WIZARD,
                 "Choose your wizard"));
 
     }
@@ -365,8 +364,8 @@ public class Controller {
 
         expectedUserAction.remove(nickname); //Not expecting any action from this player now, he should be waiting for his first turn
         playersReady++;
-        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.NEXT_TURN_WAIT,
-                "Wait for all players to have chosen!"));
+        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.WIZARD,
+                nickname, UserActionType.WAIT_GAME_START, "Wait for all players to have chosen!"));
     }
 
     /**
@@ -386,8 +385,8 @@ public class Controller {
 
         //At start of game, first player (randomly drawn by model) is expected to play an assistant
         expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT);
-        sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT,
-                "Choose assistant to play"));
+        sendUpdateToAllUsers(new Update(game, null, UserActionType.WAIT_GAME_START,
+                turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT, "Choose assistant to play"));
     }
 
     /**
@@ -414,14 +413,14 @@ public class Controller {
         try{ //If another player has to play an assistant, it will expect them to play it
             turnController.nextTurn();
             expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT);
-            sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT,
-                    "Choose assistant to play"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.PLAY_ASSISTANT,
+                    turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT, "Choose assistant to play"));
         }catch (IllegalStateException phaseDone){
             //If all players have played their assistant, it will progress the phase and ask for next request
             turnController.nextPhase(); //Will compute the Action order, request made to player who played lowest card
             expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT);
-            sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT,
-                    "Move student from entrance"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.PLAY_ASSISTANT,
+                    turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT, "Move student from entrance"));
         }
     }
 
@@ -446,12 +445,12 @@ public class Controller {
             //If more students to move, expects another student moved
             expectedUserAction.put(nickname, UserActionType.MOVE_STUDENT);
             sendUpdateToAllUsers(new Update(game, nickname, UserActionType.MOVE_STUDENT,
-                    "Move student from entrance"));
+                    nickname, UserActionType.MOVE_STUDENT, "Move student from entrance"));
         }
         else {//If no more students to move, expects user to move mother nature
             expectedUserAction.put(nickname, UserActionType.MOVE_MOTHER_NATURE);
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.MOVE_MOTHER_NATURE,
-                    "Move mother nature"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.MOVE_STUDENT,
+                    nickname, UserActionType.MOVE_MOTHER_NATURE, "Move mother nature"));
         }
     }
 
@@ -480,14 +479,14 @@ public class Controller {
 
         if(!isLastRound){
             expectedUserAction.put(nickname, UserActionType.TAKE_FROM_CLOUD);
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TAKE_FROM_CLOUD,
-                    "Take from cloud"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.MOVE_MOTHER_NATURE,
+                    nickname, UserActionType.TAKE_FROM_CLOUD, "Take from cloud"));
         }
         else{
             //If it's the last round, clouds are disabled and cloud selection is skipped (since useless, it's the last round no one cares)
             //CHECKME: always to disable clouds?
             expectedUserAction.clear();
-            endOfRoundOperations(); //Since its last round, WinnerInfo will be sent.
+            endOfRoundOperations(nickname, UserActionType.MOVE_MOTHER_NATURE); //Since its last round, WinnerInfo will be sent.
         }
     }
 
@@ -512,11 +511,11 @@ public class Controller {
             turnController.nextTurn();
             expectedUserAction.clear();
             expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT);
-            sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT,
-                    "Move student from entrance"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TAKE_FROM_CLOUD,
+                    turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT, "Move student from entrance"));
         }
         catch (IllegalStateException phaseDone){ //If instead all players have played, phase is switched
-            endOfRoundOperations();
+            endOfRoundOperations(nickname, UserActionType.TAKE_FROM_CLOUD);
         }
     }
 
@@ -533,7 +532,7 @@ public class Controller {
         try{
             requestParameters = ((GameExpert) game).useCharacter(nickname, characterID);
         }
-        catch (IllegalStateException e){
+        catch (IllegalStateException | IllegalArgumentException e){
             sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
             return;
         }
@@ -543,12 +542,10 @@ public class Controller {
             // The second condition is always true, but if we were to add new characters that request no parameters
             // but can be used more than once, they shouldn't be used automatically
             useAbility(nickname, new ArrayList<>());
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_ABILITY,
-                    "Character ability automatically used"));
         }
         else {
-            sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.USE_ABILITY,
-                    "Can now use character ability"));
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_CHARACTER,
+                    turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Can now use character ability"));
         }
     }
 
@@ -576,8 +573,14 @@ public class Controller {
             }
             //TODO: other exceptions should be thrown and handled. done? to check
         }
-        sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.USE_ABILITY,
-                "Ability used, may now use another"));
+        if(parameters.size() == 0 && ((GameExpert) game).getActiveCharacterMaxUses() == 1){
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_CHARACTER,
+                    turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used automatically"));
+        }
+        else {
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_ABILITY,
+                    turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used, may now use another"));
+        }
     }
 
     //used by above
@@ -589,7 +592,7 @@ public class Controller {
      * first player of the planning phase.
      * either request to send the client or an end game request
      */
-    private void endOfRoundOperations(){
+    private void endOfRoundOperations(String lastPlayerToAct, UserActionType lastUserActionTaken){
         try { //perform end of round operations
             game.endOfRoundOperations();
         }catch (GameOverException e){
@@ -605,8 +608,8 @@ public class Controller {
             this.lastRoundOperations();
         }
         expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT);
-        sendUpdateToAllUsers(new Update(game, turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT,
-                "Choose your assistant"));
+        sendUpdateToAllUsers(new Update(game, lastPlayerToAct, lastUserActionTaken,
+                turnController.getCurrentPlayer(), UserActionType.PLAY_ASSISTANT, "Choose your assistant"));
     }
 
     /**
@@ -625,8 +628,8 @@ public class Controller {
      */
     private void gameOverOperations(){
         TowerColor winner = game.determineWinner();
-        sendUpdateToAllUsers(new Update(game, null, UserActionType.END_GAME,
-                "Winner has been determined, end game"));
+        sendUpdateToAllUsers(new Update(game, null, null,
+                null, UserActionType.END_GAME, "Winner has been determined, end game"));
     }
 
     //endregion

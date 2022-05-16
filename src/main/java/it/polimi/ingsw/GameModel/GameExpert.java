@@ -9,6 +9,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
@@ -16,6 +17,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -114,7 +116,7 @@ public class GameExpert extends Game {
      * @param ID the ID of the character to use
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(String nickname, int ID) throws  IllegalStateException{
+    public List<RequestParameter> useCharacter(String nickname, int ID) throws  IllegalStateException, IllegalArgumentException{
         return characterManager.useCharacter(players.getByNickname(nickname), ID);
     }
 
@@ -151,6 +153,18 @@ public class GameExpert extends Game {
 
     //region State observer methods
 
+        /**
+         * Returns the max amount of island groups a given player can move
+         * @param nickname the player who can move the returned number of steps
+         * @return the max amount of island groups a given player can move
+         */
+        @Override
+        public int getActualMovePower(String nickname){
+            int mp = super.getActualMovePower(nickname);
+            int extra = characterManager.getActiveCharacterID() == 4 ? 2 : 0;
+            return mp + extra;
+        }
+
         //region Characters
         /**
          * method to observe number of coins of a given player.
@@ -175,7 +189,7 @@ public class GameExpert extends Game {
 
         /**
          * Getter for the ActiveCharacter ID.
-         * @return the ActiveCharacter ID.
+         * @return the ActiveCharacter ID. -1 if no character is active.
          */
         public int getActiveCharacterID(){
             return characterManager.getActiveCharacterID();
@@ -197,7 +211,47 @@ public class GameExpert extends Game {
             return characterManager.getActiveCharacterUsesLeft();
         }
 
-        //endregion
+        /**
+         * Getter for the students contained on a given character.
+         * @param ID the ID of the character to inspect
+         * @return a hash map containing the ID of the students as key and their color as value.
+         * If no students are contained, the map will be empty
+         */
+        public HashMap<Integer, Color> getCharacterStudents(int ID){
+            if(! characterManager.getCurrentCharacterIDs().contains(ID))
+                return new HashMap<>();
+            else
+                return characterManager.getCharacterStudents(ID);
+        }
+
+        /**
+         * Getter for the current cost of the character.
+         * @param ID the ID of the character requested
+         * @return the cost
+         */
+        public int getCharacterCost(int ID){
+            return characterManager.getCharacterCost(ID);
+        }
+
+        /**
+         * Getter for the number of entry tiles left on the character
+         * @return the number of entry tiles left on the character
+         */
+        @Override
+        public int getNoEntryTilesCharacter(int ID) {
+            return characterManager.getNoEntryTilesCharacter(ID);
+        }
+
+        /**
+         * Gets the current requested parameters for the active character
+         * @return the current requested parameters for the active character
+         */
+        @Override
+            public List<RequestParameter> getCurrentRequestParameters() {
+                return characterManager.getCurrentRequestParameters();
+        }
+
+    //endregion
 
     //endregion
 }

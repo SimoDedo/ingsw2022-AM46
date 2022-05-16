@@ -7,31 +7,46 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class Update extends Message {
 
-    ObservableByClient game;
+    private final ObservableByClient game;
+
+    private final UserActionType userActionTaken;
+
+    private final String playerActionTaken;
 
     /**
      * String that represents the player who should take the action requested in this update.
      * All other players will treat use this update only to show information
      */
-    String actionTakingPlayer;
+    private final String actionTakingPlayer;
 
     /**
      * The action that is expected from the action taking player.
      */
-    UserActionType nextUserAction;
+    private final UserActionType nextUserAction;
 
-    String info;
+    private final String info;
 
-    public Update(ObservableByClient game, String actionTakingPlayer, UserActionType nextUserAction, String info) {
+    public Update(ObservableByClient game,String playerActionTaken, UserActionType userActionTaken,
+                  String actionTakingPlayer, UserActionType nextUserAction, String info) {
         super("Server");
         this.game = game;
-        this.actionTakingPlayer = actionTakingPlayer;
+        this.userActionTaken = userActionTaken;
+        this.playerActionTaken = playerActionTaken;
         this.nextUserAction = nextUserAction;
+        this.actionTakingPlayer = actionTakingPlayer;
         this.info = info;
     }
 
     public ObservableByClient getGame() {
         return game;
+    }
+
+    public UserActionType getUserActionTaken() {
+        return userActionTaken;
+    }
+
+    public String getPlayerActionTaken() {
+        return playerActionTaken;
     }
 
     public String getActionTakingPlayer() {
@@ -43,6 +58,11 @@ public class Update extends Message {
     }
 
     public String getInfo() {
+        return info;
+    }
+
+    @Override
+    public String toString() {
         return info;
     }
 }
