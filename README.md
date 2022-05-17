@@ -1,6 +1,6 @@
 # Eriantys
 ### Final project for the Software Engineering course at PoliMi AY 2022, curated by group AM46
-![Eriantys banner](https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_slider.jpg "Eriantys title banner")
+![Eriantys banner](https://user-images.githubusercontent.com/71946484/168785428-4267d78b-f1a8-48ee-86a3-55e4e34056af.png "Eriantys title banner")
 
 Online implementation of the tabletop game [Eriantys](https://craniointernational.com/products/eriantys/) (Italian version [here](https://www.craniocreations.it/prodotto/eriantys/)), produced by [Cranio Creations](https://craniointernational.com/) (Italian website [here](https://www.craniocreations.it/)). Written in Java with the help of various tools.
 
@@ -35,8 +35,8 @@ Made by:
 | AF3: parallel matches    |    🟢    |
 | Controller               |    🟢    |
 | Communication protocol   |    🟢    |
-| Client & view            |    🟡    |
-| CLI                      |    🟡    |
+| Client & view            |    🟢    |
+| CLI                      |    🟢    |
 | GUI                      |    🟡    |
 
 🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
@@ -124,6 +124,8 @@ The project will include:
   + **0.8.4**: rebuilt network messages
 + **0.9.0**: created Client class and UI interface 
   + **0.9.1**: build CLI 
+  + **0.9.2**: finished Client and CLI
+  + **0.9.3**: GUI draft and login/setup screens
 ---
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
