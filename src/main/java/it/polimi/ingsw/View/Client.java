@@ -341,6 +341,7 @@ public class Client {
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
+                UI.displayInfo("Team " + update.getGame().getWinner() + " has WON!!!");
             }
         }
 
@@ -351,9 +352,12 @@ public class Client {
     //endregion
 
     //region Network send/receive
-    public void sendUserAction(UserAction userAction){
+    public synchronized void sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
+            outObj.flush();
+            outObj.reset();
+
         } catch (IOException e) {
             UI.displayError("Unable to write to server.", true);
             reset();
@@ -382,6 +386,12 @@ public class Client {
     }
 
     private void reset(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.exit(-1);
+        }
         System.exit(-1); //FIXME: actual reset
+
     }
 }

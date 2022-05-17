@@ -105,11 +105,13 @@ public class CLI implements UI {
                 }
                 else{ //Shouldn't reach here if command mapping stays as it is, if it changes it is needed
                     displayInvalid();
+                    standings();
                     displayAvailableCommands();
                 }
             }
             else{
                 displayInvalid();
+                standings();
                 displayAvailableCommands();
             }
         }
@@ -413,6 +415,7 @@ public class CLI implements UI {
                     parameters.add(drStudentID);
                 }
                 case COLOR -> {
+                    displayArchipelago();
                     for(String player : game.getPlayers())
                         displayPlayerBoard(player);
                     displayMessage("Please choose a color:");
@@ -529,7 +532,7 @@ public class CLI implements UI {
                         "\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;m(\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;m \u001B[38;5;m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;m,\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \n" +
                         "\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;m(\u001B[38;5;m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;169m#\u001B[38;5;m#\u001B[38;5;m#\u001B[38;5;m(\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;m*\u001B[38;5;m#\u001B[38;5;m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;039m#\u001B[38;5;m#\u001B[38;5;m#\u001B[38;5;m(\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \n" +
                         "\u001B[0m");
-        displayMessage("                                                    WELOCME TO ERIANTYS!\n");
+        displayMessage("                                                    WELCOME TO ERIANTYS!\n");
     }
 
     public void displayHelp(){
@@ -844,7 +847,7 @@ public class CLI implements UI {
             toPrint.append(game.getNoEntryTilesCharacter(ID));
         }
         if(game.getActiveCharacterID() != -1 && game.getActiveCharacterID() == ID){
-            toPrint.append(BRIGHT_RED).append(" ACTIVE: ")
+            toPrint.append(" | ").append(BRIGHT_RED).append("ACTIVE: ")
                     .append(game.getActiveCharacterUsesLeft()).append(" uses left").append(RESET);
         }
         toPrint.append("]\n");

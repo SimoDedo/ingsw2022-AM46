@@ -117,13 +117,17 @@ public class SocketConnection implements Runnable {
      *
      * @param message the Message object to send
      */
-    public void sendMessage(Message message) {
+    public synchronized void sendMessage(Message message) {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
-            outputStream.reset();
+            outputStream.reset(); //FIXME: !!!!!!!! ERRORS!!!!!!!!!! maybe fixed with synchronizing
         } catch (Exception e) { // what exceptions are thrown here?
             e.printStackTrace();
+            if(server instanceof MatchServer)
+                closeMatch();
+            else
+                close();
         }
     }
 }
