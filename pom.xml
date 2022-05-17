@@ -22,15 +22,20 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.junit.jupiter</groupId>
-          <artifactId>junit-jupiter</artifactId>
-          <version>5.8.2</version>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.8.2</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>18.0.1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -41,7 +46,14 @@
           <artifactId>sonar-maven-plugin</artifactId>
           <version>3.7.0.1746</version>
         </plugin>
-
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.8</version>
+          <configuration>
+            <mainClass>it.polimi.ingsw.ClientApp</mainClass>
+          </configuration>
+        </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>

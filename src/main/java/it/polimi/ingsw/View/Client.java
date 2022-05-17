@@ -9,6 +9,7 @@ import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.CLI.CLI;
+import it.polimi.ingsw.View.GUI.GUI;
 
 import java.io.*;
 import java.net.Socket;
@@ -49,7 +50,7 @@ public class Client {
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
             if (chosenUI.equals("gui"))
-                UI = new CLI(this); //FIXME: gui here
+                UI = new GUI(this);
         }
         defaultServerIP = "127.0.0.1";
         defaultServerPort = 4646;
@@ -167,7 +168,7 @@ public class Client {
                     System.out.println("CLI selected!");
                 }
                 case 2 -> {
-                    UI = new CLI(this); //FIXME: fix when GUI done
+                    UI = new GUI(this);
                     System.out.println("GUI selected!");
                 }
                 default -> {
