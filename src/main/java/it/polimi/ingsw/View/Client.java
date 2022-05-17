@@ -1,6 +1,8 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Network.Message.Error.Error;
+import it.polimi.ingsw.Network.Message.Error.LoginError;
+import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Network.Message.Update.Update;
@@ -17,9 +19,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Client {
 
+    private final String defaultServerIP;
     private String serverIP;
+    private final int defaultServerPort;
     private int serverPort;
-    private final boolean usesDefaultServer;
 
     private UI UI;
 
@@ -33,25 +36,27 @@ public class Client {
     private InputStream in;
     private ObjectInputStream inObj;
 
-    private ExecutorService askQueue;
-    private ExecutorService infoQueue;
+    private final ExecutorService requestQueue;
+    private final ExecutorService infoQueue;
     private Ping ping;
     private ExecutorService pingExecutor;
     private final Thread mainThread;
 
-    public Client(Boolean usesDefaultServer, String chosenUI){
+    private boolean gameStarted;
+
+    public Client(String chosenUI){
         if(chosenUI != null){
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
             if (chosenUI.equals("gui"))
                 UI = new CLI(this); //FIXME: gui here
         }
-        askQueue = Executors.newSingleThreadExecutor();
+        defaultServerIP = "127.0.0.1";
+        defaultServerPort = 4646;
+        requestQueue = Executors.newSingleThreadExecutor();
         infoQueue = Executors.newSingleThreadExecutor();
-        serverIP = "127.0.0.1";
-        serverPort = 4646;
-        this.usesDefaultServer = usesDefaultServer;
-        mainThread = new Thread(() -> UI.parseCommand());
+        gameStarted = false;
+        mainThread = new Thread(() -> UI.startGame());
     }
 
 
@@ -60,96 +65,65 @@ public class Client {
             askCLIorGUI();
 
         while (socket == null){ //Asks for server info
-            if(!usesDefaultServer){ //Skipped only if --default option
-                Map<String, String> serverInfo = UI.askServerInfo();
+                Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
                 serverPort = Integer.parseInt(serverInfo.get("port"));
-            }
-            else
-                UI.askTryConnecting();
-            lobbyConnection(serverIP, serverPort);
+            connectToLobbyServer(serverIP, serverPort);
         }
-        startPing(); //Starts heartbeat with lobby server
 
-        ServerLoginInfo serverLoginInfo = null;
-        while (serverLoginInfo == null){ //Asks for login username (until valid one is given)
-            nickname = UI.askNickname();
-            serverLoginInfo = tryLobbyLogin();
-        }
-        UI.setNickname(nickname);
-
-        stopPing(); //Stops heartbeat with lobby server to avoid writing on the socket that is subsequently closed
-        disconnectFromLobby();
-        matchLogin(serverIP, serverLoginInfo.getPort());
-        startPing(); //Starts heartbeat with match server
-
+        startPing(); //Starts heartbeat with lobby server on another thread
+        requestQueue.execute(() -> {
+            nickname = UI.requestNickname();
+            UI.setNickname(nickname);
+            tryLobbyLogin();
+        });
 
         while (true){
             parseMessage( receiveMessage() );
         }
-
     }
 
     //region Server connection
 
-    private void lobbyConnection(String IP, int port){
+    private void connectToLobbyServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
             out = socket.getOutputStream();
             outObj = new ObjectOutputStream(out);
             in = socket.getInputStream();
             inObj  = new ObjectInputStream(in);
-            UI.showText("Connected to lobby server.");
+            UI.displayInfo("Connected to lobby server.");
+            socket.setSoTimeout(2000);
         } catch (IOException e) {
-            UI.showError("Could not connect to server.");
+            UI.displayError("Could not connect to server.", false);
         }
     }
 
-    private ServerLoginInfo tryLobbyLogin(){
-        ServerLoginInfo serverLoginInfo = null;
+    private void tryLobbyLogin(){
         LoginUserAction login;
-        try {
-            login = new LoginUserAction(nickname);
-        }
-        catch (IllegalArgumentException e){
-            UI.showError("Enter a nickname that isn't empty!");
-            return null;
-        }
+        login = new LoginUserAction(nickname);
         sendUserAction(login);
-        Message message = receiveMessage();
-        if(message instanceof ServerLoginInfo){
-            UI.showText("Connecting to port: "+ ((ServerLoginInfo) message).getPort());
-            serverLoginInfo = (ServerLoginInfo) message;
-        }
-        else if(message instanceof Error){
-            UI.showError(message.toString());
-        }
-        else{
-            UI.showError("Server didn't send correct information.");
-            reset();
-        }
-
-        return serverLoginInfo;
     }
 
     private void disconnectFromLobby(){
         try {
             socket.close();
         } catch (IOException e) {
-            UI.showError("Error in disconnecting from server");
+            UI.displayError("Error in disconnecting from server", true);
         }
     }
 
-    private void matchLogin(String IP, int port){
+    private void connectToMatchServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
             out = socket.getOutputStream();
             outObj = new ObjectOutputStream(out);
             in = socket.getInputStream();
             inObj  = new ObjectInputStream(in);
-            UI.showText("Connected to match server.");
+            socket.setSoTimeout(2000);
+            UI.displayInfo("Connected to match server.");
         } catch (IOException e) {
-            UI.showError("Could not connect to match server. Error: " + e);
+            UI.displayError("Could not connect to match server. Error: " + e, true);
             reset();
         }
         sendUserAction(new LoginUserAction(nickname));
@@ -165,15 +139,16 @@ public class Client {
         pingExecutor.shutdownNow();
         boolean error;
         try { //Ensures ping was successfully stopped, to avoid error when socket is closed
-            error = ! pingExecutor.awaitTermination(5, TimeUnit.MILLISECONDS);
+            error = ! pingExecutor.awaitTermination(50, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             error = true;
         }
-        if (error)
-            UI.showError("Error occurred while shutting down ping.");
+        if (error){
+            UI.displayError("Error occurred while shutting down ping.", true);
+            reset();
+        }
     }
     //endregion
-
 
     private void askCLIorGUI(){
         Scanner sysIn = new Scanner(System.in);
@@ -204,149 +179,187 @@ public class Client {
 
     //region Parsing
     private void parseMessage(Message message){
-        if (message instanceof Error){
-            parseUpdate(lastUpdate);
-            UI.showError(message.toString());
+        if(message instanceof PingInfo){
+            ping.received();
+        }
+        else if(message instanceof LoginError){
+            requestQueue.execute(() -> {
+                UI.displayError(message.toString(), false);
+                nickname = UI.requestNickname();
+                UI.setNickname(nickname);
+                tryLobbyLogin();
+            });
+        }
+        else if(message instanceof ServerLoginInfo){
+            UI.displayInfo("Connecting to port: " + ((ServerLoginInfo) message).getPort());
+            stopPing(); //Stops heartbeat with lobby server to avoid writing on the socket that is subsequently closed
+            disconnectFromLobby();
+            connectToMatchServer(serverIP, ((ServerLoginInfo) message).getPort());
+            startPing(); //Starts heartbeat with match server
         }
         else if (message instanceof Update){
             parseUpdate((Update) message);
         }
+        else if (message instanceof Error){
+            UI.displayError(message.toString(), false);
+            parseUpdate(lastUpdate);
+        }
         else{
-            UI.showError("Server didn't send correct information.");
+            UI.displayError("Server didn't send correct information.", true);
             reset();
         }
     }
 
     private void parseUpdate(Update update){
-        UI.update(update.getGame());
         if(nickname.equals(update.getActionTakingPlayer()) && update.getNextUserAction() != null){
             lastUpdate = update;
-            askAction(update);
+            requestQueue.execute(() ->{
+                requestAction(update);
+                UI.notifyServerResponse(gameStarted);
+            });
         }
         else {
-            showInfo(update);
+            infoQueue.execute(() -> {
+                displayInfo(update);
+                UI.notifyServerResponse(gameStarted);
+            });
         }
-        if(mainThread.isAlive()){
-            UI.displayAvailableCommands();
-        }
-        UI.notifyServerResponse();
     }
 
-    private void askAction(Update update){
+    private void requestAction(Update update){
+        if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
+            UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
+
+        List<Command> toDisable = new ArrayList<>();
+        List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
-            //During setup, action are requested in a different thread to allow info on others' actions to be received
-            case GAME_SETTINGS -> { //TODO: use "request" functions
-                askQueue.execute(() -> UI.askGameSettings());
+            //During setup, action are requested in a different thread to also allow info on others' actions to be received
+            case GAME_SETTINGS -> {
+                UI.requestGameSettings();
             }
             case TOWER_COLOR -> {
-                askQueue.execute(() -> UI.askTowerColor(update.getGame().getNumOfPlayers()));
+                UI.requestTowerColor(update.getGame());
             }
             case WIZARD -> {
-                askQueue.execute(() -> UI.askWizard());
+                UI.requestWizard(update.getGame());
             }
             //No input is accepted when here, client is waiting for others to complete their selection (and receive PLAY_ASSISTANT)
             //Commands are enabled but main thread isn't started yet. Commands are "pre-loaded".
-            case NEXT_TURN_WAIT -> {
-                UI.showInfo("Please wait for all players to be ready and for your turn to start...");
-                UI.enableCommand(Command.QUIT);
-                UI.enableCommand(Command.HELP);
-                UI.enableCommand(Command.CARDS);
-                UI.enableCommand(Command.TABLE);
-                UI.enableCommand(Command.ORDER);
+            case WAIT_GAME_START -> {
+                UI.displayInfo("Please wait for all players to be ready and for your turn to start...");
             }
             //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
             //The possible actions are enabled and disabled by the client.
             case PLAY_ASSISTANT -> {
-                UI.disableCommand(Command.CLOUD);
-                UI.enableCommand(Command.ASSISTANT);
-                if(!mainThread.isAlive())
+                toDisable.addAll(Arrays.asList(Command.CLOUD, Command.CHARACTER));
+                toEnable.add(Command.ASSISTANT);
+                if(!gameStarted){
+                    gameStarted = true;
+                    toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
+                    if(update.getGame().getGameMode() == GameMode.EXPERT)
+                        toEnable.add(Command.CHARACTER_INFO);
                     mainThread.start();
-                UI.standings();
-                UI.showInfo("It is now your planning phase turn! Choose an assistant.");
+                }
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
             case MOVE_STUDENT -> {
-                UI.disableCommand(Command.ASSISTANT);
-                UI.enableCommand(Command.MOVE);
-                UI.standings();
-                UI.showInfo("It is now your action phase turn! Move students");
+                toDisable.add(Command.ASSISTANT);
+                if(update.getGame().getGameMode() == GameMode.EXPERT && update.getGame().getActiveCharacterID() == -1)
+                    toEnable.add(Command.CHARACTER);
+                toEnable.add(Command.MOVE);
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
             case MOVE_MOTHER_NATURE -> {
-                UI.disableCommand(Command.MOVE);
-                UI.enableCommand(Command.MOTHER_NATURE);
-                UI.standings();
-                UI.showInfo("Move mother nature.");
+                toDisable.add(Command.MOVE);
+                toEnable.add(Command.MOTHER_NATURE);
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
             case TAKE_FROM_CLOUD -> {
-                UI.disableCommand(Command.MOTHER_NATURE);
-                UI.enableCommand(Command.CLOUD);
-                UI.standings();
-                UI.showInfo("Choose a cloud.");
+                toDisable.add(Command.MOTHER_NATURE);
+                toEnable.add(Command.CLOUD);
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
             case USE_ABILITY -> {
-
+                if(update.getGame().getActiveCharacterUsesLeft() > 0) {
+                    toDisable.add(Command.CHARACTER);
+                    toEnable.add(Command.ABILITY);
+                }
+                else {
+                    toDisable.add(Command.CHARACTER);
+                    toDisable.add(Command.ABILITY);
+                }
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
         }
+
+
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
+            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
     }
 
-    private void showInfo(Update update){
+    private void displayInfo(Update update){
+        if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
+            UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
         //Info will be a different colored text in CLI or a pop-up in GUI, parallel to asking for action.
         //Allows information about other players action while user is selecting (useful for parallel login)
+        List<Command> toDisable = new ArrayList<>();
+        List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
-            case TOWER_COLOR -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() + " connected and is choosing a tower color"));
-            }
-            case WIZARD -> {
-                infoQueue.execute(() -> UI.showInfo(
-                        update.getActionTakingPlayer() +" chose color" ));
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is now choosing a wizard" ));
-            }
-            case NEXT_TURN_WAIT -> {
-                infoQueue.execute(() -> UI.showInfo(update.getActionTakingPlayer() +" is ready!" ));
+            case TOWER_COLOR, WAIT_GAME_START, WIZARD -> {
             }
             case PLAY_ASSISTANT -> {
-                UI.disableCommand(Command.ASSISTANT);
-                UI.disableCommand(Command.CLOUD);
-                if(!mainThread.isAlive())
+                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
+                if(!gameStarted){
+                    gameStarted = true;
+                    toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
+                    if(update.getGame().getGameMode() == GameMode.EXPERT)
+                        toEnable.add(Command.CHARACTER_INFO);
                     mainThread.start();
-                UI.standings();
-                UI.showInfo(update.getActionTakingPlayer() +" is now choosing an assistant" );
+                }
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
+
             }
             case MOVE_STUDENT -> {
-                UI.disableCommand(Command.ASSISTANT);
-                UI.disableCommand(Command.CLOUD);
-                UI.standings();
-                UI.showInfo(update.getActionTakingPlayer() +" is now choosing which student to move" );
+                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
-            case MOVE_MOTHER_NATURE -> {
-                UI.standings();
-                UI.showInfo(update.getActionTakingPlayer() +" is now choosing where to move mother nature" );
-            }
-            case TAKE_FROM_CLOUD -> {
-                UI.standings();
-                UI.showInfo(update.getActionTakingPlayer() +" is now choosing a cloud" );
-            }
-            case USE_ABILITY -> {
-                UI.showInfo(update.getActionTakingPlayer() +" has now activated a character" );
+            case MOVE_MOTHER_NATURE, USE_ABILITY, TAKE_FROM_CLOUD -> {
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
             }
             case END_GAME -> {
                 for(Command command : Command.values()){
                     if(command != Command.QUIT)
-                        UI.disableCommand(command);
+                        toDisable.add(command);
                 }
-                UI.standings();
-                UI.showInfo("TEAM " + update.getGame().getWinner() + " HAS WON!!");
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
+                UI.displayInfo("Team " + update.getGame().getWinner() + " has WON!!!");
             }
         }
 
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
+            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
     }
+
     //endregion
 
     //region Network send/receive
-    public void sendUserAction(UserAction userAction){
+    public synchronized void sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
+            outObj.flush();
+            outObj.reset();
+
         } catch (IOException e) {
-            UI.showError("Unable to write to server.");
+            UI.displayError("Unable to write to server.", true);
             reset();
         }
     }
@@ -356,11 +369,11 @@ public class Client {
         try {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            UI.showError("Unable to receive messages from server");
+            UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
             reset();
         }
         if(!(message instanceof Message)){
-            UI.showError("Server sending wrong objects");
+            UI.displayError("Server sending wrong objects", true);
             reset();
         }
         return (Message) message;
@@ -373,88 +386,12 @@ public class Client {
     }
 
     private void reset(){
-        System.exit(-1); //FIXME: actual reset
-        askQueue.shutdownNow();
-        infoQueue.shutdownNow();
-        askQueue = Executors.newSingleThreadExecutor();
-        infoQueue = Executors.newSingleThreadExecutor();
-        serverIP = "127.0.0.1";
-        serverPort = 4646;
-        if(UI instanceof CLI)
-            UI = new CLI(this);
-        else
-            UI = new CLI(this); //FIXME: GUI here
-        socket = null;
-        start();
-    }
-
-
-
-
-    //pietro
-    public Phase getPhase(){
-        return Phase.IDLE;
-
-    }
-
-    public String getNickname(){
-        return nickname;
-    }
-
-
-    public boolean requestLogin(String nickname) {
-        return true;
-    }
-
-    public boolean requestGameMode(int readBoundNumber) {
-        return true;
-    }
-
-    public boolean requestTowerColor(String readLineFromSelection) {
-        TowerColor towerColor = TowerColor.valueOf(readLineFromSelection.toUpperCase());
-        sendUserAction(new TowerColorUserAction(nickname, towerColor));
-        return true;
-    }
-
-    public boolean requestWizard(String readLineFromSelection) {
-        return true;
-    }
-
-    public boolean requestAssistant(int assistantID) {
-        sendUserAction(new PlayAssistantUserAction(nickname, assistantID));
-        return true;
-    }
-
-    /**
-     * used to move students from source to any location
-     * @param studentColor of the student to move
-     * @return true if move is allowed
-     */
-    public boolean requestMove(Color studentColor, int destinationID){
-        int studentID = -1;
-        HashMap<Integer, Color> studentIDs = lastUpdate.getGame().getEntranceStudentsIDs(getNickname());
-        for(Map.Entry<Integer, Color> entry : studentIDs.entrySet()){
-            if (entry.getValue() == studentColor) { studentID = entry.getKey(); break; }
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.exit(-1);
         }
-        if(studentID == -1){ UI.displayMessage("No student of selected color in entrance"); return false; }
-        UserAction request = new MoveStudentUserAction(getNickname(), studentID, destinationID);
-        sendUserAction(request);
-        // send request and verify
-        return true;
+        System.exit(-1); //FIXME: actual reset
 
-    }
-
-    public boolean requestMotherNature(int islandID){
-        sendUserAction(new MoveMotherNatureUserAction(nickname, islandID));
-        return true;
-    }
-
-    public boolean requestCloud(int readBoundNumber) {
-        sendUserAction(new TakeFromCloudUserAction(nickname, readBoundNumber));
-        return true;
-    }
-
-    public boolean requestCharacter(int characterID) {
-        return true;
     }
 }

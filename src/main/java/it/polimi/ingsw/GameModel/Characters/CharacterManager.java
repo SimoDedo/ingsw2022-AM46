@@ -5,6 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
@@ -13,6 +14,7 @@ import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -21,14 +23,15 @@ import java.util.stream.Collectors;
  */
 public class CharacterManager  implements Serializable {
 
-    private final Archipelago archipelago;
-    private final Bag bag;
-    private final PlayerList playerList;
-    private final ProfessorSet professorSet;
-    private final List<AbstractCharacter> characters = new ArrayList<>(12);
+    private Archipelago archipelago;
+    private Bag bag;
+    private PlayerList playerList;
+    private ProfessorSet professorSet;
+    private List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
-    final transient private CharacterFactory charFactory = new CharacterFactory();
-    final transient private ConsumerSet consumerSet;
+    private List<RequestParameter> currentRequestParameters = new ArrayList<>();
+    transient private CharacterFactory charFactory = new CharacterFactory();
+    transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.
@@ -89,7 +92,8 @@ public class CharacterManager  implements Serializable {
         }
         player.takeCoins(characters.get(ID - 1).getCost());
         currentCharacter = characters.get(ID - 1);
-        return currentCharacter.useCharacter(player);
+        currentRequestParameters = currentCharacter.useCharacter(player);
+        return currentRequestParameters;
     }
 
     /**
@@ -147,6 +151,7 @@ public class CharacterManager  implements Serializable {
      * Resets the character that was used this round, if there was any
      */
     public void resetActiveCharacter(){
+        currentRequestParameters.clear();
         for(Character character : characters) {
             if (character != null && character.wasUsedThisTurn())
                 character.resetUseState();
@@ -159,5 +164,43 @@ public class CharacterManager  implements Serializable {
      */
     public List<Integer> getCurrentCharacterIDs() {
         return characters.stream().filter(Objects::nonNull).map(AbstractCharacter::getCharacterID).collect(Collectors.toList());
+    }
+
+    /**
+     * Getter for the students contained on a given character.
+     * @param ID the ID of the character to inspect
+     * @return a hash map containing the ID of the students as key and their color as value.
+     * If no students are contained, the map will be empty
+     */
+    public HashMap<Integer, Color> getCharacterStudents(int ID){
+        if(characters.get(ID - 1) instanceof StudentMoverCharacter)
+            return ((StudentMoverCharacter) characters.get(ID - 1)).getStudentIDsAndColor();
+        else
+            return new HashMap<>();
+    }
+
+    /**
+     * Getter for the current cost of the character.
+     * @param ID the ID of the character requested
+     * @return the cost
+     */
+    public int getCharacterCost(int ID){
+        return characters.get(ID -1) != null ? characters.get(ID - 1).getCost() : 0;
+    }
+
+    /**
+     * Getter for the number of entry tiles left on the character
+     * @return the number of entry tiles left on the character
+     */
+    public int getNoEntryTilesCharacter(int ID) {
+        return ID == 5 ? ((NoEntryCharacter)characters.get(ID - 1)).getNoEntryTiles() : 0;
+    }
+
+    /**
+     * Gets the current requested parameters for the active character
+     * @return the current requested parameters for the active character
+     */
+    public List<RequestParameter> getCurrentRequestParameters() {
+        return currentRequestParameters;
     }
 }

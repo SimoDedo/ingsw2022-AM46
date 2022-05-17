@@ -72,7 +72,8 @@ public class Archipelago implements Serializable {
         for (int i = 1; i < 12; i++) {
             if(i != 6){
                 int idx = idxStarting + i < 12 ? idxStarting + i : idxStarting + i - 12;
-                islandGroups.get(idx).placeStudent(students.get(idxStudent));
+                Student debug = students.get(idxStudent);
+                islandGroups.get(idx).placeStudent(debug);
                 idxStudent++;
             }
         }

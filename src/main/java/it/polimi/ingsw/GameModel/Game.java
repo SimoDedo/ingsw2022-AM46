@@ -3,16 +3,21 @@ package it.polimi.ingsw.GameModel;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
+import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
+import it.polimi.ingsw.GameModel.Characters.CharacterManager;
+import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
+
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,12 +32,11 @@ import java.util.*;
  */
 public class Game implements ObservableByClient, Serializable {
 
-    private final Player neutralPlayer = new Player();
-    protected final Bag bag = new Bag();
-    protected final Archipelago archipelago = new Archipelago();
+    protected Bag bag;
+    protected Archipelago archipelago = new Archipelago();
     private final List<CloudTile> clouds = new ArrayList<>();
-    protected final ProfessorSet professorSet = new ProfessorSet();
-    protected final PlayerList players = new PlayerList();
+    protected ProfessorSet professorSet = new ProfessorSet();
+    protected PlayerList players = new PlayerList();
     private final TurnManager turnManager = new TurnManager();
 
     /**
@@ -57,6 +61,7 @@ public class Game implements ObservableByClient, Serializable {
 
     private TowerColor winner;
 
+
     /**
      * Constructor for Game. Places 10 students across the Archipelago, fills the bag with the
      * remaining students, then sets up the number and size of clouds and of players. Finally, adds
@@ -64,6 +69,7 @@ public class Game implements ObservableByClient, Serializable {
      * @param gameConfig the game configuration object, created by the GameFactory
      */
     public Game(GameConfig gameConfig) {
+        bag = new Bag();
         isLastRound = false;
         this.gameConfig = gameConfig;
         archipelago.initialStudentPlacement(bag.drawN(10));
@@ -226,11 +232,6 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void resolveIslandGroup(int islandGroupID) throws GameOverException {
         archipelago.resolveIslandGroup(islandGroupID, players, professorSet);
-            //TODO: not really a todo, just wanted someone to see this:
-            // to avoid long exception chain, exception is thrown in resolve of archipelago.
-            // Tower space no longer throws exception, just returns null -> this is because exception was thrown
-            // not when the last tower was taken, but when the next tower was requested. Now the method completes
-            // its job and then it is checked whether the game is over.
     }
 
     /**
@@ -352,216 +353,252 @@ public class Game implements ObservableByClient, Serializable {
 
     //region State observer methods
 
-    //region Game
-    /**
-     * Getter for the number of players selected for this game
-     * @return the number of players
-     */
-    @Override
-    public int getNumOfPlayers(){
-        return gameConfig.getNumOfPlayers();
-    }
+        //region Game
+        /**
+         * Getter for the number of players selected for this game
+         * @return the number of players
+         */
+        @Override
+        public int getNumOfPlayers(){
+            return gameConfig.getNumOfPlayers();
+        }
 
-    /**
-     * Getter for the game mode selected for this game
-     * @return the game mode selected for this game
-     */
-    @Override
-    public GameMode getGameMode(){
-        return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
-    }
+        /**
+         * Getter for the game mode selected for this game
+         * @return the game mode selected for this game
+         */
+        @Override
+        public GameMode getGameMode(){
+            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
+        }
 
-    /**
+        /**
          * Getter for the current player in the game.
          * @return the player currently executing their planning/action turn, null if firstRoundOrder
          * hasn't been determined yet
          */
-    public String getCurrentPlayer() {
-        return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
-    } // could be useful to controller
+        public String getCurrentPlayer() {
+            return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
+        } // could be useful to controller
 
-    /**
-     * Getter for the nickname of connected players
-     * @return a list with the nickname of connected players
-     */
-    public List<String> getPlayers(){
-        List<String> nicknames = new ArrayList<>();
-        for(Player player : players)
-            nicknames.add(player.getNickname());
-        return nicknames;
-    }
-
-    /**
-     * Getter for the teams
-     * @return a hashmap with a nickname as key and the tower color as value
-     */
-    public HashMap<String, TowerColor> getPlayerTeams(){
-        HashMap<String, TowerColor> teams = new HashMap<>();
-        for(Player player : players)
-            teams.put(player.getNickname(), player.getTowerColor());
-        return teams;
-    }
-
-    /**
-     * Getter for the wizards chosen
-     * @return a hashmap with a nickname as key and the wizard as value
-     */
-    public HashMap<String, WizardType> getPlayerWizard(){
-        HashMap<String, WizardType> wizards = new HashMap<>();
-        for(Player player : players)
-            wizards.put(player.getNickname(), player.getWizardType());
-        return wizards;
-    }
-
-    /**
-     * Returns current player order
-     * @return a list of nicknames ordered
-     */
-    public List<String> getPlayerOrder(){
-        return  turnManager.getCurrentOrder();
-    }
-
-    /**
-     * Method used to observe cards played this round. Returned according to current order (planning or action).
-     * To return them ordered, it uses the currentOrder given by TurnManager.
-     * If no order has been established yet, it will return an empty LinkedHashMap.
-     * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played.
-     */
-    public  LinkedHashMap<String, Integer> getCardsPlayedThisRound(){
-        LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
-        for(String nickname : turnManager.getCurrentOrder()){
-            if(cardsPlayedThisRound.get(players.getByNickname(nickname)) != null)
-                result.put(nickname, cardsPlayedThisRound.get(players.getByNickname(nickname)).getID());
-        }
-        return  result;
-    }
-
-    /**
-     * Method used to observe cards played last round. Returned according to current order (planning or action).
-     * To return them ordered, it uses the currentOrder given by TurnManager.
-     * If no order has been established yet, it will return an empty LinkedHashMap.
-     * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played
-     */
-    public  LinkedHashMap<String, Integer> getCardsPlayedLastRound(){
-        LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
-        for(String nickname : turnManager.getCurrentOrder()){
-            if(cardsPlayedLastRound.get(players.getByNickname(nickname)) != null)
-                result.put(nickname, cardsPlayedLastRound.get(players.getByNickname(nickname)).getID());
-        }
-        return  result;
-    }
-
-    /**
-     * Method to observe the current phase of the game. Needed to let know the controller which order to calculate.
-     * @return the current phase.
-     */
-    public Phase getCurrentPhase(){
-            return turnManager.getCurrentPhase();
+        /**
+         * Getter for the nickname of connected players
+         * @return a list with the nickname of connected players
+         */
+        public List<String> getPlayers(){
+            List<String> nicknames = new ArrayList<>();
+            for(Player player : players)
+                nicknames.add(player.getNickname());
+            return nicknames;
         }
 
-    public List<TowerColor> getAvailableTowerColors(){
-        List<TowerColor> availableTowerColors = Arrays.stream(TowerColor.values()).toList();
-        availableTowerColors.remove(TowerColor.NEUTRAL);
-        if(gameConfig.getNumOfPlayers() != 3)
-            availableTowerColors.remove(TowerColor.GREY);
-        for (TowerColor towerColor : TowerColor.values()){
-            if(players.getTeam(towerColor).size() == gameConfig.getNumOfPlayers() / 2)
-                availableTowerColors.remove(towerColor);
+        /**
+         * Getter for the teams
+         * @return a hashmap with a nickname as key and the tower color as value
+         */
+        public HashMap<String, TowerColor> getPlayerTeams(){
+            HashMap<String, TowerColor> teams = new HashMap<>();
+            for(Player player : players)
+                teams.put(player.getNickname(), player.getTowerColor());
+            return teams;
         }
-        return availableTowerColors;
-    }
 
-    public List<WizardType> getAvailableWizards(){
-        List<WizardType> availableWizardTypes = Arrays.stream(WizardType.values()).toList();
-        for (Player player : players)
-            availableWizardTypes.remove(player.getWizardType());
-        return availableWizardTypes;
-    }
-
-    /**
-     * Returns the team that has won the game.
-     * @return the towerColor of the team who has won the game
-     */
-    public TowerColor getWinner(){
-        return winner;
-    }
-    //endregion
-    //region Player
-    /**
-     * Returns a list of cards that weren't yet played (thus to be shown to the player)
-     * @return a list of cards IDs
-     */
-    public List<Integer> getCardsLeft(String nickname){
-        return  players.getByNickname(nickname).getCardsLeft();
-    }
-
-    /**
-     * Method to observe all the students in the entrance and their color
-     * @return HashMap with the student ID as key and its color as object
-     */
-    public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
-        return players.getByNickname(nickname).getEntranceStudentsIDs();
-    }
-
-    /**
-     * Method to get all the table IDs and their color
-     * @return an HashMap with the table color as key and the Table ID as object
-     */
-    public HashMap<Color, Integer> getTableIDs(String nickname){
-        return players.getByNickname(nickname).getTableIDs();
-    }
-
-    /**
-     * Method to observe all the students in a table
-     * @param color The color of the table
-     * @return List with the student IDs in the requested table
-     */
-    public List<Integer> getTableStudentsIDs(String nickname, Color color){
-        return players.getByNickname(nickname).getTableStudentsIDs(color);
-    }
-
-    /**
-     * Returns the amount of towers contained in the TowerSpace of a given team
-     * @param towerColor the nickname of the player to check
-     * @return the amount of towers contained in the TowerSpace
-     */
-    public int getTowersLeft(TowerColor towerColor){
-        return players.getTowerHolder(towerColor).getTowersLeft();
-    }
-
-    /**
-     * Method used to observe which player chose which wizard
-     * @return An HashMap containing the nickname of the Player and the Wizard chosen
-     */
-    public HashMap<String, WizardType> getPlayersWizardType(){
-        HashMap<String, WizardType> result = new HashMap<>();
-        for(Player player : players){
-            result.put(player.getNickname(), player.getWizardType());
+        /**
+         * Getter for the wizards chosen
+         * @return a hashmap with a nickname as key and the wizard as value
+         */
+        public HashMap<String, WizardType> getPlayerWizard(){
+            HashMap<String, WizardType> wizards = new HashMap<>();
+            for(Player player : players)
+                wizards.put(player.getNickname(), player.getWizardType());
+            return wizards;
         }
-        return result;
-    }
-    //endregion
-    //region ProfessorSet
-    /**
-     * Method to observe which Professor is owned by who
-     * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
-     */
-    public HashMap<Color, String> getProfessorsOwner(){
-        return professorSet.getProfessorsOwner();
-    }
-    //endregion
-    //region Clouds
-    /**
-     * Returns a list containing all the IDs of CloudTiles
-     * @return a list containing all the IDs of CloudTiles
-     */
-    public List<Integer> getCloudIDs(){
-        List<Integer> cloudIDs = new ArrayList<>();
-        for(CloudTile cloudTile : clouds){
-            cloudIDs.add(cloudTile.getID());
+
+        /**
+         * Returns current player order
+         * @return a list of nicknames ordered
+         */
+        public List<String> getPlayerOrder(){
+            return  turnManager.getCurrentOrder();
         }
-        return cloudIDs;
-    }
+
+        /**
+         * Returns the max amount of island groups a given player can move
+         * @param nickname the player who can move the returned number of steps
+         * @return the max amount of island groups a given player can move
+         */
+        @Override
+        public int getActualMovePower(String nickname){
+            return cardsPlayedThisRound.get(players.getByNickname(nickname)).getMovePower();
+        }
+
+
+        /**
+             * Method used to observe cards played this round. Returned according to current order (planning or action).
+             * To return them ordered, it uses the currentOrder given by TurnManager.
+             * If no order has been established yet, it will return an empty LinkedHashMap.
+             * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played.
+             */
+        public  LinkedHashMap<String, Integer> getCardsPlayedThisRound(){
+            LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+            for(String nickname : turnManager.getCurrentOrder()){
+                if(cardsPlayedThisRound.get(players.getByNickname(nickname)) != null)
+                    result.put(nickname, cardsPlayedThisRound.get(players.getByNickname(nickname)).getID());
+            }
+            return  result;
+        }
+
+        /**
+         * Method used to observe cards played last round. Returned according to current order (planning or action).
+         * To return them ordered, it uses the currentOrder given by TurnManager.
+         * If no order has been established yet, it will return an empty LinkedHashMap.
+         * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played
+         */
+        public  LinkedHashMap<String, Integer> getCardsPlayedLastRound(){
+            LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
+            for(String nickname : turnManager.getCurrentOrder()){
+                if(cardsPlayedLastRound.get(players.getByNickname(nickname)) != null)
+                    result.put(nickname, cardsPlayedLastRound.get(players.getByNickname(nickname)).getID());
+            }
+            return  result;
+        }
+
+        /**
+         * Method to observe the current phase of the game. Needed to let know the controller which order to calculate.
+         * @return the current phase.
+         */
+        public Phase getCurrentPhase(){
+                return turnManager.getCurrentPhase();
+            }
+
+        /**
+         * Returns the tower colors selectable
+         * @return the tower colors selectable
+         */
+        public List<TowerColor> getAvailableTowerColors(){
+            List<TowerColor> availableTowerColors = new ArrayList<>(Arrays.stream(TowerColor.values()).toList());
+            availableTowerColors.remove(TowerColor.NEUTRAL);
+            if(gameConfig.getNumOfPlayers() != 3)
+                availableTowerColors.remove(TowerColor.GREY);
+            for (TowerColor towerColor : TowerColor.values()){
+                if(players.getTeam(towerColor).size() == gameConfig.getNumOfPlayers() / 2)
+                    availableTowerColors.remove(towerColor);
+            }
+            return availableTowerColors;
+        }
+
+        /**
+         * Returns the wizards selectable
+         * @return the wizards selectable
+         */
+        public List<WizardType> getAvailableWizards(){
+            List<WizardType> availableWizardTypes = new ArrayList<>(Arrays.stream(WizardType.values()).toList());
+            for (Player player : players)
+                availableWizardTypes.remove(player.getWizardType());
+            return availableWizardTypes;
+        }
+
+        /**
+         * Returns how many towers are left to be placed for each team
+         * @return a hashmap with tower color as key and the number of towers left as key
+         */
+        public HashMap<TowerColor, Integer> getTowersLeft(){
+            HashMap<TowerColor, Integer> towersLeft = new HashMap<>();
+            for (Player player : players){
+                if(player.isTowerHolder())
+                    towersLeft.put(player.getTowerColor(), player.getTowersLeft());
+            }
+            return towersLeft;
+        }
+
+        /**
+         * Returns the team that has won the game.
+         * @return the towerColor of the team who has won the game
+         */
+        public TowerColor getWinner(){
+            return winner;
+        }
+        //endregion
+        //region Player
+        /**
+         * Returns a list of cards that weren't yet played (thus to be shown to the player)
+         * @return a list of cards IDs
+         */
+        public List<Integer> getCardsLeft(String nickname){
+            return  players.getByNickname(nickname).getCardsLeft();
+        }
+
+        /**
+         * Method to observe all the students in the entrance and their color
+         * @return HashMap with the student ID as key and its color as object
+         */
+        public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
+            return players.getByNickname(nickname).getEntranceStudentsIDs();
+        }
+
+        /**
+         * Method to get all the table IDs and their color
+         * @return an HashMap with the table color as key and the Table ID as object
+         */
+        public HashMap<Color, Integer> getTableIDs(String nickname){
+            return players.getByNickname(nickname).getTableIDs();
+        }
+
+        /**
+         * Method to observe all the students in a table
+         * @param color The color of the table
+         * @return List with the student IDs in the requested table
+         */
+        public List<Integer> getTableStudentsIDs(String nickname, Color color){
+            return players.getByNickname(nickname).getTableStudentsIDs(color);
+        }
+
+        /**
+         * Returns the amount of towers contained in the TowerSpace of a given team
+         * @param towerColor the nickname of the player to check
+         * @return the amount of towers contained in the TowerSpace
+         */
+        public int getTowersLeft(TowerColor towerColor){
+            return players.getTowerHolder(towerColor).getTowersLeft();
+        }
+
+            /**
+             * Method used to observe which player chose which wizard
+             * @return An HashMap containing the nickname of the Player and the Wizard chosen
+             */
+            public HashMap<String, WizardType> getPlayersWizardType(){
+                HashMap<String, WizardType> result = new HashMap<>();
+                for(Player player : players){
+                    result.put(player.getNickname(), player.getWizardType());
+                }
+                return  result;
+            }
+
+        public int getCoinsLeft(String nickname, Color color){
+            return getPlayerByNickname(nickname).getCoinsLeft(color);
+        }
+            //endregion
+        //region ProfessorSet
+        /**
+         * Method to observe which Professor is owned by who
+         * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
+         */
+        public HashMap<Color, String> getProfessorsOwner(){
+            return  professorSet.getProfessorsOwner();
+        }
+        //endregion
+        //region Clouds
+        /**
+         * Returns a list containing all the IDs of CloudTiles
+         * @return a list containing all the IDs of CloudTiles
+         */
+        public List<Integer> getCloudIDs(){
+            List<Integer> cloudIDs = new ArrayList<>();
+            for(CloudTile cloudTile : clouds){
+                cloudIDs.add(cloudTile.getID());
+            }
+            return  cloudIDs;
+        }
 
     /**
      * Return all the IDs of students contained in a given cloud along with their color
@@ -577,102 +614,123 @@ public class Game implements ObservableByClient, Serializable {
         throw new IllegalArgumentException("No cloud with such ID exists");
     }
     //endregion
-    //region Bag
-    /**
-     * Method to observe all the students in the bag and their color
-     * @return HashMap with the student ID as key and its color as object
-     */
-    public HashMap<Integer, Color> getBagStudentsIDs(){//Probably not needed
-        return  bag.getStudentIDsAndColor();
-    }
-    //endregion
-    //region Archipelago
-    /**
-     * Returns all students contained in all islands with their color
-     * @return An HashMap with StudentID as key and Color as value
-     */
-    public HashMap<Integer, Color> getArchipelagoStudentIDs(){
-        return archipelago.getStudentIDs();
-    }
+        //region Bag
+        /**
+         * Method to observe all the students in the bag and their color
+         * @return HashMap with the student ID as key and its color as object
+         */
+        public HashMap<Integer, Color> getBagStudentsIDs(){//Probably not needed
+            return  bag.getStudentIDsAndColor();
+        }
+        //endregion
+        //region Archipelago
+        /**
+         * Returns all students contained in all islands with their color
+         * @return An HashMap with StudentID as key and Color as value
+         */
+        public HashMap<Integer, Color> getArchipelagoStudentIDs(){
+            return archipelago.getStudentIDs();
+        }
 
-    /**
-     * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
-     */
-    public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
-        return archipelago.getIslandTilesStudentsIDs();
-    }
+        /**
+         * Searches all IslandTiles to find which students each contains
+         * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
+         */
+        public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
+            return archipelago.getIslandTilesStudentsIDs();
+        }
 
-    /**
-     * For each IslandGroup finds the IDs of its IslandTiles
-     * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
-     */
-    public HashMap<Integer, List<Integer>> getIslandTilesIDs(){
-        return  archipelago.getIslandTilesIDs();
-    }
+        /**
+         * For each IslandGroup finds the IDs of its IslandTiles
+         * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
+         */
+        public HashMap<Integer, List<Integer>> getIslandTilesIDs(){
+            return  archipelago.getIslandTilesIDs();
+        }
 
-    /**
-     * Returns the IslandGroup index of the IslandGroup which contains MotherNature
-     * @return the IslandGroup index of the IslandGroup which contains MotherNature
-     */
-    @Override
-    public int getMotherNatureIslandGroupIdx() {
-        return archipelago.getMotherNatureIslandGroupIndex();
-    }
+        /**
+         * Returns the IslandGroup index of the IslandGroup which contains MotherNature
+         * @return the IslandGroup index of the IslandGroup which contains MotherNature
+         */
+        @Override
+        public int getMotherNatureIslandGroupIdx() {
+            return archipelago.getMotherNatureIslandGroupIndex();
+        }
 
-    /**
-     * Returns the IslandTile ID of the IslandTile which contains MotherNature
-     * @return the IslandTile ID of the IslandTile which contains MotherNature
-     */
-    public int getMotherNatureIslandTileID(){
-        return archipelago.getMotherNatureIslandTileID();
-    }
+        /**
+         * Returns the IslandTile ID of the IslandTile which contains MotherNature
+         * @return the IslandTile ID of the IslandTile which contains MotherNature
+         */
+        public int getMotherNatureIslandTileID(){
+            return archipelago.getMotherNatureIslandTileID();
+        }
 
-    /**
-    * Returns the IslandGroups indexes along with the TowerColor of the Team who has towers.
-    * The color is null when no Team holds the IslandGroup
-    * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
-    */
-    public HashMap<Integer, TowerColor> getIslandGroupsOwners(){
-    return archipelago.getIslandGroupsOwner();
-}
-
-    /**
-     * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
-     * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
-     */
-    public HashMap<Integer, Integer> getNoEntryTiles(){
-        return archipelago.getNoEntryTiles();
+        /**
+        * Returns the IslandGroups indexes along with the TowerColor of the Team who has towers.
+        * The color is null when no Team holds the IslandGroup
+        * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
+        */
+        public HashMap<Integer, TowerColor> getIslandGroupsOwners(){
+        return archipelago.getIslandGroupsOwner();
     }
 
-    //endregion
-    //region CharacterManager
+        /**
+         * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
+         * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
+         */
+        public HashMap<Integer, Integer> getNoEntryTilesArchipelago(){
+            return archipelago.getNoEntryTiles();
+        }
 
-    @Override
-    public int getCoins(String nickname) {
-        return 0;
-    }
+        //endregion
+        //region CharacterManager
 
-    @Override
-    public List<Integer> getDrawnCharacterIDs() {
-        return null;
-    }
+        @Override
+        public int getCoins(String nickname) {
+            return 0;
+        }
 
-    @Override
-    public int getActiveCharacterID() {
-        return 0;
-    }
+        @Override
+        public List<Integer> getDrawnCharacterIDs() {
+            return new ArrayList<>();
+        }
 
-    @Override
-    public int getActiveCharacterMaxUses() {
-        return 0;
-    }
+        @Override
+        public int getActiveCharacterID() {
+            return -1;
+        }
 
-    @Override
-    public int getActiveCharacterUsesLeft() {
-        return 0;
-    }
-    //endregion
+        @Override
+        public int getActiveCharacterMaxUses() {
+            return 0;
+        }
+
+        @Override
+        public int getActiveCharacterUsesLeft() {
+            return 0;
+        }
+
+        @Override
+        public HashMap<Integer, Color> getCharacterStudents(int ID) {
+            return new HashMap<>();
+        }
+
+        @Override
+        public int getCharacterCost(int ID) {
+            return 0;
+        }
+
+        @Override
+        public int getNoEntryTilesCharacter(int ID) {
+            return 0;
+        }
+
+        @Override
+        public List<RequestParameter> getCurrentRequestParameters() {
+            return null;
+        }
+
+        //endregion
 
     //endregion
 }

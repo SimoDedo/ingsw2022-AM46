@@ -2,9 +2,7 @@ package it.polimi.ingsw.GameModel;
 
 import it.polimi.ingsw.Utils.Enum.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public interface ObservableByClient {
 
@@ -56,6 +54,13 @@ public interface ObservableByClient {
         List<String> getPlayerOrder();
 
         /**
+         * Returns the max amount of island groups a given player can move
+         * @param nickname the player who can move the returned number of steps
+         * @return the max amount of island groups a given player can move
+         */
+        int getActualMovePower(String nickname);
+
+        /**
          * Method used to observe cards played this round. Returned according to current order (planning or action).
          * To return them ordered, it uses the currentOrder given by TurnManager.
          * If no order has been established yet, it will return an empty LinkedHashMap.
@@ -77,9 +82,23 @@ public interface ObservableByClient {
          */
         Phase getCurrentPhase();
 
+        /**
+         * Returns the tower colors selectable
+         * @return the tower colors selectable
+         */
         List<TowerColor> getAvailableTowerColors();
 
+        /**
+         * Returns the wizards selectable
+         * @return the wizards selectable
+         */
         List<WizardType> getAvailableWizards();
+
+        /**
+         * Returns how many towers are left to be placed for each team
+         * @return a hashmap with tower color as key and the number of towers left as key
+         */
+        HashMap<TowerColor, Integer> getTowersLeft();
 
         /**
          * Returns the team that has won the game.
@@ -122,6 +141,10 @@ public interface ObservableByClient {
          * @return the amount of towers contained in the TowerSpace
          */
         int getTowersLeft(TowerColor towerColor);
+
+
+        int getCoinsLeft(String nickname, Color color);
+
 
         /**
          * Method used to observe which player chose which wizard
@@ -200,7 +223,7 @@ public interface ObservableByClient {
          * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
          * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
          */
-        HashMap<Integer, Integer> getNoEntryTiles();
+        HashMap<Integer, Integer> getNoEntryTilesArchipelago();
 
         //endregion
 
@@ -220,7 +243,7 @@ public interface ObservableByClient {
 
         /**
          * Getter for the ActiveCharacter ID.
-         * @return the ActiveCharacter ID.
+         * @return the ActiveCharacter ID. -1 if no character is active.
          */
         int getActiveCharacterID();
 
@@ -235,6 +258,33 @@ public interface ObservableByClient {
          * @return the number of times the ability of the active character can still be used.
          */
         int getActiveCharacterUsesLeft();
+
+        /**
+         * Getter for the students contained on a given character.
+         * @param ID the ID of the character requested
+         * @return a hash map containing the ID of the students as key and their color as value.
+         * If no students are contained, the map will be empty
+         */
+        HashMap<Integer, Color> getCharacterStudents(int ID);
+
+        /**
+         * Getter for the current cost of the character.
+         * @param ID the ID of the character requested
+         * @return the cost
+         */
+        int getCharacterCost(int ID);
+
+        /**
+         * Getter for the number of entry tiles left on the character
+         * @return the number of entry tiles left on the character
+         */
+        int getNoEntryTilesCharacter(int ID);
+
+        /**
+         * Gets the current requested parameters for the active character
+         * @return the current requested parameters for the active character
+         */
+        List<RequestParameter> getCurrentRequestParameters();
 
         //endregion
 

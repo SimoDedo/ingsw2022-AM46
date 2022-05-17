@@ -148,4 +148,6 @@ public class PlayerBoard implements Serializable {
     public int getTowersLeft(){
         return towerSpace.pawnCount();
     }
+
+    public int getCoinsLeft(Color color){ return diningRoom.getCoinsLeft(color); }
 }

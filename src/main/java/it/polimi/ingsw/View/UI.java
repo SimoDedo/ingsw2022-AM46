@@ -1,94 +1,41 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
-import it.polimi.ingsw.Utils.Enum.Command;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
+import it.polimi.ingsw.Utils.Enum.Command;
+import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public interface UI {
 
-    void update(ObservableByClient game);
-
-    void askTryConnecting();
-
-    Map<String, String> askServerInfo();
-
     void setNickname(String nickname);
 
-    String askNickname();
+    void update(ObservableByClient game);
 
-    void askGameSettings();
+    void startGame();
 
-    void askTowerColor(int numOfPlayers);
+    void updateCommands(List<Command> toDisable, List<Command> toEnable);
 
-    void askWizard();
+    void notifyServerResponse(boolean gameStarted);
 
-    void showText(String text);
+    Map<String, String> requestServerInfo(String defaultIP, int defaultPort);
 
-    void showInfo(String info);
+    String requestNickname();
 
-    void showError(String error);
+    void requestGameSettings();
 
-    void reset();
+    void requestTowerColor(ObservableByClient game);
 
-    void displayLogin();
-
-    void displayBoard();
-
+    void requestWizard(ObservableByClient game);
 
     void displayMessage(String message);
 
-    void displayMessage(String message, String color);
+    void displayInfo(String info);
 
-    void requestLogin();
+    void displayError(String error, boolean isUrgent);
 
-    void requestTowerColor();
+    void displayBoard(ObservableByClient game, UserActionType actionTaken);
 
-    void requestGameMode();
-
-    void requestPlayerNumber();
-
-    void requestWizard ();
-
-    void requestAssistant();
-
-    void requestMoveFromEntrance();
-
-    void requestMotherNature();
-
-    void requestCloud();
-
-    void requestCharacter();
-
-    void displayHelp();
-
-    void displayHelp(String context);
-
-    void displayUnavailable();
-
-    void displayInvalid();
-
-    void standings();
-
-    void displayEntrance(String nickname);
-
-    void displayArchipelago();
-
-    void displayTables(String nickname);
-
-    void displayClouds();
-
-    void displayCharacters();
-
-    void displayHand(String nickname);
-
-    void enableCommand(Command command);
-
-    void disableCommand(Command command);
-
-    void notifyServerResponse();
-
-    void displayAvailableCommands();
-
-    void parseCommand();
 }

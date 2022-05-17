@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network.Server;
 
+import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Network.Message.UserAction.PingUserAction;
 import it.polimi.ingsw.Network.Message.UserAction.UserAction;
@@ -96,7 +97,9 @@ public class SocketConnection implements Runnable {
         try {
             Object message = inputStream.readObject();
             action = (UserAction) message;
-            if(!(action instanceof PingUserAction))
+            if(action instanceof PingUserAction)
+                sendMessage(new PingInfo());
+            else
                 server.parseAction(this, action);
         } catch (IOException | ClassNotFoundException e) {
             //e.printStackTrace();
@@ -112,13 +115,17 @@ public class SocketConnection implements Runnable {
      *
      * @param message the Message object to send
      */
-    public void sendMessage(Message message) {
+    public synchronized void sendMessage(Message message) {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
-            outputStream.reset();
+            outputStream.reset(); //FIXME: !!!!!!!! ERRORS!!!!!!!!!! maybe fixed with synchronizing
         } catch (Exception e) { // what exceptions are thrown here?
             e.printStackTrace();
+            if(server instanceof MatchServer)
+                closeMatch();
+            else
+                close();
         }
     }
 }
