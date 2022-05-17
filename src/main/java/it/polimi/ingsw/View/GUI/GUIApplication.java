@@ -366,7 +366,7 @@ public class GUIApplication extends Application {
         DoubleProperty opacity = scene.getRoot().opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(5000), new KeyValue(opacity, 1.0))
+                new KeyFrame(new Duration(9999), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
     }
