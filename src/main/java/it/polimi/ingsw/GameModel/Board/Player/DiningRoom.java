@@ -3,13 +3,14 @@ import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 
-public class DiningRoom {
+public class DiningRoom implements Serializable {
     private final List<Table> tables;
 
     /**
@@ -97,6 +98,10 @@ public class DiningRoom {
      */
     public List<Integer> getTableStudentsIDs(Color color){
         return getTable(color).getStudentIDsAndColor().keySet().stream().toList();
+    }
+
+    public int getCoinsLeft(Color color){
+        return getTable(color).getCoinsLeft();
     }
 
 

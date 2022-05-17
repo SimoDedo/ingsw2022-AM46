@@ -1,6 +1,5 @@
 package it.polimi.ingsw.GameModel;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
@@ -9,7 +8,6 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
-import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -243,12 +241,12 @@ class GameTest {
         game.playAssistant("Simo", 10);
 
         int islandTileMN = game.getMotherNatureIslandTileID();
-        int destinationIG = game.getIslandTilesIDs().entrySet().
-                stream().
-                filter(entry -> entry.getValue().contains(islandTileMN)).
-                findAny().
-                get(). //always present
-                        getKey();
+        int destinationIG = game.getIslandTilesIDs().entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().contains(islandTileMN))
+                .findAny()
+                .get()//always present
+                .getKey();
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int destinationIT = game.getIslandTilesIDs().get(destinationIG).get(0);
@@ -274,7 +272,23 @@ class GameTest {
         game.assignWizard("Simo", WizardType.MAGE);
         game.playAssistant("Simo", 10);
 
-        Map.Entry<Integer, Color> studentToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream().toList().get(0);
+        List<Integer> studentsToMove = new ArrayList<>();
+        int tableID = 0;
+        for(Color color : Color.values()){
+            long count = game.getEntranceStudentsIDs("Simo").entrySet().stream()
+                    .filter(e -> e.getValue() == color)
+                    .count();
+            if(count > 1){
+                studentsToMove = game.getEntranceStudentsIDs("Simo").entrySet().stream()
+                        .filter(en -> en.getValue() == color)
+                        .toList()
+                        .stream()
+                        .map(ent -> ent.getKey())
+                        .toList();
+                tableID = game.getTableIDs("Simo").get(color);
+                break;
+            }
+        }
         //Select random student from entrance along with their color (thus an entry)
         int islandTileMN = game.getMotherNatureIslandTileID();
         int destinationIG = game.getIslandTilesIDs().entrySet().
@@ -286,10 +300,11 @@ class GameTest {
         destinationIG = destinationIG == 11 ? 0 : destinationIG + 1;
 
         int island = game.getIslandTilesIDs().get(destinationIG).get(0);
-        game.moveStudentFromEntrance("Simo", studentToMove.getKey(), island);
-        game.moveMotherNature("Simo", island);
+        game.moveStudentFromEntrance("Simo", studentsToMove.get(0), tableID);
+        game.moveStudentFromEntrance("Simo", studentsToMove.get(1), island);
 
-        assertEquals(TowerColor.BLACK, game.getIslandGroupsOwner().get(destinationIG),
+        game.moveMotherNature("Simo", island);
+        assertEquals(TowerColor.BLACK, game.getIslandGroupsOwners().get(destinationIG),
                 "The island should be conquered by team who owns the only student placed");
     }
 

@@ -9,9 +9,10 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Player {
+public class Player implements Serializable {
 
     private final String nickname;
     private final PlayerBoard playerBoard;
@@ -260,6 +261,9 @@ public class Player {
     public int getTowersLeft(){
         return playerBoard.getTowersLeft();
     }
+
+
+    public int getCoinsLeft(Color color){ return playerBoard.getCoinsLeft(color); }
 
     //endregion
 

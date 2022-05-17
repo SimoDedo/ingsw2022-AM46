@@ -35,8 +35,6 @@ public class ConsumerSet {
     public ConsumerSet(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet,
                        List<AbstractCharacter> characters, CoinBag coinBag) {
 
-        //todo: add exception handling maybe? Needed LastRoundException on C1 and C11 if last student drawn and GameOverException on C3(those done and tested)
-
         consumers.add((list) -> { // C1
             StudentMoverCharacter char1 = (StudentMoverCharacter) characters.get(0);
             Student student = char1.getPawnByID(list.get(0));
@@ -131,6 +129,7 @@ public class ConsumerSet {
             }
 
             professorSet.checkAndMoveProfessor(playerList, studentFromDR.getColor());
+            professorSet.checkAndMoveProfessor(playerList, studentFromEntrance.getColor());
         });
 
         consumers.add((list) -> { // C11

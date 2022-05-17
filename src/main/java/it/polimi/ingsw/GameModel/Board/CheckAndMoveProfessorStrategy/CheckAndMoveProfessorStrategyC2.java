@@ -35,15 +35,27 @@ public class CheckAndMoveProfessorStrategyC2 implements CheckAndMoveProfessorStr
 
     /**
      * Given a color in the professor set, this strategy gives the professor to the player that has
-     * the most students of that color in their dining room. In the case of a draw, if one of the two
-     * drawing player is the activator of the character, they win the professor.
+     * the most students of that color in their dining room. In the case of a draw, if one of the
+     * drawing player is the activator of the character, they win the professor, otherwise, the last player
+     * who held such professor will keep it.
      */
     public void checkAndMoveProfessor(Professor prof, PlayerList playerList, Color color) {
-        Player winner = playerList.get(0);
+        int maxScore = 0;
+        Player winner = null;
         for (Player player : playerList) {
-            if (player.getScore(color) > winner.getScore(color)) winner = player;
-            else if (player.equals(activator) && player.getScore(color) == winner.getScore(color)) winner = player;
+            if (player.getScore(color) > maxScore){
+                winner = player;
+                maxScore = winner.getScore(color);
+            }
+            else if(player.getScore(color) == maxScore && player.equals(activator)){
+                winner = player;
+                maxScore = winner.getScore(color);
+            }
+            else if(player.getScore(color) == maxScore && ! activator.equals(winner)){
+                winner = null;
+            }
         }
-        prof.setOwner(winner);
+        if(winner != null)
+            prof.setOwner(winner);
     }
 }

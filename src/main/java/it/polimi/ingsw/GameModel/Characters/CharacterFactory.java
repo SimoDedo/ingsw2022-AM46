@@ -26,7 +26,7 @@ public class CharacterFactory {
         List<RequestParameter> requestParameters = new ArrayList<>();
         switch (ID){
             case 1:
-                requestParameters.add(RequestParameter.STUDCARD);
+                requestParameters.add(RequestParameter.STUDENT_CARD);
                 requestParameters.add(RequestParameter.ISLAND);
                 character = new StudentMoverCharacter(1, 1, 1, 4, requestParameters);
                 for (int i = 0; i < 4; i++)
@@ -51,8 +51,8 @@ public class CharacterFactory {
                 character = new StrategyCharacter(6, 3, requestParameters);
                 break;
             case 7:
-                requestParameters.add(RequestParameter.STUDCARD);
-                requestParameters.add(RequestParameter.STUDENTRANCE);
+                requestParameters.add(RequestParameter.STUDENT_CARD);
+                requestParameters.add(RequestParameter.STUDENT_ENTRANCE);
                 character = new StudentMoverCharacter(7, 1, 3, 6, requestParameters);
                 for (int i = 0; i < 6; i++)
                     if(bag != null)
@@ -66,12 +66,12 @@ public class CharacterFactory {
                 character = new StrategyCharacter(9, 3, requestParameters);
                 break;
             case 10:
-                requestParameters.add(RequestParameter.STUDENTRANCE);
-                requestParameters.add(RequestParameter.STUDDININGROOM);
+                requestParameters.add(RequestParameter.STUDENT_ENTRANCE);
+                requestParameters.add(RequestParameter.STUDENT_DINING_ROOM);
                 character = new StudentMoverCharacter(10, 1, 2, 0, requestParameters);
                 break;
             case 11:
-                requestParameters.add(RequestParameter.STUDCARD);
+                requestParameters.add(RequestParameter.STUDENT_CARD);
                 character = new StudentMoverCharacter(11, 2, 1, 4, requestParameters);
                 for (int i = 0; i < 4; i++)
                     if(bag != null)

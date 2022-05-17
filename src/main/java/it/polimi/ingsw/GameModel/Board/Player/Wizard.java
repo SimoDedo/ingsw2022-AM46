@@ -2,11 +2,12 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import it.polimi.ingsw.Utils.Enum.WizardType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class Wizard {
+public class Wizard implements Serializable {
 
     private final WizardType type;
 

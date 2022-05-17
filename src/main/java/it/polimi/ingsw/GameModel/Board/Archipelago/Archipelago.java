@@ -13,13 +13,14 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.InvalidObjectException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class that models all the islands on the table.
  * It contains a list of IslandGroup to model the merged IslandTiles.
  */
-public class Archipelago {
+public class Archipelago implements Serializable {
 
     /**
      * List that contains all the IslandGroups. The order of the list is used to merge and render the islands
@@ -29,12 +30,12 @@ public class Archipelago {
     /**
      * Strategy to apply when resolving an island
      */
-    private ResolveStrategy resolveStrategy;
+    transient private ResolveStrategy resolveStrategy;
 
     /**
      * Strategy to apply when moving MotherNature
      */
-    private MoveMotherNatureStrategy moveMotherNatureStrategy;
+    transient private MoveMotherNatureStrategy moveMotherNatureStrategy;
 
     //region Creation
     /**
@@ -72,7 +73,8 @@ public class Archipelago {
         for (int i = 1; i < 12; i++) {
             if(i != 6){
                 int idx = idxStarting + i < 12 ? idxStarting + i : idxStarting + i - 12;
-                islandGroups.get(idx).placeStudent(students.get(idxStudent));
+                Student debug = students.get(idxStudent);
+                islandGroups.get(idx).placeStudent(debug);
                 idxStudent++;
             }
         }
@@ -95,7 +97,7 @@ public class Archipelago {
      * @param islandTileDestinationID Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws InvalidObjectException, NoSuchElementException {
+    public void moveMotherNature(int islandTileDestinationID, int moveCount) throws IllegalArgumentException, NoSuchElementException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), getIslandTileByID(islandTileDestinationID), moveCount, islandGroups);
     }
 
@@ -312,7 +314,7 @@ public class Archipelago {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID (PLEASE CONFIRM IT'S NOT IDX) of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();
@@ -370,7 +372,7 @@ public class Archipelago {
      * Returns the IslandTile ID of the IslandTile which contains MotherNature
      * @return the IslandTile ID of the IslandTile which contains MotherNature
      */
-    public int getMotherNatureIslandTileIndex(){
+    public int getMotherNatureIslandTileID(){
         return getMotherNatureIslandTile().getID();
     }
 
@@ -386,6 +388,7 @@ public class Archipelago {
         return result;
     }
 
+    //FIXME: maybe Hashmap<Integer, Boolean> would do the job? can you stack noEntry tiles?
     /**
      * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
      * @return The IslandGroups indexes along with the number of NoEntryTiles each contains

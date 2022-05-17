@@ -9,6 +9,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.Characters.CharacterManager;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
@@ -16,7 +17,9 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Class that extends Game. It is created instead of Game in an Expert match.
@@ -64,6 +67,16 @@ public class GameExpert extends Game {
     }
 
     /**
+     * This method progresses the turn, updating currentPlayer.
+     */
+    @Override
+    public void nextTurn() throws IllegalStateException{
+        super.nextTurn();
+        characterManager.resetActiveCharacter();
+    }
+
+
+    /**
      * Creates the characterManager (which creates the 3 characters). Called by the controller once all players are connected.
      */
     public void createCharacters(){
@@ -103,7 +116,7 @@ public class GameExpert extends Game {
      * @param ID the ID of the character to use
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(String nickname, int ID) throws  IllegalStateException{
+    public List<RequestParameter> useCharacter(String nickname, int ID) throws  IllegalStateException, IllegalArgumentException{
         return characterManager.useCharacter(players.getByNickname(nickname), ID);
     }
 
@@ -113,7 +126,9 @@ public class GameExpert extends Game {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException{
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
         characterManager.useAbility(parameterList);
     }
 
@@ -122,7 +137,6 @@ public class GameExpert extends Game {
      * Determining the winner if this is the last round to be played
      * Resetting the character used this round
      * Resetting the strategies
-     * Changing the Phase (????????)
      */
     @Override
     public void endOfRoundOperations() throws GameOverException {
@@ -139,7 +153,19 @@ public class GameExpert extends Game {
 
     //region State observer methods
 
-        //region Player
+        /**
+         * Returns the max amount of island groups a given player can move
+         * @param nickname the player who can move the returned number of steps
+         * @return the max amount of island groups a given player can move
+         */
+        @Override
+        public int getActualMovePower(String nickname){
+            int mp = super.getActualMovePower(nickname);
+            int extra = characterManager.getActiveCharacterID() == 4 ? 2 : 0;
+            return mp + extra;
+        }
+
+        //region Characters
         /**
          * method to observe number of coins of a given player.
          * @param nickname the player to check
@@ -148,8 +174,7 @@ public class GameExpert extends Game {
         public int getCoins(String nickname){
             return players.getByNickname(nickname).getCoins();
         }
-        //endregion
-        //region Characters
+
         /**
          * Method to observe which characters were created for this game.
          * @return a list of the created character IDs.
@@ -164,13 +189,69 @@ public class GameExpert extends Game {
 
         /**
          * Getter for the ActiveCharacter ID.
-         * @return the ActiveCharacter ID.
+         * @return the ActiveCharacter ID. -1 if no character is active.
          */
         public int getActiveCharacterID(){
             return characterManager.getActiveCharacterID();
         }
 
-        //endregion
+        /**
+         * Return the maximum number of times the ability of the active character can be used.
+         * @return the maximum number of times the ability of the active character can be used.
+         */
+        public int getActiveCharacterMaxUses(){
+            return characterManager.getActiveCharacterMaxUses();
+        }
+
+        /**
+         * Returns the number of times the ability of the active character can still be used.
+         * @return the number of times the ability of the active character can still be used.
+         */
+        public int getActiveCharacterUsesLeft(){
+            return characterManager.getActiveCharacterUsesLeft();
+        }
+
+        /**
+         * Getter for the students contained on a given character.
+         * @param ID the ID of the character to inspect
+         * @return a hash map containing the ID of the students as key and their color as value.
+         * If no students are contained, the map will be empty
+         */
+        public HashMap<Integer, Color> getCharacterStudents(int ID){
+            if(! characterManager.getCurrentCharacterIDs().contains(ID))
+                return new HashMap<>();
+            else
+                return characterManager.getCharacterStudents(ID);
+        }
+
+        /**
+         * Getter for the current cost of the character.
+         * @param ID the ID of the character requested
+         * @return the cost
+         */
+        public int getCharacterCost(int ID){
+            return characterManager.getCharacterCost(ID);
+        }
+
+        /**
+         * Getter for the number of entry tiles left on the character
+         * @return the number of entry tiles left on the character
+         */
+        @Override
+        public int getNoEntryTilesCharacter(int ID) {
+            return characterManager.getNoEntryTilesCharacter(ID);
+        }
+
+        /**
+         * Gets the current requested parameters for the active character
+         * @return the current requested parameters for the active character
+         */
+        @Override
+            public List<RequestParameter> getCurrentRequestParameters() {
+                return characterManager.getCurrentRequestParameters();
+        }
+
+    //endregion
 
     //endregion
 }

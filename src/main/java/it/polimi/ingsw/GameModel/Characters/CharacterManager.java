@@ -5,19 +5,23 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
 
 
+import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Class that stores and manages Characters, directing their activation and giving them the Consumer
  * objects which act as their abilities.
  */
-public class CharacterManager {
+public class CharacterManager  implements Serializable {
 
     private Archipelago archipelago;
     private Bag bag;
@@ -25,8 +29,9 @@ public class CharacterManager {
     private ProfessorSet professorSet;
     private List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
-    private CharacterFactory charFactory = new CharacterFactory();
-    private ConsumerSet consumerSet;
+    private List<RequestParameter> currentRequestParameters = new ArrayList<>();
+    transient private CharacterFactory charFactory = new CharacterFactory();
+    transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.
@@ -55,7 +60,7 @@ public class CharacterManager {
      */
     private List<Integer> selectRandomCharIDs() {
         List<Integer> IDs = new ArrayList<>();
-        Random random = new Random(System.currentTimeMillis());
+        Random random = new Random();
         while (IDs.size() < 3){
             Integer next = random.nextInt(12) + 1;
             if(! IDs.contains(next))
@@ -87,7 +92,8 @@ public class CharacterManager {
         }
         player.takeCoins(characters.get(ID - 1).getCost());
         currentCharacter = characters.get(ID - 1);
-        return currentCharacter.useCharacter(player);
+        currentRequestParameters = currentCharacter.useCharacter(player);
+        return currentRequestParameters;
     }
 
     /**
@@ -96,7 +102,14 @@ public class CharacterManager {
      * to the currently active character.
      * @param parameterList the list of the consumer's parameters
      */
-    public void useAbility(List<Integer> parameterList) throws IllegalStateException, LastRoundException, GameOverException {
+    public void useAbility(List<Integer> parameterList)
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
+            LastRoundException, GameOverException {
+        if(currentCharacter == null)
+            throw new IllegalStateException("No character was activated!");
+        else if(currentCharacter.getUsesLeft() <= 0)
+            throw new IllegalStateException("Character has no more uses lef!");
+
         int currentID = currentCharacter.getCharacterID();
         currentCharacter.useAbility(consumerSet.getConsumer(currentID), parameterList);
     }
@@ -119,13 +132,75 @@ public class CharacterManager {
     }
 
     /**
+     * Return the maximum number of times the ability of the active character can be used.
+     * @return the maximum number of times the ability of the active character can be used.
+     */
+    public int getActiveCharacterMaxUses(){
+        return currentCharacter == null ? 0 : currentCharacter.getMaxUses();
+    }
+
+    /**
+     * Returns the number of times the ability of the active character can still be used.
+     * @return the number of times the ability of the active character can still be used.
+     */
+    public int getActiveCharacterUsesLeft(){
+        return currentCharacter == null ? 0 : currentCharacter.getUsesLeft();
+    }
+
+    /**
      * Resets the character that was used this round, if there was any
      */
     public void resetActiveCharacter(){
+        currentRequestParameters.clear();
         for(Character character : characters) {
             if (character != null && character.wasUsedThisTurn())
                 character.resetUseState();
         }
         currentCharacter = null;
+    }
+
+    /**
+     * @return a list of IDs of the 3 characters that were randomly chosen for this game
+     */
+    public List<Integer> getCurrentCharacterIDs() {
+        return characters.stream().filter(Objects::nonNull).map(AbstractCharacter::getCharacterID).collect(Collectors.toList());
+    }
+
+    /**
+     * Getter for the students contained on a given character.
+     * @param ID the ID of the character to inspect
+     * @return a hash map containing the ID of the students as key and their color as value.
+     * If no students are contained, the map will be empty
+     */
+    public HashMap<Integer, Color> getCharacterStudents(int ID){
+        if(characters.get(ID - 1) instanceof StudentMoverCharacter)
+            return ((StudentMoverCharacter) characters.get(ID - 1)).getStudentIDsAndColor();
+        else
+            return new HashMap<>();
+    }
+
+    /**
+     * Getter for the current cost of the character.
+     * @param ID the ID of the character requested
+     * @return the cost
+     */
+    public int getCharacterCost(int ID){
+        return characters.get(ID -1) != null ? characters.get(ID - 1).getCost() : 0;
+    }
+
+    /**
+     * Getter for the number of entry tiles left on the character
+     * @return the number of entry tiles left on the character
+     */
+    public int getNoEntryTilesCharacter(int ID) {
+        return ID == 5 ? ((NoEntryCharacter)characters.get(ID - 1)).getNoEntryTiles() : 0;
+    }
+
+    /**
+     * Gets the current requested parameters for the active character
+     * @return the current requested parameters for the active character
+     */
+    public List<RequestParameter> getCurrentRequestParameters() {
+        return currentRequestParameters;
     }
 }

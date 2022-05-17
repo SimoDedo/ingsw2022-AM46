@@ -8,12 +8,13 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Model a group of island tiles
  */
-public class IslandGroup {
+public class IslandGroup implements Serializable {
     /**
      * IslandTiles that compose the IslandGroup
      */
@@ -40,11 +41,10 @@ public class IslandGroup {
      * @throws NoSuchElementException if there is no island tile that contains Mother Nature in this group
      */
     public IslandTile getMotherNatureTile() throws NoSuchElementException {
-        IslandTile temp = null;
         for(IslandTile islandTile : islandTiles){
-            if(islandTile.hasMotherNature())
-                temp = islandTile;
-            return temp;
+            if(islandTile.hasMotherNature()){
+                return islandTile;
+            }
         }
         throw new NoSuchElementException("No tile in this IslandGroup has Mother Nature");
     }
