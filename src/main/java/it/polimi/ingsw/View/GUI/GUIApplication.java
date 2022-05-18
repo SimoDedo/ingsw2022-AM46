@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * Class for creating the GUI and displaying it to the user, showing changes in the game based on
+ * Class for creating the GUIController and displaying it to the user, showing changes in the game based on
  * method calls from the GUIController class.
  */
 public class GUIApplication extends Application {
@@ -31,7 +31,7 @@ public class GUIApplication extends Application {
     private Scene loginScene, gameSetupScene, mainScene;
     private Stage stage;
 
-    private GUI controller;
+    private GUIController controller;
 
     public GUIApplication() {
         instance = this;
@@ -58,7 +58,10 @@ public class GUIApplication extends Application {
         }
         int i = 1;
         while (instance == null) {
-            System.out.println("zzz: " + i++);
+            if (i > 1) {
+                System.out.println("zzz: " + i);
+            }
+            i++;
             try {
                 Thread.sleep(500); // 450 is actually fine, but it might run slightly slower on some devices so...
             } catch (InterruptedException e) {
@@ -68,7 +71,7 @@ public class GUIApplication extends Application {
         return instance;
     }
 
-    public void setController(GUI controller) {
+    public void setController(GUIController controller) {
         this.controller = controller;
     }
 
@@ -302,7 +305,7 @@ public class GUIApplication extends Application {
 
     private void setupStage() {
         stage.setTitle("Eriantys AM46");
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image("/icon.png"));
     }
 
     private AnchorPane setupScene(VBox root) {
