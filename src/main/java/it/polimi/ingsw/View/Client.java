@@ -40,7 +40,6 @@ public class Client {
     private final ExecutorService infoQueue;
     private Ping ping;
     private ExecutorService pingExecutor;
-    private final Thread mainThread;
 
     private boolean gameStarted;
 
@@ -56,7 +55,6 @@ public class Client {
         requestQueue = Executors.newSingleThreadExecutor();
         infoQueue = Executors.newSingleThreadExecutor();
         gameStarted = false;
-        mainThread = new Thread(() -> UI.startGame());
     }
 
 
@@ -215,13 +213,13 @@ public class Client {
             lastUpdate = update;
             requestQueue.execute(() ->{
                 requestAction(update);
-                UI.notifyServerResponse(gameStarted);
+                UI.notifyServerResponse();
             });
         }
         else {
             infoQueue.execute(() -> {
                 displayInfo(update);
-                UI.notifyServerResponse(gameStarted);
+                UI.notifyServerResponse();
             });
         }
     }
@@ -258,7 +256,7 @@ public class Client {
                     toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
                     if(update.getGame().getGameMode() == GameMode.EXPERT)
                         toEnable.add(Command.CHARACTER_INFO);
-                    mainThread.start();
+                    UI.startGame();
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
@@ -319,7 +317,7 @@ public class Client {
                     toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
                     if(update.getGame().getGameMode() == GameMode.EXPERT)
                         toEnable.add(Command.CHARACTER_INFO);
-                    mainThread.start();
+                    UI.startGame();
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
