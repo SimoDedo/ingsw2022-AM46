@@ -55,11 +55,15 @@ public class GUIController {
 
     public void connectWithNicknameSuccessful() {
         guiApplication.switchToGameSetup();
+        enableGameSettings(); //FIXME DEBUG
     }
 
     public void enableGameSettings() {
         guiApplication.lookup("gameSettingsPane").setDisable(false);
         guiApplication.lookup("towerWizardPane").setDisable(true);
+        ( (ChoiceBox<String>) guiApplication.lookup("numChoice") ).getSelectionModel().select(0);
+        ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice") ).getSelectionModel().select(0);
+        guiApplication.lookup("gameSettingsButton").requestFocus();
     }
 
     public void sendGameSettings() {
@@ -67,12 +71,16 @@ public class GUIController {
         // sending stuff to client; if successful
         guiApplication.lookup("gameSettingsPane").setDisable(true);
         guiApplication.lookup("towerWizardPane").setDisable(false);
+        guiApplication.lookup("towerWizardButton").requestFocus();
+        updateTowerWizard(); // FIXME DEBUG
     }
 
     public void updateTowerWizard() {
         // called when there's an update in the game and I'm still waiting for it to start
         // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
-        // or something like that
+        // or something like that. and then set defaults:
+        ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+        ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
     }
 
     public void sendTowerColor() {

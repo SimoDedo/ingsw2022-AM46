@@ -63,7 +63,7 @@ public class GUIApplication extends Application {
             }
             i++;
             try {
-                Thread.sleep(500); // 450 is actually fine, but it might run slightly slower on some devices so...
+                Thread.sleep(100); // 450 is actually fine, but it might run slightly slower on some devices so...
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -85,15 +85,15 @@ public class GUIApplication extends Application {
         createMainScene();
     }
 
-    private void createLoginScene() {
+    public void createLoginScene() {
         VBox root = new VBox();
-        root.setBackground(new Background(new BackgroundImage(
+        AnchorPane anchorPane = setupScene(root);
+        anchorPane.setBackground(new Background(new BackgroundImage(
                 new Image("/bg1_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
-        AnchorPane anchorPane = setupScene(root);
         VBox gridContainer = new VBox();
         gridContainer.setAlignment(Pos.CENTER);
         gridContainer.setPadding(new Insets(20.0, 0.0, 0.0, 0.0));
@@ -137,8 +137,7 @@ public class GUIApplication extends Application {
         ipPane.add(portLabel, 0, 1);
         final TextField ipField = new TextField();
         ipField.setId("ipField");
-        ipField.setPrefHeight(50.0);
-        ipField.setPrefWidth(350.0);
+        ipField.setPrefSize(350.0, 50.0);
         ipField.setPromptText("Insert the IP to connect to. Default IP: localhost");
         ipField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -149,8 +148,7 @@ public class GUIApplication extends Application {
         ipPane.add(ipField, 1, 0);
         final TextField portField = new TextField();
         portField.setId("portField");
-        portField.setPrefHeight(50.0);
-        portField.setPrefWidth(350.0);
+        portField.setPrefSize(350.0, 50.0);
         portField.setPromptText("Insert the port to connect to. Default port: 4646");
         portField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -169,8 +167,7 @@ public class GUIApplication extends Application {
         nickPane.add(nickLabel, 0, 3);
         TextField nickField = new TextField();
         nickField.setId("nickField");
-        nickField.setPrefHeight(50.0);
-        nickField.setPrefWidth(350.0);
+        nickField.setPrefSize(350.0, 50.0);
         nickField.setPromptText("Insert your unique nickname...");
         nickField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -192,15 +189,15 @@ public class GUIApplication extends Application {
         loginScene = new Scene(root);
     }
 
-    private void createGameSetupScene() {
+    public void createGameSetupScene() {
         VBox root = new VBox();
-        root.setBackground(new Background(new BackgroundImage(
+        AnchorPane anchorPane = setupScene(root);
+        anchorPane.setBackground(new Background(new BackgroundImage(
                 new Image("/bg2_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
-        AnchorPane anchorPane = setupScene(root);
         VBox gridContainer = new VBox();
         gridContainer.setAlignment(Pos.CENTER);
         gridContainer.setPadding(new Insets(20.0, 0.0, 0.0, 0.0));
@@ -228,19 +225,22 @@ public class GUIApplication extends Application {
         ChoiceBox<String> numChoice = new ChoiceBox<>();
         numChoice.setId("numChoice");
         numChoice.getItems().setAll("2", "3", "4");
-        numChoice.setPrefHeight(50.0);
-        numChoice.setPrefWidth(350.0);
+        numChoice.setPrefSize(350.0, 50.0);
+        numChoice.setOnAction(actionEvent -> lookup("gameModeChoice").requestFocus());
         gameSettingsPane.add(numChoice, 1, 0);
         ChoiceBox<String> gameModeChoice = new ChoiceBox<>();
         gameModeChoice.setId("gameModeChoice");
         gameModeChoice.getItems().setAll("Standard", "Expert");
-        gameModeChoice.setPrefHeight(50.0);
-        gameModeChoice.setPrefWidth(350.0);
+        gameModeChoice.setPrefSize(350.0, 50.0);
+        gameModeChoice.setOnAction(actionEvent -> lookup("gameSettingsButton").requestFocus());
         gameSettingsPane.add(gameModeChoice, 1, 1);
 
         Button gameSettingsButton = new Button("Confirm game setup");
         gameSettingsButton.setId("gameSettingsButton");
         gameSettingsButton.setOnMouseClicked(mouseEvent -> controller.sendGameSettings());
+        gameSettingsButton.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) controller.sendGameSettings();
+        });
         gameSettingsPane.add(gameSettingsButton, 1, 2);
 
         GridPane towerWizardPane = new GridPane();
@@ -257,20 +257,26 @@ public class GUIApplication extends Application {
         ChoiceBox<String> colorChoice = new ChoiceBox<>();
         colorChoice.setId("colorChoice");
         colorChoice.getItems().setAll("White", "Grey", "Black");
-        colorChoice.setPrefHeight(50.0);
-        colorChoice.setPrefWidth(350.0);
+        colorChoice.setPrefSize(350.0, 50.0);
+        colorChoice.setOnAction(actionEvent -> lookup("wizardChoice").requestFocus());
         towerWizardPane.add(colorChoice, 1, 0);
         ChoiceBox<String> wizardChoice = new ChoiceBox<>();
         wizardChoice.setId("wizardChoice");
         wizardChoice.getItems().setAll("Samurai", "Witch", "Mage", "King");
-        wizardChoice.setPrefHeight(50.0);
-        wizardChoice.setPrefWidth(350.0);
+        wizardChoice.setPrefSize(350.0, 50.0);
+        wizardChoice.setOnAction(actionEvent -> lookup("towerWizardButton").requestFocus());
         towerWizardPane.add(wizardChoice, 1, 1);
         Button towerWizardButton = new Button("Confirm choices");
         towerWizardButton.setId("towerWizardButton");
         towerWizardButton.setOnMouseClicked(mouseEvent -> {
             controller.sendTowerColor();
             controller.sendWizardType();
+        });
+        towerWizardButton.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                controller.sendTowerColor();
+                controller.sendWizardType();
+            }
         });
         towerWizardPane.add(towerWizardButton, 1, 2);
         Label connectionMessage = new Label();
@@ -283,34 +289,76 @@ public class GUIApplication extends Application {
         gameSetupScene = new Scene(root);
     }
 
-    private void createMainScene() {
+    public void createMainScene() {
         VBox root = new VBox();
-        root.setBackground(new Background(new BackgroundImage(
+        AnchorPane anchorPane = setupScene(root);
+        anchorPane.setBackground(new Background(new BackgroundImage(
                 new Image("/bg3_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
-        AnchorPane anchorPane = setupScene(root);
-        GridPane gridContainer = new GridPane();
-        anchorPane.getChildren().add(gridContainer);
-        AnchorPane.setRightAnchor(gridContainer, 0.0);
-        AnchorPane.setBottomAnchor(gridContainer, 0.0);
-        AnchorPane.setLeftAnchor(gridContainer, 0.0);
-        AnchorPane.setTopAnchor(gridContainer, 0.0);
+        GridPane mainGrid = new GridPane();
+        anchorPane.getChildren().add(mainGrid);
+        AnchorPane.setRightAnchor(mainGrid, 0.0);
+        AnchorPane.setBottomAnchor(mainGrid, 0.0);
+        AnchorPane.setLeftAnchor(mainGrid, 0.0);
+        AnchorPane.setTopAnchor(mainGrid, 0.0);
+        mainGrid.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
+        mainGrid.setHgap(10.0);
+        mainGrid.setVgap(10.0);
 
-        // mainGrid.setGridLinesVisible(true);
+
+        mainGrid.add(createArchipelagoPane(), 1, 1);
+
+
+        mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
     }
 
-    private void setupStage() {
+    public AnchorPane createArchipelagoPane() {
+        AnchorPane archipelagoPane = new AnchorPane();
+        archipelagoPane.setId("archipelagoPane");
+        archipelagoPane.setPrefSize(600.0, 500.0);
+
+        // 12 islandtiles go here
+
+        // character hbox goes here
+
+        // cloud hbox goes here
+
+        // bag goes here
+
+        // coinheap goes here
+
+        return archipelagoPane;
+    }
+
+    public GridPane createPlayer(Pos position) {
+        GridPane playerPane = new GridPane();
+        double assistantSizeBig, assistantSizeSmall, rotateValue;
+        boolean handFirst, entranceFirst;
+        switch (position) {
+            case TOP_CENTER -> { //wip
+            }
+        }
+
+        //setting orientation goes here
+
+        // creating hand and discard pile goes here
+
+        // creating board and coins goes here
+
+        return playerPane;
+    }
+
+    public void setupStage() {
         stage.setTitle("Eriantys AM46");
         stage.getIcons().add(new Image("/icon.png"));
     }
 
     private AnchorPane setupScene(VBox root) {
-        root.setPrefWidth(1366);
-        root.setPrefHeight(768);
+        root.setPrefSize(1366.0, 760.0);
         root.setStyle("-fx-font-size: 14pt");
 
         MenuBar menuBar = new MenuBar();
@@ -356,17 +404,21 @@ public class GUIApplication extends Application {
         return stage.getScene().lookup("#" + id);
     }
 
-    public void fadeIn(Scene scene) {
-        DoubleProperty opacity = scene.getRoot().opacityProperty();
+    public Node getContent(Scene scene) {
+        return scene.getRoot().getChildrenUnmodifiable().get(1);
+    }
+
+    public void fadeIn(Node node) {
+        DoubleProperty opacity = node.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(500), new KeyValue(opacity, 1.0))
+                new KeyFrame(new Duration(5000), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
     }
 
-    public void fadeInLong(Scene scene) {
-        DoubleProperty opacity = scene.getRoot().opacityProperty();
+    public void fadeInLong(Node node) {
+        DoubleProperty opacity = node.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
                 new KeyFrame(new Duration(9999), new KeyValue(opacity, 1.0))
@@ -387,7 +439,7 @@ public class GUIApplication extends Application {
         stage.setScene(loginScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Login");
-        fadeIn(loginScene);
+        fadeIn(getContent(loginScene));
     }
 
     public void switchToGameSetup() {
@@ -406,7 +458,7 @@ public class GUIApplication extends Application {
         stage.setScene(gameSetupScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Game setup");
-        fadeIn(gameSetupScene);
+        fadeIn(getContent(gameSetupScene));
 
     }
 
@@ -414,7 +466,7 @@ public class GUIApplication extends Application {
         stage.setScene(mainScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Game");
-        fadeInLong(mainScene);
+        fadeInLong(getContent(mainScene));
     }
 
 }
