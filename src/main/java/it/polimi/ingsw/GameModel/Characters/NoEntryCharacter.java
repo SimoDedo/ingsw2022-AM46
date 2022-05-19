@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
 import java.util.List;
@@ -19,6 +20,18 @@ public class NoEntryCharacter extends AbstractCharacter {
         super(ID, cost, requestParameters);
         this.noEntryTiles = maxNoEntryTiles;
         this.maxNoEntryTiles = maxNoEntryTiles;
+    }
+
+    /**
+     * Along with the standard character activation, it checks that at least one no entry tile is left on the
+     * @param owner the player who activated this character
+     * @return a list of RequestParameters that will be needed by the game controller
+     */
+    @Override
+    public List<RequestParameter> useCharacter(Player owner) throws IllegalStateException{
+        if(noEntryTiles == 0)
+            throw  new IllegalStateException("There are no more no entry tiles left!");
+        return super.useCharacter(owner);
     }
 
     /**

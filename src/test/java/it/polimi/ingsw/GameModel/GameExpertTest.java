@@ -89,26 +89,7 @@ class GameExpertTest {
      * Tests that characters are correctly used and that multiple character usage isn't permitted.
      */
     @RepeatedTest(5)
-    void useCharacter() {
-        GameFactory gameFactory = new GameFactory();
-        GameExpert game = (GameExpert) gameFactory.create(4, GameMode.EXPERT);
-        game.createPlayer("Simo", TowerColor.BLACK);
-        game.createPlayer("Greg", TowerColor.BLACK);
-        game.createPlayer("Pirovano", TowerColor.WHITE);
-        game.createPlayer("Ceruti", TowerColor.WHITE);
-
-        game.createCharacters();
-        for (int i = 0; i < 3; i++) //Give enough coin for every possible character
-        game.players.getByNickname("Simo").awardCoin();
-        game.useCharacter("Simo", game.getDrawnCharacterIDs().get(0));
-        assertEquals(game.getDrawnCharacterIDs().get(0), game.getActiveCharacterID(),
-                "Active character should be the one selected");
-        assertThrows(IllegalStateException.class, () -> game.useCharacter("Greg", game.getDrawnCharacterIDs().get(1)),
-                "No other character should be able to get activated");
-    }
-
-    @RepeatedTest(5)
-    void endOfRoundOperations() throws GameOverException {
+    void useCharacter() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
         GameExpert game = (GameExpert) gameFactory.create(4, GameMode.EXPERT);
         game.createPlayer("Simo", TowerColor.BLACK);
@@ -119,9 +100,30 @@ class GameExpertTest {
         game.createCharacters();
         for (int i = 0; i < 3; i++) //Give enough coin for every possible character
             game.players.getByNickname("Simo").awardCoin();
+        game.players.getByNickname("Simo").addToDR(new Student(Color.RED, null)); //Avoids failure in character activation if it requires a student in Dining Room
+        game.useCharacter("Simo", game.getDrawnCharacterIDs().get(0));
+        assertEquals(game.getDrawnCharacterIDs().get(0), game.getActiveCharacterID(),
+                "Active character should be the one selected");
+        assertThrows(IllegalStateException.class, () -> game.useCharacter("Greg", game.getDrawnCharacterIDs().get(1)),
+                "No other character should be able to get activated");
+    }
+
+    @RepeatedTest(5)
+    void endOfRoundOperations() throws GameOverException, FullTableException {
+        GameFactory gameFactory = new GameFactory();
+        GameExpert game = (GameExpert) gameFactory.create(4, GameMode.EXPERT);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.BLACK);
+        game.createPlayer("Pirovano", TowerColor.WHITE);
+        game.createPlayer("Ceruti", TowerColor.WHITE);
+
+        game.createCharacters();
+        for (int i = 0; i < 3; i++) //Give enough coin for every possible character
+            game.players.getByNickname("Simo").awardCoin();
+        game.players.getByNickname("Simo").addToDR(new Student(Color.RED, null)); //Avoids failure in character activation if it requires a student in Dining Room
         game.useCharacter("Simo", game.getDrawnCharacterIDs().get(0));
         game.endOfRoundOperations();
         assertEquals(-1, game.getActiveCharacterID(),
-                "Active character should be the one selected");
+                "There should be no character active (ID = -1)");
     }
 }

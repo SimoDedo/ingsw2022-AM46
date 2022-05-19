@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
@@ -18,7 +19,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
 
     private boolean isFirstUse, wasUsedThisTurn, abilityUsed;
 
-    private List<RequestParameter> requestParameters;
+    private final List<RequestParameter> requestParameters;
 
     private Player owner;
 
@@ -34,21 +35,32 @@ public abstract class AbstractCharacter implements Character, Serializable {
     /**
      * Precedes a character's ability activation. The character sets its activator as its owner.
      * If this is the first time the character is being used in the game, the cost is increased by
-     * one. Finally, the method returns a list of parameters it needs in order for its ability to
+     * one. If the character requires a dining room student, it checks if at least one is present in the player's
+     * dining room, otherwise throws an exception.
+     * Finally, the method returns a list of parameters it needs in order for its ability to
      * activate, which will be picked up by the controller.
      * @param owner the player who activated this character
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player owner) {
-        if (wasUsedThisTurn) throw new IllegalStateException("Already activated");
-        else {
-            this.owner = owner;
-            if (isFirstUse) {
-                isFirstUse = false;
-                cost++;
+    public List<RequestParameter> useCharacter(Player owner) throws  IllegalStateException{
+        if (wasUsedThisTurn) throw new IllegalStateException("Already activated.");
+        if(requestParameters.contains(RequestParameter.STUDENT_DINING_ROOM)){
+            int emptyTables = 0;
+            for(Color color : Color.values()){
+                if(owner.getTableStudentsIDs(color).size() == 0)
+                    emptyTables++;
             }
-            wasUsedThisTurn = true;
+            if(emptyTables == 5)
+                throw new IllegalStateException("This character requires at least one student to be in your Dining Room.");
         }
+
+        this.owner = owner;
+        if (isFirstUse) {
+            isFirstUse = false;
+            cost++;
+        }
+        wasUsedThisTurn = true;
+
         return requestParameters;
     }
 
