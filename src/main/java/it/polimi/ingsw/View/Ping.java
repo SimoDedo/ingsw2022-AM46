@@ -2,6 +2,10 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Network.Message.UserAction.PingUserAction;
 
+/**
+ * Class that implements runnable.
+ * When ran, it starts a ping with the server.
+ */
 @SuppressWarnings("BusyWait")
 public class Ping implements Runnable{
 

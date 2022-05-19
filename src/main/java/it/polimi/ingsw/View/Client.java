@@ -28,6 +28,9 @@ public class Client {
 
     private String nickname;
 
+    /**
+     * The last update receive. It is used to ask again the UI for input when error is received.
+     */
     private Update lastUpdate;
 
     private Socket socket;
@@ -36,13 +39,26 @@ public class Client {
     private InputStream in;
     private ObjectInputStream inObj;
 
+    /**
+     * Thread queue where all operations that must request something to the user are executed.
+     */
     private final ExecutorService requestQueue;
+    /**
+     * Thread queue where all operations that must only show information to the user are executed.
+     */
     private final ExecutorService infoQueue;
     private Ping ping;
+    /**
+     * Executor which will only execute ping related threads.
+     */
     private ExecutorService pingExecutor;
 
     private boolean gameStarted;
 
+    /**
+     * Constructor for the Client
+     * @param chosenUI represents a CLI or a GUI.
+     */
     public Client(String chosenUI){
         if(chosenUI != null){
             if(chosenUI.equals("cli"))
@@ -57,7 +73,12 @@ public class Client {
         gameStarted = false;
     }
 
-
+    /**
+     * Main method that starts by requesting whether the user wants to use a CLI or a GUI.
+     * Then, server IP and port are requested though the chosen UI, the connection is established
+     * and the ping is started. A nickname is then requested and finally the main loop of receiving server responses
+     * is started.
+     */
     public void start(){
         if(UI == null) //Skipped if --cli or --gui option
             askCLIorGUI();
@@ -83,6 +104,11 @@ public class Client {
 
     //region Server connection
 
+    /**
+     * Tries to connect to the lobby server at the given address.
+     * @param IP ip to connect to
+     * @param port port to connect to
+     */
     private void connectToLobbyServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
@@ -97,12 +123,18 @@ public class Client {
         }
     }
 
+    /**
+     * Tries to login by sending a login user action with chosen username.
+     */
     private void tryLobbyLogin(){
         LoginUserAction login;
         login = new LoginUserAction(nickname);
         sendUserAction(login);
     }
 
+    /**
+     * Disconnects user from server.
+     */
     private void disconnectFromLobby(){
         try {
             socket.close();
@@ -111,6 +143,11 @@ public class Client {
         }
     }
 
+    /**
+     * Tries to connect to the match server at the given address.
+     * @param IP ip to connect to
+     * @param port port to connect to
+     */
     private void connectToMatchServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
@@ -127,12 +164,18 @@ public class Client {
         sendUserAction(new LoginUserAction(nickname));
     }
 
+    /**
+     * Starts ping with the server to which the socket is connected.
+     */
     private void startPing(){
         ping = new Ping(this);
         pingExecutor = Executors.newSingleThreadExecutor();
         pingExecutor.execute(ping);
     }
 
+    /**
+     * Stops ping with the server to which the socket is connected. Waits for the ping to have stopped before returning.
+     */
     private void stopPing(){
         pingExecutor.shutdownNow();
         boolean error;
@@ -148,6 +191,9 @@ public class Client {
     }
     //endregion
 
+    /**
+     * Asks on the terminal whether the user wants to play with CLI or GUI
+     */
     private void askCLIorGUI(){
         Scanner sysIn = new Scanner(System.in);
         int viewChoice = 0;
@@ -176,6 +222,11 @@ public class Client {
     }
 
     //region Parsing
+
+    /**
+     * Parses a received message.
+     * @param message a message sent by the server.
+     */
     private void parseMessage(Message message){
         if(message instanceof PingInfo){
             ping.received();
@@ -208,6 +259,13 @@ public class Client {
         }
     }
 
+    /**
+     * If the server sent an update, this method parses the update based on the action taking player.
+     * If the action taking player of the update is this client, then executes in a thread queue.
+     * If it isn't, it executes on a different thread queue.
+     * This allows the Client to make request of the user and show them info in parallel.
+     * @param update the update received.
+     */
     private void parseUpdate(Update update){
         if(nickname.equals(update.getActionTakingPlayer()) && update.getNextUserAction() != null){
             lastUpdate = update;
@@ -224,6 +282,11 @@ public class Client {
         }
     }
 
+    /**
+     * Parses the update on the premise of making the user a request of some kind, either by directly
+     * requesting it or by enabling and disabling commands that allow the user to take an action.
+     * @param update the update received.
+     */
     private void requestAction(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
@@ -300,6 +363,12 @@ public class Client {
             UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
     }
 
+    /**
+     * Parses the update on the premise of showing the player some information.
+     * Nothing will be requested of the user, at most some commands will be disabled based on what action is
+     * expected to be taken.
+     * @param update the update received.
+     */
     private void displayInfo(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
@@ -350,6 +419,11 @@ public class Client {
     //endregion
 
     //region Network send/receive
+
+    /**
+     * Sends a UserAction through the socket.
+     * @param userAction the UserAction to be sen.
+     */
     public synchronized void sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
@@ -362,6 +436,10 @@ public class Client {
         }
     }
 
+    /**
+     * Receives a message from the server through the socket.
+     * @return
+     */
     private Message receiveMessage(){
         Object message = null;
         try {
@@ -378,11 +456,17 @@ public class Client {
     }
     //endregion
 
+    /**
+     * Clears the terminal.
+     */
     private void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    /**
+     * Closes the application.
+     */
     private void reset(){
         try {
             socket.close();

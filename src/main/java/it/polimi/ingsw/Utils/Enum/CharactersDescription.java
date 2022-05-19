@@ -1,5 +1,9 @@
 package it.polimi.ingsw.Utils.Enum;
 
+/**
+ * Enum that represent each character.
+ * Each one has a description attached.
+ */
 public enum CharactersDescription {
     C1("Take 1 Student from this card and place it on an Island of your choice. Then, draw a new Student from the Bag and place it on this card."),
     C2("During this turn, you take control of any number of Professors even if you have the same number of Students as the player who currently controls them."),

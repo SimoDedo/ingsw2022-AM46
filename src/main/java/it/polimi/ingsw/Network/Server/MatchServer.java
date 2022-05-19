@@ -46,11 +46,6 @@ public class MatchServer implements Server, Runnable {
      */
     private Map<String, SocketConnection> connectionMap = new HashMap<>();
 
-    /**
-     * HashMap for storing the VirtualViews associated with each nickname.
-     */
-    private Map<String, VirtualView> viewMap = new HashMap<>();
-
     private ExecutorService executor;
 
     /**
@@ -191,7 +186,6 @@ public class MatchServer implements Server, Runnable {
                 System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port);
                 registerClient(IP, nickname, socketConnection);
                 controller.loginHandle(nickname);
-                viewMap.put(nickname, new VirtualView());
             } else {
                 socketConnection.sendMessage(new LoginError("The server is full!"));
                 socketConnection.close();

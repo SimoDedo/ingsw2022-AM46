@@ -2,6 +2,9 @@ package it.polimi.ingsw.Network.Message.Info;
 
 import java.net.InetAddress;
 
+/**
+ * Info sent by the LobbyServer to inform the client of the address and port of the MatchServer assigned.
+ */
 public class ServerLoginInfo extends Info {
 
     private InetAddress IP;
