@@ -63,6 +63,7 @@ public class LobbyServer implements Server {
             try {
                 tempSocket = mainSocket.accept();
                 SocketConnection newConnection = new SocketConnection(tempSocket, this);
+                System.out.println(newConnection.getInetAddress() + " connected to lobby server.");
                 executor.execute(newConnection);
                 connections.add(newConnection);
             } catch (IOException ioe) {
@@ -100,7 +101,7 @@ public class LobbyServer implements Server {
     }
 
     @Override
-    public void parseAction(SocketConnection socketConnection, UserAction userAction) {
+    public synchronized void parseAction(SocketConnection socketConnection, UserAction userAction) {
         if (userAction.getUserActionType() == UserActionType.LOGIN) {
             handleLogin(socketConnection, (LoginUserAction) userAction);
         }
@@ -123,7 +124,7 @@ public class LobbyServer implements Server {
             socketConnection.sendMessage(new LoginError("Nickname should start with a letter or number!"));
         }
         else {
-            System.out.println("\"" + loginAction.getNickname() + "\" connected to lobby server");
+            System.out.println("\"" + loginAction.getNickname() + "\" (" + socketConnection.getInetAddress() + ") logged in.");
             registerClient(loginAction.getNickname(), socketConnection.getInetAddress());
             MatchServer serverToConnect = null;
             for (MatchServer server : matchServers) {
@@ -144,15 +145,18 @@ public class LobbyServer implements Server {
         }
     }
 
+
     public void deleteMatch(MatchServer matchServer){
         matchServers.remove(matchServer);
     }
 
     public void registerClient(String nickname, InetAddress IP) {
         registeredNicks.put(nickname, IP);
+
     }
 
     public void unregisterClient(String nickname, InetAddress IP) {
         registeredNicks.remove(nickname, IP);
+        System.out.println("\"" + nickname + "\" (" + IP + ") logged out.");
     }
 }

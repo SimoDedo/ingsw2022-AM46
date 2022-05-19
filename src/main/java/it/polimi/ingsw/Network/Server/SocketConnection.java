@@ -32,7 +32,7 @@ public class SocketConnection implements Runnable {
         this.socket = clientSocket;
         this.server = server;
         try {
-            socket.setSoTimeout(2000); //2 seconds time out, client needs to keep heartbeat
+            socket.setSoTimeout(5000); //2 seconds time out, client needs to keep heartbeat
             inputStream = new ObjectInputStream(socket.getInputStream());
             outputStream = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException ioe) {
@@ -74,6 +74,13 @@ public class SocketConnection implements Runnable {
         }
     }
 
+    private void handleClosing(){
+        if(server instanceof MatchServer)
+            closeMatch();
+        else
+            close();
+    }
+
     public void close() {
         setActive(false);
         try {
@@ -105,10 +112,7 @@ public class SocketConnection implements Runnable {
                 server.parseAction(this, action);
         } catch (IOException | ClassNotFoundException e) {
             //e.printStackTrace();
-            if(server instanceof MatchServer)
-                closeMatch();
-            else
-                close();
+            handleClosing();
         }
     }
 
@@ -124,10 +128,7 @@ public class SocketConnection implements Runnable {
             outputStream.reset(); //FIXME: !!!!!!!! ERRORS!!!!!!!!!! maybe fixed with synchronizing
         } catch (Exception e) { // what exceptions are thrown here?
             e.printStackTrace();
-            if(server instanceof MatchServer)
-                closeMatch();
-            else
-                close();
+            handleClosing();
         }
     }
 }

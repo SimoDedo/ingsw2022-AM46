@@ -91,9 +91,9 @@ public class Client {
             in = socket.getInputStream();
             inObj  = new ObjectInputStream(in);
             UI.displayInfo("Connected to lobby server.");
-            socket.setSoTimeout(2000);
+            socket.setSoTimeout(5000);
         } catch (IOException e) {
-            UI.displayError("Could not connect to server.", false);
+            UI.displayError("Could not connect to server: " + e.getLocalizedMessage(), false);
         }
     }
 
@@ -107,7 +107,7 @@ public class Client {
         try {
             socket.close();
         } catch (IOException e) {
-            UI.displayError("Error in disconnecting from server", true);
+            UI.displayError("Error in disconnecting from server: " + e.getLocalizedMessage(), true);
         }
     }
 
@@ -121,7 +121,7 @@ public class Client {
             socket.setSoTimeout(2000);
             UI.displayInfo("Connected to match server.");
         } catch (IOException e) {
-            UI.displayError("Could not connect to match server. Error: " + e, true);
+            UI.displayError("Could not connect to match server: " + e, true);
             reset();
         }
         sendUserAction(new LoginUserAction(nickname));
@@ -142,7 +142,7 @@ public class Client {
             error = true;
         }
         if (error){
-            UI.displayError("Error occurred while shutting down ping.", true);
+            UI.displayError("Error occurred while shutting down ping." , true);
             reset();
         }
     }
@@ -357,7 +357,7 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            UI.displayError("Unable to write to server.", true);
+            UI.displayError("Unable to write to server: " + e.getLocalizedMessage(), true);
             reset();
         }
     }
@@ -371,7 +371,7 @@ public class Client {
             reset();
         }
         if(!(message instanceof Message)){
-            UI.displayError("Server sending wrong objects", true);
+            UI.displayError("Server didn't send correct information.", true);
             reset();
         }
         return (Message) message;
