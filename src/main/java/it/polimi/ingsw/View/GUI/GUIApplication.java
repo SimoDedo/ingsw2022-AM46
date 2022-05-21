@@ -20,12 +20,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.util.Pair;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
@@ -42,7 +37,7 @@ public class GUIApplication extends Application {
 
     private GUIController controller;
 
-    private final Executor runLaterExecutor = Platform::runLater;
+    public final static Executor runLaterExecutor = Platform::runLater;
 
     public GUIApplication() {
         instance = this;
@@ -321,6 +316,10 @@ public class GUIApplication extends Application {
         mainGrid.add(new ArchipelagoPane(), 1, 1);
         mainGrid.add(new PlayerPane(Pos.BOTTOM_CENTER), 1, 2);
         mainGrid.add(new PlayerPane(Pos.TOP_CENTER), 1, 0);
+
+        Button debugButton = new Button("DEBUG");
+        debugButton.setOnMouseClicked(mouseEvent -> controller.utilityFunction());
+        mainGrid.add(debugButton, 2, 2);
 
         mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);

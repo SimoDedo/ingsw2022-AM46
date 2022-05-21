@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IslandTilePane extends StackPane {
 
-    boolean partyMode = true;
+    boolean partyMode = false;
 
     static double size = 120.0, shrinkConstant = 0.80;
 
@@ -29,6 +29,10 @@ public class IslandTilePane extends StackPane {
         imageView.setCache(true);
         this.getChildren().add(imageView);
         IslandTilePane.setAlignment(imageView, Pos.CENTER);
+
+        // gridpane for tower, mother nature, no entry tile goes here
+
+        // gridpane for students goes here
     }
 
     public void setMergePoints(int index) {
@@ -102,5 +106,6 @@ public class IslandTilePane extends StackPane {
 
     public Point2D getCenter() {
         return new Point2D(getLayoutX() + size / 2, getLayoutY() + size / 2);
+        // return new Point2D(localToParent(0,0).getX() + size / 2, localToParent(0,0).getY() + size / 2);
     }
 }
