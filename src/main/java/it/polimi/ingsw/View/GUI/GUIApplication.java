@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,6 +20,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.Pair;
+
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Class for creating the GUIController and displaying it to the user, showing changes in the game based on
@@ -29,9 +37,12 @@ public class GUIApplication extends Application {
     private static GUIApplication instance;
 
     private Scene loginScene, gameSetupScene, mainScene;
+
     private Stage stage;
 
     private GUIController controller;
+
+    private final Executor runLaterExecutor = Platform::runLater;
 
     public GUIApplication() {
         instance = this;
@@ -58,10 +69,7 @@ public class GUIApplication extends Application {
         }
         int i = 1;
         while (instance == null) {
-            if (i > 1) {
-                System.out.println("zzz: " + i);
-            }
-            i++;
+            // System.out.println("zzz: " + i++);
             try {
                 Thread.sleep(100); // 450 is actually fine, but it might run slightly slower on some devices so...
             } catch (InterruptedException e) {
@@ -81,15 +89,15 @@ public class GUIApplication extends Application {
         createLoginScene();
         setupStage();
         switchToLogin();
-        createGameSetupScene();
-        createMainScene();
+        runLaterExecutor.execute(this::createGameSetupScene);
+        runLaterExecutor.execute(this::createMainScene);
     }
 
     public void createLoginScene() {
         VBox root = new VBox();
         AnchorPane anchorPane = setupScene(root);
         anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/bg1_unfocused.png"),
+                new Image("/general/bg1_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
@@ -103,7 +111,7 @@ public class GUIApplication extends Application {
         AnchorPane.setLeftAnchor(gridContainer, 0.0);
         AnchorPane.setTopAnchor(gridContainer, 0.0);
 
-        Image iconPlusName = new Image("/iconPlusName.png");
+        Image iconPlusName = new Image("/general/iconPlusName.png");
         ImageView imageView = new ImageView(iconPlusName);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(400);
@@ -193,7 +201,7 @@ public class GUIApplication extends Application {
         VBox root = new VBox();
         AnchorPane anchorPane = setupScene(root);
         anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/bg2_unfocused.png"),
+                new Image("/general/bg2_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
@@ -293,12 +301,14 @@ public class GUIApplication extends Application {
         VBox root = new VBox();
         AnchorPane anchorPane = setupScene(root);
         anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/bg3_unfocused.png"),
+                new Image("/general/bg3_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
         GridPane mainGrid = new GridPane();
+        mainGrid.setId("mainGrid");
+        mainGrid.setAlignment(Pos.CENTER);
         anchorPane.getChildren().add(mainGrid);
         AnchorPane.setRightAnchor(mainGrid, 0.0);
         AnchorPane.setBottomAnchor(mainGrid, 0.0);
@@ -308,53 +318,17 @@ public class GUIApplication extends Application {
         mainGrid.setHgap(10.0);
         mainGrid.setVgap(10.0);
 
-
-        mainGrid.add(createArchipelagoPane(), 1, 1);
-
+        mainGrid.add(new ArchipelagoPane(), 1, 1);
+        mainGrid.add(new PlayerPane(Pos.BOTTOM_CENTER), 1, 2);
+        mainGrid.add(new PlayerPane(Pos.TOP_CENTER), 1, 0);
 
         mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
     }
 
-    public AnchorPane createArchipelagoPane() {
-        AnchorPane archipelagoPane = new AnchorPane();
-        archipelagoPane.setId("archipelagoPane");
-        archipelagoPane.setPrefSize(600.0, 500.0);
-
-        // 12 islandtiles go here
-
-        // character hbox goes here
-
-        // cloud hbox goes here
-
-        // bag goes here
-
-        // coinheap goes here
-
-        return archipelagoPane;
-    }
-
-    public GridPane createPlayer(Pos position) {
-        GridPane playerPane = new GridPane();
-        double assistantSizeBig, assistantSizeSmall, rotateValue;
-        boolean handFirst, entranceFirst;
-        switch (position) {
-            case TOP_CENTER -> { //wip
-            }
-        }
-
-        //setting orientation goes here
-
-        // creating hand and discard pile goes here
-
-        // creating board and coins goes here
-
-        return playerPane;
-    }
-
     public void setupStage() {
         stage.setTitle("Eriantys AM46");
-        stage.getIcons().add(new Image("/icon.png"));
+        stage.getIcons().add(new Image("/general/icon.png"));
     }
 
     private AnchorPane setupScene(VBox root) {
@@ -362,6 +336,7 @@ public class GUIApplication extends Application {
         root.setStyle("-fx-font-size: 14pt");
 
         MenuBar menuBar = new MenuBar();
+        menuBar.setStyle("-fx-font-size: 10pt");
         Menu helpMenu = new Menu("Help");
         helpMenu.setId("helpMenu");
         MenuItem about = new MenuItem("About Eriantys");
@@ -412,16 +387,7 @@ public class GUIApplication extends Application {
         DoubleProperty opacity = node.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(5000), new KeyValue(opacity, 1.0))
-        );
-        fadeIn.play();
-    }
-
-    public void fadeInLong(Node node) {
-        DoubleProperty opacity = node.opacityProperty();
-        Timeline fadeIn = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(9999), new KeyValue(opacity, 1.0))
+                new KeyFrame(new Duration(400), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
     }
@@ -466,7 +432,7 @@ public class GUIApplication extends Application {
         stage.setScene(mainScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Game");
-        fadeInLong(getContent(mainScene));
+        fadeIn(getContent(mainScene));
     }
 
 }

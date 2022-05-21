@@ -5,10 +5,14 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class for controlling the GUIController based on method calls from the client.
@@ -17,6 +21,8 @@ public class GUIController {
 
     GUI gui;
     private GUIApplication guiApplication;
+
+    private List<List<Integer>> groupList = new ArrayList<>();
 
     public GUIController(GUI gui) {
         this.gui = gui;
@@ -37,8 +43,8 @@ public class GUIController {
     public void connectToIP() {
         String IP = ( (TextField) guiApplication.lookup("ipField")).getText();
         String port = ( (TextField) guiApplication.lookup("portField")).getText();
-        System.out.println("Connecting to " + IP + ":" + port); //da cambiare
-        connectToIPSuccessful(); // da cambiare
+        System.out.println("Connecting to " + IP + ":" + port); // DELETEME debug
+        connectToIPSuccessful(); // DELETEME debug
     }
 
     public void connectToIPSuccessful() {
@@ -49,13 +55,13 @@ public class GUIController {
 
     public void connectWithNickname() {
         String nickname = ( (TextField) guiApplication.lookup("nickField")).getText();
-        System.out.println("Connecting with nickname " + nickname); // da cambiare
-        connectWithNicknameSuccessful(); // da cambiare
+        System.out.println("Connecting with nickname " + nickname); // DELETEME debug
+        connectWithNicknameSuccessful(); // DELETEME debug
     }
 
     public void connectWithNicknameSuccessful() {
         guiApplication.switchToGameSetup();
-        enableGameSettings(); //FIXME DEBUG
+        enableGameSettings(); // DELETEME debug
     }
 
     public void enableGameSettings() {
@@ -72,7 +78,7 @@ public class GUIController {
         guiApplication.lookup("gameSettingsPane").setDisable(true);
         guiApplication.lookup("towerWizardPane").setDisable(false);
         guiApplication.lookup("towerWizardButton").requestFocus();
-        updateTowerWizard(); // FIXME DEBUG
+        updateTowerWizard(); // DELETEME debug
     }
 
     public void updateTowerWizard() {
@@ -87,7 +93,7 @@ public class GUIController {
         // TowerColor lookup.gettext e switch case per trasformare in enum
         // fallisce se il campo è vuoto
         //towercolor disable
-        System.out.println("Tower color chosen");
+        System.out.println("Tower color chosen"); // DELETEME debug
     }
 
     public void sendWizardType() {
@@ -114,6 +120,27 @@ public class GUIController {
 
     public void startGame() {
         guiApplication.switchToMain();
+        for (int i = 0; i < 12; i++) {
+            List<Integer> newGroup = new ArrayList<>();
+            newGroup.add(i);
+            groupList.add(newGroup);
+        }
+        updateArchipelago(); //DELETEME debug
+    }
+
+    public void updateArchipelago() {
+        // compare old groupList with new groupList, in the island tiles number order
+        // when a diff is found in island j which has just been merged:
+        // ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        // Point2D mergeDiff = archipelagoPane.calcMergeDiff(j - 1, j);
+        // archipelagoPane.relocateBack(j, mergeDiff);
+        // for i in (islandGroup che sto analizzando adesso, quello che contiene j-1) :
+        // archipelagoPane.relocateForward(i, mergeDiff);
+
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
+        Point2D mergeDiff = archipelagoPane.calcMergeDiff(0, 1);
+        archipelagoPane.relocateBack(1, mergeDiff);
+        archipelagoPane.relocateForward(0, mergeDiff);
     }
 
 }
