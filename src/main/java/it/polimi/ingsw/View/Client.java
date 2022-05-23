@@ -378,7 +378,9 @@ public class Client {
         List<Command> toDisable = new ArrayList<>();
         List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
-            case TOWER_COLOR, WAIT_GAME_START, WIZARD -> {
+            case TOWER_COLOR -> {}
+            case WIZARD, WAIT_GAME_START -> {
+                UI.updateSetup(update.getGame(), update.getUserActionTaken());
             }
             case PLAY_ASSISTANT -> {
                 toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));

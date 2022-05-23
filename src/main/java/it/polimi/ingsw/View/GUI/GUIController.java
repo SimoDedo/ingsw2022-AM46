@@ -132,21 +132,21 @@ public class GUIController {
         return GameMode.valueOf(gameMode.toUpperCase());
     }
 
+    public void showGameMode(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ( (ChoiceBox<String>) guiApplication.lookup("numChoice")).setValue(String.valueOf(game.getNumOfPlayers()));
+            String mode = game.getGameMode() == GameMode.NORMAL ? "Standard" : "Expert"; //This sucks but __someone__ changed it from normal to standard.
+            ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice")).setValue(mode);
+        });
+    }
+
     public void showTowerWizard() {
         GUIApplication.runLaterExecutor.execute(() -> {
-            guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("towerWizardPane").setDisable(false);
             guiApplication.lookup("towerWizardButton").requestFocus();
 
             if(debug){
-                for(TowerColor towerColor : TowerColor.values())
-                    ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getItems().setAll(
-                            towerColor.toString().toLowerCase());
-                for(WizardType wizard : WizardType.values())
-                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(
-                            wizard.toString().toLowerCase());
-
                 ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
                 ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
             }
@@ -163,16 +163,19 @@ public class GUIController {
         List<String> wiz = wizards.stream()
                 .map(w -> w.toString().charAt(0) + w.toString().substring(1).toLowerCase())
                 .toList();
-        GUIApplication.runLaterExecutor.execute(() -> {
-            if(! guiApplication.lookup("colorChoice").isDisable() ){
-                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(tc);
-                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
-            }
-            ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getItems().setAll(wiz);
-            ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
-
-            guiApplication.lookup("towerWizardButton").requestFocus();
-        });
+        if(! guiApplication.lookup("towerWizardPane").isDisable()){
+            GUIApplication.runLaterExecutor.execute(() -> {
+                if(! guiApplication.lookup("colorChoice").isDisable() ){
+                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(tc);
+                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+                }
+                if(! guiApplication.lookup("wizardChoice").isDisable() ) {
+                    ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getItems().setAll(wiz);
+                    ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getSelectionModel().select(0);
+                }
+                guiApplication.lookup("towerWizardButton").requestFocus();
+            });
+        }
     }
 
     public void towerColorSuccessful(){

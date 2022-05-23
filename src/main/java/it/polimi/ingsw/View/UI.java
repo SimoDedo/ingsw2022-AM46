@@ -34,6 +34,8 @@ public interface UI {
 
     void displayError(String error, boolean isUrgent);
 
+    void updateSetup(ObservableByClient game, UserActionType actionTaken);
+
     void displayBoard(ObservableByClient game, UserActionType actionTaken);
 
 }

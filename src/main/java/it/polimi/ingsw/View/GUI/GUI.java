@@ -85,6 +85,7 @@ public class GUI implements UI {
     @Override
     public void requestTowerColor(ObservableByClient game) {
         guiController.connectWithNicknameSuccessful();
+        guiController.showGameMode(game);
         guiController.showTowerWizard();
         guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         waitInput();
@@ -100,8 +101,14 @@ public class GUI implements UI {
         }
         else
             waitInput();
-        guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
+        //guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
+        // causes automatic selection to be reset, however it's needed if somehow the real time updating fails. but it shouldn't so it's removed for now
         client.sendUserAction(new WizardUserAction(this.nickname, guiController.getWizardChosen()));
+    }
+
+    @Override
+    public void updateSetup(ObservableByClient game, UserActionType actionTaken) {
+        guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
     }
 
     @Override
