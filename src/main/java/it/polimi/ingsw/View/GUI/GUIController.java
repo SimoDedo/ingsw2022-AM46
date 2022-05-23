@@ -1,5 +1,8 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.Utils.Enum.GameMode;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Enum.WizardType;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -11,8 +14,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class for controlling the GUIController based on method calls from the client.
@@ -24,6 +26,8 @@ public class GUIController {
 
     private List<List<Integer>> groupList = new ArrayList<>();
 
+    private boolean debug = false;
+
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
@@ -31,101 +35,180 @@ public class GUIController {
     }
 
     public void displayError(String errorDescription) {
-        Alert errorDialog = new Alert(Alert.AlertType.ERROR);
-        Stage stage = (Stage) errorDialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("/icon.png"));
-        errorDialog.setTitle("Error");
-        errorDialog.setHeaderText("Wrong action!");
-        errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
-        errorDialog.showAndWait();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            Alert errorDialog = new Alert(Alert.AlertType.ERROR);
+            Stage stage = (Stage) errorDialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("/general/icon.png"));
+            errorDialog.setTitle("Error");
+            errorDialog.setHeaderText("Wrong action!");
+            errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
+            errorDialog.showAndWait();
+        });
     }
 
     public void connectToIP() {
-        String IP = ( (TextField) guiApplication.lookup("ipField")).getText();
-        String port = ( (TextField) guiApplication.lookup("portField")).getText();
-        System.out.println("Connecting to " + IP + ":" + port); // DELETEME debug
-        connectToIPSuccessful(); // DELETEME debug
+        if(debug){
+            String IP = ( (TextField) guiApplication.lookup("ipField")).getText();
+            String port = ( (TextField) guiApplication.lookup("portField")).getText();
+            System.out.println("Connecting to " + IP + ":" + port); // DELETEME debug
+            connectToIPSuccessful(); // DELETEME debug
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public Map<String, String> getIPChosen(){
+        Map<String, String> map = new HashMap<>();
+        map.put("IP",( (TextField) guiApplication.lookup("ipField")).getText() );
+        map.put("port" ,  ( (TextField) guiApplication.lookup("portField")).getText());
+        return map;
     }
 
     public void connectToIPSuccessful() {
-        guiApplication.lookup("ipPane").setDisable(true);
-        guiApplication.lookup("nickPane").setDisable(false);
-        ( (Button) guiApplication.lookup("connectButton")).setText("Connected successfully!");
+        GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("ipPane").setDisable(true));
+        GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("nickPane").setDisable(false));
+        GUIApplication.runLaterExecutor.execute(() -> ( (Button) guiApplication.lookup("connectButton")).setText("Connected successfully!"));
     }
 
     public void connectWithNickname() {
-        String nickname = ( (TextField) guiApplication.lookup("nickField")).getText();
-        System.out.println("Connecting with nickname " + nickname); // DELETEME debug
-        connectWithNicknameSuccessful(); // DELETEME debug
+        if(debug){
+            String nickname = ( (TextField) guiApplication.lookup("nickField")).getText();
+            System.out.println("Connecting with nickname " + nickname); // DELETEME debug
+            connectWithNicknameSuccessful(); // DELETEME debug
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public String getNicknameChosen(){
+        return ( (TextField) guiApplication.lookup("nickField")).getText();
     }
 
     public void connectWithNicknameSuccessful() {
-        guiApplication.switchToGameSetup();
-        enableGameSettings(); // DELETEME debug
+        GUIApplication.runLaterExecutor.execute(() -> guiApplication.switchToGameSetup());
+        if(debug){
+            enableGameSettings(); // DELETEME debug
+        }
     }
 
     public void enableGameSettings() {
-        guiApplication.lookup("gameSettingsPane").setDisable(false);
-        guiApplication.lookup("towerWizardPane").setDisable(true);
-        ( (ChoiceBox<String>) guiApplication.lookup("numChoice") ).getSelectionModel().select(0);
-        ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice") ).getSelectionModel().select(0);
-        guiApplication.lookup("gameSettingsButton").requestFocus();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.lookup("gameSettingsPane").setDisable(false);
+            guiApplication.lookup("towerWizardPane").setDisable(true);
+            ( (ChoiceBox<String>) guiApplication.lookup("numChoice") ).getSelectionModel().select(0);
+            ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice") ).getSelectionModel().select(0);
+            guiApplication.lookup("gameSettingsButton").requestFocus();
+        });
     }
 
     public void sendGameSettings() {
-        // if something's missing: do nothing
-        // sending stuff to client; if successful
-        guiApplication.lookup("gameSettingsPane").setDisable(true);
-        guiApplication.lookup("towerWizardPane").setDisable(false);
-        guiApplication.lookup("towerWizardButton").requestFocus();
-        updateTowerWizard(); // DELETEME debug
+        if(debug){
+            // if something's missing: do nothing
+            // sending stuff to client; if successful
+            guiApplication.lookup("gameSettingsPane").setDisable(true);
+            guiApplication.lookup("towerWizardPane").setDisable(false);
+            guiApplication.lookup("towerWizardButton").requestFocus();
+            updateTowerWizard(); // DELETEME debug
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public int getNumOfPlayerChosen(){
+        String numChoice = ( (ChoiceBox<String>) guiApplication.lookup("numChoice")).getValue();
+        return Integer.parseInt(numChoice);
+    }
+
+    public GameMode getGameModeChosen(){
+        String gameMode = ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice")).getValue();
+        if("STANDARD".equals(gameMode.toUpperCase()))
+            gameMode = "NORMAL";
+        return GameMode.valueOf(gameMode.toUpperCase());
     }
 
     public void updateTowerWizard() {
-        // called when there's an update in the game and I'm still waiting for it to start
-        // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
-        // or something like that. and then set defaults:
-        ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
-        ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
+        GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.lookup("gameSettingsPane").setDisable(true);
+            guiApplication.lookup("towerWizardPane").setDisable(false);
+            guiApplication.lookup("towerWizardButton").requestFocus();
+            // called when there's an update in the game and I'm still waiting for it to start
+            // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
+            // or something like that. and then set defaults:
+            ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+            ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
+        });
     }
 
     public void sendTowerColor() {
-        // TowerColor lookup.gettext e switch case per trasformare in enum
-        // fallisce se il campo è vuoto
-        //towercolor disable
-        System.out.println("Tower color chosen"); // DELETEME debug
+        if(debug){
+            // TowerColor lookup.gettext e switch case per trasformare in enum
+            // fallisce se il campo è vuoto
+            //towercolor disable
+            System.out.println("Tower color chosen"); // DELETEME debug
+        }
+        else{
+            gui.notifyInput();
+        }
+    }
+
+    public TowerColor getTowerColorChosen(){
+        String choice = ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getValue();
+        return TowerColor.valueOf(choice.toUpperCase());
     }
 
     public void sendWizardType() {
-        // if tower color is null, don't do anything!!!!!!!!!
-        System.out.println("Wizard type chosen");
-        // wizard lookup.gettext e switch case per trasformare in enum
-        // fallisce se il campo è vuoto
-        Label label = ( (Label) guiApplication.lookup("connectionMessage"));
-        label.setText("Waiting for a game to start.");
-        StringProperty stringProperty = label.textProperty();
-        DoubleProperty opacity = label.opacityProperty();
-        Timeline fadeIn = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(1000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start..")),
-                new KeyFrame(new Duration(2000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start...")),
-                new KeyFrame(new Duration(3000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start....")),
-                new KeyFrame(new Duration(4000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start.....")),
-                new KeyFrame(new Duration(5000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start......")),
-                new KeyFrame(new Duration(6000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start......."))
-        );
-        fadeIn.play();
-        startGame();
+        if(debug){
+            // if tower color is null, don't do anything!!!!!!!!!
+            System.out.println("Wizard type chosen");
+            // wizard lookup.gettext e switch case per trasformare in enum
+            // fallisce se il campo è vuoto
+            waitForStart();
+            startGame();
+        }
+        else {
+            gui.notifyInput();
+        }
     }
 
+    public WizardType getWizardChosen(){
+        String choice = ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getValue();
+        return WizardType.valueOf(choice.toUpperCase());
+    }
+
+    public void waitForStart(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            Label label = ( (Label) guiApplication.lookup("connectionMessage"));
+            label.setText("Waiting for a game to start.");
+            StringProperty stringProperty = label.textProperty();
+            DoubleProperty opacity = label.opacityProperty();
+            Timeline fadeIn = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
+                    new KeyFrame(new Duration(1000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start..")),
+                    new KeyFrame(new Duration(2000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start...")),
+                    new KeyFrame(new Duration(3000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start....")),
+                    new KeyFrame(new Duration(4000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start.....")),
+                    new KeyFrame(new Duration(5000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start......")),
+                    new KeyFrame(new Duration(6000), new KeyValue(opacity, 1.0), new KeyValue(stringProperty, "Waiting for a game to start......."))
+            );
+            fadeIn.play();
+        });
+    }
+
+
+
     public void startGame() {
-        guiApplication.switchToMain();
-        for (int i = 0; i < 12; i++) {
-            List<Integer> newGroup = new ArrayList<>();
-            newGroup.add(i);
-            groupList.add(newGroup);
-        }
-        updateArchipelago(); //DELETEME debug
+        GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.switchToMain();
+            for (int i = 0; i < 12; i++) {
+                List<Integer> newGroup = new ArrayList<>();
+                newGroup.add(i);
+                groupList.add(newGroup);
+            }
+            updateArchipelago(); //DELETEME debug
+        });
     }
 
     public void updateArchipelago() {
@@ -181,5 +264,7 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(1, secondMergeDiff));
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(0, secondMergeDiff));
     }
+
+
 
 }

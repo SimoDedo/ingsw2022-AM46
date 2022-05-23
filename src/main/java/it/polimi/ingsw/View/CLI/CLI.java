@@ -311,6 +311,12 @@ public class CLI implements UI {
         });
     }
 
+    @Override
+    public void requestWaitStart() {
+        displayInfo("Please wait for all players to be ready and for your turn to start...");
+
+    }
+
     private void requestAssistant(){
         displayHand(this.nickname);
         displayPlayedCards();

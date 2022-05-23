@@ -28,6 +28,8 @@ public interface UI {
 
     void requestWizard(ObservableByClient game);
 
+    void requestWaitStart();
+
     void displayInfo(String info);
 
     void displayError(String error, boolean isUrgent);

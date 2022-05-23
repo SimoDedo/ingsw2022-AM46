@@ -308,7 +308,7 @@ public class Client {
             //No input is accepted when here, client is waiting for others to complete their selection (and receive PLAY_ASSISTANT)
             //Commands are enabled but main thread isn't started yet. Commands are "pre-loaded".
             case WAIT_GAME_START -> {
-                UI.displayInfo("Please wait for all players to be ready and for your turn to start...");
+                UI.requestWaitStart();
             }
             //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
             //The possible actions are enabled and disabled by the client.
