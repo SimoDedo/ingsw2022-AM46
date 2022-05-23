@@ -85,18 +85,22 @@ public class GUI implements UI {
     @Override
     public void requestTowerColor(ObservableByClient game) {
         guiController.connectWithNicknameSuccessful();
-        guiController.updateTowerWizard();
+        guiController.showTowerWizard();
+        guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         waitInput();
         client.sendUserAction(new TowerColorUserAction(this.nickname, guiController.getTowerColorChosen()));
     }
 
     @Override
     public void requestWizard(ObservableByClient game) {
-        guiController.updateTowerWizard();
-        if(!chosenTC)
+        guiController.showTowerWizard();
+        if(!chosenTC){
             chosenTC = true;
+            guiController.towerColorSuccessful();
+        }
         else
             waitInput();
+        guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         client.sendUserAction(new WizardUserAction(this.nickname, guiController.getWizardChosen()));
     }
 

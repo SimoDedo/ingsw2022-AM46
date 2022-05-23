@@ -1,5 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.GameModel.Board.Player.Wizard;
+import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
@@ -15,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class for controlling the GUIController based on method calls from the client.
@@ -110,7 +113,7 @@ public class GUIController {
             guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("towerWizardPane").setDisable(false);
             guiApplication.lookup("towerWizardButton").requestFocus();
-            updateTowerWizard(); // DELETEME debug
+            showTowerWizard(); // DELETEME debug
         }
         else {
             gui.notifyInput();
@@ -129,16 +132,52 @@ public class GUIController {
         return GameMode.valueOf(gameMode.toUpperCase());
     }
 
-    public void updateTowerWizard() {
+    public void showTowerWizard() {
         GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("towerWizardPane").setDisable(false);
             guiApplication.lookup("towerWizardButton").requestFocus();
-            // called when there's an update in the game and I'm still waiting for it to start
-            // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
-            // or something like that. and then set defaults:
-            ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+
+            if(debug){
+                for(TowerColor towerColor : TowerColor.values())
+                    ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getItems().setAll(
+                            towerColor.toString().toLowerCase());
+                for(WizardType wizard : WizardType.values())
+                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(
+                            wizard.toString().toLowerCase());
+
+                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+                ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
+            }
+        });
+    }
+
+    public void updateTowerWizard(List<TowerColor> towerColors, List<WizardType> wizards){
+        // called when there's an update in the game and I'm still waiting for it to start
+        // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
+        // or something like that. and then set defaults:
+        List<String> tc = towerColors.stream()
+                .map(t -> t.toString().charAt(0) + t.toString().substring(1).toLowerCase())
+                .toList();
+        List<String> wiz = wizards.stream()
+                .map(w -> w.toString().charAt(0) + w.toString().substring(1).toLowerCase())
+                .toList();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            if(! guiApplication.lookup("colorChoice").isDisable() ){
+                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(tc);
+                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+            }
+            ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getItems().setAll(wiz);
             ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
+
+            guiApplication.lookup("towerWizardButton").requestFocus();
+        });
+    }
+
+    public void towerColorSuccessful(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.lookup("colorChoice").setDisable(true);
         });
     }
 
@@ -180,6 +219,7 @@ public class GUIController {
 
     public void waitForStart(){
         GUIApplication.runLaterExecutor.execute(() -> {
+            guiApplication.lookup("towerWizardPane").setDisable(true);
             Label label = ( (Label) guiApplication.lookup("connectionMessage"));
             label.setText("Waiting for a game to start.");
             StringProperty stringProperty = label.textProperty();
