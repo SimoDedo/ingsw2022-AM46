@@ -39,11 +39,11 @@ public class CLI implements UI {
     private final List<String> infoQueue;
     private final List<String> errorQueue;
 
-    private final ExecutorService setupOperation;
+    private final ExecutorService operations;
 
     public CLI(Client client) {
         lock = new Object();
-        setupOperation = Executors.newSingleThreadExecutor();
+        operations = Executors.newSingleThreadExecutor();
         serverResponse = false;
         gameStarted = false;
         output = new PrintStream(System.out);
@@ -61,64 +61,65 @@ public class CLI implements UI {
         this.nickname = nickname;
     }
 
-    @Override
-    public void update(ObservableByClient game) {
+    private void update(ObservableByClient game) {
         this.game = game;
     }
 
     @Override
     public void startGame(){
         gameStarted = true;
-        boolean quit = false;
-        while (!quit){
-            String commandString = parser.readLine();
-            clearScreen();
+        operations.execute(() -> {
+            boolean quit = false;
+            while (!quit){
+                String commandString = parser.readLine();
+                clearScreen();
 
-            Command command = mapCommand(commandString);
-            if(command != null){
-                if(infoCommandList.contains(command)){
-                    switch (command){
-                        case HELP -> displayHelp();
-                        case TABLE -> standings();
-                        case CARDS -> displayAvailableCards();
-                        case ORDER -> displayCurrentOrder();
-                        case CHARACTER_INFO -> displayCharactersDetailed();
-                        case QUIT -> quit = true;
-                        default-> displayInvalid();
+                Command command = mapCommand(commandString);
+                if(command != null){
+                    if(infoCommandList.contains(command)){
+                        switch (command){
+                            case HELP -> displayHelp();
+                            case TABLE -> standings();
+                            case CARDS -> displayAvailableCards();
+                            case ORDER -> displayCurrentOrder();
+                            case CHARACTER_INFO -> displayCharactersDetailed();
+                            case QUIT -> quit = true;
+                            default-> displayInvalid();
+                        }
+                        if(!quit)
+                            displayAvailableCommands();
                     }
-                    if(!quit)
+
+                    else if(gameCommandList.contains(command)){
+                        switch (command){
+                            case ASSISTANT -> requestAssistant();
+                            case MOVE -> requestMoveFromEntrance();
+                            case MOTHER_NATURE -> requestMotherNature();
+                            case CLOUD -> requestCloud();
+                            case CHARACTER -> requestCharacter();
+                            case ABILITY -> requestCharacterAbility();
+                            case END_TURN -> requestEndTurn();
+                            default-> displayInvalid();
+                        }
+                        waitForServerResponse();
+                    }
+                    else{ //Shouldn't reach here if command mapping stays as it is, if it changes it is needed
+                        displayInvalid();
+                        standings();
                         displayAvailableCommands();
-                }
-
-                else if(gameCommandList.contains(command)){
-                    switch (command){
-                        case ASSISTANT -> requestAssistant();
-                        case MOVE -> requestMoveFromEntrance();
-                        case MOTHER_NATURE -> requestMotherNature();
-                        case CLOUD -> requestCloud();
-                        case CHARACTER -> requestCharacter();
-                        case ABILITY -> requestCharacterAbility();
-                        case END_TURN -> requestEndTurn();
-                        default-> displayInvalid();
                     }
-                    waitForServerResponse();
                 }
-                else{ //Shouldn't reach here if command mapping stays as it is, if it changes it is needed
+                else{
                     displayInvalid();
                     standings();
                     displayAvailableCommands();
                 }
             }
-            else{
-                displayInvalid();
-                standings();
-                displayAvailableCommands();
-            }
-        }
-        System.exit(0);
+            System.exit(0);
+        });
     }
 
-    public void waitForServerResponse(){
+    private void waitForServerResponse(){
         synchronized (lock){
             clearScreen();
             displayMessage("Waiting server response...");
@@ -134,9 +135,10 @@ public class CLI implements UI {
             serverResponse = false;
         }
     }
+
     @Override
-    public void notifyServerResponse(boolean gameStarted){
-        if(gameStarted){
+    public void notifyServerResponse(){
+        if(this.gameStarted){
             clearScreen();
             standings();
             displayInfoQueue();
@@ -242,7 +244,7 @@ public class CLI implements UI {
     @Override
     public void requestGameSettings(){
         displayErrorQueue();
-        setupOperation.execute(() ->{
+        operations.execute(() ->{
             GameMode gameMode = requestGameMode();
             clearScreen();
             int numOfPlayers = requestPlayerNumber();
@@ -267,7 +269,7 @@ public class CLI implements UI {
     public void requestTowerColor(ObservableByClient game){
         update(game);
         displayErrorQueue();
-        setupOperation.execute(() ->{
+        operations.execute(() ->{
             List<TowerColor> available = this.game.getAvailableTowerColors();
             int sel = 1;
 
@@ -290,7 +292,7 @@ public class CLI implements UI {
     public void requestWizard(ObservableByClient game){
         update(game);
         displayErrorQueue();
-        setupOperation.execute(() -> {
+        operations.execute(() -> {
             List<WizardType> available = this.game.getAvailableWizards();
             int sel = 1;
 
@@ -309,7 +311,7 @@ public class CLI implements UI {
         });
     }
 
-    public void requestAssistant(){
+    private void requestAssistant(){
         displayHand(this.nickname);
         displayPlayedCards();
         displayMessage("Type the number of the assistant you would like to play.");
@@ -320,7 +322,7 @@ public class CLI implements UI {
         client.sendUserAction(assistantRequest);
     }
 
-    public void requestMoveFromEntrance(){
+    private void requestMoveFromEntrance(){
         HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(nickname);
 
         displayEntrance(nickname);
@@ -342,7 +344,7 @@ public class CLI implements UI {
         client.sendUserAction(moveStudentRequest);
     }
 
-    public void requestMotherNature(){
+    private void requestMotherNature(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         int movePower = game.getActualMovePower(nickname);
 
@@ -360,7 +362,7 @@ public class CLI implements UI {
         client.sendUserAction(moveMotherNatureRequest);
     }
 
-    public void requestCloud(){
+    private void requestCloud(){
         List<Integer> clouds = game.getCloudIDs();
         displayClouds();
         displayMessage("Type the number of the cloud you would like to choose.");
@@ -371,7 +373,7 @@ public class CLI implements UI {
         client.sendUserAction(cloudRequest);
     }
 
-    public void requestCharacter(){
+    private void requestCharacter(){
         displayCharactersDetailed();
         displayMessage("Select the number of the character you want to activate!");
 
@@ -381,7 +383,7 @@ public class CLI implements UI {
         client.sendUserAction(characterRequest);
     }
 
-    public void requestCharacterAbility(){
+    private void requestCharacterAbility(){
         List<RequestParameter> requestedParameters = game.getCurrentRequestParameters();
         int characterID = game.getActiveCharacterID();
         List<Integer> parameters = new ArrayList<>();
@@ -428,7 +430,7 @@ public class CLI implements UI {
         client.sendUserAction(moveStudentRequest);
     }
 
-    public void requestEndTurn(){
+    private void requestEndTurn(){
         displayMessage("Would you to play a character before ending your turn? y/n");
 
         String endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
@@ -439,8 +441,7 @@ public class CLI implements UI {
         }
     }
 
-    @Override
-    public void displayMessage(String message) {
+    private void displayMessage(String message) {
         message = message + "\n";
         output.println(message);
     }
@@ -479,7 +480,7 @@ public class CLI implements UI {
         update(game);
     }
 
-    public void displayWelcome() {
+    private void displayWelcome() {
         clearScreen();
         output.println(
                 "\u001B[107;40m\u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \u001B[38;5;016m \n" +
@@ -535,7 +536,7 @@ public class CLI implements UI {
         displayMessage("                                                    WELCOME TO ERIANTYS!\n");
     }
 
-    public void displayHelp(){
+    private void displayHelp(){
         StringBuilder toPrint = new StringBuilder();
         toPrint.append("The available ").append(CYAN).append("info").append(RESET).append(" commands are:\n\n");
         for(Command command : infoCommandList){
@@ -550,11 +551,11 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayInvalid(){
+    private void displayInvalid(){
         displayMessage("Unrecognized command - please type help for a list of available commands.");
     }
 
-    public void standings(){
+    private void standings(){
         displayPlayersInfo();
         output.print("\033[1A"); //Move cursor up to not leave empty line
         displayTurnInfo();
@@ -570,14 +571,14 @@ public class CLI implements UI {
         displayPlayedCards();
     }
 
-    public void displayTurnInfo(){
+    private void displayTurnInfo(){
         String toPrint = "Phase: " + game.getCurrentPhase() +
                 " | Turn of: " +
                 game.getCurrentPlayer();
         displayMessage(toPrint);
     }
 
-    public void displayArchipelago(){
+    private void displayArchipelago(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         HashMap<Integer, List<Integer>> islandTileStudentIDs = game.getIslandTilesStudentsIDs();
         HashMap<Integer, Color> archipelagoStudentColors = game.getArchipelagoStudentIDs();
@@ -616,7 +617,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayClouds(){
+    private void displayClouds(){
         StringBuilder toPrint = new StringBuilder("CLOUDS:");
         List<Integer> clouds = game.getCloudIDs();
         for(int cloudID : clouds){
@@ -627,7 +628,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayCharactersShort(){
+    private void displayCharactersShort(){
         StringBuilder toPrint = new StringBuilder("CHARACTERS:\n");
         for(int ID : game.getDrawnCharacterIDs()) {
             toPrint.append(characterStringShort(ID));
@@ -637,7 +638,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayCharactersDetailed(){
+    private void displayCharactersDetailed(){
         StringBuilder toPrint = new StringBuilder("These are the CHARACTERS which have been picked for this game:\n\n");
         for(int ID : game.getDrawnCharacterIDs()) {
             toPrint.append(characterStringDetailed(ID));
@@ -647,7 +648,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayPlayerBoard(String nickname){
+    private void displayPlayerBoard(String nickname){
         String nickToWrite = nickname;
         if(nickname.equals(this.nickname)){ nickToWrite = "Your"; } else nickToWrite += "'s";
         displayMessage(nickToWrite + " board:");
@@ -661,11 +662,11 @@ public class CLI implements UI {
         }
     }
 
-    public void displayEntrance(String nickname){
+    private void displayEntrance(String nickname){
         displayMessage("ENTRANCE: " + studentFrequencyString(new ArrayList<>(game.getEntranceStudentsIDs(nickname).values())));
     }
 
-    public void displayDiningRoom(String nickname){
+    private void displayDiningRoom(String nickname){
         StringBuilder toPrint = new StringBuilder("TABLES");
         if(game.getGameMode() == GameMode.EXPERT)
             toPrint.append(" [Coins left]");
@@ -682,7 +683,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayHand(String nickname){
+    private void displayHand(String nickname){
         String nickToWrite = nickname;
         if(nickname.equals(this.nickname)){ nickToWrite = "your"; } else nickToWrite += "'s";
         StringBuilder toPrint = new StringBuilder("These are the ASSISTANTS still in " + nickToWrite + " hand:\n");
@@ -692,7 +693,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayPlayersInfo(){
+    private void displayPlayersInfo(){
         HashMap<String, TowerColor> towers = game.getPlayerTeams();
         HashMap<String, WizardType> wizards = game.getPlayerWizard();
 
@@ -707,7 +708,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayCurrentOrder(){
+    private void displayCurrentOrder(){
         StringBuilder toPrint = new StringBuilder("This is the current " + game.getCurrentPhase() + " phase order:\n");
         int i = 1;
         for(String nickname : game.getPlayerOrder()){
@@ -717,7 +718,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayPlayedCards(){
+    private void displayPlayedCards(){
         StringBuilder toPrint = new StringBuilder("ASSISTANTS currently played [Move power]:\n");
         for(String nickname : game.getCardsPlayedThisRound().keySet()){
             toPrint.append(nickname).append(": ").append(game.getCardsPlayedThisRound().get(nickname)).
@@ -728,13 +729,13 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayAvailableCards(){
+    private void displayAvailableCards(){
         for (String nickname : game.getPlayers()){
             displayHand(nickname);
         }
     }
 
-    public void displayTowersLeft(){
+    private void displayTowersLeft(){
         HashMap<TowerColor, Integer> towersLeft = game.getTowersLeft();
         StringBuilder toPrint = new StringBuilder();
         for(TowerColor towerColor : TowerColor.values()){
@@ -751,7 +752,7 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
-    public void displayAvailableCommands(){
+    private void displayAvailableCommands(){
         StringBuilder toPrint = new StringBuilder(
                 "These are the available " + CYAN + "info " + RESET + "and " + RED + "game " + RESET + "commands right now:\n");
         for(Command command : infoCommandList){

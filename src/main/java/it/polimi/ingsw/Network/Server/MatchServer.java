@@ -46,11 +46,6 @@ public class MatchServer implements Server, Runnable {
      */
     private Map<String, SocketConnection> connectionMap = new HashMap<>();
 
-    /**
-     * HashMap for storing the VirtualViews associated with each nickname.
-     */
-    private Map<String, VirtualView> viewMap = new HashMap<>();
-
     private ExecutorService executor;
 
     /**
@@ -78,6 +73,7 @@ public class MatchServer implements Server, Runnable {
             try {
                 tempSocket = serverSocket.accept();
                 SocketConnection newConnection = new SocketConnection(tempSocket, this);
+                System.out.println(newConnection.getInetAddress() + " connected to match server on port " + port);
                 executor.execute(newConnection);
             } catch (IOException ioe) {
                 if(isActive()){
@@ -130,7 +126,7 @@ public class MatchServer implements Server, Runnable {
             String nickname = entry.getKey();
             if(connection.isActive()){
                 connection.close();
-                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname +"\"");
+                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname + "\" (" + connection.getInetAddress() +")");
             }
             unregisterClient(connection.getInetAddress(), nickname, connection);
         }
@@ -187,10 +183,9 @@ public class MatchServer implements Server, Runnable {
         String nickname = loginAction.getNickname();
         if (awaitingMap.containsKey(nickname) && awaitingMap.containsValue(IP) && awaitingMap.get(nickname).equals(IP)){
             if (!isFull()) {
-                System.out.println("\"" + loginAction.getNickname() + "\" connected to match server on port " + port);
+                System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port);
                 registerClient(IP, nickname, socketConnection);
                 controller.loginHandle(nickname);
-                viewMap.put(nickname, new VirtualView());
             } else {
                 socketConnection.sendMessage(new LoginError("The server is full!"));
                 socketConnection.close();

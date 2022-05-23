@@ -12,13 +12,11 @@ public interface UI {
 
     void setNickname(String nickname);
 
-    void update(ObservableByClient game);
-
     void startGame();
 
     void updateCommands(List<Command> toDisable, List<Command> toEnable);
 
-    void notifyServerResponse(boolean gameStarted);
+    void notifyServerResponse();
 
     Map<String, String> requestServerInfo(String defaultIP, int defaultPort);
 
@@ -29,8 +27,6 @@ public interface UI {
     void requestTowerColor(ObservableByClient game);
 
     void requestWizard(ObservableByClient game);
-
-    void displayMessage(String message);
 
     void displayInfo(String info);
 

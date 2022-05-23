@@ -18,7 +18,7 @@ public interface Character {
      * @param owner the player who activated this character
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    List<RequestParameter> useCharacter(Player owner);
+    List<RequestParameter> useCharacter(Player owner) throws IllegalStateException;
 
     /**
      * Method that executes the character's ability. It passes the list of parameters (in the form

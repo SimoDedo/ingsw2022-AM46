@@ -2,8 +2,11 @@ package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
+import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
 import it.polimi.ingsw.GameModel.Characters.CharacterFactory;
+import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -39,16 +42,20 @@ class AbstractCharacterTest {
     }
 
     /**
-     * Tests that character usage is correctly kept track of
+     * Tests that character usage is correctly kept track of, and that character 10 can't be activated if
+     * Dining Room is empty
      */
     @Test
-    void wasUsedThisTurn() {
+    void wasUsedThisTurn() throws FullTableException {
         CharacterFactory factory = new CharacterFactory();
         AbstractCharacter char10 = factory.create(10, new Bag());
         assertFalse(char10.wasUsedThisTurn(), "Character shouldn't have been used this turn yet");
-        char10.useCharacter(new Player());
+        Player test = new Player();
+        assertThrows(IllegalStateException.class, () -> char10.useCharacter(test));
+        test.addToDR(new Student(Color.RED, null));
+        char10.useCharacter(test);
         assertTrue(char10.wasUsedThisTurn(), "Character should have been used this turn");
-        assertThrows(IllegalStateException.class, () -> char10.useCharacter(new Player()),
+        assertThrows(IllegalStateException.class, () -> char10.useCharacter(test),
                 "Character shouldn't be able to be used twice in same turn");
     }
 

@@ -1,5 +1,9 @@
 package it.polimi.ingsw.Utils.Enum;
 
+/**
+ * Represents the possible user action that the user can take.
+ * Each also has two description used to show info to the user.
+ */
 public enum UserActionType {
     LOGIN,
     GAME_SETTINGS("has chosen the game settings", "is choosing the game settings"),

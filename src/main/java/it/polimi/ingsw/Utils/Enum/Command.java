@@ -2,6 +2,11 @@ package it.polimi.ingsw.Utils.Enum;
 
 import it.polimi.ingsw.Utils.CommandString;
 
+/**
+ * Enum that represent each command that the user can take.
+ * Each command also has a string that represents the command to be written, a boolean to indicate whether the
+ * command is used to perform game operations and a description of the command itself.
+ */
 public enum Command {
     HELP(CommandString.help, false,
             "Displays this screen."),

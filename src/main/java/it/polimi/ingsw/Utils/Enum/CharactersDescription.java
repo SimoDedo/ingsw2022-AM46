@@ -1,7 +1,11 @@
 package it.polimi.ingsw.Utils.Enum;
 
+/**
+ * Enum that represent each character.
+ * Each one has a description attached.
+ */
 public enum CharactersDescription {
-    C1("In setup, draw 4 Students and place them on this card. EFFECT: Take 1 Student from this card and place it on an Island of your choice. Then, draw a new Student from the Bag and place it on this card."),
+    C1("Take 1 Student from this card and place it on an Island of your choice. Then, draw a new Student from the Bag and place it on this card."),
     C2("During this turn, you take control of any number of Professors even if you have the same number of Students as the player who currently controls them."),
     C3("Choose an Island and resolve the Island as if Mother Nature had ended her movement there. Mother Nature will still move and the Island where she ends her movement will also be resolved."),
     C4("You may move Mother Nature up to 2 additional Islands than is indicated by the Assistant card you've played."),

@@ -2,6 +2,7 @@ package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Game;
+import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -103,7 +104,7 @@ class ControllerTest {
         controller.receiveUserAction(new WizardUserAction("Simo", WizardType.MAGE)); //Mage choosing
         controller.receiveUserAction(new WizardUserAction("Greg", WizardType.SAMURAI));
 
-        Game game = controller.getGame();
+        ObservableByClient game = controller.getGame();
         String firstPlayer = game.getCurrentPlayer();
         controller.receiveUserAction(new PlayAssistantUserAction(firstPlayer, 4));
 
@@ -131,7 +132,7 @@ class ControllerTest {
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
         controller.receiveUserAction(new WizardUserAction("Simo", WizardType.MAGE)); //Mage choosing
         controller.receiveUserAction(new WizardUserAction("Greg", WizardType.SAMURAI));
-        Game game = controller.getGame();
+        ObservableByClient game = controller.getGame();
         String firstPlayer = game.getCurrentPlayer();
         controller.receiveUserAction(new PlayAssistantUserAction(firstPlayer, 4));
         controller.receiveUserAction(new PlayAssistantUserAction(game.getCurrentPlayer(), 5));
@@ -180,7 +181,7 @@ class ControllerTest {
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
         controller.receiveUserAction(new WizardUserAction("Simo", WizardType.MAGE)); //Mage choosing
         controller.receiveUserAction(new WizardUserAction("Greg", WizardType.SAMURAI));
-        Game game = controller.getGame();
+        ObservableByClient game = controller.getGame();
         String firstPlayer = game.getCurrentPlayer();
         controller.receiveUserAction(new PlayAssistantUserAction(firstPlayer, 4));
         controller.receiveUserAction(new PlayAssistantUserAction(game.getCurrentPlayer(), 5));
