@@ -682,8 +682,10 @@ public class CLI implements UI {
      */
     public void displayHelp(String context){
         switch (context){
-            case "port" -> displayMessage("PORT");
-            case "IP" -> displayMessage("IP");
+            case "port" -> displayMessage("Input the port of the server you would like to connect to. Press enter for" +
+                    "the default port");
+            case "IP" -> displayMessage("Input the IP of the server you would like to connect to. Press enter for the" +
+                    "default IP");
             case "nick" -> displayMessage("Input an unique nickname (everything is allowed except for \"help\").");
             case "student-color" -> displayMessage("Type the name of the color of the student you would like to pick " +
                     "from the available ones.");
