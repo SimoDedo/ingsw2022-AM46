@@ -87,7 +87,12 @@ public class Client {
         while (socket == null){ //Asks for server info
                 Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
-                serverPort = Integer.parseInt(serverInfo.get("port"));
+                try {
+                    serverPort = Integer.parseInt(serverInfo.get("port"));
+                }
+                catch (NumberFormatException e){
+                    serverPort = 0;
+                }
             connectToLobbyServer(serverIP, serverPort);
         }
 
