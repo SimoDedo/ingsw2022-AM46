@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Network.Message.Update;
 
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Utils.Enum.UserActionType;

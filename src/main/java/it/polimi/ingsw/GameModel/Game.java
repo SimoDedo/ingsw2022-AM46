@@ -3,15 +3,11 @@ package it.polimi.ingsw.GameModel;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
-import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
-import it.polimi.ingsw.GameModel.Characters.CharacterManager;
-import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
@@ -369,7 +365,7 @@ public class Game implements ObservableByClient, Serializable {
          */
         @Override
         public GameMode getGameMode(){
-            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
+            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.STANDARD;
         }
 
         /**

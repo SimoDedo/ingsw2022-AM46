@@ -10,7 +10,7 @@ public abstract class Message implements Serializable {
     /**
      * Whoever sent this message.
      */
-    private String sender;
+    private final String sender;
 
     public Message(String sender){
         this.sender = sender;

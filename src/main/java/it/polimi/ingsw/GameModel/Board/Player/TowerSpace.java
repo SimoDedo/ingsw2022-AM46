@@ -2,7 +2,6 @@ package it.polimi.ingsw.GameModel.Board.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.BoardElements.TowerContainer;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 public class TowerSpace extends TowerContainer {
 

@@ -1,14 +1,11 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +30,7 @@ class ControllerTest {
                 "After his login, the first player is expected to choose his tower color");
 
         controller.receiveUserAction(new GameSettingsUserAction("Greg", 3, GameMode.EXPERT));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg")); //Second player login
 
         assertEquals(UserActionType.TOWER_COLOR, controller.getExpectedUserAction().get("Simo"),
@@ -51,7 +48,7 @@ class ControllerTest {
     void setupErrorTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg"));
         controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK));
         assertEquals(UserActionType.WIZARD, controller.getExpectedUserAction().get("Simo"),
@@ -73,7 +70,7 @@ class ControllerTest {
     void setupTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg"));
         controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK)); //Tower color choosing
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
@@ -97,7 +94,7 @@ class ControllerTest {
     void playAssistantTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg"));
         controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK)); //Tower color choosing
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
@@ -126,7 +123,7 @@ class ControllerTest {
     void actionPhaseTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg"));
         controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK)); //Tower color choosing
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));
@@ -175,7 +172,7 @@ class ControllerTest {
     void endOfRoundTest(){
         Controller controller = new Controller();
         controller.receiveUserAction(new LoginUserAction("Simo"));
-        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.NORMAL));
+        controller.receiveUserAction(new GameSettingsUserAction("Simo", 2, GameMode.STANDARD));
         controller.receiveUserAction(new LoginUserAction("Greg"));
         controller.receiveUserAction(new TowerColorUserAction("Simo", TowerColor.BLACK)); //Tower color choosing
         controller.receiveUserAction(new TowerColorUserAction("Greg", TowerColor.WHITE));

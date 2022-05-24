@@ -4,7 +4,7 @@ import it.polimi.ingsw.Network.Message.Message;
 
 public abstract class Error extends Message {
 
-    private String errorDescription;
+    private final String errorDescription;
 
     public Error(String sender, String errorDescription) {
         super(sender);

@@ -4,7 +4,7 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class TowerColorUserAction extends UserAction{
-    private TowerColor towerColor;
+    private final TowerColor towerColor;
 
     public TowerColorUserAction(String sender, TowerColor towerColor) {
         super(sender, UserActionType.TOWER_COLOR);

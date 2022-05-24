@@ -12,7 +12,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,30 +22,30 @@ import java.util.concurrent.Executors;
  */
 public class MatchServer implements Server, Runnable {
 
-    private LobbyServer lobbyServer;
+    private final LobbyServer lobbyServer;
 
-    private Controller controller;
+    private final Controller controller;
 
     private boolean active = true;
 
     /**
      * The port on which the server socket of this MatchServer will listen.
      */
-    private int port;
+    private final int port;
 
     private ServerSocket serverSocket;
 
     /**
      * HashMap for storing the future client connections which will be accepted on this server.
      */
-    private Map<String, InetAddress> awaitingMap = new HashMap<>();
+    private final Map<String, InetAddress> awaitingMap = new HashMap<>();
 
     /**
      * HashMap for storing the connections on the server associated with each nickname.
      */
-    private Map<String, SocketConnection> connectionMap = new HashMap<>();
+    private final Map<String, SocketConnection> connectionMap = new HashMap<>();
 
-    private ExecutorService executor;
+    private final ExecutorService executor;
 
     /**
      * Constructor for the MatchServer class.

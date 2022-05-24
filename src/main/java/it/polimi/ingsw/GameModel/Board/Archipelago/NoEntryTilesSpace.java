@@ -12,7 +12,7 @@ public class NoEntryTilesSpace implements Serializable {
     /**
      * The noEntryTile character who created the space.
      */
-    private NoEntryCharacter noEntryCharacter;
+    private final NoEntryCharacter noEntryCharacter;
 
     /**
      * The number of noEntryTiles placed on the space.

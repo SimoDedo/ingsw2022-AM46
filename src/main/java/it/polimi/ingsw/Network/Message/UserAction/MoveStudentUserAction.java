@@ -4,9 +4,9 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public class MoveStudentUserAction extends UserAction{
 
-    private int studentID;
+    private final int studentID;
 
-    private int islandOrTableID;
+    private final int islandOrTableID;
 
     public MoveStudentUserAction(String sender, int studentID, int islandOrTableID) {
         super(sender, UserActionType.MOVE_STUDENT);

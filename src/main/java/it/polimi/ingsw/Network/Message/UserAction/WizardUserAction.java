@@ -5,7 +5,7 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 
 public class WizardUserAction extends UserAction{
 
-    private WizardType wizardType;
+    private final WizardType wizardType;
 
     public WizardUserAction(String sender, WizardType wizardType) {
         super(sender, UserActionType.WIZARD);

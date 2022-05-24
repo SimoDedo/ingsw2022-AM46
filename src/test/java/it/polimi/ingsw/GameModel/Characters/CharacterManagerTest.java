@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -344,7 +343,7 @@ class CharacterManagerTest {
         professorSet.setOwner(Color.RED, playerList.getByNickname("Simo"));
         archipelago.resolveIslandGroup(0, playerList, professorSet);
 
-        assertTrue(archipelago.getTowerColorOfIslandGroup(0) == null,
+        assertNull(archipelago.getTowerColorOfIslandGroup(0),
                 "A no entry tile was placed, thus no resolving should take place");
         assertEquals(3, archipelago.getNoEntryTiles().get(0),
                 "Three no entry tile should be placed, since one was used");

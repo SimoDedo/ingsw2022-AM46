@@ -8,7 +8,6 @@ import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.IllegalActionError;
 import it.polimi.ingsw.Network.Message.Error.IllegalSelectionError;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
-import it.polimi.ingsw.Network.Message.Info.*;
 import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Network.Server.MatchServer;

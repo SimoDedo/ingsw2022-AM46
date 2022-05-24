@@ -1,9 +1,6 @@
 package it.polimi.ingsw.View.CLI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
-import it.polimi.ingsw.Network.Message.UserAction.GameSettingsUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.TowerColorUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.WizardUserAction;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.InputParser;
 

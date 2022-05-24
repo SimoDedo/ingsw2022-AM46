@@ -19,7 +19,7 @@ public class Player implements Serializable {
     private Wizard wizard;
     private final boolean isTowerHolder;
 
-    private TowerColor towerColor;
+    private final TowerColor towerColor;
 
     private int coins;
 

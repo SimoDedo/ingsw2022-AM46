@@ -2,7 +2,6 @@ package it.polimi.ingsw.Utils;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class InputParser {

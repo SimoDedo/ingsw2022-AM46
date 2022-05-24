@@ -20,9 +20,11 @@ import java.util.function.Consumer;
  */
 public class StudentMoverCharacter extends AbstractCharacter implements PlaceAndRemoveStudent {
 
-    private int usesLeft, maxUses, maxPawns;
+    private int usesLeft;
+    private final int maxUses;
+    private final int maxPawns;
 
-    private List<Student> students;
+    private final List<Student> students;
 
     public StudentMoverCharacter(int ID, int cost, int maxUses, int maxPawns, List<RequestParameter> requestParameters) {
         super(ID, cost, requestParameters);

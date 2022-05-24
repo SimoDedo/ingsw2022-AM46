@@ -28,7 +28,7 @@ public class TurnManager implements Serializable {
      * assignWizard function from Game will fill clockwisePlayerList little by little each time it
      * is called.
      */
-    private List<Player> clockwisePlayerList = new ArrayList<>();
+    private final List<Player> clockwisePlayerList = new ArrayList<>();
 
     public TurnManager() {}
 
@@ -129,7 +129,6 @@ public class TurnManager implements Serializable {
         switch (currentPhase) {
             case IDLE, ACTION -> {
                 currentPhase = Phase.PLANNING;
-                //determinePlanningOrder(); already a method in game that calls determinePlanningOrder, why also here? am I missing smth?
             }
             case PLANNING -> currentPhase = Phase.ACTION;
         }

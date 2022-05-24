@@ -2,7 +2,6 @@ package it.polimi.ingsw.GameModel.BoardElements;
 
 import it.polimi.ingsw.GameModel.Board.Player.*;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,12 +12,12 @@ public abstract class PawnContainer<T extends BoardPiece> extends BoardPieceWith
     /**
      * The list containing the pawns
      */
-    private List<T> pawns;
+    private final List<T> pawns;
 
     /**
      * Maximum number of pawns that the container can hold. If set at -1, no limit is set
      */
-    private int maxPawns;
+    private final int maxPawns;
 
 
     /**

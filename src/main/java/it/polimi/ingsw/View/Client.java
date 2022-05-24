@@ -124,7 +124,7 @@ public class Client {
     }
 
     /**
-     * Tries to login by sending a login user action with chosen username.
+     * Tries to log in by sending a login user action with chosen username.
      */
     private void tryLobbyLogin(){
         LoginUserAction login;
@@ -438,7 +438,6 @@ public class Client {
 
     /**
      * Receives a message from the server through the socket.
-     * @return
      */
     private Message receiveMessage(){
         Object message = null;

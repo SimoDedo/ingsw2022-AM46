@@ -6,7 +6,6 @@ import it.polimi.ingsw.GameModel.PlayerConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -15,8 +14,8 @@ import java.util.NoSuchElementException;
 
 public class PlayerBoard implements Serializable {
     private TowerSpace towerSpace = null;
-    private Entrance entrance;
-    private DiningRoom diningRoom;
+    private final Entrance entrance;
+    private final DiningRoom diningRoom;
 
 
 
@@ -39,7 +38,7 @@ public class PlayerBoard implements Serializable {
      * @throws NoSuchElementException if no student with this ID is found
      */
     public Student getStudentByID(int ID) throws NoSuchElementException {
-        Student student = entrance.getPawnByID(ID);;
+        Student student = entrance.getPawnByID(ID);
 
         if(student == null){ student = diningRoom.getStudentByID(ID); }
 

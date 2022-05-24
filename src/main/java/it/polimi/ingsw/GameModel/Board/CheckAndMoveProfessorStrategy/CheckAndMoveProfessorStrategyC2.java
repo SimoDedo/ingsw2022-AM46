@@ -5,8 +5,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Professor;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import java.util.List;
-
 /**
  * Modified CheckAndMoveProfessor strategy set up by Character 2. This strategy is different
  * from the standard one in that it stores a preferred Player, who wins the professor in case of
@@ -18,7 +16,7 @@ public class CheckAndMoveProfessorStrategyC2 implements CheckAndMoveProfessorStr
      * Player who activated and paid for C2. This player will win the professor in the case of a
      * draw.
      */
-    private Player activator;
+    private final Player activator;
 
     public String getActivatingPlayer(){
         return activator == null ? null : activator.getNickname();

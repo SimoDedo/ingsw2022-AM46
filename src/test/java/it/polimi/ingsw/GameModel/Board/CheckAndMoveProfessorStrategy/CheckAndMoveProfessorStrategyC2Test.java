@@ -11,9 +11,6 @@ import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.PlayerList;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

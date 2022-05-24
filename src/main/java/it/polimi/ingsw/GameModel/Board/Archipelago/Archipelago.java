@@ -25,7 +25,7 @@ public class Archipelago implements Serializable {
     /**
      * List that contains all the IslandGroups. The order of the list is used to merge and render the islands
      */
-    private List<IslandGroup> islandGroups;
+    private final List<IslandGroup> islandGroups;
 
     /**
      * Strategy to apply when resolving an island
@@ -88,7 +88,7 @@ public class Archipelago implements Serializable {
      * @param islandTileDestination Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws InvalidObjectException {
+    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws IllegalArgumentException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 

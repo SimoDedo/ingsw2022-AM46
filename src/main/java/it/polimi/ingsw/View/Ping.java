@@ -13,7 +13,7 @@ public class Ping implements Runnable{
 
     private boolean isActive;
 
-    private Client client;
+    private final Client client;
 
     public Ping(Client client){
         this.client = client;

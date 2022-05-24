@@ -19,9 +19,9 @@ public enum Command {
     CHARACTER_INFO(CommandString.characterInfo, false,
             "Displays the characters that can be activated, along with a description of their effect."),
     ASSISTANT(CommandString.assistant, true,
-            "Lets you play an assistant from you hand.\n" +
+            "Lets you play an assistant from your hand.\n" +
             " The assistant number will determine the order of the action phase (from lowest to highest).\n" +
-            " The assistant move pover (M.P.) will determine the maximum amount of steps mother nature can take during your action phase."),
+            " The assistant move power (M.P.) will determine the maximum amount of steps mother nature can take during your action phase."),
     MOVE(CommandString.move, true,
             "Lets you move a student from your entrance.\n" +
             " You can select any of your entrance student and then decide to move them to an island or to your dining room."),

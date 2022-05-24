@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InvalidObjectException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +30,7 @@ class GameTest {
     @Test
     void playerTest(){
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         assertThrows(IllegalArgumentException.class, () -> game.createPlayer("Pirovano", TowerColor.BLACK));
@@ -46,7 +45,7 @@ class GameTest {
     @Test
     void assignWizard() {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -71,7 +70,7 @@ class GameTest {
     @RepeatedTest(10)
     void playAssistant() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -107,7 +106,7 @@ class GameTest {
     @Test
     void playAssistantDesperate() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -144,7 +143,7 @@ class GameTest {
     @Test
     void moveStudentFromEntranceToDN() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -169,7 +168,7 @@ class GameTest {
     @Test
     void moveStudentFromEntranceToIslandTIle() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -196,7 +195,7 @@ class GameTest {
     @RepeatedTest(10)
     void checkAndMoveProfessor() throws FullTableException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -229,9 +228,9 @@ class GameTest {
      * Then we move MN to the next IslandGroup (always a legal move) and check if it actually contains MN
      */
     @RepeatedTest(10)
-    void moveMotherNature() throws LastRoundException, GameOverException, InvalidObjectException {
+    void moveMotherNature() throws LastRoundException, GameOverException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -261,9 +260,9 @@ class GameTest {
      * Then MN is moved to the next IslandGroup, which will be resolved and hold Towers
      */
     @RepeatedTest(10)
-    void resolveIslandGroup() throws GameOverException, InvalidObjectException, LastRoundException, FullTableException {
+    void resolveIslandGroup() throws GameOverException, LastRoundException, FullTableException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -314,7 +313,7 @@ class GameTest {
     @RepeatedTest(10)
     void takeFromCloud() throws LastRoundException, FullTableException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -345,7 +344,7 @@ class GameTest {
     @RepeatedTest(10)
     void determinePlanningOrder() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -382,7 +381,7 @@ class GameTest {
     @RepeatedTest(10)
     void determineActionOrder() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -414,7 +413,7 @@ class GameTest {
     @Test
     void pushThisRoundInLastRound() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -443,7 +442,7 @@ class GameTest {
     @RepeatedTest(10)
     void disableClouds() throws LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -466,7 +465,7 @@ class GameTest {
     @Test
     void determineWinnerNoMoreTowers() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -499,7 +498,7 @@ class GameTest {
     @Test
     void determineWinnerThreeIslands() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(3, GameMode.NORMAL);
+        Game game = gameFactory.create(3, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.WHITE);
         game.createPlayer("Pietro", TowerColor.GREY);
@@ -550,7 +549,7 @@ class GameTest {
     @Test
     void determineWinnerNoCards() throws GameOverException, LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -588,7 +587,7 @@ class GameTest {
     @RepeatedTest(20)
     void determineWinnerNoStudents() throws GameOverException, LastRoundException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
@@ -626,7 +625,7 @@ class GameTest {
     @Test
     void determineWinnerTowerTie() throws GameOverException {
         GameFactory gameFactory = new GameFactory();
-        Game game = gameFactory.create(4, GameMode.NORMAL);
+        Game game = gameFactory.create(4, GameMode.STANDARD);
         game.createPlayer("Simo", TowerColor.BLACK);
         game.createPlayer("Greg", TowerColor.BLACK);
         game.createPlayer("Pirovano", TowerColor.WHITE);
