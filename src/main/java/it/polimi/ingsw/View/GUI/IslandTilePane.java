@@ -1,10 +1,15 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +20,11 @@ public class IslandTilePane extends StackPane {
 
     boolean partyMode = false;
 
-    static double size = 120.0, shrinkConstant = 0.80;
+    static double size = 120.0, shrinkConstant = 0.80, modifierSize = 25.0, studentSize = 15.0;
 
-    Point2D forwardMergePoint, backMergePoint;
+    private TowerColor towerColor;
+
+    private Point2D forwardMergePoint, backMergePoint;
 
     public IslandTilePane() {
         Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png");
@@ -29,10 +36,94 @@ public class IslandTilePane extends StackPane {
         imageView.setCache(true);
         this.getChildren().add(imageView);
         IslandTilePane.setAlignment(imageView, Pos.CENTER);
+        VBox gridContainer = new VBox(5);
+        this.getChildren().add(gridContainer);
+        gridContainer.setAlignment(Pos.TOP_CENTER);
+        gridContainer.setPrefSize(100.0, 80);
 
         // gridpane for tower, mother nature, no entry tile goes here
+        GridPane islandModifiersPane = new GridPane();
+        islandModifiersPane.setAlignment(Pos.CENTER);
+        gridContainer.getChildren().add(islandModifiersPane);
+        islandModifiersPane.setPrefSize(100.0, 25.0);
+
+        Image tower = new Image("/pawns/tower_white1.png");
+        ImageView towerView = new ImageView(tower);
+        towerView.setEffect(new DropShadow(20.0, Color.WHITE));
+        towerView.setPreserveRatio(true);
+        towerView.setFitHeight(modifierSize);
+        towerView.setSmooth(true);
+        towerView.setCache(true);
+        islandModifiersPane.add(towerView, 0, 0);
+
+        Image mother = new Image("/pawns/mothernature0.png");
+        ImageView motherView = new ImageView(mother);
+        motherView.setEffect(new DropShadow(20.0, Color.WHITE));
+        motherView.setPreserveRatio(true);
+        motherView.setFitHeight(modifierSize);
+        motherView.setSmooth(true);
+        motherView.setCache(true);
+        islandModifiersPane.add(motherView, 1, 0);
+
+        Image noentry = new Image("/pawns/noentrytile.png");
+        ImageView noentryView = new ImageView(noentry);
+        noentryView.setEffect(new DropShadow(20.0, Color.WHITE));
+        noentryView.setPreserveRatio(true);
+        noentryView.setFitHeight(modifierSize);
+        noentryView.setSmooth(true);
+        noentryView.setCache(true);
+        islandModifiersPane.add(noentryView, 2, 0);
 
         // gridpane for students goes here
+        GridPane studentPane = new GridPane();
+        studentPane.setAlignment(Pos.CENTER);
+        studentPane.setVgap(2.0);
+        studentPane.setHgap(2.0);
+        gridContainer.getChildren().add(studentPane);
+        Image red = new Image("/pawns/student_pink.png");
+        ImageView redView = new ImageView(red);
+        redView.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView.setPreserveRatio(true);
+        redView.setFitHeight(studentSize);
+        redView.setSmooth(true);
+        redView.setCache(true);
+        studentPane.add(redView, 2, 0);
+
+        Image red1 = new Image("/pawns/student_red.png");
+        ImageView redView1 = new ImageView(red1);
+        redView1.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView1.setPreserveRatio(true);
+        redView1.setFitHeight(studentSize);
+        redView1.setSmooth(true);
+        redView1.setCache(true);
+        studentPane.add(redView1, 0, 0);
+
+        Image red2 = new Image("/pawns/student_yellow.png");
+        ImageView redView2 = new ImageView(red2);
+        redView2.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView2.setPreserveRatio(true);
+        redView2.setFitHeight(studentSize);
+        redView2.setSmooth(true);
+        redView2.setCache(true);
+        studentPane.add(redView2, 1, 1);
+
+        Image red3 = new Image("/pawns/student_green.png");
+        ImageView redView3 = new ImageView(red3);
+        redView3.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView3.setPreserveRatio(true);
+        redView3.setFitHeight(studentSize);
+        redView3.setSmooth(true);
+        redView3.setCache(true);
+        studentPane.add(redView3, 2, 2);
+
+        Image red4 = new Image("/pawns/student_blue.png");
+        ImageView redView4 = new ImageView(red4);
+        redView4.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView4.setPreserveRatio(true);
+        redView4.setFitHeight(studentSize);
+        redView4.setSmooth(true);
+        redView4.setCache(true);
+        studentPane.add(redView4, 3, 2);
     }
 
     public void setMergePoints(int index) {

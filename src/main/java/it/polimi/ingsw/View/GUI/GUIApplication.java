@@ -317,10 +317,6 @@ public class GUIApplication extends Application {
         mainGrid.add(new PlayerPane(Pos.BOTTOM_CENTER), 1, 2);
         mainGrid.add(new PlayerPane(Pos.TOP_CENTER), 1, 0);
 
-        Button debugButton = new Button("DEBUG");
-        debugButton.setOnMouseClicked(mouseEvent -> controller.utilityFunction());
-        mainGrid.add(debugButton, 2, 2);
-
         mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
     }

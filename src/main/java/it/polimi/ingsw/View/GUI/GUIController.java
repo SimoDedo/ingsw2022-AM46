@@ -1,6 +1,5 @@
 package it.polimi.ingsw.View.GUI;
 
-import it.polimi.ingsw.GameModel.Board.Player.Wizard;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
@@ -16,8 +15,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class for controlling the GUIController based on method calls from the client.
@@ -29,7 +30,7 @@ public class GUIController {
 
     private List<List<Integer>> groupList = new ArrayList<>();
 
-    private boolean debug = false;
+    private boolean debug = true;
 
     public GUIController(GUI gui) {
         this.gui = gui;
@@ -293,9 +294,9 @@ public class GUIController {
          */
         //example code:
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, "white"));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(1, "grey"));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, "black"));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.BLACK));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.GREY));
 
     }
 
