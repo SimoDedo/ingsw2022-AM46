@@ -27,6 +27,7 @@ public class GUI implements UI {
     private final Object waitInputLock;
     private boolean waitingInput;
 
+    private boolean loggedIn;
     private boolean chosenTC;
 
     public GUI(Client client) {
@@ -36,6 +37,7 @@ public class GUI implements UI {
         waitInputLock = new Object();
         waitingInput = false;
 
+        loggedIn = false;
         chosenTC = false;
     }
 
@@ -76,6 +78,7 @@ public class GUI implements UI {
     @Override
     public void requestGameSettings() {
         guiController.connectWithNicknameSuccessful();
+        loggedIn = true;
         guiController.enableGameSettings();
         waitInput();
         client.sendUserAction(
@@ -84,7 +87,10 @@ public class GUI implements UI {
 
     @Override
     public void requestTowerColor(ObservableByClient game) {
-        guiController.connectWithNicknameSuccessful();
+        if(! loggedIn){
+            guiController.connectWithNicknameSuccessful();
+            loggedIn = true;
+        }
         guiController.showGameMode(game);
         guiController.showTowerWizard();
         guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());

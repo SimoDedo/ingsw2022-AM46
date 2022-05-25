@@ -7,17 +7,18 @@ import java.util.List;
 
 public class ClientApp {
     public static void main(String[] args){
-        String UI = null;
+        String UI;
+        List<String> argsList = Arrays.stream(args).toList();
 
-        for (int i = 0; i < args.length; i++) {
-            List<String> argsList = Arrays.stream(args).toList();
-            if(argsList.contains("--cli"))
-                UI = "cli";
-            else if(argsList.contains("--gui"))
-                UI = "gui";
-        }
+        if(argsList.contains("--cli"))
+            UI = "cli";
+        else if(argsList.contains("--gui"))
+            UI = "gui";
+        else
+            UI = "gui";
+
         Client client = new Client(UI);
-
         client.start();
     }
 }
+
