@@ -82,7 +82,7 @@ public class IslandTilePane extends StackPane {
         gridContainer.getChildren().add(studentPane);
         Image red = new Image("/pawns/student_pink.png");
         ImageView redView = new ImageView(red);
-        redView.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView.setEffect(new DropShadow(10.0, Color.BLACK));
         redView.setPreserveRatio(true);
         redView.setFitHeight(studentSize);
         redView.setSmooth(true);
@@ -91,7 +91,7 @@ public class IslandTilePane extends StackPane {
 
         Image red1 = new Image("/pawns/student_red.png");
         ImageView redView1 = new ImageView(red1);
-        redView1.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView1.setEffect(new DropShadow(10.0, Color.BLACK));
         redView1.setPreserveRatio(true);
         redView1.setFitHeight(studentSize);
         redView1.setSmooth(true);
@@ -100,7 +100,7 @@ public class IslandTilePane extends StackPane {
 
         Image red2 = new Image("/pawns/student_yellow.png");
         ImageView redView2 = new ImageView(red2);
-        redView2.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView2.setEffect(new DropShadow(10.0, Color.BLACK));
         redView2.setPreserveRatio(true);
         redView2.setFitHeight(studentSize);
         redView2.setSmooth(true);
@@ -109,7 +109,7 @@ public class IslandTilePane extends StackPane {
 
         Image red3 = new Image("/pawns/student_green.png");
         ImageView redView3 = new ImageView(red3);
-        redView3.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView3.setEffect(new DropShadow(10.0, Color.BLACK));
         redView3.setPreserveRatio(true);
         redView3.setFitHeight(studentSize);
         redView3.setSmooth(true);
@@ -118,7 +118,7 @@ public class IslandTilePane extends StackPane {
 
         Image red4 = new Image("/pawns/student_blue.png");
         ImageView redView4 = new ImageView(red4);
-        redView4.setEffect(new DropShadow(10.0, Color.WHITE));
+        redView4.setEffect(new DropShadow(10.0, Color.BLACK));
         redView4.setPreserveRatio(true);
         redView4.setFitHeight(studentSize);
         redView4.setSmooth(true);

@@ -1,4 +1,4 @@
 package it.polimi.ingsw.View.GUI;
 
-public class AssistantCard {
+public class AssistantPane {
 }

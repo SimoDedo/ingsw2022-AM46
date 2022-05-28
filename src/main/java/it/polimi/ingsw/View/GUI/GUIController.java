@@ -128,7 +128,7 @@ public class GUIController {
 
     public GameMode getGameModeChosen(){
         String gameMode = ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice")).getValue();
-        if("STANDARD".equals(gameMode.toUpperCase()))
+        if("STANDARD".equalsIgnoreCase(gameMode))
             gameMode = "NORMAL";
         return GameMode.valueOf(gameMode.toUpperCase());
     }
@@ -295,8 +295,8 @@ public class GUIController {
         //example code:
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.BLACK));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.GREY));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.GREY));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.BLACK));
 
     }
 

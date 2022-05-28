@@ -11,7 +11,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
@@ -20,11 +21,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ArchipelagoPane extends AnchorPane {
 
-    double bridgeHeight = 40.0, bridgeLength = 20.0, angleAdjustment = 90.0;
-
     public ArchipelagoPane() {
         this.setId("archipelagoPane");
-        double archipelagoSide = 450.0;
+        double archipelagoSide = 500.0;
         this.setPrefSize(archipelagoSide, archipelagoSide);
         double centerPos = archipelagoSide / 2.0;
 
@@ -38,32 +37,65 @@ public class ArchipelagoPane extends AnchorPane {
         createEmptyBridges();
 
         // character hbox goes here
+        double charContainerHeight = 80.0, charContainerWidth = 300.0;
+        HBox charContainer = new HBox(5.0);
+        this.getChildren().add(charContainer);
+        charContainer.setAlignment(Pos.CENTER);
+        charContainer.setPrefSize(charContainerHeight, charContainerWidth);
+        charContainer.relocate(centerPos - 40.0, centerPos - 200.0);
+
+        for (int i = 0; i < 3; i++) {
+            CharacterPane characterPane = new CharacterPane();
+            characterPane.setId("characterPane" + i);
+            charContainer.getChildren().add(characterPane);
+            characterPane.setCharacterImage(i+5);
+        }
 
         // cloud hbox goes here
-        GridPane cloudPane = new GridPane();
-        cloudPane.setPrefSize(250.0, 75.0);
-        this.getChildren().add(cloudPane);
-        cloudPane.setAlignment(Pos.CENTER);
-        cloudPane.setHgap(5.0);
-        cloudPane.relocate(centerPos - 90.0, centerPos + 20.0);
+        double cloudContainerHeight = 80.0, cloudContainerWidth = 350.0;
+        HBox cloudContainer = new HBox(5.0);
+        cloudContainer.setAlignment(Pos.CENTER);
+        cloudContainer.setPrefSize(cloudContainerWidth, cloudContainerHeight);
+        cloudContainer.setMaxSize(cloudContainerWidth, cloudContainerHeight);
+        this.getChildren().add(cloudContainer);
+        cloudContainer.relocate(centerPos - 110.0, centerPos + 30.0);
 
         for (int i = 0; i < 4; i++) {
-            // Image cloud = new Image("/clouds/cloud_card_" + ThreadLocalRandom.current().nextInt(0, 5) + ".png");
-            Image cloud = new Image("/clouds/cloud_card_" + (i+1) + ".png");
-            ImageView cloudView = new ImageView(cloud);
-            cloudView.setId("cloudView" + i);
-            cloudView.setEffect(new DropShadow(50.0, Color.WHITE));
-            cloudView.setPreserveRatio(true);
-            cloudView.setFitHeight(75.0);
-            cloudView.setSmooth(true);
-            cloudView.setCache(true);
-            cloudPane.add(cloudView, i, 0);
+            CloudPane cloudPane = new CloudPane();
+            cloudPane.setId("cloudPane" + i);
+            cloudContainer.getChildren().add(cloudPane);
         }
 
         // bag goes here
+        double bagSize = 60.0;
+        StackPane bagPane = new StackPane();
+        bagPane.setEffect(new DropShadow(50.0, Color.WHITE));
+        bagPane.setAlignment(Pos.CENTER);
+        bagPane.setMaxSize(bagSize, bagSize);
+        Image bag = new Image("/world/bag_students.png");
+        ImageView bagView = new ImageView(bag);
+        bagView.setPreserveRatio(true);
+        bagView.setFitHeight(bagSize);
+        bagView.setSmooth(true);
+        bagView.setCache(true);
+        bagPane.getChildren().add(bagView);
+        this.getChildren().add(bagPane);
+        bagPane.relocate(230.0, 400.0);
 
         // coinheap goes here
-
+        StackPane coinBagPane = new StackPane();
+        coinBagPane.setEffect(new DropShadow(50.0, Color.WHITE));
+        coinBagPane.setAlignment(Pos.CENTER);
+        coinBagPane.setMaxSize(bagSize, bagSize);
+        Image coinBag = new Image("/world/bag_coins.png");
+        ImageView coinBagView = new ImageView(coinBag);
+        coinBagView.setPreserveRatio(true);
+        coinBagView.setFitHeight(bagSize);
+        coinBagView.setSmooth(true);
+        coinBagView.setCache(true);
+        coinBagPane.getChildren().add(coinBagView);
+        this.getChildren().add(coinBagPane);
+        coinBagPane.relocate(340.0, 400.0);
     }
 
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {
@@ -123,6 +155,7 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     public void createEmptyBridges() {
+        double bridgeHeight = 50.0, bridgeLength = 25.0, angleAdjustment = 90.0;
         for (int i = 0; i < 12; i++) {
             int forwardIndex = i, backIndex = i!=11 ? i+1 : 0;
             Image bridge = new Image("/world/emptybridge.png");
