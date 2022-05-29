@@ -446,7 +446,7 @@ public class Client {
 
     /**
      * Receives a message from the server through the socket.
-     * @return
+     * @return the message received from the server, if converted successfully
      */
     private Message receiveMessage(){
         Object message = null;
@@ -475,10 +475,11 @@ public class Client {
     /**
      * Closes the application.
      */
-    private void reset(){
+    public void reset(){
         try {
             socket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             System.exit(-1);
         }
         System.exit(-1); //FIXME: actual reset

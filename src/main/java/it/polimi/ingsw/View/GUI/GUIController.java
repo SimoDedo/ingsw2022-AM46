@@ -26,7 +26,7 @@ import java.util.Map;
 public class GUIController {
 
     GUI gui;
-    private GUIApplication guiApplication;
+    private final GUIApplication guiApplication;
 
     private List<List<Integer>> groupList = new ArrayList<>();
 
@@ -48,6 +48,10 @@ public class GUIController {
             errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
             errorDialog.showAndWait();
         });
+    }
+
+    public void close() {
+        gui.close();
     }
 
     public void connectToIP() {
