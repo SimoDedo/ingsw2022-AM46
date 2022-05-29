@@ -27,7 +27,8 @@ public class IslandTilePane extends StackPane {
     private Point2D forwardMergePoint, backMergePoint;
 
     public IslandTilePane() {
-        Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png");
+        Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png"
+                , 300, 300, true, true);
         ImageView imageView = new ImageView(islandTileBackground);
         imageView.setRotate(60 * ThreadLocalRandom.current().nextInt(partyMode ? 6 : 1));
         imageView.setPreserveRatio(true);
@@ -47,7 +48,7 @@ public class IslandTilePane extends StackPane {
         gridContainer.getChildren().add(islandModifiersPane);
         islandModifiersPane.setPrefSize(100.0, 25.0);
 
-        Image tower = new Image("/pawns/tower_white1.png");
+        Image tower = new Image("/pawns/tower_white1.png", 50, 50, true, true);
         ImageView towerView = new ImageView(tower);
         towerView.setEffect(new DropShadow(20.0, Color.WHITE));
         towerView.setPreserveRatio(true);
@@ -56,7 +57,7 @@ public class IslandTilePane extends StackPane {
         towerView.setCache(true);
         islandModifiersPane.add(towerView, 0, 0);
 
-        Image mother = new Image("/pawns/mothernature0.png");
+        Image mother = new Image("/pawns/mothernature0.png", 50, 50, true, true);
         ImageView motherView = new ImageView(mother);
         motherView.setEffect(new DropShadow(20.0, Color.WHITE));
         motherView.setPreserveRatio(true);
@@ -65,7 +66,7 @@ public class IslandTilePane extends StackPane {
         motherView.setCache(true);
         islandModifiersPane.add(motherView, 1, 0);
 
-        Image noentry = new Image("/pawns/noentrytile.png");
+        Image noentry = new Image("/pawns/noentrytile.png", 50, 50, true, true);
         ImageView noentryView = new ImageView(noentry);
         noentryView.setEffect(new DropShadow(20.0, Color.WHITE));
         noentryView.setPreserveRatio(true);
@@ -80,7 +81,7 @@ public class IslandTilePane extends StackPane {
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
-        Image red = new Image("/pawns/student_pink.png");
+        Image red = new Image("/pawns/student_pink.png", 50, 50, true, true);
         ImageView redView = new ImageView(red);
         redView.setEffect(new DropShadow(10.0, Color.BLACK));
         redView.setPreserveRatio(true);
@@ -89,7 +90,7 @@ public class IslandTilePane extends StackPane {
         redView.setCache(true);
         studentPane.add(redView, 2, 0);
 
-        Image red1 = new Image("/pawns/student_red.png");
+        Image red1 = new Image("/pawns/student_red.png", 50, 50, true, true);
         ImageView redView1 = new ImageView(red1);
         redView1.setEffect(new DropShadow(10.0, Color.BLACK));
         redView1.setPreserveRatio(true);
@@ -98,7 +99,7 @@ public class IslandTilePane extends StackPane {
         redView1.setCache(true);
         studentPane.add(redView1, 0, 0);
 
-        Image red2 = new Image("/pawns/student_yellow.png");
+        Image red2 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
         ImageView redView2 = new ImageView(red2);
         redView2.setEffect(new DropShadow(10.0, Color.BLACK));
         redView2.setPreserveRatio(true);
@@ -107,7 +108,7 @@ public class IslandTilePane extends StackPane {
         redView2.setCache(true);
         studentPane.add(redView2, 1, 1);
 
-        Image red3 = new Image("/pawns/student_green.png");
+        Image red3 = new Image("/pawns/student_green.png", 50, 50, true, true);
         ImageView redView3 = new ImageView(red3);
         redView3.setEffect(new DropShadow(10.0, Color.BLACK));
         redView3.setPreserveRatio(true);
@@ -116,7 +117,7 @@ public class IslandTilePane extends StackPane {
         redView3.setCache(true);
         studentPane.add(redView3, 2, 2);
 
-        Image red4 = new Image("/pawns/student_blue.png");
+        Image red4 = new Image("/pawns/student_blue.png", 50, 50, true, true);
         ImageView redView4 = new ImageView(red4);
         redView4.setEffect(new DropShadow(10.0, Color.BLACK));
         redView4.setPreserveRatio(true);

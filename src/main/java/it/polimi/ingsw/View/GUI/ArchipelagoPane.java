@@ -31,7 +31,7 @@ public class ArchipelagoPane extends AnchorPane {
             IslandTilePane newIsland = new IslandTilePane();
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
-            newIsland.relocate(centerPos + Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
+            newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
             newIsland.setMergePoints(i);
         }
         createEmptyBridges();
@@ -72,7 +72,7 @@ public class ArchipelagoPane extends AnchorPane {
         bagPane.setEffect(new DropShadow(50.0, Color.WHITE));
         bagPane.setAlignment(Pos.CENTER);
         bagPane.setMaxSize(bagSize, bagSize);
-        Image bag = new Image("/world/bag_students.png");
+        Image bag = new Image("/world/bag_students.png", 100, 100, true, true);
         ImageView bagView = new ImageView(bag);
         bagView.setPreserveRatio(true);
         bagView.setFitHeight(bagSize);
@@ -87,7 +87,7 @@ public class ArchipelagoPane extends AnchorPane {
         coinBagPane.setEffect(new DropShadow(50.0, Color.WHITE));
         coinBagPane.setAlignment(Pos.CENTER);
         coinBagPane.setMaxSize(bagSize, bagSize);
-        Image coinBag = new Image("/world/bag_coins.png");
+        Image coinBag = new Image("/world/bag_coins.png", 100, 100, true, true);
         ImageView coinBagView = new ImageView(coinBag);
         coinBagView.setPreserveRatio(true);
         coinBagView.setFitHeight(bagSize);
@@ -192,7 +192,8 @@ public class ArchipelagoPane extends AnchorPane {
             case GREY -> pngName = "stone";
             default -> pngName = "wood";
         }
-        bridgeView.setImage(new Image("/world/" + pngName + ThreadLocalRandom.current().nextInt(1, 3) + ".png"));
+        bridgeView.setImage(new Image("/world/" + pngName + ThreadLocalRandom.current().nextInt(1, 3) + ".png",
+                200, 200, true, true));
         DoubleProperty opacity = bridgeView.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),

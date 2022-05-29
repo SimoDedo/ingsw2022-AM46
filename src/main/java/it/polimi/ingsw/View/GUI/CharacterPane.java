@@ -25,7 +25,7 @@ public class CharacterPane extends StackPane {
     }
 
     public void setCharacterImage(int charID) {
-        Image newChar = new Image("/chars/char" + charID + ".png");
+        Image newChar = new Image("/chars/char" + charID + ".png", 250, 250, true, true);
         ImageView newCharView = new ImageView(newChar);
         newCharView.setEffect(new DropShadow(50.0, Color.WHITE));
         newCharView.setPreserveRatio(true);

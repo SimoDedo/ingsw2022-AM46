@@ -314,8 +314,16 @@ public class GUIApplication extends Application {
         mainGrid.setVgap(10.0);
 
         mainGrid.add(new ArchipelagoPane(), 1, 1);
-        mainGrid.add(new PlayerPane(Pos.BOTTOM_CENTER), 1, 2);
-        mainGrid.add(new PlayerPane(Pos.TOP_CENTER), 1, 0);
+
+        //Player boards
+        VBox players = new VBox();
+        players.setSpacing(2);
+        players.setAlignment(Pos.CENTER);
+        players.getChildren().add(new PlayerPane(1, "soadopasd"));
+        players.getChildren().add(new PlayerPane(2, "292doih"));
+        players.getChildren().add(new PlayerPane(3, "123709asdasd"));
+        players.getChildren().add(new PlayerPane(4, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
+        mainGrid.add(players, 2, 1);
 
         mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
