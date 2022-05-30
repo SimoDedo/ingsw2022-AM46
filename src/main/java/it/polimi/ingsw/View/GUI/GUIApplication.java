@@ -81,8 +81,8 @@ public class GUIApplication extends Application {
     @Override
     public void start(Stage mainStage) {
         stage = mainStage;
-        createLoginScene();
         setupStage();
+        createLoginScene();
         switchToLogin();
         runLaterExecutor.execute(this::createGameSetupScene);
         runLaterExecutor.execute(this::createMainScene);
@@ -332,6 +332,15 @@ public class GUIApplication extends Application {
     public void setupStage() {
         stage.setTitle("Eriantys AM46");
         stage.getIcons().add(new Image("/general/icon.png"));
+        stage.setOnCloseRequest(windowEvent -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you really wish to close Eriantys?", ButtonType.YES, ButtonType.NO);
+            ButtonType result = alert.showAndWait().orElse(ButtonType.NO);
+            if (result.equals(ButtonType.NO)) windowEvent.consume();
+            else {
+                Platform.exit();
+                controller.close();
+            }
+        });
     }
 
     private AnchorPane setupScene(VBox root) {

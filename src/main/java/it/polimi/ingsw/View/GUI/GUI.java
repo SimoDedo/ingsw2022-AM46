@@ -41,6 +41,10 @@ public class GUI implements UI {
         chosenTC = false;
     }
 
+    public void close() {
+        client.reset();
+    }
+
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
