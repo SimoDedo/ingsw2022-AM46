@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IslandTilePane extends StackPane {
 
-    boolean partyMode = false;
+    boolean partyMode = true;
     int index;
 
     static double size = 120.0, shrinkConstant = 0.80, modifierSize = 25.0, studentSize = 15.0;

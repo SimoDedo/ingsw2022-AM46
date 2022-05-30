@@ -172,8 +172,9 @@ public class GUIApplication extends Application {
         nickField.setPromptText("Insert your unique nickname...");
         nickField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                if ( ! ((TextField) (lookup("nickField"))).getText().equals("") )
+                if ( ! ((TextField) (lookup("nickField"))).getText().equals("") ) {
                     controller.connectWithNickname();
+                }
             }
         });
         nickPane.add(nickField, 1, 3);
@@ -294,7 +295,7 @@ public class GUIApplication extends Application {
         VBox root = new VBox();
         AnchorPane anchorPane = setupScene(root);
         anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/general/bg3_unfocused.png"),
+                new Image("/general/bg4_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
@@ -311,27 +312,28 @@ public class GUIApplication extends Application {
         mainGrid.setHgap(10.0);
         mainGrid.setVgap(10.0);
 
-        mainGrid.add(new ArchipelagoPane(), 1, 1);
+        mainGrid.add(new ArchipelagoPane(), 0, 0);
 
         Button debugButton = new Button("DEBUG");
         debugButton.setOnMouseClicked(mouseEvent -> controller.utilityFunction());
-        mainGrid.add(debugButton, 0, 0);
+        mainGrid.add(debugButton, 0, 1);
 
         //Player boards
         VBox players = new VBox();
         players.setSpacing(1);
         players.setAlignment(Pos.CENTER);
-        players.getChildren().add(new PlayerPane(1, "soadopasd"));
-        players.getChildren().add(new PlayerPane(2, "292doih"));
-        players.getChildren().add(new PlayerPane(3, "123709asdasd"));
-        players.getChildren().add(new PlayerPane(4, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
-        mainGrid.add(players, 2, 1);
+        players.getChildren().add(new PlayerPane(1, "Nickname 1"));
+        players.getChildren().add(new PlayerPane(2, "Nickname 2"));
+        players.getChildren().add(new PlayerPane(3, "Nickname 3"));
+        players.getChildren().add(new PlayerPane(4, "Nickname 4"));
+        mainGrid.add(players, 1, 0);
 
-        mainGrid.setGridLinesVisible(true);
+        // mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
     }
 
     public void setupStage() {
+        stage.setMaximized(true);
         stage.setTitle("Eriantys AM46");
         stage.getIcons().add(new Image("/general/icon.png"));
         stage.setOnCloseRequest(windowEvent -> {
@@ -346,7 +348,7 @@ public class GUIApplication extends Application {
     }
 
     private AnchorPane setupScene(VBox root) {
-        root.setPrefSize(1366.0, 760.0);
+        root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
 
         MenuBar menuBar = new MenuBar();
@@ -401,13 +403,13 @@ public class GUIApplication extends Application {
         DoubleProperty opacity = node.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
-                new KeyFrame(new Duration(400), new KeyValue(opacity, 1.0))
+                new KeyFrame(new Duration(500), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
     }
 
-    public void fadeOut(Scene scene) {
-        DoubleProperty opacity = scene.getRoot().opacityProperty();
+    public void fadeOut(Node node) {
+        DoubleProperty opacity = node.opacityProperty();
         Timeline fadeOut = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 1.0)),
                 new KeyFrame(new Duration(500), new KeyValue(opacity, 0.0))
@@ -419,27 +421,13 @@ public class GUIApplication extends Application {
         stage.setScene(loginScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Login");
-        fadeIn(getContent(loginScene));
     }
 
     public void switchToGameSetup() {
-        /*
-        new Thread(() -> {
-            fadeOut(loginScene);
-        }).start();
-        synchronized (this) {
-            try {
-                wait(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        */
         stage.setScene(gameSetupScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Game setup");
         fadeIn(getContent(gameSetupScene));
-
     }
 
     public void switchToMain() {

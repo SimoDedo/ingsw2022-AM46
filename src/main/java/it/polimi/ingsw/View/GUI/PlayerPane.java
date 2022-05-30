@@ -15,9 +15,9 @@ import java.util.List;
 
 public class PlayerPane extends VBox {
 
-    private final double sizeBoardV = 170;
-    private final double sizeDiscard = 80;
-    private final double sizeCoin = 30;
+    private final double sizeBoardV = 170.0;
+    private final double sizeDiscard = 80.0;
+    private final double sizeCoin = 30.0;
     private final int position;
 
 

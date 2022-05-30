@@ -10,13 +10,13 @@ import javafx.scene.paint.Color;
 
 public class AssistantPane extends AnchorPane {
 
-    private final double sizeAssistant;
+    private final double assistantSize;
 
     private final GridPane assistantGrid;
 
 
-    public AssistantPane(int position, double sizeAssistant) {
-        this.sizeAssistant = sizeAssistant;
+    public AssistantPane(int position, double assistantSize) {
+        this.assistantSize = assistantSize;
         assistantGrid = new GridPane();
         this.setId("assistantPane" + position);
         for (int i = 1; i < 11; i++) {
@@ -29,7 +29,7 @@ public class AssistantPane extends AnchorPane {
         Image assistant = new Image("/deck/animali_1_" + ID + "@3x.png", 200, 200, true, true);
         ImageView imageViewAssistant = new ImageView(assistant);
         imageViewAssistant.setPreserveRatio(true);
-        imageViewAssistant.setFitHeight(sizeAssistant);
+        imageViewAssistant.setFitHeight(assistantSize);
         imageViewAssistant.setId("assistant" + position + ID);
         setZoomOnAssistant(imageViewAssistant);
         assistantGrid.add(imageViewAssistant, (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
@@ -54,7 +54,7 @@ public class AssistantPane extends AnchorPane {
             ImageView toZoom = new ImageView(imageView.getImage());
             toZoom.setId("toZoomAssistant");
             toZoom.setPreserveRatio(true);
-            toZoom.setFitHeight(sizeAssistant * 2);
+            toZoom.setFitHeight(assistantSize * 2);
             toZoom.setEffect(new DropShadow());
             toZoom.setMouseTransparent(true);
             this.getChildren().add(toZoom);

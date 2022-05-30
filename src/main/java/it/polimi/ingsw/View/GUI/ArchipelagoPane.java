@@ -42,7 +42,7 @@ public class ArchipelagoPane extends AnchorPane {
         this.getChildren().add(charContainer);
         charContainer.setAlignment(Pos.CENTER);
         charContainer.setPrefSize(charContainerHeight, charContainerWidth);
-        charContainer.relocate(centerPos - 40.0, centerPos - 200.0);
+        charContainer.relocate(centerPos - 40.0, centerPos - 190.0);
 
         for (int i = 0; i < 3; i++) {
             CharacterPane characterPane = new CharacterPane();
@@ -80,7 +80,7 @@ public class ArchipelagoPane extends AnchorPane {
         bagView.setCache(true);
         bagPane.getChildren().add(bagView);
         this.getChildren().add(bagPane);
-        bagPane.relocate(230.0, 400.0);
+        bagPane.relocate(230.0, 390.0);
 
         // coinheap goes here
         StackPane coinBagPane = new StackPane();
@@ -95,7 +95,7 @@ public class ArchipelagoPane extends AnchorPane {
         coinBagView.setCache(true);
         coinBagPane.getChildren().add(coinBagView);
         this.getChildren().add(coinBagPane);
-        coinBagPane.relocate(340.0, 400.0);
+        coinBagPane.relocate(340.0, 390.0);
     }
 
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {
@@ -103,9 +103,6 @@ public class ArchipelagoPane extends AnchorPane {
         Point2D backMergePoint = backIsland.getBackMergePoint();
         IslandTilePane forwardIsland = (IslandTilePane) this.lookup("#islandTilePane" + forwardIndex);
         Point2D forwardMergePoint = forwardIsland.getForwardMergePoint();
-        System.out.println("backMergePoint = " + backMergePoint);
-        System.out.println("forwardMergePoint = " + forwardMergePoint);
-        System.out.println("midpoint = " + backMergePoint.midpoint(forwardMergePoint));
         return backMergePoint.midpoint(forwardMergePoint).subtract(forwardMergePoint);
     }
 

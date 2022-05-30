@@ -247,8 +247,6 @@ public class GUIController {
         });
     }
 
-
-
     public void startGame() {
         GUIApplication.runLaterExecutor.execute(() -> {
             guiApplication.switchToMain();
