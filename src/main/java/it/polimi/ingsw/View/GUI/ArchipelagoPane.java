@@ -166,8 +166,8 @@ public class ArchipelagoPane extends AnchorPane {
 
     public void createEmptyBridges() {
         double bridgeHeight = 50.0, bridgeLength = 25.0, angleAdjustment = 90.0;
-        for (int i = 0; i < 12; i++) {
-            int forwardIndex = i, backIndex = i!=11 ? i+1 : 0;
+        for (int forwardIndex = 0; forwardIndex < 12; forwardIndex++) {
+            int backIndex = forwardIndex!=11 ? forwardIndex+1 : 0;
             Image bridge = new Image("/world/emptybridge.png");
             ImageView bridgeView = new ImageView(bridge);
             bridgeView.setId("bridgeView" + forwardIndex);
@@ -202,7 +202,7 @@ public class ArchipelagoPane extends AnchorPane {
             case GREY -> pngName = "stone";
             default -> pngName = "wood";
         }
-        bridgeView.setImage(new Image("/world/" + pngName + ThreadLocalRandom.current().nextInt(1, 3) + ".png",
+        bridgeView.setImage(new Image("/world/" + pngName + "1.png",
                 200, 200, true, true));
         DoubleProperty opacity = bridgeView.opacityProperty();
         Timeline fadeIn = new Timeline(
