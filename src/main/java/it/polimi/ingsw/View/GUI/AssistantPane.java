@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 
 public class AssistantPane extends GridPane {
 
-    private final int sizeAssistant = 85;
+    private final double assistantSize = 85.0;
 
 
     public AssistantPane(int position) {
@@ -20,7 +20,7 @@ public class AssistantPane extends GridPane {
         Image assistant = new Image("/deck/animali_1_" + ID + "@3x.png", 200, 200, true, true);
         ImageView imageViewAssistant = new ImageView(assistant);
         imageViewAssistant.setPreserveRatio(true);
-        imageViewAssistant.setFitHeight(sizeAssistant);
+        imageViewAssistant.setFitHeight(assistantSize);
         imageViewAssistant.setId("assistant" + position + ID);
         this.add(imageViewAssistant, 8 + (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
     }

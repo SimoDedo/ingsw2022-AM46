@@ -62,9 +62,7 @@ public class GUIApplication extends Application {
         if (instance == null) {
             new Thread(() -> Application.launch(GUIApplication.class)).start();
         }
-        int i = 1;
         while (instance == null) {
-            // System.out.println("zzz: " + i++);
             try {
                 Thread.sleep(100); // 450 is actually fine, but it might run slightly slower on some devices so...
             } catch (InterruptedException e) {
@@ -314,6 +312,10 @@ public class GUIApplication extends Application {
         mainGrid.setVgap(10.0);
 
         mainGrid.add(new ArchipelagoPane(), 1, 1);
+
+        Button debugButton = new Button("DEBUG");
+        debugButton.setOnMouseClicked(mouseEvent -> controller.utilityFunction());
+        mainGrid.add(debugButton, 0, 0);
 
         //Player boards
         VBox players = new VBox();

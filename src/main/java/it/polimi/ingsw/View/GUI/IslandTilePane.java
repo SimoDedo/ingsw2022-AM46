@@ -11,14 +11,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
 
 public class IslandTilePane extends StackPane {
 
     boolean partyMode = false;
+    int index;
 
     static double size = 120.0, shrinkConstant = 0.80, modifierSize = 25.0, studentSize = 15.0;
 
@@ -26,7 +24,9 @@ public class IslandTilePane extends StackPane {
 
     private Point2D forwardMergePoint, backMergePoint;
 
-    public IslandTilePane() {
+    public IslandTilePane(int index) {
+        this.index = index;
+
         Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png"
                 , 300, 300, true, true);
         ImageView imageView = new ImageView(islandTileBackground);
@@ -88,7 +88,7 @@ public class IslandTilePane extends StackPane {
         redView.setFitHeight(studentSize);
         redView.setSmooth(true);
         redView.setCache(true);
-        studentPane.add(redView, 2, 0);
+        studentPane.add(redView, 3, 0);
 
         Image red1 = new Image("/pawns/student_red.png", 50, 50, true, true);
         ImageView redView1 = new ImageView(red1);
@@ -124,80 +124,47 @@ public class IslandTilePane extends StackPane {
         redView4.setFitHeight(studentSize);
         redView4.setSmooth(true);
         redView4.setCache(true);
-        studentPane.add(redView4, 3, 2);
-    }
-
-    public void setMergePoints(int index) {
-        List<Point2D> mergePointDiffList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            mergePointDiffList.add(new Point2D(
-                    Math.cos(Math.PI/2 + Math.PI/3*i)*size/2*shrinkConstant,
-                    - Math.sin(Math.PI/2 + Math.PI/3*i)*size/2*shrinkConstant
-            ));
-        }
-
-        switch (index) {
-            case 0 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(0));
-                backMergePoint = getCenter().add(mergePointDiffList.get(3));
-            }
-            case 1 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(1));
-                backMergePoint = getCenter().add(mergePointDiffList.get(3));
-            }
-            case 2 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(1));
-                backMergePoint = getCenter().add(mergePointDiffList.get(4));
-            }
-            case 3 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(2));
-                backMergePoint = getCenter().add(mergePointDiffList.get(4));
-            }
-            case 4 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(2));
-                backMergePoint = getCenter().add(mergePointDiffList.get(5));
-            }
-            case 5 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(3));
-                backMergePoint = getCenter().add(mergePointDiffList.get(5));
-            }
-            case 6 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(3));
-                backMergePoint = getCenter().add(mergePointDiffList.get(0));
-            }
-            case 7 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(4));
-                backMergePoint = getCenter().add(mergePointDiffList.get(0));
-            }
-            case 8 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(4));
-                backMergePoint = getCenter().add(mergePointDiffList.get(1));
-            }
-            case 9 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(5));
-                backMergePoint = getCenter().add(mergePointDiffList.get(1));
-            }
-            case 10 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(5));
-                backMergePoint = getCenter().add(mergePointDiffList.get(2));
-            }
-            case 11 -> {
-                forwardMergePoint = getCenter().add(mergePointDiffList.get(0));
-                backMergePoint = getCenter().add(mergePointDiffList.get(2));
-            }
-        }
+        studentPane.add(redView4, 3, 3);
     }
 
     public Point2D getForwardMergePoint() {
+        int side;
+        switch (index) {
+            case 0, 11 -> side = 0;
+            case 1, 2 -> side = 1;
+            case 3, 4 -> side = 2;
+            case 5, 6 -> side = 3;
+            case 7, 8 -> side = 4;
+            default -> side = 5;
+        }
+        Point2D mergePointDiff = new Point2D(
+                Math.cos(Math.PI/2 + Math.PI/3*side)*size/2*shrinkConstant,
+                - Math.sin(Math.PI/2 + Math.PI/3*side)*size/2*shrinkConstant
+        );
+        forwardMergePoint = getCenter().add(mergePointDiff);
         return forwardMergePoint;
     }
 
     public Point2D getBackMergePoint() {
+        int side;
+        switch (index) {
+            case 0, 1 -> side = 3;
+            case 2, 3 -> side = 4;
+            case 4, 5 -> side = 5;
+            case 6, 7 -> side = 0;
+            case 8, 9 -> side = 1;
+            default -> side = 2;
+        }
+        Point2D mergePointDiff = new Point2D(
+                Math.cos(Math.PI/2 + Math.PI/3*side)*size/2*shrinkConstant,
+                - Math.sin(Math.PI/2 + Math.PI/3*side)*size/2*shrinkConstant
+        );
+        backMergePoint = getCenter().add(mergePointDiff);
         return backMergePoint;
     }
 
     public Point2D getCenter() {
-        return new Point2D(getLayoutX() + size / 2, getLayoutY() + size / 2);
-        // return new Point2D(localToParent(0,0).getX() + size / 2, localToParent(0,0).getY() + size / 2);
+        // return new Point2D(getLayoutX() + size / 2, getLayoutY() + size / 2);
+        return new Point2D(localToParent(0,0).getX() + size / 2, localToParent(0,0).getY() + size / 2);
     }
 }

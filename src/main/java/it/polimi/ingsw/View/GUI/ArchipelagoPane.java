@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -28,11 +29,10 @@ public class ArchipelagoPane extends AnchorPane {
         double centerPos = archipelagoSide / 2.0;
 
         for (int i = 0; i < 12; i++) {
-            IslandTilePane newIsland = new IslandTilePane();
+            IslandTilePane newIsland = new IslandTilePane(i);
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
             newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
-            newIsland.setMergePoints(i);
         }
         createEmptyBridges();
 
@@ -119,13 +119,19 @@ public class ArchipelagoPane extends AnchorPane {
         // translate version:
         Translate translate = new Translate();
         forwardIsland.getTransforms().add(translate);
+        Interpolator customInterpolator = new Interpolator() {
+            @Override
+            protected double curve(double v) {
+                return Math.pow(v, 10);
+            }
+        };
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1),
-                        new KeyValue(translate.xProperty(), 0d),
-                        new KeyValue(translate.yProperty(), 0d)),
-                new KeyFrame(Duration.seconds(3),
-                        new KeyValue(translate.xProperty(), mergeDiff.getX()),
-                        new KeyValue(translate.yProperty(), mergeDiff.getY()))
+                new KeyFrame(Duration.millis(500),
+                        new KeyValue(translate.xProperty(), 0d, customInterpolator),
+                        new KeyValue(translate.yProperty(), 0d, customInterpolator)),
+                new KeyFrame(Duration.millis(2000),
+                        new KeyValue(translate.xProperty(), mergeDiff.getX(), customInterpolator),
+                        new KeyValue(translate.yProperty(), mergeDiff.getY(), customInterpolator))
         );
         timeline.setCycleCount(1);
         timeline.play();
@@ -142,13 +148,20 @@ public class ArchipelagoPane extends AnchorPane {
         //translate version:
         Translate translate = new Translate();
         backIsland.getTransforms().add(translate);
+
+        Interpolator customInterpolator = new Interpolator() {
+            @Override
+            protected double curve(double v) {
+                return Math.pow(v, 10);
+            }
+        };
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1),
-                        new KeyValue(translate.xProperty(), 0d),
-                        new KeyValue(translate.yProperty(), 0d)),
-                new KeyFrame(Duration.seconds(3),
-                        new KeyValue(translate.xProperty(), reverseMergeDiff.getX()),
-                        new KeyValue(translate.yProperty(), reverseMergeDiff.getY()))
+                new KeyFrame(Duration.millis(500),
+                        new KeyValue(translate.xProperty(), 0d, customInterpolator),
+                        new KeyValue(translate.yProperty(), 0d, customInterpolator)),
+                new KeyFrame(Duration.millis(2000),
+                        new KeyValue(translate.xProperty(), reverseMergeDiff.getX(), customInterpolator),
+                        new KeyValue(translate.yProperty(), reverseMergeDiff.getY(), customInterpolator))
         );
         timeline.setCycleCount(1);
         timeline.play();

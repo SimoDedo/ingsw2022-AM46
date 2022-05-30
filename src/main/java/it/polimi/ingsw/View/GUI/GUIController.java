@@ -32,6 +32,8 @@ public class GUIController {
 
     private boolean debug = true;
 
+    private boolean useBridges = false;
+
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
@@ -260,8 +262,8 @@ public class GUIController {
     }
 
     public void updateArchipelago() {
-        // version with movement:
-        /*
+
+        /* version with movement:
          compare old groupList with new groupList, in the island tiles number order
          pick tile from old list
          pick group from new list
@@ -279,15 +281,7 @@ public class GUIController {
          archipelagoPane.relocateForward(i, mergeDiff);
         */
 
-        // example code:
-        /*
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
-        final Point2D mergeDiff = archipelagoPane.calcMergeDiff(0, 1);
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(1, mergeDiff));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(0, mergeDiff));*/
-
-        // version with bridges:
-        /*
+        /* version with bridges:
         bridges only appear when an island is conquered => when an islandgroup changes size
         we only check new and old group sizes, back to back
         if the size is the same, nothing has changed. go to the next group
@@ -295,24 +289,35 @@ public class GUIController {
         call setBridge(i, tower color) on every tile index i inside the group (redundant if the color hasn't changed and
         there's only been an addition to the group, but whatever since this single line encompasses both addition and
         re-conquest
-         */
-        //example code:
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.GREY));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.BLACK));
+        */
 
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");// DELETEME debug tutta questa sezione
+        if (useBridges) {
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.GREY));
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.BLACK));
+        }
+        else {
+            final Point2D mergeDiff = archipelagoPane.calcMergeDiff(2, 3);
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(3, mergeDiff));
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, mergeDiff));
+
+
+            final Point2D mergeDiff2 = archipelagoPane.calcMergeDiff(4, 5);
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, mergeDiff2));
+            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(4, mergeDiff2));
+        }
     }
 
     public void utilityFunction() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
 
-        final Point2D secondMergeDiff = archipelagoPane.calcMergeDiff(1, 2);
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(2, secondMergeDiff));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(1, secondMergeDiff));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(0, secondMergeDiff));
+        final Point2D secondMergeDiff = archipelagoPane.calcMergeDiff(3, 4);
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(4, secondMergeDiff));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, secondMergeDiff));
+
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, secondMergeDiff));
+        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(3, secondMergeDiff));
     }
-
-
 
 }
