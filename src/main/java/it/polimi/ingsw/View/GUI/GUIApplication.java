@@ -319,12 +319,12 @@ public class GUIApplication extends Application {
 
         //Player boards
         VBox players = new VBox();
-        players.setSpacing(2);
+        players.setSpacing(1);
         players.setAlignment(Pos.CENTER);
         players.getChildren().add(new PlayerPane(1, "soadopasd"));
         players.getChildren().add(new PlayerPane(2, "292doih"));
         players.getChildren().add(new PlayerPane(3, "123709asdasd"));
-        players.getChildren().add(new PlayerPane(4, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
+        players.getChildren().add(new PlayerPane(4, "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"));
         mainGrid.add(players, 2, 1);
 
         mainGrid.setGridLinesVisible(true);
@@ -447,6 +447,11 @@ public class GUIApplication extends Application {
         stage.show();
         stage.setTitle("Eriantys AM46: Game");
         fadeIn(getContent(mainScene));
+        //vvvv DEBUG vvvvv
+        ((PlayerPane)this.lookup("playerPane" + 1)).enableSelectAssistant();
+        ((PlayerPane)this.lookup("playerPane" + 2)).enableSelectAssistant();
+        ((PlayerPane)this.lookup("playerPane" + 3)).enableSelectAssistant();
+        ((PlayerPane)this.lookup("playerPane" + 4)).enableSelectAssistant();
     }
 
 }
