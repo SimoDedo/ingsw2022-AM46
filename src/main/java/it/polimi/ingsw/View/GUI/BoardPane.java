@@ -21,9 +21,9 @@ public class BoardPane extends StackPane {
 
 
     private final GridPane mainGrid;
-    private final GridPane entrance;
-    private final GridPane diningRoom;
-    private final GridPane professors;
+    private final StudentContainerPane entrance;
+    private final StudentContainerPane diningRoom;
+    private final StudentContainerPane professors;
     private final GridPane towerSpace;
 
 
@@ -57,17 +57,14 @@ public class BoardPane extends StackPane {
         r.setPercentHeight(100);
         mainGrid.getRowConstraints().addAll(r);
 
-        entrance = new GridPane();
+        entrance = new StudentContainerPane(sizeBoardH, sizeBoardV, entrancePct, 5, 2, 10.0, 5.0, 15.0);
         entrance.setId("entrancePane" + position);
-        createGrid(entrance, entrancePct, 5, 2, 10, 5, 15);
 
-        diningRoom = new GridPane();
+        diningRoom = new StudentContainerPane(sizeBoardH, sizeBoardV, diningRoomPct, 5, 10, 5.0, 7.5, 0.0);
         diningRoom.setId("diningRoomPane" + position);
-        createGrid(diningRoom, diningRoomPct, 5, 10, 5, 7.5, 0);
 
-        professors = new GridPane();
+        professors = new StudentContainerPane(sizeBoardH, sizeBoardV, professorPct, 5, 1, 6.0, 7.5, 0.0);
         professors.setId("professorsPane" + position);
-        createGrid(professors, professorPct, 5, 1, 6, 7.5, 0);
 
         towerSpace = new GridPane();
         towerSpace.setId("towerSpacePane" + position);
@@ -298,7 +295,7 @@ public class BoardPane extends StackPane {
     }
 
     public void debugP(){
-        Image red1 = new Image("/pawns/teacher_green.png", 50, 50, true, true);
+        Image red1 = new Image("/pawns/professor_green.png", 50, 50, true, true);
         ImageView redView1 = new ImageView(red1);
         redView1.setEffect(new DropShadow(10.0, Color.BLACK));
         redView1.setPreserveRatio(true);
@@ -306,7 +303,7 @@ public class BoardPane extends StackPane {
         redView1.setSmooth(true);
         redView1.setCache(true);
 
-        Image red2 = new Image("/pawns/teacher_red.png", 50, 50, true, true);
+        Image red2 = new Image("/pawns/professor_red.png", 50, 50, true, true);
         ImageView redView2 = new ImageView(red2);
         redView2.setEffect(new DropShadow(10.0, Color.BLACK));
         redView2.setPreserveRatio(true);
@@ -314,7 +311,7 @@ public class BoardPane extends StackPane {
         redView2.setSmooth(true);
         redView2.setCache(true);
 
-        Image red3 = new Image("/pawns/teacher_yellow.png", 50, 50, true, true);
+        Image red3 = new Image("/pawns/professor_yellow.png", 50, 50, true, true);
         ImageView redView3 = new ImageView(red3);
         redView3.setEffect(new DropShadow(10.0, Color.BLACK));
         redView3.setPreserveRatio(true);
@@ -322,7 +319,7 @@ public class BoardPane extends StackPane {
         redView3.setSmooth(true);
         redView3.setCache(true);
 
-        Image red4 = new Image("/pawns/teacher_pink.png", 50, 50, true, true);
+        Image red4 = new Image("/pawns/professor_pink.png", 50, 50, true, true);
         ImageView redView4 = new ImageView(red4);
         redView4.setEffect(new DropShadow(10.0, Color.BLACK));
         redView4.setPreserveRatio(true);
@@ -330,7 +327,7 @@ public class BoardPane extends StackPane {
         redView4.setSmooth(true);
         redView4.setCache(true);
 
-        Image red5 = new Image("/pawns/teacher_blue.png", 50, 50, true, true);
+        Image red5 = new Image("/pawns/professor_blue.png", 50, 50, true, true);
         ImageView redView5 = new ImageView(red5);
         redView5.setEffect(new DropShadow(10.0, Color.BLACK));
         redView5.setPreserveRatio(true);
@@ -353,7 +350,7 @@ public class BoardPane extends StackPane {
 
     public void debugT(){
         for (int i = 0; i < 8; i++) {
-            Image tower1 = new Image("/pawns/tower_white1.png", 50, 50, true, true);
+            Image tower1 = new Image("/pawns/tower_white.png", 50, 50, true, true);
             ImageView towerView1 = new ImageView(tower1);
             towerView1.setEffect(new DropShadow(10.0, Color.GREY));
             towerView1.setPreserveRatio(true);

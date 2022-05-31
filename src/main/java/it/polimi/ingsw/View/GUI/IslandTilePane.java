@@ -48,32 +48,12 @@ public class IslandTilePane extends StackPane {
         gridContainer.getChildren().add(islandModifiersPane);
         islandModifiersPane.setPrefSize(100.0, 25.0);
 
-        Image tower = new Image("/pawns/tower_white1.png", 50, 50, true, true);
-        ImageView towerView = new ImageView(tower);
-        towerView.setEffect(new DropShadow(20.0, Color.WHITE));
-        towerView.setPreserveRatio(true);
-        towerView.setFitHeight(modifierSize);
-        towerView.setSmooth(true);
-        towerView.setCache(true);
-        islandModifiersPane.add(towerView, 0, 0);
-
-        Image mother = new Image("/pawns/mothernature0.png", 50, 50, true, true);
-        ImageView motherView = new ImageView(mother);
-        motherView.setEffect(new DropShadow(20.0, Color.WHITE));
-        motherView.setPreserveRatio(true);
-        motherView.setFitHeight(modifierSize);
-        motherView.setSmooth(true);
-        motherView.setCache(true);
-        islandModifiersPane.add(motherView, 1, 0);
-
-        Image noentry = new Image("/pawns/noentrytile.png", 50, 50, true, true);
-        ImageView noentryView = new ImageView(noentry);
-        noentryView.setEffect(new DropShadow(20.0, Color.WHITE));
-        noentryView.setPreserveRatio(true);
-        noentryView.setFitHeight(modifierSize);
-        noentryView.setSmooth(true);
-        noentryView.setCache(true);
-        islandModifiersPane.add(noentryView, 2, 0);
+        PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
+        islandModifiersPane.add(tower, 0, 0);
+        PawnView mothernature = new PawnView(0, "mothernature", "", PawnView.pawnSize);
+        islandModifiersPane.add(mothernature, 1, 0);
+        PawnView noentry = new PawnView(0, "noentrytile", "", PawnView.pawnSize);
+        islandModifiersPane.add(noentry, 2, 0);
 
         // gridpane for students goes here
         GridPane studentPane = new GridPane();
@@ -81,50 +61,17 @@ public class IslandTilePane extends StackPane {
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
-        Image red = new Image("/pawns/student_pink.png", 50, 50, true, true);
-        ImageView redView = new ImageView(red);
-        redView.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView.setPreserveRatio(true);
-        redView.setFitHeight(studentSize);
-        redView.setSmooth(true);
-        redView.setCache(true);
-        studentPane.add(redView, 3, 0);
 
-        Image red1 = new Image("/pawns/student_red.png", 50, 50, true, true);
-        ImageView redView1 = new ImageView(red1);
-        redView1.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView1.setPreserveRatio(true);
-        redView1.setFitHeight(studentSize);
-        redView1.setSmooth(true);
-        redView1.setCache(true);
-        studentPane.add(redView1, 0, 0);
-
-        Image red2 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView2 = new ImageView(red2);
-        redView2.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView2.setPreserveRatio(true);
-        redView2.setFitHeight(studentSize);
-        redView2.setSmooth(true);
-        redView2.setCache(true);
-        studentPane.add(redView2, 1, 1);
-
-        Image red3 = new Image("/pawns/student_green.png", 50, 50, true, true);
-        ImageView redView3 = new ImageView(red3);
-        redView3.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView3.setPreserveRatio(true);
-        redView3.setFitHeight(studentSize);
-        redView3.setSmooth(true);
-        redView3.setCache(true);
-        studentPane.add(redView3, 2, 2);
-
-        Image red4 = new Image("/pawns/student_blue.png", 50, 50, true, true);
-        ImageView redView4 = new ImageView(red4);
-        redView4.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView4.setPreserveRatio(true);
-        redView4.setFitHeight(studentSize);
-        redView4.setSmooth(true);
-        redView4.setCache(true);
-        studentPane.add(redView4, 3, 3);
+        for (int i = 0; i < 4; i++) {
+            StudentView studentView = new StudentView(i, "student", "red", StudentView.studentSize);
+            studentView.setEnabled();
+            int finalI = i;
+            studentView.setCallback(mouseEvent -> {
+                System.out.println("TEST " + finalI);
+                studentView.setDisabled();
+            });
+            studentPane.add(studentView, i, i);
+        }
     }
 
     public Point2D getForwardMergePoint() {
