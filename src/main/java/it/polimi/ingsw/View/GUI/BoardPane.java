@@ -7,35 +7,40 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import it.polimi.ingsw.Utils.Enum.Color;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BoardPane extends StackPane {
 
     private final double studentSize = 15.0, modifierSize = 25.0; //CHECKME: uniform better with the rest
-    private double sizeBoardV;
-    private double sizeBoardH;
-    private final double entrancePct = 500.0/3304.0; //TODO: not hardcoded but fetched form image file (at least 3304.0)
-    private final double diningRoomPct = (2270.0 - 500.0) /3304.0;
-    private final double professorPct = (2560.0 - 2270.0) / 3304.0;
-    private final double towerPct = (3304.0 - 2560.0) / 3304.0;
+    private double boardHeight;
+    private double boardWidth;
+    private final double entrancePct = (500.0/3304.0) * 100; //TODO: not hardcoded but fetched form image file (at least 3304.0)
+    private final double diningRoomPct = ((2270.0 - 500.0) /3304.0) * 100;
+    private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
+    private final double towerPct = ((3304.0 - 2560.0) / 3304.0) * 100;
 
 
     private final GridPane mainGrid;
     private final StudentContainerPane entrance;
-    private final StudentContainerPane diningRoom;
+    private final GridPane diningRoom;
+    private final HashMap<Color, StudentContainerPane> tables;
+    private final HashMap<Color, Integer> tableOrder;
     private final StudentContainerPane professors;
     private final GridPane towerSpace;
 
 
-    public BoardPane(int position, double sizeBoardV) {
-        this.sizeBoardV = sizeBoardV;
-        this.sizeBoardH = sizeBoardV * (3304.0 / 1413.0);
+    public BoardPane(int position, double boardHeight) {
+        this.boardHeight = boardHeight;
+        this.boardWidth = boardHeight * (3304.0 / 1413.0);
 
         this.setId("boardPane" + position);
         Image playerBoard = new Image("/world/board_roundedcorners.png", 600, 600,true, false);
         ImageView imageViewPB = new ImageView(playerBoard);
         imageViewPB.setPreserveRatio(true);
-        imageViewPB.setFitHeight(sizeBoardV);
+        imageViewPB.setFitHeight(boardHeight);
         imageViewPB.setSmooth(true);
         imageViewPB.setCache(true);
         imageViewPB.setEffect(new DropShadow());
@@ -57,13 +62,25 @@ public class BoardPane extends StackPane {
         r.setPercentHeight(100);
         mainGrid.getRowConstraints().addAll(r);
 
-        entrance = new StudentContainerPane(sizeBoardH, sizeBoardV, entrancePct, 5, 2, 10.0, 5.0, 15.0);
+        entrance = new StudentContainerPane(boardWidth, boardHeight, entrancePct, 5, 2, 10.0, 5.0, 15.0);
         entrance.setId("entrancePane" + position);
 
-        diningRoom = new StudentContainerPane(sizeBoardH, sizeBoardV, diningRoomPct, 5, 10, 5.0, 7.5, 0.0);
+        diningRoom = new GridPane();
+        createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.5, 0.0);
         diningRoom.setId("diningRoomPane" + position);
 
-        professors = new StudentContainerPane(sizeBoardH, sizeBoardV, professorPct, 5, 1, 6.0, 7.5, 0.0);
+        tableOrder = new HashMap<>(Map.of(Color.GREEN, 0, Color.RED, 1, Color.YELLOW, 2, Color.PINK, 3, Color.BLUE, 4));
+        tables = new HashMap<>();
+
+        for (Color color : Color.values()){
+            StudentContainerPane table = new StudentContainerPane(boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
+            table.setId("table"+color.toString().toLowerCase()+position);
+            tables.put(color, table);
+            diningRoom.add(table, 0, tableOrder.get(color));
+        }
+
+
+        professors = new StudentContainerPane(boardWidth, boardHeight, professorPct, 5, 1, 6.0, 7.5, 0.0);
         professors.setId("professorsPane" + position);
 
         towerSpace = new GridPane();
@@ -99,205 +116,34 @@ public class BoardPane extends StackPane {
             c.setPercentWidth(100.0 / columns);
             toCreate.getColumnConstraints().add(c);
         }
-        toCreate.setPadding(new Insets(sizeBoardV * (paddingVPct/100), sizeBoardH * (paddingHPct/100 + paddingExtraRightPct/100) * widthPct,
-                sizeBoardV * (paddingVPct/100), sizeBoardH * (paddingHPct/100) * widthPct));
+        toCreate.setPadding(new Insets(boardHeight * (paddingVPct/100), boardWidth * (paddingHPct/100 + paddingExtraRightPct/100) * (widthPct/100),
+                boardHeight * (paddingVPct/100), boardWidth * (paddingHPct/100) * (widthPct/100)));
 
         //toCreate.setGridLinesVisible(true);
     }
 
 
     public void debugStudE(){
-        Image red1 = new Image("/pawns/student_red.png", 50, 50, true, true);
-        ImageView redView1 = new ImageView(red1);
-        redView1.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView1.setPreserveRatio(true);
-        redView1.setFitHeight(studentSize);
-        redView1.setSmooth(true);
-        redView1.setCache(true);
-
-        Image red2 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView2 = new ImageView(red2);
-        redView2.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView2.setPreserveRatio(true);
-        redView2.setFitHeight(studentSize);
-        redView2.setSmooth(true);
-        redView2.setCache(true);
-
-        Image red3 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView3 = new ImageView(red3);
-        redView3.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView3.setPreserveRatio(true);
-        redView3.setFitHeight(studentSize);
-        redView3.setSmooth(true);
-        redView3.setCache(true);
-
-        Image red4 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView4 = new ImageView(red4);
-        redView4.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView4.setPreserveRatio(true);
-        redView4.setFitHeight(studentSize);
-        redView4.setSmooth(true);
-        redView4.setCache(true);
-
-        Image red5 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView5 = new ImageView(red5);
-        redView5.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView5.setPreserveRatio(true);
-        redView5.setFitHeight(studentSize);
-        redView5.setSmooth(true);
-        redView5.setCache(true);
-
-        Image red6 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView6 = new ImageView(red6);
-        redView6.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView6.setPreserveRatio(true);
-        redView6.setFitHeight(studentSize);
-        redView6.setSmooth(true);
-        redView6.setCache(true);
-
-        Image red7 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView7 = new ImageView(red7);
-        redView7.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView7.setPreserveRatio(true);
-        redView7.setFitHeight(studentSize);
-        redView7.setSmooth(true);
-        redView7.setCache(true);
-
-        Image red8 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView8 = new ImageView(red8);
-        redView8.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView8.setPreserveRatio(true);
-        redView8.setFitHeight(studentSize);
-        redView8.setSmooth(true);
-        redView8.setCache(true);
-
-        Image red9 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView9 = new ImageView(red9);
-        redView9.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView9.setPreserveRatio(true);
-        redView9.setFitHeight(studentSize);
-        redView9.setSmooth(true);
-        redView9.setCache(true);
-
-        entrance.add(redView1, 0,0);
-        entrance.add(redView2, 1,0);
-        entrance.add(redView3, 0,1);
-        entrance.add(redView4, 1,1);
-        entrance.add(redView5, 0,2);
-        entrance.add(redView6, 1,2);
-        entrance.add(redView7, 0,3);
-        entrance.add(redView8, 1,3);
-        entrance.add(redView9, 0,4);
-
-        GridPane.setHalignment(redView1, HPos.CENTER);
-        GridPane.setHalignment(redView2, HPos.CENTER);
-        GridPane.setHalignment(redView3, HPos.CENTER);
-        GridPane.setHalignment(redView4, HPos.CENTER);
-        GridPane.setHalignment(redView5, HPos.CENTER);
-        GridPane.setHalignment(redView6, HPos.CENTER);
-        GridPane.setHalignment(redView7, HPos.CENTER);
-        GridPane.setHalignment(redView8, HPos.CENTER);
-        GridPane.setHalignment(redView9, HPos.CENTER);
+        for (int i = 0; i < 10; i++) {
+            StudentView studentView = new StudentView(0, "student", "green", StudentView.studentSize);
+            entrance.add(studentView, i % 2, i / 2);
+            GridPane.setHalignment(studentView, HPos.CENTER);
+        }
     }
 
     public void debugStudDN(){
-        Image red1 = new Image("/pawns/student_red.png", 50, 50, true, true);
-        ImageView redView1 = new ImageView(red1);
-        redView1.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView1.setPreserveRatio(true);
-        redView1.setFitHeight(studentSize);
-        redView1.setSmooth(true);
-        redView1.setCache(true);
-        diningRoom.add(redView1, 0,0);
-
-        Image red2 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView2 = new ImageView(red2);
-        redView2.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView2.setPreserveRatio(true);
-        redView2.setFitHeight(studentSize);
-        redView2.setSmooth(true);
-        redView2.setCache(true);
-        diningRoom.add(redView2, 1,0);
-
-        Image red3 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView3 = new ImageView(red3);
-        redView3.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView3.setPreserveRatio(true);
-        redView3.setFitHeight(studentSize);
-        redView3.setSmooth(true);
-        redView3.setCache(true);
-        diningRoom.add(redView3, 2,0);
-
-        Image red4 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView4 = new ImageView(red4);
-        redView4.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView4.setPreserveRatio(true);
-        redView4.setFitHeight(studentSize);
-        redView4.setSmooth(true);
-        redView4.setCache(true);
-        diningRoom.add(redView4, 3, 0);
-
-        Image red5 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView5 = new ImageView(red5);
-        redView5.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView5.setPreserveRatio(true);
-        redView5.setFitHeight(studentSize);
-        redView5.setSmooth(true);
-        redView5.setCache(true);
-        diningRoom.add(redView5, 6,4);
-
-        Image red6 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView6 = new ImageView(red6);
-        redView6.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView6.setPreserveRatio(true);
-        redView6.setFitHeight(studentSize);
-        redView6.setSmooth(true);
-        redView6.setCache(true);
-        diningRoom.add(redView6, 4,0);
-
-        Image red7 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView7 = new ImageView(red7);
-        redView7.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView7.setPreserveRatio(true);
-        redView7.setFitHeight(studentSize);
-        redView7.setSmooth(true);
-        redView7.setCache(true);
-        diningRoom.add(redView7, 5,0);
-
-        Image red8 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView8 = new ImageView(red8);
-        redView8.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView8.setPreserveRatio(true);
-        redView8.setFitHeight(studentSize);
-        redView8.setSmooth(true);
-        redView8.setCache(true);
-        diningRoom.add(redView8, 6,0);
-
-        Image red9 = new Image("/pawns/student_yellow.png", 50, 50, true, true);
-        ImageView redView9 = new ImageView(red9);
-        redView9.setEffect(new DropShadow(10.0, Color.BLACK));
-        redView9.setPreserveRatio(true);
-        redView9.setFitHeight(studentSize);
-        redView9.setSmooth(true);
-        redView9.setCache(true);
-        diningRoom.add(redView9, 7,0);
-
-        GridPane.setHalignment(redView1, HPos.CENTER);
-        GridPane.setHalignment(redView2, HPos.CENTER);
-        GridPane.setHalignment(redView3, HPos.CENTER);
-        GridPane.setHalignment(redView4, HPos.CENTER);
-        GridPane.setHalignment(redView5, HPos.CENTER);
-        GridPane.setHalignment(redView6, HPos.CENTER);
-        GridPane.setHalignment(redView7, HPos.CENTER);
-        GridPane.setHalignment(redView8, HPos.CENTER);
-        GridPane.setHalignment(redView9, HPos.CENTER);
-
+        for(Color color : Color.values()){
+            for (int i = 0; i < 10; i++) {
+                StudentView studentView = new StudentView(0, "student", color.toString().toLowerCase(), StudentView.studentSize);
+                tables.get(color).add(studentView, i, 0);
+                GridPane.setHalignment(studentView, HPos.CENTER);
+            }
+        }
     }
 
     public void debugP(){
         Image red1 = new Image("/pawns/professor_green.png", 50, 50, true, true);
         ImageView redView1 = new ImageView(red1);
-        redView1.setEffect(new DropShadow(10.0, Color.BLACK));
         redView1.setPreserveRatio(true);
         redView1.setFitHeight(studentSize);
         redView1.setSmooth(true);
@@ -305,7 +151,6 @@ public class BoardPane extends StackPane {
 
         Image red2 = new Image("/pawns/professor_red.png", 50, 50, true, true);
         ImageView redView2 = new ImageView(red2);
-        redView2.setEffect(new DropShadow(10.0, Color.BLACK));
         redView2.setPreserveRatio(true);
         redView2.setFitHeight(studentSize);
         redView2.setSmooth(true);
@@ -313,7 +158,6 @@ public class BoardPane extends StackPane {
 
         Image red3 = new Image("/pawns/professor_yellow.png", 50, 50, true, true);
         ImageView redView3 = new ImageView(red3);
-        redView3.setEffect(new DropShadow(10.0, Color.BLACK));
         redView3.setPreserveRatio(true);
         redView3.setFitHeight(studentSize);
         redView3.setSmooth(true);
@@ -321,7 +165,6 @@ public class BoardPane extends StackPane {
 
         Image red4 = new Image("/pawns/professor_pink.png", 50, 50, true, true);
         ImageView redView4 = new ImageView(red4);
-        redView4.setEffect(new DropShadow(10.0, Color.BLACK));
         redView4.setPreserveRatio(true);
         redView4.setFitHeight(studentSize);
         redView4.setSmooth(true);
@@ -329,7 +172,6 @@ public class BoardPane extends StackPane {
 
         Image red5 = new Image("/pawns/professor_blue.png", 50, 50, true, true);
         ImageView redView5 = new ImageView(red5);
-        redView5.setEffect(new DropShadow(10.0, Color.BLACK));
         redView5.setPreserveRatio(true);
         redView5.setFitHeight(studentSize);
         redView5.setSmooth(true);
@@ -352,7 +194,6 @@ public class BoardPane extends StackPane {
         for (int i = 0; i < 8; i++) {
             Image tower1 = new Image("/pawns/tower_white.png", 50, 50, true, true);
             ImageView towerView1 = new ImageView(tower1);
-            towerView1.setEffect(new DropShadow(10.0, Color.GREY));
             towerView1.setPreserveRatio(true);
             towerView1.setFitHeight(modifierSize);
             towerView1.setSmooth(true);

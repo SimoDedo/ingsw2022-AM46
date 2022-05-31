@@ -21,8 +21,8 @@ public class StudentContainerPane extends GridPane {
             c.setPercentWidth(100.0 / columns);
             this.getColumnConstraints().add(c);
         }
-        this.setPadding(new Insets(parentHeight * (paddingVPct/100), parentWidth * (paddingHPct/100 + paddingExtraRightPct/100) * widthPct,
-                parentHeight * (paddingVPct/100), parentWidth * (paddingHPct/100) * widthPct));
+        this.setPadding(new Insets(parentHeight * (paddingVPct/100), parentWidth * (paddingHPct/100 + paddingExtraRightPct/100) * (widthPct/100),
+                parentHeight * (paddingVPct/100), parentWidth * (paddingHPct/100) * (widthPct/100)));
 
     }
 
