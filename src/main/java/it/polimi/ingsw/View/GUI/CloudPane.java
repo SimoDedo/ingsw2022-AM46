@@ -34,9 +34,9 @@ public class CloudPane extends StackPane {
         studentPane.setHgap(2.0);
         this.getChildren().add(studentPane);
 
-        /* debug
+
         for (int i = 0; i < 3; i++) {
-            StudentView studentView = new StudentView(i, "student", "red", StudentView.studentSize);
+            StudentView studentView = new StudentView(i, "student", "yellow", StudentView.studentSize);
             studentView.setEnabled();
             int finalI = i;
             studentView.setCallback(mouseEvent -> {
@@ -47,6 +47,6 @@ public class CloudPane extends StackPane {
             StudentContainerPane.setHalignment(studentView, HPos.CENTER);
         }
 
-         */
+
     }
 }

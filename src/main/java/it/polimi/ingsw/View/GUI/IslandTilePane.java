@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
@@ -65,9 +66,9 @@ public class IslandTilePane extends StackPane {
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
 
-        /* debug
+
         for (int i = 0; i < 4; i++) {
-            StudentView studentView = new StudentView(i, "student", "red", StudentView.studentSize);
+            StudentView studentView = new StudentView(i, "student", "blue", StudentView.studentSize);
             studentView.setEnabled();
             int finalI = i;
             studentView.setCallback(mouseEvent -> {
@@ -77,7 +78,7 @@ public class IslandTilePane extends StackPane {
             studentPane.add(studentView, i, i);
             StudentContainerPane.setHalignment(studentView, HPos.CENTER);
         }
-        */
+
     }
 
     public Point2D getForwardMergePoint() {

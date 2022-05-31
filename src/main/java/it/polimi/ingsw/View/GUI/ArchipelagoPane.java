@@ -53,13 +53,13 @@ public class ArchipelagoPane extends AnchorPane {
         }
 
         // cloud hbox goes here
-        double cloudContainerHeight = 80.0, cloudContainerWidth = 350.0;
+        double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
         HBox cloudContainer = new HBox(5.0);
         cloudContainer.setAlignment(Pos.CENTER);
         cloudContainer.setPrefSize(cloudContainerWidth, cloudContainerHeight);
         cloudContainer.setMaxSize(cloudContainerWidth, cloudContainerHeight);
         this.getChildren().add(cloudContainer);
-        cloudContainer.relocate(centerPos - 110.0, centerPos + 380.0);
+        cloudContainer.relocate(centerPos - 160.0, centerPos + 360.0);
 
         for (int i = 0; i < 4; i++) {
             CloudPane cloudPane = new CloudPane();
