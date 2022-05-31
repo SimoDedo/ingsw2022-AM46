@@ -478,10 +478,7 @@ public class Client {
     public void reset(){
         try {
             socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        } catch (Exception ignored) {}
         System.exit(-1); //FIXME: actual reset
 
     }
