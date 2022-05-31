@@ -14,7 +14,6 @@ import java.util.Map;
 
 public class BoardPane extends StackPane {
 
-    private final double studentSize = 15.0, modifierSize = 25.0; //CHECKME: uniform better with the rest
     private double boardHeight;
     private double boardWidth;
     private final double entrancePct = (500.0/3304.0) * 100; //TODO: not hardcoded but fetched form image file (at least 3304.0)
@@ -22,12 +21,12 @@ public class BoardPane extends StackPane {
     private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
     private final double towerPct = ((3304.0 - 2560.0) / 3304.0) * 100;
 
+    private final HashMap<Color, Integer> tableOrder;
 
     private final GridPane mainGrid;
     private final StudentContainerPane entrance;
     private final GridPane diningRoom;
     private final HashMap<Color, StudentContainerPane> tables;
-    private final HashMap<Color, Integer> tableOrder;
     private final StudentContainerPane professors;
     private final GridPane towerSpace;
 
@@ -124,7 +123,7 @@ public class BoardPane extends StackPane {
 
 
     public void debugStudE(){
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             StudentView studentView = new StudentView(0, "student", "green", StudentView.studentSize);
             entrance.add(studentView, i % 2, i / 2);
             GridPane.setHalignment(studentView, HPos.CENTER);
@@ -142,67 +141,19 @@ public class BoardPane extends StackPane {
     }
 
     public void debugP(){
-        Image red1 = new Image("/pawns/professor_green.png", 50, 50, true, true);
-        ImageView redView1 = new ImageView(red1);
-        redView1.setPreserveRatio(true);
-        redView1.setFitHeight(studentSize);
-        redView1.setSmooth(true);
-        redView1.setCache(true);
+        for(Color color : Color.values()){
+            PawnView prof = new PawnView(0, "professor", color.toString().toLowerCase(), StudentView.studentSize);
+            professors.add(prof, 0, tableOrder.get(color));
+            GridPane.setHalignment(prof, HPos.CENTER);
+        }
 
-        Image red2 = new Image("/pawns/professor_red.png", 50, 50, true, true);
-        ImageView redView2 = new ImageView(red2);
-        redView2.setPreserveRatio(true);
-        redView2.setFitHeight(studentSize);
-        redView2.setSmooth(true);
-        redView2.setCache(true);
-
-        Image red3 = new Image("/pawns/professor_yellow.png", 50, 50, true, true);
-        ImageView redView3 = new ImageView(red3);
-        redView3.setPreserveRatio(true);
-        redView3.setFitHeight(studentSize);
-        redView3.setSmooth(true);
-        redView3.setCache(true);
-
-        Image red4 = new Image("/pawns/professor_pink.png", 50, 50, true, true);
-        ImageView redView4 = new ImageView(red4);
-        redView4.setPreserveRatio(true);
-        redView4.setFitHeight(studentSize);
-        redView4.setSmooth(true);
-        redView4.setCache(true);
-
-        Image red5 = new Image("/pawns/professor_blue.png", 50, 50, true, true);
-        ImageView redView5 = new ImageView(red5);
-        redView5.setPreserveRatio(true);
-        redView5.setFitHeight(studentSize);
-        redView5.setSmooth(true);
-        redView5.setCache(true);
-
-        professors.add(redView1, 0, 0);
-        professors.add(redView2, 0, 1);
-        professors.add(redView3, 0, 2);
-        professors.add(redView4, 0, 3);
-        professors.add(redView5, 0, 4);
-
-        GridPane.setHalignment(redView1, HPos.CENTER);
-        GridPane.setHalignment(redView2, HPos.CENTER);
-        GridPane.setHalignment(redView3, HPos.CENTER);
-        GridPane.setHalignment(redView4, HPos.CENTER);
-        GridPane.setHalignment(redView5, HPos.CENTER);
     }
 
     public void debugT(){
         for (int i = 0; i < 8; i++) {
-            Image tower1 = new Image("/pawns/tower_white.png", 50, 50, true, true);
-            ImageView towerView1 = new ImageView(tower1);
-            towerView1.setPreserveRatio(true);
-            towerView1.setFitHeight(modifierSize);
-            towerView1.setSmooth(true);
-            towerView1.setCache(true);
-
-            int col = i % 2;
-            int row = i / 2;
-            towerSpace.add(towerView1, col, row);
-            GridPane.setHalignment(towerView1, HPos.CENTER);
+            PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
+            towerSpace.add(tower, i % 2, i / 2);
+            GridPane.setHalignment(tower, HPos.CENTER);
         }
     }
 }
