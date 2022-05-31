@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ArchipelagoPane extends AnchorPane {
@@ -41,8 +42,8 @@ public class ArchipelagoPane extends AnchorPane {
         HBox charContainer = new HBox(5.0);
         this.getChildren().add(charContainer);
         charContainer.setAlignment(Pos.CENTER);
-        charContainer.setPrefSize(charContainerHeight, charContainerWidth);
-        charContainer.relocate(centerPos - 40.0, centerPos - 190.0);
+        charContainer.setPrefSize(charContainerWidth, charContainerHeight);
+        charContainer.relocate(centerPos - 90.0, centerPos + 50.0);
 
         for (int i = 0; i < 3; i++) {
             CharacterPane characterPane = new CharacterPane();
@@ -58,7 +59,7 @@ public class ArchipelagoPane extends AnchorPane {
         cloudContainer.setPrefSize(cloudContainerWidth, cloudContainerHeight);
         cloudContainer.setMaxSize(cloudContainerWidth, cloudContainerHeight);
         this.getChildren().add(cloudContainer);
-        cloudContainer.relocate(centerPos - 110.0, centerPos + 30.0);
+        cloudContainer.relocate(centerPos - 110.0, centerPos + 380.0);
 
         for (int i = 0; i < 4; i++) {
             CloudPane cloudPane = new CloudPane();
@@ -67,35 +68,14 @@ public class ArchipelagoPane extends AnchorPane {
         }
 
         // bag goes here
-        double bagSize = 60.0;
-        StackPane bagPane = new StackPane();
-        bagPane.setEffect(new DropShadow(50.0, Color.WHITE));
-        bagPane.setAlignment(Pos.CENTER);
-        bagPane.setMaxSize(bagSize, bagSize);
-        Image bag = new Image("/world/bag_students.png", 100, 100, true, true);
-        ImageView bagView = new ImageView(bag);
-        bagView.setPreserveRatio(true);
-        bagView.setFitHeight(bagSize);
-        bagView.setSmooth(true);
-        bagView.setCache(true);
-        bagPane.getChildren().add(bagView);
-        this.getChildren().add(bagPane);
-        bagPane.relocate(230.0, 390.0);
+        BagPane studentsBagPane = new BagPane("students");
+        this.getChildren().add(studentsBagPane);
+        studentsBagPane.relocate(centerPos - 5.0, centerPos - 40.0);
 
         // coinheap goes here
-        StackPane coinBagPane = new StackPane();
-        coinBagPane.setEffect(new DropShadow(50.0, Color.WHITE));
-        coinBagPane.setAlignment(Pos.CENTER);
-        coinBagPane.setMaxSize(bagSize, bagSize);
-        Image coinBag = new Image("/world/bag_coins.png", 100, 100, true, true);
-        ImageView coinBagView = new ImageView(coinBag);
-        coinBagView.setPreserveRatio(true);
-        coinBagView.setFitHeight(bagSize);
-        coinBagView.setSmooth(true);
-        coinBagView.setCache(true);
-        coinBagPane.getChildren().add(coinBagView);
-        this.getChildren().add(coinBagPane);
-        coinBagPane.relocate(340.0, 390.0);
+        BagPane coinsBagPane = new BagPane("coins");
+        this.getChildren().add(coinsBagPane);
+        coinsBagPane.relocate(centerPos + 65.0, centerPos - 40.0);
     }
 
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {

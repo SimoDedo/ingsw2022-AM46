@@ -293,13 +293,20 @@ public class GUIApplication extends Application {
 
     public void createMainScene() {
         VBox root = new VBox();
-        AnchorPane anchorPane = setupScene(root);
+        root.setPrefSize(stage.getWidth(), stage.getHeight());
+        root.setStyle("-fx-font-size: 14pt");
+
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setId("mainContentPane");
+        anchorPane.setStyle("-fx-font-family: 'Gill Sans MT'");
+        root.getChildren().add(anchorPane);
         anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/general/bg4_unfocused.png"),
+                new Image("/general/bg6_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-                BackgroundPosition.CENTER,
-                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
+                BackgroundPosition.DEFAULT,
+                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, true, true)
         )));
+
         GridPane mainGrid = new GridPane();
         mainGrid.setId("mainGrid");
         mainGrid.setAlignment(Pos.CENTER);
@@ -308,25 +315,35 @@ public class GUIApplication extends Application {
         AnchorPane.setBottomAnchor(mainGrid, 0.0);
         AnchorPane.setLeftAnchor(mainGrid, 0.0);
         AnchorPane.setTopAnchor(mainGrid, 0.0);
-        mainGrid.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
-        mainGrid.setHgap(10.0);
+        mainGrid.setPadding(new Insets(10.0, 5.0, 10.0, 5.0));
+        mainGrid.setHgap(20.0);
         mainGrid.setVgap(10.0);
 
-        mainGrid.add(new ArchipelagoPane(), 0, 0);
+        // turn order box
+        mainGrid.add(new TurnOrderPane(), 0, 0);
 
+        // archipelago
+        mainGrid.add(new ArchipelagoPane(), 0, 1);
+
+        /*
+        debug button for merge animation
         Button debugButton = new Button("DEBUG");
-        debugButton.setOnMouseClicked(mouseEvent -> controller.utilityFunction());
+        debugButton.setOnMouseClicked(mouseEvent -> controller.debugFunction1());
         mainGrid.add(debugButton, 0, 1);
+         */
 
         //Player boards
         VBox players = new VBox();
         players.setSpacing(1);
         players.setAlignment(Pos.CENTER);
-        players.getChildren().add(new PlayerPane(1, "Nickname 1"));
-        players.getChildren().add(new PlayerPane(2, "Nickname 2"));
-        players.getChildren().add(new PlayerPane(3, "Nickname 3"));
-        players.getChildren().add(new PlayerPane(4, "Nickname 4"));
-        mainGrid.add(players, 1, 0);
+        players.getChildren().add(0, new PlayerPane(1, "Nickname 1"));
+        players.getChildren().add(0, new PlayerPane(2, "Nickname 2"));
+        players.getChildren().add(0, new PlayerPane(3, "Nickname 3"));
+        players.getChildren().add(0,
+
+
+                new PlayerPane(4, "Nickname 4"));
+        mainGrid.add(players, 1, 1);
 
         // mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
@@ -363,13 +380,14 @@ public class GUIApplication extends Application {
             aboutDialog.setContentText("""
                     Online implementation of the tabletop game Eriantys produced by Cranio Creations.
                     Made by group AM46: Pietro Beghetto, Simone de Donato, Gregorio Dimaglie.
-                    Version: v0.9.3
-                    Date: 17/05/2022""");
+                    Version: v0.9.4
+                    Date: 31/05/2022""");
             aboutDialog.showAndWait();
         });
         helpMenu.getItems().add(about);
         menuBar.getMenus().add(helpMenu);
         AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setId("mainContentPane");
         anchorPane.setStyle("-fx-font-family: 'Gill Sans MT'");
         root.getChildren().addAll(menuBar, anchorPane);
         return anchorPane;
@@ -396,7 +414,7 @@ public class GUIApplication extends Application {
     }
 
     public Node getContent(Scene scene) {
-        return scene.getRoot().getChildrenUnmodifiable().get(1);
+        return scene.lookup("#mainContentPane");
     }
 
     public void fadeIn(Node node) {

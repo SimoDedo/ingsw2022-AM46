@@ -100,7 +100,6 @@ public class BoardPane extends StackPane {
         mainGrid.add(towerSpace, 3, 0);
         //mainGrid.setGridLinesVisible(true);
         this.getChildren().add(mainGrid);
-
     }
 
     private void createGrid(GridPane toCreate, double widthPct, int rows, int columns, double paddingHPct,

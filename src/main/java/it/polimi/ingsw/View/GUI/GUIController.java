@@ -289,7 +289,9 @@ public class GUIController {
         re-conquest
         */
 
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");// DELETEME debug tutta questa sezione
+        //example code:
+
+        /*ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");// DELETEME debug tutta questa sezione
         if (useBridges) {
             GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
             GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.GREY));
@@ -304,10 +306,10 @@ public class GUIController {
             final Point2D mergeDiff2 = archipelagoPane.calcMergeDiff(4, 5);
             GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, mergeDiff2));
             GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(4, mergeDiff2));
-        }
+        }*/
     }
 
-    public void utilityFunction() {
+    public void debugFunction1() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
 
         final Point2D secondMergeDiff = archipelagoPane.calcMergeDiff(3, 4);
