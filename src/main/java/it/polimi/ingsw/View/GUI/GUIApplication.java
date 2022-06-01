@@ -2,6 +2,9 @@ package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
+import it.polimi.ingsw.View.GUI.Application.ArchipelagoPane;
+import it.polimi.ingsw.View.GUI.Application.PlayerPane;
+import it.polimi.ingsw.View.GUI.Application.TurnOrderPane;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;

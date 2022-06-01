@@ -1,18 +1,16 @@
-package it.polimi.ingsw.View.GUI;
+package it.polimi.ingsw.View.GUI.Application;
 
-import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 

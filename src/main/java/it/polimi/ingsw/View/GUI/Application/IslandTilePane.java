@@ -1,4 +1,4 @@
-package it.polimi.ingsw.View.GUI;
+package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import javafx.geometry.HPos;

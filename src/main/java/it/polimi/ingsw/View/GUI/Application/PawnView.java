@@ -1,4 +1,4 @@
-package it.polimi.ingsw.View.GUI;
+package it.polimi.ingsw.View.GUI.Application;
 
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
