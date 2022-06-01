@@ -15,6 +15,8 @@ public class CloudPane extends StackPane {
 
     public static double cloudSize = 100.0;
 
+    private StudentContainerPane studentPane;
+
     public CloudPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(cloudSize, cloudSize);
@@ -28,13 +30,18 @@ public class CloudPane extends StackPane {
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
 
-        StudentContainerPane studentPane = new StudentContainerPane(cloudSize, cloudSize, 100, 3, 3, 25.0, 25.0, 0.0);
+    }
+
+    public void createCloud(int ID){
+        studentPane = new StudentContainerPane("cloudStudentsPane", ID,
+                cloudSize, cloudSize, 100, 3, 3, 25.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         this.getChildren().add(studentPane);
+    }
 
-
+    public void debugStud(){
         for (int i = 0; i < 3; i++) {
             StudentView studentView = new StudentView(i, "student", "yellow", StudentView.studentSize);
             studentView.setEnabled();
@@ -46,7 +53,5 @@ public class CloudPane extends StackPane {
             studentPane.add(studentView, i, i);
             StudentContainerPane.setHalignment(studentView, HPos.CENTER);
         }
-
-
     }
 }

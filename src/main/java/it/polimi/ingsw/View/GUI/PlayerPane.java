@@ -1,43 +1,63 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.Utils.Enum.Color;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class PlayerPane extends VBox {
+public class PlayerPane extends GridPane {
 
-    private final double sizeBoardV = 170.0;
-    private final double sizeDiscard = 80.0;
-    private final double sizeCoin = 30.0;
+    private double sizeBoardV = 170.0;
+    private final double resizeFactor = 0.85;
+    private double sizeDiscard = 80.0;
+    private double sizeCoin = 30.0;
     private final int position;
 
+    private final BoardPane boardPane;
+    private final VBox discardCoinPane;
+    private final AssistantPane assistantPane;
 
-    public PlayerPane(int position, String nickname) {
+
+    public PlayerPane(int position, boolean isMainPlayer) {
         this.position = position;
         this.setId("playerPane" + position);
-        this.setSpacing(1);
-        this.setAlignment(Pos.CENTER_LEFT);
+        this.setHgap(1);
+        this.setAlignment(Pos.CENTER);
+        this.setHgap(5);
 
-        Text nickPane = new Text(nickname);
+        boardPane = new BoardPane(position, isMainPlayer ? sizeBoardV : sizeBoardV * resizeFactor);
+        discardCoinPane = new VBox();
+        assistantPane = new AssistantPane(position, sizeBoardV / 2);
+    }
+
+    public void setNickname(String nickname){
+        Text nickPane = new Text();
         nickPane.setId("nickPane" + position);
         nickPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 10));
+        this.getChildren().add(0, nickPane);
+    }
 
+    public void createBoard(int entranceID, HashMap<Color, Integer> tableIDs){
+        boardPane.createEntrance(entranceID);
+        boardPane.createDiningRoom(tableIDs);
+        boardPane.createProfessors();
+        boardPane.createTowerSpace();
+        this.add(boardPane, 0, 1);
+    }
 
-        GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(5);
-        //Create BoardPane
-        mainGrid.add(new BoardPane(position, sizeBoardV), 0, 1);
-
+    public void createDiscardCoin(boolean withCoins, boolean isMainPlayer){
         //Create discard and coin pane
+        sizeDiscard = isMainPlayer ? sizeDiscard : sizeDiscard * resizeFactor;
         Image discard = new Image("/deck/carteTOT_back_1@3x.png", 200, 200, true, true);
         ImageView imageViewDiscard = new ImageView(discard);
         imageViewDiscard.setId("wizard" + position);
@@ -49,33 +69,38 @@ public class PlayerPane extends VBox {
         discardPane.setId("discardPane" + position);
         discardPane.getChildren().add(imageViewDiscard);
 
-        Image coin = new Image("/world/coin.png", 100, 100, true, true);
-        ImageView imageViewCoin = new ImageView(coin);
-        imageViewCoin.setPreserveRatio(true);
-        imageViewCoin.setFitWidth(sizeCoin);
-        imageViewCoin.setEffect(new DropShadow());
+        discardCoinPane.getChildren().add(discardPane);
+        if(withCoins){
+            sizeCoin = isMainPlayer ? sizeCoin : sizeCoin * resizeFactor;
+            Image coin = new Image("/world/coin.png", 100, 100, true, true);
+            ImageView imageViewCoin = new ImageView(coin);
+            imageViewCoin.setPreserveRatio(true);
+            imageViewCoin.setFitWidth(sizeCoin);
+            imageViewCoin.setEffect(new DropShadow());
 
-        Text coinsPane = new Text(String.valueOf(3));
-        coinsPane.setId("coinsPane" + position);
-        coinsPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, sizeCoin * 0.75));
-        coinsPane.setFill(Color.WHITE);
-        coinsPane.setEffect(new DropShadow(20, Color.BLACK));
+            Text coinsPane = new Text(String.valueOf(3));
+            coinsPane.setId("coinsPane" + position);
+            coinsPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, sizeCoin * 0.75));
+            coinsPane.setFill(javafx.scene.paint.Color.WHITE);
+            coinsPane.setEffect(new DropShadow(20, javafx.scene.paint.Color.BLACK));
 
-        StackPane coinStack = new StackPane();
-        coinStack.getChildren().addAll(imageViewCoin, coinsPane);
+            StackPane coinStack = new StackPane();
+            coinStack.getChildren().addAll(imageViewCoin, coinsPane);
 
-        VBox discardCoinPane = new VBox();
+            discardCoinPane.getChildren().add(coinStack);
+        }
+
         discardCoinPane.setAlignment(Pos.CENTER);
         discardCoinPane.setSpacing(10);
-        discardCoinPane.getChildren().addAll(discardPane, coinStack);
 
-        mainGrid.add(discardCoinPane, 1, 1);
+        this.add(discardCoinPane, 1, 1);
+    }
 
-        //Create assistant pane
-        mainGrid.add(new AssistantPane(position, sizeBoardV / 2), 2, 1);
-
-        this.getChildren().add(nickPane);
-        this.getChildren().add(mainGrid);
+    public void createAssistantPane(boolean isMainPlayer){
+        if(! isMainPlayer){
+            assistantPane.resizeAssistant(resizeFactor);
+        }
+        this.add(assistantPane, 2, 1);
     }
 
     public void enableSelectAssistant(){

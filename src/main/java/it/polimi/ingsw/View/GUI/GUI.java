@@ -137,6 +137,9 @@ public class GUI implements UI {
 
     @Override
     public void displayBoard(ObservableByClient game, UserActionType actionTaken) {
+        switch (actionTaken){
+            case WAIT_GAME_START -> guiController.initialDraw(game);
+        }
 
     }
 

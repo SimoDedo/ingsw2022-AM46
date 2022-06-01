@@ -24,6 +24,10 @@ public class IslandTilePane extends StackPane {
 
     private Point2D forwardMergePoint, backMergePoint;
 
+    private GridPane islandModifiersPane;
+    private final VBox gridContainer;
+    private StudentContainerPane studentPane;
+
     public IslandTilePane(int index) {
         this.index = index;
 
@@ -39,13 +43,13 @@ public class IslandTilePane extends StackPane {
         this.getChildren().add(imageView);
 
         IslandTilePane.setAlignment(imageView, Pos.CENTER);
-        VBox gridContainer = new VBox(islandTileSize *0.05);
+        gridContainer = new VBox(islandTileSize *0.05);
         this.getChildren().add(gridContainer);
         gridContainer.setAlignment(Pos.TOP_CENTER);
         gridContainer.setPrefSize(islandTileSize, islandTileSize);
 
         // gridpane for tower, mother nature, no entry tile goes here
-        GridPane islandModifiersPane = new GridPane();
+        islandModifiersPane = new GridPane();
         islandModifiersPane.setAlignment(Pos.CENTER);
         gridContainer.getChildren().add(islandModifiersPane);
         islandModifiersPane.setPrefSize(islandTileSize, islandTileSize *0.15);
@@ -58,27 +62,20 @@ public class IslandTilePane extends StackPane {
         PawnView noentry = new PawnView(0, "noentrytile", "", PawnView.pawnSize);
         islandModifiersPane.add(noentry, 2, 0);
         */
+    }
 
-        // gridpane for students goes here
-        StudentContainerPane studentPane = new StudentContainerPane(islandTileSize, islandTileSize *0.8, 100, 4, 4, 25.0, 0.0, 0.0);
+    public void createIslandTile(int ID){
+        studentPane = new StudentContainerPane("islandStudentsPane", ID,
+                islandTileSize, islandTileSize *0.8, 100, 4, 4, 25.0, 0.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
+    }
 
-
-        for (int i = 0; i < 4; i++) {
-            StudentView studentView = new StudentView(i, "student", "blue", StudentView.studentSize);
-            studentView.setEnabled();
-            int finalI = i;
-            studentView.setCallback(mouseEvent -> {
-                System.out.println("TEST " + finalI);
-                studentView.setDisabled();
-            });
-            studentPane.add(studentView, i, i);
-            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
-        }
-
+    public void putMotherNature(){
+        PawnView motherNature = new PawnView(0, "mothernature", "", PawnView.pawnSize);
+        islandModifiersPane.add(motherNature, 1, 0);
     }
 
     public Point2D getForwardMergePoint() {
@@ -120,5 +117,19 @@ public class IslandTilePane extends StackPane {
     public Point2D getCenter() {
         // return new Point2D(getLayoutX() + size / 2, getLayoutY() + size / 2);
         return new Point2D(localToParent(0,0).getX() + islandTileSize / 2, localToParent(0,0).getY() + islandTileSize / 2);
+    }
+
+    public void debugStud(){
+        for (int i = 0; i < 4; i++) {
+            StudentView studentView = new StudentView(i, "student", "blue", StudentView.studentSize);
+            studentView.setEnabled();
+            int finalI = i;
+            studentView.setCallback(mouseEvent -> {
+                System.out.println("TEST " + finalI);
+                studentView.setDisabled();
+            });
+            studentPane.add(studentView, i, i);
+            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
+        }
     }
 }

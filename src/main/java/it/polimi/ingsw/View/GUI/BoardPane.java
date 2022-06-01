@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class BoardPane extends StackPane {
 
+    private final int position;
+
     private double boardHeight;
     private double boardWidth;
     private final double entrancePct = (500.0/3304.0) * 100; //TODO: not hardcoded but fetched form image file (at least 3304.0)
@@ -24,14 +26,15 @@ public class BoardPane extends StackPane {
     private final HashMap<Color, Integer> tableOrder;
 
     private final GridPane mainGrid;
-    private final StudentContainerPane entrance;
-    private final GridPane diningRoom;
-    private final HashMap<Color, StudentContainerPane> tables;
-    private final StudentContainerPane professors;
-    private final GridPane towerSpace;
+    private StudentContainerPane entrance;
+    private GridPane diningRoom;
+    private HashMap<Color, StudentContainerPane> tables;
+    private StudentContainerPane professors;
+    private GridPane towerSpace;
 
 
     public BoardPane(int position, double boardHeight) {
+        this.position = position;
         this.boardHeight = boardHeight;
         this.boardWidth = boardHeight * (3304.0 / 1413.0);
 
@@ -61,43 +64,9 @@ public class BoardPane extends StackPane {
         r.setPercentHeight(100);
         mainGrid.getRowConstraints().addAll(r);
 
-        entrance = new StudentContainerPane(boardWidth, boardHeight, entrancePct, 5, 2, 10.0, 5.0, 15.0);
-        entrance.setId("entrancePane" + position);
-
-        diningRoom = new GridPane();
-        createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.5, 0.0);
-        diningRoom.setId("diningRoomPane" + position);
-
         tableOrder = new HashMap<>(Map.of(Color.GREEN, 0, Color.RED, 1, Color.YELLOW, 2, Color.PINK, 3, Color.BLUE, 4));
-        tables = new HashMap<>();
-
-        for (Color color : Color.values()){
-            StudentContainerPane table = new StudentContainerPane(boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
-            table.setId("table"+color.toString().toLowerCase()+position);
-            tables.put(color, table);
-            diningRoom.add(table, 0, tableOrder.get(color));
-        }
 
 
-        professors = new StudentContainerPane(boardWidth, boardHeight, professorPct, 5, 1, 6.0, 7.5, 0.0);
-        professors.setId("professorsPane" + position);
-
-        towerSpace = new GridPane();
-        towerSpace.setId("towerSpacePane" + position);
-        createGrid(towerSpace, towerPct, 4, 2, 12, 10, 0);
-
-
-        debugStudE();
-        debugStudDN();
-        debugP();
-        debugT();
-
-
-        mainGrid.add(entrance, 0 , 0);
-        mainGrid.add(diningRoom, 1, 0);
-        mainGrid.add(professors,2,0);
-        mainGrid.add(towerSpace, 3, 0);
-        //mainGrid.setGridLinesVisible(true);
         this.getChildren().add(mainGrid);
     }
 
@@ -117,11 +86,51 @@ public class BoardPane extends StackPane {
         toCreate.setPadding(new Insets(boardHeight * (paddingVPct/100), boardWidth * (paddingHPct/100 + paddingExtraRightPct/100) * (widthPct/100),
                 boardHeight * (paddingVPct/100), boardWidth * (paddingHPct/100) * (widthPct/100)));
 
-        //toCreate.setGridLinesVisible(true);
     }
 
+    public void createEntrance(int entranceID){
+        entrance = new StudentContainerPane("entrancePane", entranceID,
+                boardWidth, boardHeight, entrancePct, 5, 2, 10.0, 5.0, 15.0);
+        mainGrid.add(entrance, 0 , 0);
+    }
 
-    public void debugStudE(){
+    public void createDiningRoom(HashMap<Color, Integer> tableIDs){
+        diningRoom = new GridPane();
+        createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.5, 0.0);
+        diningRoom.setId("diningRoomPane" + position);
+
+        tables = new HashMap<>();
+
+        for (Color color : Color.values()){
+            StudentContainerPane table = new StudentContainerPane("tablePane",tableIDs.get(color),
+                    boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
+            tables.put(color, table);
+            diningRoom.add(table, 0, tableOrder.get(color));
+        }
+        mainGrid.add(diningRoom, 1, 0);
+    }
+
+    public void createProfessors(){
+        professors = new StudentContainerPane("professorPane", position,
+                boardWidth, boardHeight, professorPct, 5, 1, 6.0, 7.5, 0.0);
+        mainGrid.add(professors,2,0);
+    }
+
+    public void createTowerSpace(){
+        towerSpace = new GridPane();
+        towerSpace.setId("towerSpacePane" + position);
+        createGrid(towerSpace, towerPct, 4, 2, 12, 10, 0);
+        mainGrid.add(towerSpace, 3, 0);
+    }
+
+    public void debugPawn(){
+        debugStudE();
+        debugStudDN();
+        debugP();
+        debugT();
+    }
+
+    private void debugStudE(){
         for (int i = 0; i < 9; i++) {
             StudentView studentView = new StudentView(0, "student", "green", StudentView.studentSize);
             entrance.add(studentView, i % 2, i / 2);
@@ -129,7 +138,7 @@ public class BoardPane extends StackPane {
         }
     }
 
-    public void debugStudDN(){
+    private void debugStudDN(){
         for(Color color : Color.values()){
             for (int i = 0; i < 10; i++) {
                 StudentView studentView = new StudentView(0, "student", color.toString().toLowerCase(), StudentView.studentSize);
@@ -139,7 +148,7 @@ public class BoardPane extends StackPane {
         }
     }
 
-    public void debugP(){
+    private void debugP(){
         for(Color color : Color.values()){
             PawnView prof = new PawnView(0, "professor", color.toString().toLowerCase(), StudentView.studentSize);
             professors.add(prof, 0, tableOrder.get(color));
@@ -148,7 +157,7 @@ public class BoardPane extends StackPane {
 
     }
 
-    public void debugT(){
+    private void debugT(){
         for (int i = 0; i < 8; i++) {
             PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
             towerSpace.add(tower, i % 2, i / 2);

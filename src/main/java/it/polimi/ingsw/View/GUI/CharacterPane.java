@@ -12,6 +12,8 @@ public class CharacterPane extends StackPane {
 
     double charHeight = 100.0, charWidth = charHeight/2;
 
+    private StudentContainerPane studentPane;
+
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
@@ -25,25 +27,16 @@ public class CharacterPane extends StackPane {
         charView.setCache(true);
         this.getChildren().add(charView);
 
-        StudentContainerPane studentPane = new StudentContainerPane(charWidth, charHeight, 100, 3, 3, 10.0, 25.0, 0.0);
+    }
+
+    public void createCharacter(int ID){
+        studentPane = new StudentContainerPane("characterStudentPane", ID,
+                charWidth, charHeight, 100, 3, 3, 10.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         this.getChildren().add(studentPane);
-
-
-        for (int i = 0; i < 3; i++) {
-            StudentView studentView = new StudentView(i, "student", "pink", StudentView.studentSize);
-            studentView.setEnabled();
-            int finalI = i;
-            studentView.setCallback(mouseEvent -> {
-                System.out.println("TEST " + finalI);
-                studentView.setDisabled();
-            });
-            studentPane.add(studentView, i, i);
-            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
-        }
-
+        setCharacterImage(ID);
     }
 
     public void setCharacterImage(int charID) {
@@ -55,5 +48,19 @@ public class CharacterPane extends StackPane {
         charView.setFitHeight(charHeight);
         charView.setSmooth(true);
         charView.setCache(true);
+    }
+
+    public void debugStud(){
+        for (int i = 0; i < 3; i++) {
+            StudentView studentView = new StudentView(i, "student", "pink", StudentView.studentSize);
+            studentView.setEnabled();
+            int finalI = i;
+            studentView.setCallback(mouseEvent -> {
+                System.out.println("TEST " + finalI);
+                studentView.setDisabled();
+            });
+            studentPane.add(studentView, i, i);
+            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
+        }
     }
 }

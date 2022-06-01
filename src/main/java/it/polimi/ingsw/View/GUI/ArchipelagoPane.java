@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -8,26 +9,26 @@ import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 
 public class ArchipelagoPane extends AnchorPane {
 
+    private final HBox cloudContainer;
+    private final HBox charContainer;
+
+    private final double archipelagoSide = 500.0;
+    private final double centerPos = archipelagoSide / 2.0;
+
     public ArchipelagoPane() {
         this.setId("archipelagoPane");
-        double archipelagoSide = 500.0;
         this.setPrefSize(archipelagoSide, archipelagoSide);
-        double centerPos = archipelagoSide / 2.0;
 
         for (int i = 0; i < 12; i++) {
             IslandTilePane newIsland = new IslandTilePane(i);
@@ -39,39 +40,57 @@ public class ArchipelagoPane extends AnchorPane {
 
         // character hbox goes here
         double charContainerHeight = 80.0, charContainerWidth = 300.0;
-        HBox charContainer = new HBox(5.0);
+        charContainer = new HBox(5.0);
         this.getChildren().add(charContainer);
         charContainer.setAlignment(Pos.CENTER);
         charContainer.setPrefSize(charContainerWidth, charContainerHeight);
         charContainer.relocate(centerPos - 90.0, centerPos + 50.0);
 
-        for (int i = 0; i < 3; i++) {
-            CharacterPane characterPane = new CharacterPane();
-            characterPane.setId("characterPane" + i);
-            charContainer.getChildren().add(characterPane);
-            characterPane.setCharacterImage(i+5);
-        }
 
         // cloud hbox goes here
         double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
-        HBox cloudContainer = new HBox(5.0);
+        cloudContainer = new HBox(5.0);
         cloudContainer.setAlignment(Pos.CENTER);
         cloudContainer.setPrefSize(cloudContainerWidth, cloudContainerHeight);
         cloudContainer.setMaxSize(cloudContainerWidth, cloudContainerHeight);
         this.getChildren().add(cloudContainer);
         cloudContainer.relocate(centerPos - 160.0, centerPos + 360.0);
 
-        for (int i = 0; i < 4; i++) {
-            CloudPane cloudPane = new CloudPane();
-            cloudPane.setId("cloudPane" + i);
-            cloudContainer.getChildren().add(cloudPane);
-        }
-
         // bag goes here
         BagPane studentsBagPane = new BagPane("students");
         this.getChildren().add(studentsBagPane);
         studentsBagPane.relocate(centerPos - 5.0, centerPos - 40.0);
 
+    }
+
+    public void createIslands(List<Integer> islandIDs, int motherNatureIsland){
+        //Finishes creating islands
+        for (int i = 0; i < 12; i++) {
+            IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
+            islandTilePane.createIslandTile(islandIDs.get(i));
+            if(islandIDs.get(i) == motherNatureIsland)
+                islandTilePane.putMotherNature();
+        }
+    }
+
+    public void createClouds(int numOfPlayers,List<Integer> cloudIDs){
+        for (int i = 0; i < numOfPlayers; i++) {
+            CloudPane cloudPane = new CloudPane();
+            cloudPane.setId("cloudPane" + i);
+            cloudContainer.getChildren().add(cloudPane);
+            cloudPane.createCloud(cloudIDs.get(i));
+        }
+    }
+
+    public void createCharacterAndHeap(List<Integer> characterIDs){
+        //Creates characters
+        for (int i = 0; i < 3; i++) {
+            CharacterPane characterPane = new CharacterPane();
+            characterPane.setId("characterPane" + i);
+            charContainer.getChildren().add(characterPane);
+            characterPane.createCharacter(characterIDs.get(i));
+
+        }
         // coinheap goes here
         BagPane coinsBagPane = new BagPane("coins");
         this.getChildren().add(coinsBagPane);
@@ -190,6 +209,23 @@ public class ArchipelagoPane extends AnchorPane {
                 new KeyFrame(new Duration(1000), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
+    }
+
+    public void debugStud(){
+        for (int i = 0; i < 12; i++) {
+            IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
+            islandTilePane.debugStud();
+        }
+        for (int i = 0; i < 4; i++) {
+            CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + i);
+            if(cloudPane != null)
+                cloudPane.debugStud();
+        }
+        for (int i = 0; i < 3; i++) {
+            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + i);
+            if(characterPane != null)
+                characterPane.debugStud();
+        }
     }
 
 }

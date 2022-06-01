@@ -8,8 +8,9 @@ import javafx.scene.layout.RowConstraints;
 
 public class StudentContainerPane extends GridPane {
 
-    public StudentContainerPane(double parentWidth, double parentHeight, double widthPct, int rows, int columns, double paddingHPct,
-                                double paddingVPct, double paddingExtraRightPct) {
+    public StudentContainerPane(String containerType, int id, double parentWidth, double parentHeight,
+                                double widthPct, int rows, int columns, double paddingHPct, double paddingVPct, double paddingExtraRightPct) {
+        this.setId(containerType+id);
         this.setAlignment(Pos.CENTER);
         for (int i = 0; i < rows; i++) {
             RowConstraints r = new RowConstraints();

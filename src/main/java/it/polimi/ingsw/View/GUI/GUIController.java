@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
@@ -255,9 +256,27 @@ public class GUIController {
                 newGroup.add(i);
                 groupList.add(newGroup);
             }
+            if(debug){//DELETEME debug
+                HashMap<Color, Integer> table = new HashMap<>();
+                for (Color color : Color.values())
+                    table.put(color, 0);
+                for (int i = 0; i < 3; i++) {
+                    guiApplication.createPlayer(i, GameMode.EXPERT,"Player" + i,0 , table, i == 2);
+                    ((BoardPane) guiApplication.lookup("boardPane"+i)).debugPawn();
+                }
+                ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+                guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
+                        List.of(0,0,0,0), List.of(2,5,6), 5);
+                archipelagoPane.debugStud();
+            }
             updateArchipelago(); //DELETEME debug
         });
     }
+
+    public void initialDraw(ObservableByClient game){
+
+    }
+
 
     public void updateArchipelago() {
 

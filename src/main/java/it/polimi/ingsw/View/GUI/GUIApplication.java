@@ -1,5 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Enum.GameMode;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -22,6 +24,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -334,20 +338,35 @@ public class GUIApplication extends Application {
          */
 
         //Player boards
-        VBox players = new VBox();
-        players.setSpacing(1);
+        GridPane players = new GridPane();
+        players.setId("players");
+        players.setVgap(1);
         players.setAlignment(Pos.CENTER);
-        players.getChildren().add(0, new PlayerPane(1, "Nickname 1"));
-        players.getChildren().add(0, new PlayerPane(2, "Nickname 2"));
-        players.getChildren().add(0, new PlayerPane(3, "Nickname 3"));
-        players.getChildren().add(0,
 
-
-                new PlayerPane(4, "Nickname 4"));
         mainGrid.add(players, 1, 1);
 
-        // mainGrid.setGridLinesVisible(true);
+        mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
+    }
+
+    public void createPlayer(int position, GameMode gameMode, String nickname, int entranceID, HashMap<Color, Integer> tablesIDs, boolean isMainPlayer){
+        GridPane players = (GridPane) this.lookup("players");
+        PlayerPane player = new PlayerPane(position, isMainPlayer);
+        player.setNickname(nickname);
+        player.createBoard(entranceID, tablesIDs);
+        player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer);
+        player.createAssistantPane(isMainPlayer);
+        player.enableSelectAssistant();
+        players.add(player, 0 , position);
+    }
+
+    public void createArchipelago(int numOfPlayers, GameMode gameMode,List<Integer> islandIDs, List<Integer> cloudIDs,
+                                  List<Integer> characterIDs, int motherNatureIsland){
+        ArchipelagoPane archipelagoPane = ((ArchipelagoPane) this.lookup("archipelagoPane"));
+        archipelagoPane.createIslands(islandIDs, motherNatureIsland);
+        archipelagoPane.createClouds(numOfPlayers, cloudIDs);
+        if(gameMode.equals(GameMode.EXPERT))
+            archipelagoPane.createCharacterAndHeap(characterIDs);
     }
 
     public void setupStage() {
@@ -459,11 +478,7 @@ public class GUIApplication extends Application {
         stage.show();
         stage.setTitle("Eriantys AM46: Game");
         fadeIn(getContent(mainScene));
-        //vvvv DEBUG vvvvv
-        ((PlayerPane)this.lookup("playerPane" + 1)).enableSelectAssistant();
-        ((PlayerPane)this.lookup("playerPane" + 2)).enableSelectAssistant();
-        ((PlayerPane)this.lookup("playerPane" + 3)).enableSelectAssistant();
-        ((PlayerPane)this.lookup("playerPane" + 4)).enableSelectAssistant();
+
     }
 
 }

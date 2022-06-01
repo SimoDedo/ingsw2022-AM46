@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 
 public class AssistantPane extends AnchorPane {
 
-    private final double assistantSize;
+    private double assistantSize;
 
     private final GridPane assistantGrid;
 
@@ -33,6 +33,13 @@ public class AssistantPane extends AnchorPane {
         imageViewAssistant.setId("assistant" + position + ID);
         setZoomOnAssistant(imageViewAssistant);
         assistantGrid.add(imageViewAssistant, (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
+    }
+
+    public void resizeAssistant(double resizeFactor){
+        assistantSize = assistantSize * resizeFactor;
+        for(Node assistantView : assistantGrid.getChildren()){
+            ((ImageView) assistantView).setFitHeight(assistantSize);
+        }
     }
 
     public ImageView removeAssistant(int position, int ID){
