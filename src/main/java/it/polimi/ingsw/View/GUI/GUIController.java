@@ -256,20 +256,24 @@ public class GUIController {
                 newGroup.add(i);
                 groupList.add(newGroup);
             }
-            if(debug){//DELETEME debug
+            if (debug) { //DELETEME debug
                 HashMap<Color, Integer> table = new HashMap<>();
                 for (Color color : Color.values())
                     table.put(color, 0);
                 for (int i = 0; i < 3; i++) {
-                    guiApplication.createPlayer(i, GameMode.EXPERT,"Player" + i,0 , table, i == 2);
+                    guiApplication.createPlayer(i, GameMode.EXPERT,"Player" + i,0 , table, i == 0);
                     ((BoardPane) guiApplication.lookup("boardPane"+i)).debugPawn();
                 }
                 ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
                 guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
                         List.of(0,0,0,0), List.of(2,5,6), 5);
                 archipelagoPane.debugStud();
+
+                CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+                cloudContainerPane.enableSelectCloud();
+                CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+                charContainerPane.enableSelectCharacter();
             }
-            updateArchipelago(); //DELETEME debug
         });
     }
 
@@ -277,6 +281,80 @@ public class GUIController {
 
     }
 
+    /**
+     * Notifies gui that a card has been chosen. Used by assistant cards.
+     */
+    public void notifyAssistantCard() {
+        if (debug) {
+            System.out.println("Assistant card chosen");
+            assistantCardSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    /**
+     * Finds the player's assistant card pane and retrieves the ID of the selected card. Used by gui.
+     *
+     */
+    public int getAssistantCardChosen() {
+        AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane0");
+        System.out.println(pane.getAssistantChosen()); // DELETEME debug
+        return pane.getAssistantChosen();
+    }
+
+    /**
+     * Effectively moves the card to the discard pile. Used by gui.
+     */
+    public void assistantCardSuccessful() {
+        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane0");
+        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane0");
+        playerPane.moveAssistant(assistantPane.getAssistantChosen());
+    }
+
+    public void notifyCloud() {
+        if (debug) {
+            System.out.println("Cloud chosen");
+            cloudSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public int getCloudChosen() {
+        CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+        System.out.println(pane.getCloudChosen()); // DELETEME debug
+        return pane.getCloudChosen();
+    }
+
+    public void cloudSuccessful() {
+        CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+        pane.emptyCloud(pane.getCloudChosen());
+    }
+
+    public void notifyCharacter() {
+        if (debug) {
+            System.out.println("Character chosen");
+            characterSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public int getCharacterChosen() {
+        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        System.out.println(pane.getCharacterChosen()); // DELETEME debug
+        return pane.getCharacterChosen();
+    }
+
+    public void characterSuccessful() {
+        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        // wip: what to do afterwards?
+
+    }
 
     public void updateArchipelago() {
 
@@ -338,5 +416,4 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, secondMergeDiff));
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(3, secondMergeDiff));
     }
-
 }

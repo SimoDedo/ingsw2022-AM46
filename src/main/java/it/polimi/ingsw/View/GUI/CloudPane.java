@@ -29,6 +29,13 @@ public class CloudPane extends StackPane {
         cloudView.setSmooth(true);
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
+    }
+
+    public void setEnabled() {
+
+    }
+
+    public void setDisabled() {
 
     }
 

@@ -8,17 +8,18 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
-public class AssistantPane extends AnchorPane {
+public class AssistantContainerPane extends AnchorPane {
 
     private double assistantSize;
 
     private final GridPane assistantGrid;
+    private int assistantChosen = -1;
 
 
-    public AssistantPane(int position, double assistantSize) {
+    public AssistantContainerPane(int position, double assistantSize) {
         this.assistantSize = assistantSize;
         assistantGrid = new GridPane();
-        this.setId("assistantPane" + position);
+        this.setId("assistantContainerPane" + position);
         for (int i = 1; i < 11; i++) {
                 setAssistant(position, i);
         }
@@ -42,6 +43,17 @@ public class AssistantPane extends AnchorPane {
         }
     }
 
+    public void setAssistantChosen(int assistantID) {
+        this.assistantChosen = assistantID;
+    }
+
+    public int getAssistantChosen() {
+        return assistantChosen;
+    }
+
+    /**
+     * Unused function
+     */
     public ImageView removeAssistant(int position, int ID){
         String idToFind = "assistant" + position + ID;
         ImageView imageView = null;

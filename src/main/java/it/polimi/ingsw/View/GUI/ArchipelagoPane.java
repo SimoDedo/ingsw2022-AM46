@@ -20,13 +20,16 @@ import java.util.List;
 
 public class ArchipelagoPane extends AnchorPane {
 
-    private final HBox cloudContainer;
-    private final HBox charContainer;
+    private GUIController controller;
+
+    private final CloudContainerPane cloudContainer;
+    private final CharContainerPane charContainer;
 
     private final double archipelagoSide = 500.0;
     private final double centerPos = archipelagoSide / 2.0;
 
-    public ArchipelagoPane() {
+    public ArchipelagoPane(GUIController controller) {
+        this.controller = controller;
         this.setId("archipelagoPane");
         this.setPrefSize(archipelagoSide, archipelagoSide);
 
@@ -38,21 +41,14 @@ public class ArchipelagoPane extends AnchorPane {
         }
         createEmptyBridges();
 
-        // character hbox goes here
-        double charContainerHeight = 80.0, charContainerWidth = 300.0;
-        charContainer = new HBox(5.0);
+        // character container pane goes here
+        charContainer = new CharContainerPane(controller);
         this.getChildren().add(charContainer);
-        charContainer.setAlignment(Pos.CENTER);
-        charContainer.setPrefSize(charContainerWidth, charContainerHeight);
         charContainer.relocate(centerPos - 90.0, centerPos + 50.0);
 
 
         // cloud hbox goes here
-        double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
-        cloudContainer = new HBox(5.0);
-        cloudContainer.setAlignment(Pos.CENTER);
-        cloudContainer.setPrefSize(cloudContainerWidth, cloudContainerHeight);
-        cloudContainer.setMaxSize(cloudContainerWidth, cloudContainerHeight);
+        cloudContainer = new CloudContainerPane(controller);
         this.getChildren().add(cloudContainer);
         cloudContainer.relocate(centerPos - 160.0, centerPos + 360.0);
 
@@ -74,24 +70,14 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     public void createClouds(int numOfPlayers,List<Integer> cloudIDs){
-        for (int i = 0; i < numOfPlayers; i++) {
-            CloudPane cloudPane = new CloudPane();
-            cloudPane.setId("cloudPane" + i);
-            cloudContainer.getChildren().add(cloudPane);
-            cloudPane.createCloud(cloudIDs.get(i));
-        }
+        cloudContainer.createClouds(numOfPlayers, cloudIDs);
     }
 
     public void createCharacterAndHeap(List<Integer> characterIDs){
         //Creates characters
-        for (int i = 0; i < 3; i++) {
-            CharacterPane characterPane = new CharacterPane();
-            characterPane.setId("characterPane" + i);
-            charContainer.getChildren().add(characterPane);
-            characterPane.createCharacter(characterIDs.get(i));
+        charContainer.createCharacters(characterIDs);
 
-        }
-        // coinheap goes here
+        // coinheap goes here (NOT ANYMORE, HAS TO BE MOVED...)
         BagPane coinsBagPane = new BagPane("coins");
         this.getChildren().add(coinsBagPane);
         coinsBagPane.relocate(centerPos + 65.0, centerPos - 40.0);

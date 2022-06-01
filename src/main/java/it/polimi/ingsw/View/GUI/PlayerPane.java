@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -17,6 +16,8 @@ import java.util.List;
 
 public class PlayerPane extends GridPane {
 
+    private GUIController controller;
+
     private double sizeBoardV = 170.0;
     private final double resizeFactor = 0.85;
     private double sizeDiscard = 80.0;
@@ -25,10 +26,11 @@ public class PlayerPane extends GridPane {
 
     private final BoardPane boardPane;
     private final VBox discardCoinPane;
-    private final AssistantPane assistantPane;
+    private final AssistantContainerPane assistantContainerPane;
 
 
-    public PlayerPane(int position, boolean isMainPlayer) {
+    public PlayerPane(GUIController controller, int position, boolean isMainPlayer) {
+        this.controller = controller;
         this.position = position;
         this.setId("playerPane" + position);
         this.setHgap(1);
@@ -37,7 +39,9 @@ public class PlayerPane extends GridPane {
 
         boardPane = new BoardPane(position, isMainPlayer ? sizeBoardV : sizeBoardV * resizeFactor);
         discardCoinPane = new VBox();
-        assistantPane = new AssistantPane(position, sizeBoardV / 2);
+        assistantContainerPane = new AssistantContainerPane(position, sizeBoardV / 2);
+        // if (isMainPlayer) enableSelectAssistant();
+        // else disableSelectAssistant();
     }
 
     public void setNickname(String nickname){
@@ -96,11 +100,11 @@ public class PlayerPane extends GridPane {
         this.add(discardCoinPane, 1, 1);
     }
 
-    public void createAssistantPane(boolean isMainPlayer){
+    public void createAssistantContainerPane(boolean isMainPlayer){
         if(! isMainPlayer){
-            assistantPane.resizeAssistant(resizeFactor);
+            assistantContainerPane.resizeAssistant(resizeFactor);
         }
-        this.add(assistantPane, 2, 1);
+        this.add(assistantContainerPane, 2, 1);
     }
 
     public void enableSelectAssistant(){
@@ -109,11 +113,14 @@ public class PlayerPane extends GridPane {
 
         for(int i = 1; i < 11; i++){
             ImageView assistant = (ImageView) this.lookup("#assistant"+position+i);
-            int id = i;
-            if(assistant != null && !ids.contains("assistant"+position+i))
+            if(assistant != null && !ids.contains("assistant"+position+i)) {
+                int assistantID = i;
                 assistant.setOnMouseClicked(event -> {
-                    moveAssistant(id); //FIXME: debug will call smth else to give selection to controller
+                    System.out.println("Someone clicked on me! " + assistant.getId());
+                    assistantContainerPane.setAssistantChosen(assistantID);
+                    controller.notifyAssistantCard();
                 });
+            }
         }
     }
 
@@ -132,7 +139,7 @@ public class PlayerPane extends GridPane {
         assistant.setVisible(false);
 
         Pane discard = (Pane) this.lookup("#discardPane"+position);
-        discard.getChildren().removeAll(discard.getChildren());
+        discard.getChildren().clear();
 
         ImageView discarded = new ImageView(assistant.getImage());
         discarded.setFitWidth(sizeDiscard);
@@ -140,6 +147,7 @@ public class PlayerPane extends GridPane {
         discarded.setSmooth(true);
         discarded.setEffect(new DropShadow());
         discard.getChildren().add(discarded);
+        assistantContainerPane.setAssistantChosen(-1);
         enableSelectAssistant();
     }
 }

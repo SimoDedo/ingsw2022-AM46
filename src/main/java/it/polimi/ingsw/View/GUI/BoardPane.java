@@ -154,12 +154,11 @@ public class BoardPane extends StackPane {
             professors.add(prof, 0, tableOrder.get(color));
             GridPane.setHalignment(prof, HPos.CENTER);
         }
-
     }
 
     private void debugT(){
         for (int i = 0; i < 8; i++) {
-            PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
+            PawnView tower = new PawnView(0, "tower", "black", PawnView.pawnSize);
             towerSpace.add(tower, i % 2, i / 2);
             GridPane.setHalignment(tower, HPos.CENTER);
         }

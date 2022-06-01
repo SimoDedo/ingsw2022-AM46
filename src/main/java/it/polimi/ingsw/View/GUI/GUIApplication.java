@@ -328,7 +328,7 @@ public class GUIApplication extends Application {
         mainGrid.add(new TurnOrderPane(), 0, 0);
 
         // archipelago
-        mainGrid.add(new ArchipelagoPane(), 0, 1);
+        mainGrid.add(new ArchipelagoPane(controller), 0, 1);
 
         /*
         debug button for merge animation
@@ -338,9 +338,8 @@ public class GUIApplication extends Application {
          */
 
         //Player boards
-        GridPane players = new GridPane();
+        VBox players = new VBox(5.0);
         players.setId("players");
-        players.setVgap(1);
         players.setAlignment(Pos.CENTER);
 
         mainGrid.add(players, 1, 1);
@@ -350,14 +349,14 @@ public class GUIApplication extends Application {
     }
 
     public void createPlayer(int position, GameMode gameMode, String nickname, int entranceID, HashMap<Color, Integer> tablesIDs, boolean isMainPlayer){
-        GridPane players = (GridPane) this.lookup("players");
-        PlayerPane player = new PlayerPane(position, isMainPlayer);
+        VBox players = (VBox) this.lookup("players");
+        PlayerPane player = new PlayerPane(controller, position, isMainPlayer);
         player.setNickname(nickname);
         player.createBoard(entranceID, tablesIDs);
         player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer);
-        player.createAssistantPane(isMainPlayer);
+        player.createAssistantContainerPane(isMainPlayer);
         player.enableSelectAssistant();
-        players.add(player, 0 , position);
+        players.getChildren().add(0, player);
     }
 
     public void createArchipelago(int numOfPlayers, GameMode gameMode,List<Integer> islandIDs, List<Integer> cloudIDs,

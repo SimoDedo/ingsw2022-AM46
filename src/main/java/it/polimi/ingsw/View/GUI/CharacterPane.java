@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 
 public class CharacterPane extends StackPane {
 
+    private int charID;
+
     double charHeight = 100.0, charWidth = charHeight/2;
 
     private StudentContainerPane studentPane;
@@ -29,14 +31,15 @@ public class CharacterPane extends StackPane {
 
     }
 
-    public void createCharacter(int ID){
-        studentPane = new StudentContainerPane("characterStudentPane", ID,
+    public void createCharacter(int charID) {
+        this.charID = charID;
+        studentPane = new StudentContainerPane("characterStudentPane", charID,
                 charWidth, charHeight, 100, 3, 3, 10.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         this.getChildren().add(studentPane);
-        setCharacterImage(ID);
+        setCharacterImage(charID);
     }
 
     public void setCharacterImage(int charID) {
