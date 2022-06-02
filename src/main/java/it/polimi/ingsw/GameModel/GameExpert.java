@@ -166,6 +166,15 @@ public class GameExpert extends Game {
         }
 
         //region Characters
+
+        /**
+         * method to observe number of coins left in the bag.
+         * @return the number of coins of the given player
+         */
+        public int getCoinsLeft(){
+            return coinBag.getNumOfCoins();
+        }
+
         /**
          * method to observe number of coins of a given player.
          * @param nickname the player to check

@@ -70,6 +70,14 @@ public class PlayerBoard implements Serializable {
     }
 
     /**
+     * Returns the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     */
+    public int getEntranceID(){
+        return  entrance.getID();
+    }
+
+    /**
      * Searches for a student in the entrance only
      * @param studentID of the student to return
      * @return student of specified ID
@@ -147,7 +155,7 @@ public class PlayerBoard implements Serializable {
      * @return the amount of towers contained in the TowerSpace
      */
     public int getTowersLeft(){
-        return towerSpace.pawnCount();
+        return towerSpace == null ? 0 : towerSpace.pawnCount();
     }
 
     public int getCoinsLeft(Color color){ return diningRoom.getCoinsLeft(color); }
