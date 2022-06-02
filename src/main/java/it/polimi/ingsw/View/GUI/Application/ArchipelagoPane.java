@@ -24,12 +24,14 @@ public class ArchipelagoPane extends AnchorPane {
     private final GUIController controller;
 
     private final CloudContainerPane cloudContainer;
+    private BagContainerPane bagContainer;
     private final CharContainerPane charContainer;
 
     private final double archipelagoSide = 500.0;
     private final double centerPos = archipelagoSide / 2.0;
 
     private List<Integer> islandsIDs;
+
 
     public ArchipelagoPane(GUIController controller) {
         this.controller = controller;
@@ -48,17 +50,15 @@ public class ArchipelagoPane extends AnchorPane {
         this.getChildren().add(charContainer);
         charContainer.relocate(centerPos - 90.0, centerPos + 50.0);
 
-
         // cloud hbox goes here
         cloudContainer = new CloudContainerPane(controller);
         this.getChildren().add(cloudContainer);
         cloudContainer.relocate(centerPos - 160.0, centerPos + 360.0);
 
         // bag goes here
-        BagPane studentsBagPane = new BagPane("students");
-        this.getChildren().add(studentsBagPane);
-        studentsBagPane.relocate(centerPos - 5.0, centerPos - 40.0);
-
+        bagContainer = new BagContainerPane();
+        this.getChildren().add(bagContainer);
+        bagContainer.relocate(centerPos - 15.0, centerPos - 30.0);
     }
 
     public void createIslands(int motherNatureIsland, List<Integer> islands){
@@ -82,9 +82,7 @@ public class ArchipelagoPane extends AnchorPane {
         charContainer.createCharacters(characterIDs);
 
         // coinheap goes here (NOT ANYMORE, HAS TO BE MOVED...)
-        BagPane coinsBagPane = new BagPane("coins");
-        this.getChildren().add(coinsBagPane);
-        coinsBagPane.relocate(centerPos + 65.0, centerPos - 40.0);
+        bagContainer.createCoinsHeap();
     }
 
     public void updateMotherNature(int motherNatureIsland, List<Integer> islands){
@@ -122,7 +120,7 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     public void updateBag(int studentsLeft){
-        ((BagPane)this.lookup("#studentsBagPane")).updateCount(studentsLeft);
+        bagContainer.updateBag(studentsLeft);
     }
 
     public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){//TODO: add coin overcharge
@@ -130,7 +128,7 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     public void updateCoinHeap(int coinsLeft){
-        ((BagPane)this.lookup("#coinsBagPane")).updateCount(coinsLeft);
+        bagContainer.updateCoinHeap(coinsLeft);
     }
 
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {
@@ -143,12 +141,7 @@ public class ArchipelagoPane extends AnchorPane {
 
     public void relocateForward(int index, Point2D mergeDiff) {
         IslandTilePane forwardIsland = (IslandTilePane) this.lookup("#islandTilePane" + index);
-        // standard version:
-        /*forwardIsland.relocate(
-                forwardIsland.getLayoutX() + mergeDiff.getX(),
-                forwardIsland.getLayoutY() + mergeDiff.getY());*/
 
-        // translate version:
         Translate translate = new Translate();
         forwardIsland.getTransforms().add(translate);
         Interpolator customInterpolator = new Interpolator() {
@@ -171,32 +164,7 @@ public class ArchipelagoPane extends AnchorPane {
 
     public void relocateBack(int index, Point2D mergeDiff) {
         Point2D reverseMergeDiff = new Point2D(- mergeDiff.getX(), - mergeDiff.getY());
-        IslandTilePane backIsland = (IslandTilePane) this.lookup("#islandTilePane" + index);
-        // standard version:
-        /*backIsland.relocate(
-                backIsland.getLayoutX() + reverseMergeDiff.getX(),
-                backIsland.getLayoutY() + reverseMergeDiff.getY());*/
-
-        //translate version:
-        Translate translate = new Translate();
-        backIsland.getTransforms().add(translate);
-
-        Interpolator customInterpolator = new Interpolator() {
-            @Override
-            protected double curve(double v) {
-                return Math.pow(v, 10);
-            }
-        };
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(500),
-                        new KeyValue(translate.xProperty(), 0d, customInterpolator),
-                        new KeyValue(translate.yProperty(), 0d, customInterpolator)),
-                new KeyFrame(Duration.millis(2000),
-                        new KeyValue(translate.xProperty(), reverseMergeDiff.getX(), customInterpolator),
-                        new KeyValue(translate.yProperty(), reverseMergeDiff.getY(), customInterpolator))
-        );
-        timeline.setCycleCount(1);
-        timeline.play();
+        relocateForward(index, reverseMergeDiff);
     }
 
     public void createEmptyBridges() {
@@ -250,7 +218,7 @@ public class ArchipelagoPane extends AnchorPane {
         fadeIn.play();
     }
 
-    public void debugStud(){
+    public void debugStud() {
         for (int i = 0; i < 12; i++) {
             IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
             islandTilePane.debugStud();
