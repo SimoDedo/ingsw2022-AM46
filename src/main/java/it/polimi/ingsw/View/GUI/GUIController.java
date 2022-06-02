@@ -12,8 +12,10 @@ import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -100,13 +102,20 @@ public class GUIController {
 
     public void connectWithNicknameSuccessful() {
         GUIApplication.runLaterExecutor.execute(() -> guiApplication.switchToGameSetup());
-        if(debug){
+        if (debug) {
             enableGameSettings(); // DELETEME debug
         }
     }
 
     public void enableGameSettings() {
         GUIApplication.runLaterExecutor.execute(() -> {
+            VBox root = (VBox) guiApplication.lookup("gameSetupRoot");
+            root.setBackground(new Background(new BackgroundImage(
+                    new Image("/general/bg2_unfocused.png"),
+                    BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                    BackgroundPosition.CENTER,
+                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
+            )));
             guiApplication.lookup("gameSettingsPane").setDisable(false);
             guiApplication.lookup("towerWizardPane").setDisable(true);
             ( (ChoiceBox<String>) guiApplication.lookup("numChoice") ).getSelectionModel().select(0);

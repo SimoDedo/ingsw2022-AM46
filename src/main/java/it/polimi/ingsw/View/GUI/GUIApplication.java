@@ -96,15 +96,20 @@ public class GUIApplication extends Application {
         runLaterExecutor.execute(this::createMainScene);
     }
 
+    /**
+     * Creates the login scene, i.e. the screen where the user can type the IP and port to connect, and the nickname with
+     * which to connect to the lobby.
+     */
     public void createLoginScene() {
         VBox root = new VBox();
-        AnchorPane anchorPane = setupScene(root);
-        anchorPane.setBackground(new Background(new BackgroundImage(
+        root.setBackground(new Background(new BackgroundImage(
                 new Image("/general/bg1_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
+        AnchorPane anchorPane = setupScene(root);
+
         VBox gridContainer = new VBox();
         gridContainer.setAlignment(Pos.CENTER);
         gridContainer.setPadding(new Insets(20.0, 0.0, 0.0, 0.0));
@@ -114,14 +119,13 @@ public class GUIApplication extends Application {
         AnchorPane.setLeftAnchor(gridContainer, 0.0);
         AnchorPane.setTopAnchor(gridContainer, 0.0);
 
-        Image iconPlusName = new Image("/general/iconPlusName.png");
+        Image iconPlusName = new Image("/general/iconPlusName.png", 0.0, 0.0, true, true);
         ImageView imageView = new ImageView(iconPlusName);
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(400);
-        imageView.setSmooth(true);
         imageView.setCache(true);
         anchorPane.getChildren().add(imageView);
-        AnchorPane.setLeftAnchor(imageView, 50.0);
+        AnchorPane.setLeftAnchor(imageView, 100.0);
         AnchorPane.setTopAnchor(imageView, 150.0);
 
         Label loginSceneTitle = new Label("Login");
@@ -203,13 +207,15 @@ public class GUIApplication extends Application {
 
     public void createGameSetupScene() {
         VBox root = new VBox();
-        AnchorPane anchorPane = setupScene(root);
-        anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/general/bg2_unfocused.png"),
+        root.setId("gameSetupRoot");
+        root.setBackground(new Background(new BackgroundImage(
+                new Image("/general/bg7_unfocused.png"),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
         )));
+        AnchorPane anchorPane = setupScene(root);
+
         VBox gridContainer = new VBox();
         gridContainer.setAlignment(Pos.CENTER);
         gridContainer.setPadding(new Insets(20.0, 0.0, 0.0, 0.0));
@@ -303,6 +309,12 @@ public class GUIApplication extends Application {
 
     public void createMainScene() {
         VBox root = new VBox();
+        root.setBackground(new Background(new BackgroundImage(
+                new Image("/general/bg6_unfocused.png"),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                BackgroundPosition.DEFAULT,
+                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
+        )));
         root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
 
@@ -310,12 +322,6 @@ public class GUIApplication extends Application {
         anchorPane.setId("mainContentPane");
         anchorPane.setStyle("-fx-font-family: 'Gill Sans MT'");
         root.getChildren().add(anchorPane);
-        anchorPane.setBackground(new Background(new BackgroundImage(
-                new Image("/general/bg6_unfocused.png"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-                BackgroundPosition.DEFAULT,
-                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
-        )));
 
         GridPane mainGrid = new GridPane();
         mainGrid.setId("mainGrid");

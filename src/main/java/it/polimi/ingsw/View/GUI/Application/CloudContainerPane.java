@@ -31,6 +31,11 @@ public class CloudContainerPane extends HBox {
         this.setMaxSize(cloudContainerWidth, cloudContainerHeight);
     }
 
+    /**
+     * Sets an ID to each CloudPane based on the real ID in the server model.
+     * @param numOfPlayers the number of clouds in this game
+     * @param clouds the IDs of the clouds in the server model
+     */
     public void createClouds(int numOfPlayers, List<Integer> clouds) {
         cloudsIDs = new ArrayList<>();
         this.cloudNumber = numOfPlayers;
@@ -79,10 +84,10 @@ public class CloudContainerPane extends HBox {
         }
     }
 
-    public void debugStud(){
-        for (int i = 0; i < cloudsIDs.size(); i++) {
-            CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudsIDs.get(i));
-            if(cloudPane != null)
+    public void debugStud() {
+        for (Integer cloudID : cloudsIDs) {
+            CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
+            if (cloudPane != null)
                 cloudPane.debugStud();
         }
     }

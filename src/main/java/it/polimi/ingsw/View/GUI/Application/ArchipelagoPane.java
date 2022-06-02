@@ -19,20 +19,54 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This class contains most of the game elements, except for those that are specific to players. The islands, clouds,
+ * characters, the student bag and the coin heap all go here. All the aforementioned elements except for the islands
+ * have their own container.
+ */
 public class ArchipelagoPane extends AnchorPane {
 
+    /**
+     * The controller class for this pane.
+     */
     private final GUIController controller;
 
+    /**
+     * The HBox that contains the clouds.
+     */
     private final CloudContainerPane cloudContainer;
+
+    /**
+     * The HBox that contains the student bag and the coin heap.
+     */
     private BagContainerPane bagContainer;
+
+    /**
+     * The HBox that contains the characters.
+     */
     private final CharContainerPane charContainer;
 
+    /**
+     * The length of one side of this pane.
+     */
     private final double archipelagoSide = 500.0;
+
+    /**
+     * Utility field for roughly calculating the center of this pane.
+     */
     private final double centerPos = archipelagoSide / 2.0;
 
+    /**
+     * A list of the IDs of the islands in the archipelago. This ID is synchronized with the one present in the server's
+     * model.
+     */
     private List<Integer> islandsIDs;
 
-
+    /**
+     * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
+     * number of players or game mode: 12 empty islands and empty containers for characters, clouds and bags.
+     * @param controller the controller class that will handle events inside this pane
+     */
     public ArchipelagoPane(GUIController controller) {
         this.controller = controller;
         this.setId("archipelagoPane");
@@ -61,6 +95,12 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer.relocate(centerPos - 15.0, centerPos - 30.0);
     }
 
+    /**
+     * Sets an ID to each IslandTilePane based on the real ID in the server model, and places mother nature on the right
+     * island.
+     * @param motherNatureIsland the ID of the island that owns mother nature
+     * @param islands the IDs of the island tiles in the server model
+     */
     public void createIslands(int motherNatureIsland, List<Integer> islands){
         this.islandsIDs = new ArrayList<>();
         //Finishes creating islands
@@ -73,18 +113,31 @@ public class ArchipelagoPane extends AnchorPane {
         updateMotherNature(motherNatureIsland, islands);
     }
 
+    /**
+     * Sets an ID to each CloudPane based on the real ID in the server model.
+     * @param numOfPlayers the number of clouds in this game
+     * @param cloudIDs the IDs of the clouds in the server model
+     */
     public void createClouds(int numOfPlayers,List<Integer> cloudIDs){
         cloudContainer.createClouds(numOfPlayers, cloudIDs);
     }
 
+    /**
+     * Sets the elements of the archipelago which are only used in a game in expert mode: three characters with their
+     * respective IDs and a coin heap.
+     * @param characterIDs the IDs of the characters in the server model
+     */
     public void createCharacterAndHeap(List<Integer> characterIDs){
-        //Creates characters
-        charContainer.createCharacters(characterIDs);
 
-        // coinheap goes here (NOT ANYMORE, HAS TO BE MOVED...)
+        charContainer.createCharacters(characterIDs);
         bagContainer.createCoinsHeap();
     }
 
+    /**
+     * Updates all islands on the location of mother nature.
+     * @param motherNatureIsland the ID of the island that owns mother nature
+     * @param islands a list of the islands' IDs
+     */
     public void updateMotherNature(int motherNatureIsland, List<Integer> islands){
         for(Integer island : islands){
             IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
@@ -92,6 +145,10 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
+    /**
+     * Updates all islands on the presence (and color) of a tower on them.
+     * @param towers a hashmap with all the islands that have a tower on them and their associated color
+     */
     public void updateTowers(HashMap<Integer, TowerColor> towers){
         for(Integer island  : towers.keySet()){
             IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
@@ -99,12 +156,21 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
+    /**
+     * Updates all islands on the presence (and number) of no-entry tiles on them.
+     * @param noEntry a hashmap with all the islands that have a no-entry tile on them and their associated number
+     */
     public void updateNoEntry(HashMap<Integer, Integer> noEntry){
         for(Integer islandID : noEntry.keySet()){
             ((IslandTilePane)this.lookup("#islandTilePane" + islandID)).updateNoEntryTile(noEntry.get(islandID));
         }
     }
 
+    /**
+     * Updates all islands on the presence, number and color of students on them.
+     * @param islandsStuds a hashmap with all the islands that have students and their associated IDs
+     * @param studsColor a hashmap with all the students on the islands and their associated color
+     */
     public void updateIslandStudents(HashMap<Integer, List<Integer>> islandsStuds, HashMap<Integer, Color> studsColor){
         for(Integer island  : islandsStuds.keySet()){
             IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
@@ -112,25 +178,67 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
-    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration){//todo
+    /**
+     * Updates island groups, merging islands on the GUI if they have been merged in the server model.
+     * @param islandsConfiguration the current configuration of the islands inside island groups
+     */
+    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration) {
+        //todo
     }
 
+    /**
+     * Updates a single cloud on the presence, number and color of students on it.
+     * @param cloud the ID of the cloud to update
+     * @param studs a hashmap with each student's ID and color on the cloud
+     */
     public void updateCloud(int cloud, HashMap<Integer, Color> studs){
         cloudContainer.updateCloud(cloud, studs);
     }
 
+    /**
+     * Updates the students bag with the remaining number of students inside it.
+     * @param studentsLeft the remaining number of students inside the bag
+     */
     public void updateBag(int studentsLeft){
         bagContainer.updateBag(studentsLeft);
     }
 
-    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){//TODO: add coin overcharge
+    /**
+     * Updates a single character with the given ID on the presence, number and color of students and (in the case of
+     * Character 4) the number of no-entry tiles on it.
+     * @param ID the character's ID
+     * @param newStuds a hashmap with each student's ID and color on the character
+     * @param numOfNoEntryTiles the number of no-entry tiles on the character
+     */
+    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){ //TODO: add coin overcharge
         charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles);
     }
 
+    /**
+     * Updates the coinheap with the remaining number of coins inside it.
+     * @param coinsLeft the remaining number of coins in the heap
+     */
     public void updateCoinHeap(int coinsLeft){
         bagContainer.updateCoinHeap(coinsLeft);
     }
 
+    public void enableSelectIsland() {}
+
+    public void disableSelectIsland() {}
+
+    public void setIslandChosen() {}
+
+    public int getIslandChosen() {
+        return 0;
+    }
+
+    /**
+     * Calculates the distance between the merging point of either of the two soon-to-be merged islands and the midpoint
+     * of their merging points.
+     * @param forwardIndex the index of the island that will move forward to merge
+     * @param backIndex the island index of the island that will move backward to merge
+     * @return the coordinates representing the distance
+     */
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {
         IslandTilePane backIsland = (IslandTilePane) this.lookup("#islandTilePane" + backIndex);
         Point2D backMergePoint = backIsland.getBackMergePoint();
@@ -139,6 +247,11 @@ public class ArchipelagoPane extends AnchorPane {
         return backMergePoint.midpoint(forwardMergePoint).subtract(forwardMergePoint);
     }
 
+    /**
+     * Animates the forwards motion of the island with the given index, by the amount specified in the given point.
+     * @param index the index of the island to animate
+     * @param mergeDiff the point that the island will reach in the animation
+     */
     public void relocateForward(int index, Point2D mergeDiff) {
         IslandTilePane forwardIsland = (IslandTilePane) this.lookup("#islandTilePane" + index);
 
@@ -162,11 +275,19 @@ public class ArchipelagoPane extends AnchorPane {
         timeline.play();
     }
 
+    /**
+     * Animates the backwards motion of the island with the given index, by the amount specified in the given point.
+     * @param index the index of the island to animate
+     * @param mergeDiff the point that the island will reach in the animation
+     */
     public void relocateBack(int index, Point2D mergeDiff) {
         Point2D reverseMergeDiff = new Point2D(- mergeDiff.getX(), - mergeDiff.getY());
         relocateForward(index, reverseMergeDiff);
     }
 
+    /**
+     * Now deprecated. Creates the invisible bridges around the island tiles.
+     */
     public void createEmptyBridges() {
         double bridgeHeight = 50.0, bridgeLength = 25.0, angleAdjustment = 90.0;
         for (int forwardIndex = 0; forwardIndex < 12; forwardIndex++) {
@@ -198,6 +319,11 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
+    /**
+     * Now deprecated. Sets the visibility and color of a bridge connecting two islands.
+     * @param forwardIndex the index of the island from which the bridge is outgoing
+     * @param bridgeColor the color of the bridge
+     */
     public void setBridge(int forwardIndex, TowerColor bridgeColor) {
         ImageView bridgeView = (ImageView) this.lookup("#bridgeView" + forwardIndex);
         String pngName;
@@ -218,6 +344,9 @@ public class ArchipelagoPane extends AnchorPane {
         fadeIn.play();
     }
 
+    /**
+     * Debug function that displays some sample students on each island tile, cloud and character.
+     */
     public void debugStud() {
         for (int i = 0; i < 12; i++) {
             IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
