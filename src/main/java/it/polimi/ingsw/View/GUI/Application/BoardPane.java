@@ -1,20 +1,22 @@
 package it.polimi.ingsw.View.GUI.Application;
 
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import it.polimi.ingsw.Utils.Enum.Color;
+import javafx.util.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BoardPane extends StackPane {
 
-    private final int position;
+    private final String nickname;
 
     private double boardHeight;
     private double boardWidth;
@@ -26,19 +28,37 @@ public class BoardPane extends StackPane {
     private final HashMap<Color, Integer> tableOrder;
 
     private final GridPane mainGrid;
+
     private StudentContainerPane entrance;
+    private List<Pair<Integer, Integer> > freeEntranceSpots;
+
     private GridPane diningRoom;
     private HashMap<Color, StudentContainerPane> tables;
-    private StudentContainerPane professors;
+    private List<Pair<Integer, Integer> > freeDNSpots;
+
+    private GridPane professors;
+
     private GridPane towerSpace;
+    private TowerColor towerColor;
+    private int numOfTowers;
+
+    private Comparator<Pair<Integer, Integer>> compareGridSpot = (p, p2) -> {
+        if(p.getValue() < p2.getValue()) return -1;
+        else if (p.getValue() > p2.getValue()) return 1;
+        else {
+            if(p.getKey() < p2.getKey()) return  -1;
+            else if (p.getKey() > p2.getKey()) return 1;
+            else return 0;
+        }
+    };
 
 
-    public BoardPane(int position, double boardHeight) {
-        this.position = position;
+    public BoardPane(String nickname, double boardHeight) {
+        this.nickname = nickname;
         this.boardHeight = boardHeight;
         this.boardWidth = boardHeight * (3304.0 / 1413.0);
 
-        this.setId("boardPane" + position);
+        this.setId("boardPane" + nickname);
         Image playerBoard = new Image("/world/board_roundedcorners.png", 600, 600,true, false);
         ImageView imageViewPB = new ImageView(playerBoard);
         imageViewPB.setPreserveRatio(true);
@@ -92,12 +112,16 @@ public class BoardPane extends StackPane {
         entrance = new StudentContainerPane("entrancePane", entranceID,
                 boardWidth, boardHeight, entrancePct, 5, 2, 10.0, 5.0, 15.0);
         mainGrid.add(entrance, 0 , 0);
+        freeEntranceSpots = new ArrayList<>();
+        for(int i = 0 ; i < 10 ; i++){
+            freeEntranceSpots.add(new Pair<>(i % 2, i / 2));
+        }
     }
 
     public void createDiningRoom(HashMap<Color, Integer> tableIDs){
         diningRoom = new GridPane();
-        createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.5, 0.0);
-        diningRoom.setId("diningRoomPane" + position);
+        createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.7, 0.0);
+        diningRoom.setId("diningRoomPane" + nickname);
 
         tables = new HashMap<>();
 
@@ -108,19 +132,115 @@ public class BoardPane extends StackPane {
             diningRoom.add(table, 0, tableOrder.get(color));
         }
         mainGrid.add(diningRoom, 1, 0);
+
+        freeDNSpots = new ArrayList<>();
+        for (int row = 0; row < 5; row++) {
+            for(int col = 0 ; col < 10 ; col++){
+                freeDNSpots.add(new Pair<>(col, row));
+            }
+        }
+        freeDNSpots.sort(compareGridSpot);
     }
 
     public void createProfessors(){
-        professors = new StudentContainerPane("professorPane", position,
-                boardWidth, boardHeight, professorPct, 5, 1, 6.0, 7.5, 0.0);
+        professors = new GridPane();
+        professors.setId("professorPane" + nickname);
+        createGrid(professors, professorPct, 5, 1, 6.0, 7.7, 0.0);
         mainGrid.add(professors,2,0);
     }
 
-    public void createTowerSpace(){
+    public void createTowerSpace(TowerColor towerColor, int number){
+        this.towerColor = towerColor;
         towerSpace = new GridPane();
-        towerSpace.setId("towerSpacePane" + position);
+        towerSpace.setId("towerSpacePane" + nickname);
         createGrid(towerSpace, towerPct, 4, 2, 12, 10, 0);
         mainGrid.add(towerSpace, 3, 0);
+    }
+
+    public void updateEntrance(HashMap<Integer, Color> students){
+        removeOldStudentFromEntrance(students);
+        addNewStudentsToEntrance(students);
+    }
+
+    private  void removeOldStudentFromEntrance(HashMap<Integer, Color> students){
+        List<Node> studsBefore = new ArrayList<>(entrance.getChildren());
+        List<String> studsNow = students.keySet().stream().map(id -> "student" + id).toList();
+        for(Node studBefore : studsBefore){
+            if(! studsNow.contains(studBefore.getId())){
+                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getRowIndex(studBefore));
+                entrance.getChildren().remove(studBefore);
+                freeEntranceSpots.add(spotToFree);
+            }
+        }
+        freeEntranceSpots.sort(compareGridSpot);
+    }
+
+    private void addNewStudentsToEntrance(HashMap<Integer, Color> students){
+        List<Node> studsBefore = entrance.getChildren();
+        List<String> studsBeforeIDs = studsBefore.stream().map(Node::getId).toList();
+        for (Map.Entry<Integer, Color> stud : students.entrySet()){
+            if(! studsBeforeIDs.contains("student" + stud.getKey())){
+                Pair<Integer, Integer> freeSpot = freeEntranceSpots.get(0);
+                entrance.add(new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize),
+                        freeSpot.getKey(), freeSpot.getValue());
+                freeEntranceSpots.remove(freeSpot);
+            }
+        }
+    }
+
+    public void updateTable(Color tableColor, List<Integer> students){
+        removeOldStudentFromTable(tableColor, students);
+        addNewStudentsToTable(tableColor, students);
+    }
+
+    private  void removeOldStudentFromTable(Color tableColor, List<Integer> students){
+        List<Node> studsBefore = new ArrayList<>(tables.get(tableColor).getChildren());
+        List<String> studsNow = students.stream().map(id -> "student" + id).toList();
+        for(Node studBefore : studsBefore){
+            if(! studsNow.contains(studBefore.getId())){
+                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getColumnIndex(studBefore));
+                tables.get(tableColor).getChildren().remove(studBefore);
+                freeEntranceSpots.add(new Pair<>(spotToFree.getKey(), tableOrder.get(tableColor)));
+            }
+        }
+        freeEntranceSpots.sort(compareGridSpot);
+    }
+
+    private void addNewStudentsToTable(Color tableColor, List<Integer> students){
+        List<Pair<Integer,Integer>> freeTableSpots = freeDNSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList();
+        List<Node> studsBefore = entrance.getChildren();
+        List<String> studsBeforeIDs = studsBefore.stream().map(Node::getId).toList();
+        for (Integer stud : students){
+            if(! studsBeforeIDs.contains("student" + stud)){
+                Pair<Integer, Integer> freeSpot = freeTableSpots.get(0);
+                entrance.add(new StudentView(stud, "student", tableColor.toString().toLowerCase(),StudentView.studentSize),
+                        freeSpot.getKey(), freeSpot.getValue());
+                freeEntranceSpots.remove(freeSpot);
+            }
+        }
+    }
+
+    public void updateProfessors(List<Color> newProfessorsOwned){ //This isn't optimized like others, but now I have no will (also it's at max 5 pngs to reload I don't : care)
+        professors.getChildren().clear();
+        for(Color profColor : newProfessorsOwned){
+            professors.add(new PawnView(0, "professor", profColor.toString().toLowerCase(), StudentView.studentSize),
+                        0, tableOrder.get(profColor));
+        }
+    }
+
+    public void updateTowers(int newNumOfTowers){
+        if(newNumOfTowers < numOfTowers){
+            for (int i = newNumOfTowers; i < numOfTowers ; i++) {
+                towerSpace.getChildren().remove(i%2, i/2);
+            }
+        }
+        else if(newNumOfTowers > numOfTowers){
+            for (int i = numOfTowers; i < newNumOfTowers ; i++) {
+                towerSpace.add(new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize),
+                        i%2, i/2);
+            }
+        }
+        this.numOfTowers = newNumOfTowers;
     }
 
     public void debugPawn(){

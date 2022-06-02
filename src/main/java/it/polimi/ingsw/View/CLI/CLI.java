@@ -702,7 +702,7 @@ public class CLI implements UI {
             if(game.getProfessorsOwner().get(c) != null && game.getProfessorsOwner().get(c).equals(nickname))
                 toPrint.append(colorMapping.get(c)).append("(Prof) ").append(RESET);
             if(game.getGameMode() == GameMode.EXPERT)
-                toPrint.append(colorMapping.get(c)).append("[").append(game.getCoinsLeft(nickname, c)).append("] ").append(RESET);
+                toPrint.append(colorMapping.get(c)).append("[").append(game.getTableCoinsLeft(nickname, c)).append("] ").append(RESET);
         }
 
         displayMessage(toPrint.toString());

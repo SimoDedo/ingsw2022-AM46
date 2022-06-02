@@ -2,6 +2,8 @@ package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.View.GUI.Application.ArchipelagoPane;
 import it.polimi.ingsw.View.GUI.Application.PlayerPane;
 import it.polimi.ingsw.View.GUI.Application.TurnOrderPane;
@@ -351,21 +353,21 @@ public class GUIApplication extends Application {
         mainScene = new Scene(root);
     }
 
-    public void createPlayer(int position, GameMode gameMode, String nickname, int entranceID, HashMap<Color, Integer> tablesIDs, boolean isMainPlayer){
+    public void createPlayer(GameMode gameMode, String nickname, int entranceID, HashMap<Color,
+            Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer){
         VBox players = (VBox) this.lookup("players");
-        PlayerPane player = new PlayerPane(controller, position, isMainPlayer);
+        PlayerPane player = new PlayerPane(controller, nickname, isMainPlayer);
         player.setNickname(nickname);
-        player.createBoard(entranceID, tablesIDs);
-        player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer);
+        player.createBoard(entranceID, tablesIDs, towerColor, numOfTowers);
+        player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer, wizardType);
         player.createAssistantContainerPane(isMainPlayer);
-        player.enableSelectAssistant();
         players.getChildren().add(0, player);
     }
 
     public void createArchipelago(int numOfPlayers, GameMode gameMode,List<Integer> islandIDs, List<Integer> cloudIDs,
                                   List<Integer> characterIDs, int motherNatureIsland){
         ArchipelagoPane archipelagoPane = ((ArchipelagoPane) this.lookup("archipelagoPane"));
-        archipelagoPane.createIslands(islandIDs, motherNatureIsland);
+        archipelagoPane.createIslands(motherNatureIsland, islandIDs);
         archipelagoPane.createClouds(numOfPlayers, cloudIDs);
         if(gameMode.equals(GameMode.EXPERT))
             archipelagoPane.createCharacterAndHeap(characterIDs);

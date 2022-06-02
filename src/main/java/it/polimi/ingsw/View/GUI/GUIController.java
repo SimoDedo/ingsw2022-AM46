@@ -262,24 +262,66 @@ public class GUIController {
                 for (Color color : Color.values())
                     table.put(color, 0);
                 for (int i = 0; i < 3; i++) {
-                    guiApplication.createPlayer(i, GameMode.EXPERT,"Player" + i,0 , table, i == 0);
-                    ((BoardPane) guiApplication.lookup("boardPane"+i)).debugPawn();
+                    guiApplication.createPlayer(GameMode.EXPERT,"Player" + i,0 , table, TowerColor.WHITE, 8, WizardType.KING,i == 0);
+                    ((BoardPane) guiApplication.lookup("boardPane"+"Player" + i)).debugPawn();
                 }
                 ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
                 guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
-                        List.of(0,0,0,0), List.of(2,5,6), 5);
+                        List.of(0,1,2,3), List.of(2,5,6), 5);
                 archipelagoPane.debugStud();
 
                 CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
                 cloudContainerPane.enableSelectCloud();
                 CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
                 charContainerPane.enableSelectCharacter();
+
+                ((PlayerPane) guiApplication.lookup("playerPanePlayer0")).enableSelectAssistant();
             }
         });
     }
 
-    public void initialDraw(ObservableByClient game){
+    public void initialDraw(ObservableByClient game, String nickname){ //THIS WILL GET DIVIDED IN MORE METHOD which will be reused by GUI
+        GUIApplication.runLaterExecutor.execute(() -> {
+            //Draws players
+            guiApplication.createPlayer(game.getGameMode(), nickname, game.getEntranceID(nickname),
+                    game.getTableIDs(nickname), game.getPlayerTeams().get(nickname), game.getTowersLeft(nickname),
+                    game.getPlayersWizardType().get(nickname),true);
+            for(String other : game.getPlayers()){
+                if(! other.equals(nickname)){
+                    guiApplication.createPlayer(game.getGameMode(), other, game.getEntranceID(other),
+                            game.getTableIDs(other), game.getPlayerTeams().get(other), game.getTowersLeft(other),
+                            game.getPlayersWizardType().get(other), false);
+                }
+            }
+            //Draws archipelago, clouds and characters
+            List<Integer> islandIDs = new ArrayList<>();
+            for (int j = 0; j < game.getIslandTilesIDs().size(); j++) {
+                islandIDs.addAll(game.getIslandTilesIDs().get(j));
+            }
+            guiApplication.createArchipelago(game.getNumOfPlayers(), game.getGameMode(), islandIDs, game.getCloudIDs(),
+                    game.getDrawnCharacterIDs(), game.getMotherNatureIslandTileID());
 
+            for(String nick : game.getPlayers()){
+                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nick);
+                playerPane.updateEntrance(game.getEntranceStudentsIDs(nick));
+                playerPane.updateTowers(game.getTowersLeft(nick));
+                if(game.getGameMode() == GameMode.EXPERT)
+                    playerPane.updateCoins(game.getCoins(nick));
+            }
+            ((TurnOrderPane)guiApplication.lookup("turnOrderPane")).updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder());
+
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane)guiApplication.lookup("archipelagoPane");
+            archipelagoPane.updateIslandStudents(game.getIslandTilesStudentsIDs(), game.getArchipelagoStudentIDs());
+            archipelagoPane.updateBag(game.getBagStudentsLeft());
+            if(game.getGameMode() == GameMode.EXPERT){
+                archipelagoPane.updateCoinHeap(game.getCoinsLeft());
+                for(Integer charID : game.getDrawnCharacterIDs())
+                    archipelagoPane.updateCharacter(charID , game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID));
+            }
+            for(Integer cloud : game.getCloudIDs()){
+                archipelagoPane.updateCloud(cloud, game.getCloudStudentsIDs(cloud));
+            }
+        });
     }
 
     /**
@@ -309,8 +351,8 @@ public class GUIController {
      * Effectively moves the card to the discard pile. Used by gui.
      */
     public void assistantCardSuccessful() {
-        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane0");
-        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane0");
+        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPanePlayer0");
+        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPanePlayer0");
         playerPane.moveAssistant(assistantPane.getAssistantChosen());
     }
 

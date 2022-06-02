@@ -1,16 +1,23 @@
 package it.polimi.ingsw.View.GUI.Application;
 
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.util.Pair;
 
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class IslandTilePane extends StackPane {
@@ -25,8 +32,12 @@ public class IslandTilePane extends StackPane {
     private Point2D forwardMergePoint, backMergePoint;
 
     private GridPane islandModifiersPane;
+    private ImageView motherNature;
+    private ImageView noEntryTile;
+    private Text noEntryTileText;
     private final VBox gridContainer;
     private StudentContainerPane studentPane;
+    private List<Pair<Integer, Integer>> freeStudSpots;
 
     public IslandTilePane(int index) {
         this.index = index;
@@ -54,6 +65,27 @@ public class IslandTilePane extends StackPane {
         gridContainer.getChildren().add(islandModifiersPane);
         islandModifiersPane.setPrefSize(islandTileSize, islandTileSize *0.15);
 
+        //Preload mothernature and noentry images
+        motherNature = new PawnView(0, "mothernature", "", PawnView.pawnSize);
+        motherNature.setVisible(false);
+        islandModifiersPane.add(motherNature, 1, 0);
+
+        Image noEntry = new Image("/pawns/noentrytile.png", 50, 50, true, true);
+        noEntryTile = new ImageView(noEntry);
+        noEntryTile.setEffect(new DropShadow());
+        noEntryTile.setPreserveRatio(true);
+        noEntryTile.setFitHeight(PawnView.pawnSize);
+        noEntryTile.setVisible(false);
+        this.getChildren().add(noEntryTile);
+        noEntryTileText = new Text();
+        noEntryTileText.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
+        noEntryTileText.setVisible(false);
+        noEntryTileText.setFill(javafx.scene.paint.Color.WHITE);
+        noEntryTileText.setEffect(new DropShadow());
+        noEntryTileText.setStyle("-fx-stroke: black;");
+        noEntryTileText.setStyle("-fx-stroke-width: 3;");
+        this.getChildren().add(noEntryTileText);
+
         /* debug
         PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
         islandModifiersPane.add(tower, 0, 0);
@@ -71,11 +103,51 @@ public class IslandTilePane extends StackPane {
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
+        freeStudSpots = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                freeStudSpots.add(new Pair<>(i, j));
+            }
+        }
     }
 
-    public void putMotherNature(){
-        PawnView motherNature = new PawnView(0, "mothernature", "", PawnView.pawnSize);
-        islandModifiersPane.add(motherNature, 1, 0);
+    public void updateTower(TowerColor towerColor){
+        if (towerColor != null){
+            islandModifiersPane.add(new PawnView(0, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize), 0, 0);
+        }
+    }
+
+    public void updateMotherNature(boolean isMotherNatureHere){
+        motherNature.setVisible(isMotherNatureHere);
+    }
+
+    public void removeMotherNature(){
+        motherNature.setVisible(true);
+    }
+
+    public void updateNoEntryTile(int numOfNoEntryTiles){
+        if(numOfNoEntryTiles > 0){
+            noEntryTile.setVisible(true);
+            noEntryTileText.setText(String.valueOf(numOfNoEntryTiles));
+            noEntryTileText.setVisible(true);
+        }
+        else {
+            noEntryTile.setVisible(false);
+            noEntryTileText.setVisible(false);
+        }
+    }
+
+    public void updateStudents(List<Integer> newStudents,HashMap<Integer, Color> studColor){
+        List<Node> studsBefore = studentPane.getChildren();
+        List<String> studsBeforeID = studsBefore.stream().map(Node::getId).toList();
+        for (Integer stud : newStudents){
+            if(! studsBeforeID.contains("#student" + stud)){
+                int rand = new Random().nextInt(freeStudSpots.size());
+                studentPane.add(new StudentView(stud, "student", studColor.get(stud).toString().toLowerCase(), StudentView.studentSize),
+                        freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());
+                freeStudSpots.remove(rand);
+            }
+        }
     }
 
     public Point2D getForwardMergePoint() {

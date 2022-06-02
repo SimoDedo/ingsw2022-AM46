@@ -13,9 +13,11 @@ import javafx.scene.text.Text;
 
 public class BagPane extends StackPane {
 
+    private final String bagType;
     public static double bagSize = 60.0;
 
     public BagPane(String bagType) {
+        this.bagType = bagType;
         this.setId(bagType + "BagPane");
         this.setEffect(new DropShadow());
         this.setAlignment(Pos.CENTER);
@@ -35,5 +37,9 @@ public class BagPane extends StackPane {
         numRemainingText.setFill(Color.WHITE);
         numRemainingText.setEffect(new DropShadow(20, Color.BLACK));
         this.getChildren().add(numRemainingText);
+    }
+
+    public void updateCount(int count){
+        ((Text)this.lookup("#" + bagType +"BagPaneCounter")).setText(String.valueOf(count));
     }
 }

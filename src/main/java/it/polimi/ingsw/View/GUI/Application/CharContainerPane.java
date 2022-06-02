@@ -1,9 +1,12 @@
 package it.polimi.ingsw.View.GUI.Application;
 
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CharContainerPane extends HBox {
@@ -14,6 +17,9 @@ public class CharContainerPane extends HBox {
 
     private int characterChosen;
 
+    private List<Integer> charIDs;
+
+
     public CharContainerPane(GUIController controller) {
         super(5.0);
         this.controller = controller;
@@ -22,19 +28,25 @@ public class CharContainerPane extends HBox {
         this.setPrefSize(charContainerWidth, charContainerHeight);
     }
 
-    public void createCharacters(List<Integer> charIDs) {
-        for (int i = 0; i < 3; i++) {
+    public void createCharacters(List<Integer> characters) {
+        this.charIDs = new ArrayList<>();
+        for (int i = 0; i < characters.size(); i++) {
             CharacterPane characterPane = new CharacterPane();
-            characterPane.setId("characterPane" + i);
+            characterPane.setId("characterPane" + characters.get(i));
+            this.charIDs.add(characters.get(i));
             this.getChildren().add(characterPane);
             characterPane.createCharacter(charIDs.get(i));
         }
     }
 
+    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){
+        ((CharacterPane)this.lookup("#characterPane" + ID)).updateCharacter(newStuds, numOfNoEntryTiles);
+    }
+
     public void enableSelectCharacter() {
-        for (int i = 0; i < 3; i++) {
-            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + i);
-            int charIndex = i;
+        for (Integer charID : charIDs) {
+            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
+            int charIndex = charID;
             characterPane.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me!" + characterPane.getId());
                 setCharacterChosen(charIndex);
@@ -52,11 +64,19 @@ public class CharContainerPane extends HBox {
     }
 
     public void disableSelectCharacter() {
-        for (int i = 0; i < 3; i++) {
-            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + i);
+        for (Integer charID : charIDs) {
+            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
             characterPane.setOnMouseClicked(event -> {
                 System.out.println("I'm disabled");
             });
+        }
+    }
+
+    public void debugStud(){
+        for (int i = 0; i < charIDs.size(); i++) {
+            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charIDs.get(i));
+            if(characterPane != null)
+                characterPane.debugStud();
         }
     }
 }

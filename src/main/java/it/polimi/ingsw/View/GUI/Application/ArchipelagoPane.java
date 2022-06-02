@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View.GUI.Application;
 
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.animation.Interpolator;
@@ -14,6 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ArchipelagoPane extends AnchorPane {
@@ -25,6 +28,8 @@ public class ArchipelagoPane extends AnchorPane {
 
     private final double archipelagoSide = 500.0;
     private final double centerPos = archipelagoSide / 2.0;
+
+    private List<Integer> islandsIDs;
 
     public ArchipelagoPane(GUIController controller) {
         this.controller = controller;
@@ -56,14 +61,16 @@ public class ArchipelagoPane extends AnchorPane {
 
     }
 
-    public void createIslands(List<Integer> islandIDs, int motherNatureIsland){
+    public void createIslands(int motherNatureIsland, List<Integer> islands){
+        this.islandsIDs = new ArrayList<>();
         //Finishes creating islands
         for (int i = 0; i < 12; i++) {
             IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
-            islandTilePane.createIslandTile(islandIDs.get(i));
-            if(islandIDs.get(i) == motherNatureIsland)
-                islandTilePane.putMotherNature();
+            islandTilePane.setId("islandTilePane" + islands.get(i));
+            this.islandsIDs.add(islands.get(i));
+            islandTilePane.createIslandTile(islands.get(i));
         }
+        updateMotherNature(motherNatureIsland, islands);
     }
 
     public void createClouds(int numOfPlayers,List<Integer> cloudIDs){
@@ -78,6 +85,52 @@ public class ArchipelagoPane extends AnchorPane {
         BagPane coinsBagPane = new BagPane("coins");
         this.getChildren().add(coinsBagPane);
         coinsBagPane.relocate(centerPos + 65.0, centerPos - 40.0);
+    }
+
+    public void updateMotherNature(int motherNatureIsland, List<Integer> islands){
+        for(Integer island : islands){
+            IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
+            islPane.updateMotherNature(motherNatureIsland == island);
+        }
+    }
+
+    public void updateTowers(HashMap<Integer, TowerColor> towers){
+        for(Integer island  : towers.keySet()){
+            IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
+            islPane.updateTower(towers.get(island));
+        }
+    }
+
+    public void updateNoEntry(HashMap<Integer, Integer> noEntry){
+        for(Integer islandID : noEntry.keySet()){
+            ((IslandTilePane)this.lookup("#islandTilePane" + islandID)).updateNoEntryTile(noEntry.get(islandID));
+        }
+    }
+
+    public void updateIslandStudents(HashMap<Integer, List<Integer>> islandsStuds, HashMap<Integer, Color> studsColor){
+        for(Integer island  : islandsStuds.keySet()){
+            IslandTilePane islPane =  (IslandTilePane) this.lookup("#islandTilePane" + island);
+            islPane.updateStudents(islandsStuds.get(island), studsColor);
+        }
+    }
+
+    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration){//todo
+    }
+
+    public void updateCloud(int cloud, HashMap<Integer, Color> studs){
+        cloudContainer.updateCloud(cloud, studs);
+    }
+
+    public void updateBag(int studentsLeft){
+        ((BagPane)this.lookup("#studentsBagPane")).updateCount(studentsLeft);
+    }
+
+    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){//TODO: add coin overcharge
+        charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles);
+    }
+
+    public void updateCoinHeap(int coinsLeft){
+        ((BagPane)this.lookup("#coinsBagPane")).updateCount(coinsLeft);
     }
 
     public Point2D calcMergeDiff(int forwardIndex, int backIndex) {
@@ -202,16 +255,8 @@ public class ArchipelagoPane extends AnchorPane {
             IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
             islandTilePane.debugStud();
         }
-        for (int i = 0; i < 4; i++) {
-            CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + i);
-            if(cloudPane != null)
-                cloudPane.debugStud();
-        }
-        for (int i = 0; i < 3; i++) {
-            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + i);
-            if(characterPane != null)
-                characterPane.debugStud();
-        }
+        cloudContainer.debugStud();
+        charContainer.debugStud();
     }
 
 }
