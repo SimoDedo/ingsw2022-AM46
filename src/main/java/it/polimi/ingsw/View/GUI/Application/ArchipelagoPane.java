@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ArchipelagoPane extends AnchorPane {
 
-    private GUIController controller;
+    private final GUIController controller;
 
     private final CloudContainerPane cloudContainer;
     private final CharContainerPane charContainer;
@@ -37,7 +37,6 @@ public class ArchipelagoPane extends AnchorPane {
             this.getChildren().add(newIsland);
             newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
         }
-        createEmptyBridges();
 
         // character container pane goes here
         charContainer = new CharContainerPane(controller);
@@ -151,9 +150,10 @@ public class ArchipelagoPane extends AnchorPane {
         double bridgeHeight = 50.0, bridgeLength = 25.0, angleAdjustment = 90.0;
         for (int forwardIndex = 0; forwardIndex < 12; forwardIndex++) {
             int backIndex = forwardIndex!=11 ? forwardIndex+1 : 0;
-            Image bridge = new Image("/world/emptybridge.png");
+            Image bridge = new Image("/world/sandstone1.png");
             ImageView bridgeView = new ImageView(bridge);
             bridgeView.setId("bridgeView" + forwardIndex);
+            bridgeView.setVisible(false);
 
             bridgeView.setPreserveRatio(true);
             bridgeView.setFitHeight(bridgeHeight);
@@ -187,6 +187,8 @@ public class ArchipelagoPane extends AnchorPane {
         }
         bridgeView.setImage(new Image("/world/" + pngName + "1.png",
                 200, 200, true, true));
+        bridgeView.setVisible(true);
+
         DoubleProperty opacity = bridgeView.opacityProperty();
         Timeline fadeIn = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
