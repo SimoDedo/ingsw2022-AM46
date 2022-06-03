@@ -21,7 +21,7 @@ public class BoardPane extends StackPane {
 
     private double boardHeight;
     private double boardWidth;
-    private final double entrancePct = (500.0/3304.0) * 100; //TODO: not hardcoded but fetched form image file (at least 3304.0)
+    private final double entrancePct = (500.0/3304.0) * 100;
     private final double diningRoomPct = ((2270.0 - 500.0) /3304.0) * 100;
     private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
     private final double towerPct = ((3304.0 - 2560.0) / 3304.0) * 100;

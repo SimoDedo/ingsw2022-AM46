@@ -62,8 +62,8 @@ public class AssistantContainerPane extends AnchorPane {
     }
 
     public void updateAssistant(List<Integer> newAssistantsLeft){
-        for(Integer assistant : newAssistantsLeft){
-            if(! assistantsLeft.contains(assistant)){
+        for(Integer assistant : assistantsLeft){
+            if(! newAssistantsLeft.contains(assistant)){
                 this.lookup("#assistant" + nickname + assistant).setVisible(false);
             }
         }

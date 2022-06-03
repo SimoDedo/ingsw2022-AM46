@@ -294,6 +294,13 @@ public interface ObservableByClient {
         int getCharacterCost(int ID);
 
         /**
+         * Returns true if the given character is overcharged.
+         * @param ID the character to check
+         * @return true if the given character is overcharged.
+         */
+        boolean getCharacterOvercharge(int ID);
+
+        /**
          * Getter for the number of entry tiles left on the character
          * @return the number of entry tiles left on the character
          */

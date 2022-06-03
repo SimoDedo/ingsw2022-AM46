@@ -31,6 +31,7 @@ public class PlayerPane extends GridPane {
 
     private final BoardPane boardPane;
     private final VBox discardCoinPane;
+    private ImageView wizardView;
     private final AssistantContainerPane assistantContainerPane;
 
 
@@ -68,15 +69,15 @@ public class PlayerPane extends GridPane {
         //Create discard and coin pane
         sizeDiscard = isMainPlayer ? sizeDiscard : sizeDiscard * resizeFactor;
         Image discard = new Image("/deck/" + wizardType.toString().toLowerCase() + ".png", 200, 200, true, true);
-        ImageView imageViewDiscard = new ImageView(discard);
-        imageViewDiscard.setId("wizard" + nickname);
-        imageViewDiscard.setPreserveRatio(true);
-        imageViewDiscard.setFitWidth(sizeDiscard);
-        imageViewDiscard.setEffect(new DropShadow());
+        wizardView = new ImageView(discard);
+        wizardView.setId("wizard" + nickname);
+        wizardView.setPreserveRatio(true);
+        wizardView.setFitWidth(sizeDiscard);
+        wizardView.setEffect(new DropShadow());
 
         StackPane discardPane = new StackPane();
         discardPane.setId("discardPane" + nickname);
-        discardPane.getChildren().add(imageViewDiscard);
+        discardPane.getChildren().add(wizardView);
 
         discardCoinPane.getChildren().add(discardPane);
         if(withCoins){
@@ -112,11 +113,33 @@ public class PlayerPane extends GridPane {
         this.add(assistantContainerPane, 2, 1);
     }
 
+    public void updateAssistants(Integer assistantUsed, List<Integer> assistantsLeft){
+        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickname + assistantUsed);
+        assistantContainerPane.updateAssistant(assistantsLeft);
+        StackPane discardPane = (StackPane) this.lookup("#discardPane" + nickname);
+        if(assistantUsed == null){
+            discardPane.getChildren().clear();
+            discardPane.getChildren().add(wizardView);
+        }
+        else {
+            discardPane.getChildren().clear();
+            ImageView discarded = new ImageView(assistant.getImage());
+            discarded.setFitWidth(sizeDiscard);
+            discarded.setPreserveRatio(true);
+            discarded.setSmooth(true);
+            discarded.setEffect(new DropShadow());
+            discardPane.getChildren().add(discarded);
+        }
+    }
+
     public void updateEntrance(HashMap<Integer, Color> students){
         boardPane.updateEntrance(students);
     }
 
-    public void updateDiningRoom(){//todo
+    public void updateDiningRoom(HashMap<Color, String> professors){
+        List<Color> professorsOwned = professors.entrySet().stream()
+                        .filter(e -> nickname.equals(e.getValue())).map(e -> e.getKey()).toList();
+        boardPane.updateProfessors(professorsOwned);
     }
 
     public void updateProfessors(HashMap<Color, String> professors){
@@ -126,10 +149,6 @@ public class PlayerPane extends GridPane {
 
     public void updateTowers(int newNumOfTowers){
         boardPane.updateTowers(newNumOfTowers);
-    }
-
-    public void updateAssistants(List<Integer> assistantsLeft){
-        assistantContainerPane.updateAssistant(assistantsLeft);
     }
 
     public void updateCoins(int coins){
