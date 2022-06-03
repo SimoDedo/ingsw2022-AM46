@@ -62,6 +62,8 @@ public class ArchipelagoPane extends AnchorPane {
      */
     private List<Integer> islandsIDs;
 
+    private int islandChosen;
+
     /**
      * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
      * number of players or game mode: 12 empty islands and empty containers for characters, clouds and bags.
@@ -222,14 +224,45 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer.updateCoinHeap(coinsLeft);
     }
 
-    public void enableSelectIsland() {}
+    public void enableSelectIsland() {
+        for (int islandID : islandsIDs) {
+            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            int finalIslandID = islandID;
+            island.setOnMouseClicked(event -> {
+                System.out.println("Someone clicked on me, an island tile! " + island.getId());
+                setIslandChosen(finalIslandID);
+                controller.notifyIsland();
+            });
+        }
+    }
 
-    public void disableSelectIsland() {}
+    public void disableSelectIsland() {
+        for (int islandID : islandsIDs) {
+            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            island.setOnMouseClicked(event -> {
+                System.out.println("I'm disabled! " + island.getId());
+            });
+        }
+    }
 
-    public void setIslandChosen() {}
+    public void setIslandChosen(int islandID) {
+        this.islandChosen = islandID;
+    }
 
     public int getIslandChosen() {
-        return 0;
+        return islandChosen;
+    }
+
+    public void enableSelectIslandChar(CharContainerPane charContainerPane) {
+        for (int islandID : islandsIDs) {
+            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            int finalIslandID = islandID;
+            island.setOnMouseClicked(event -> {
+                System.out.println("Someone clicked on me, an island tile! Character active... " + island.getId());
+                setIslandChosen(finalIslandID);
+                controller.notifyIslandChar();
+            });
+        }
     }
 
     /**

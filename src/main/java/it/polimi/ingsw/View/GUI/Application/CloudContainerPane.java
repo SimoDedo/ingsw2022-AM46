@@ -60,16 +60,16 @@ public class CloudContainerPane extends HBox {
         return cloudChosen;
     }
 
-    public void emptyCloud(int cloudChosen) {
+    public void emptyCloud(int cloudChosen) { //todo
     }
 
     public void enableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
-            int cloudIndex = cloudID;
+            int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me!" + cloudPane.getId());
-                setCloudChosen(cloudIndex);
+                setCloudChosen(finalCloudID);
                 controller.notifyCloud();
             });
         }

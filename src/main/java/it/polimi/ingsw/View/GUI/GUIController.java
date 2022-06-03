@@ -1,10 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
-import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.GameMode;
-import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Enum.WizardType;
+import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -12,7 +9,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -279,12 +275,15 @@ public class GUIController {
                         List.of(0,1,2,3), List.of(2,5,6), 5);
                 archipelagoPane.debugStud();
 
+                archipelagoPane.enableSelectIsland();
                 CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
                 cloudContainerPane.enableSelectCloud();
                 CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
                 charContainerPane.enableSelectCharacter();
 
-                ((PlayerPane) guiApplication.lookup("playerPanePlayer0")).enableSelectAssistant();
+                PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
+                playerPane.enableSelectAssistant();
+                playerPane.enableSelectDR();
             }
         });
     }
@@ -319,7 +318,7 @@ public class GUIController {
             }
             ((TurnOrderPane)guiApplication.lookup("turnOrderPane")).updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder());
 
-            ArchipelagoPane archipelagoPane = (ArchipelagoPane)guiApplication.lookup("archipelagoPane");
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
             archipelagoPane.updateIslandStudents(game.getIslandTilesStudentsIDs(), game.getArchipelagoStudentIDs());
             archipelagoPane.updateBag(game.getBagStudentsLeft());
             if(game.getGameMode() == GameMode.EXPERT){
@@ -363,6 +362,7 @@ public class GUIController {
         PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPanePlayer0");
         AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPanePlayer0");
         playerPane.moveAssistant(assistantPane.getAssistantChosen());
+        playerPane.disableSelectAssistant();
     }
 
     public void notifyCloud() {
@@ -384,6 +384,43 @@ public class GUIController {
     public void cloudSuccessful() {
         CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
         pane.emptyCloud(pane.getCloudChosen());
+        pane.disableSelectCloud();
+    }
+
+    public void notifyIsland() {
+        if (debug) {
+            System.out.println("Island chosen");
+            islandSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public int getIslandOrDRChosen() {
+        ArchipelagoPane pane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        System.out.println("island chosen: " + pane.getIslandChosen()); // DELETEME debug
+        return pane.getIslandChosen();
+    }
+
+    public void islandSuccessful() {
+        ArchipelagoPane pane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        pane.setIslandChosen(-1);
+        pane.disableSelectIsland();
+    }
+
+    public void notifyDR() {
+        if (debug) {
+            System.out.println("DR chosen");
+            DRSuccessful();
+        } else {
+            gui.notifyInput();
+        }
+    }
+
+    public void DRSuccessful() {
+        BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
+        boardPane.disableSelectDR();
     }
 
     public void notifyCharacter() {
@@ -404,8 +441,79 @@ public class GUIController {
 
     public void characterSuccessful() {
         CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        // wip: what to do afterwards?
+        pane.enableActivateCharacter();
+    }
 
+    /**
+     * Method called when an activated character is pressed on.
+     */
+    public void prepareAbility() {
+        CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        int characterID = charContainerPane.getCharacterChosen();
+        CharacterPane character = (CharacterPane) charContainerPane.lookup("#characterPane" + characterID);
+
+        switch (characterID) {
+
+            case 2, 4, 6, 8: notifyAbility(); // no further action required, calling gui immediately
+
+            case 3, 5: {
+                ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+                archipelagoPane.enableSelectIslandChar(charContainerPane);
+            }
+            case 9, 12: {
+
+            }
+        }
+    }
+
+    public void notifyIslandChar() {
+        if (debug) {
+            System.out.println("Island chosen for character");
+        }
+        else {
+            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+
+            character.setAbilityParameter(archipelagoPane.getIslandChosen());
+            if (character.isParameterListFull()) notifyAbility();
+        }
+    }
+
+    public void notifyTableChar() {
+        if (debug) {
+            System.out.println("Table chosen for character");
+        } else {
+            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
+
+            character.setAbilityParameter(boardPane.getTableChosen());
+            if (character.isParameterListFull()) notifyAbility();
+        }
+    }
+
+    public void notifyAbility() {
+        if (debug) {
+            System.out.println("Ability activated (not really)");
+            abilitySuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public List<Integer> getAbilityParameters() {
+        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+        return character.getAbilityParameters();
+    }
+
+    public void abilitySuccessful() {
+        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        pane.setCharacterChosen(-1);
+        CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+        character.clearAbilityParameters();
     }
 
     public void updateArchipelago() {
@@ -468,4 +576,5 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, secondMergeDiff));
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(3, secondMergeDiff));
     }
+
 }

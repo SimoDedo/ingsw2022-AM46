@@ -72,6 +72,14 @@ public class CharContainerPane extends HBox {
         }
     }
 
+    public void enableActivateCharacter() {
+        CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
+        characterPane.setOnMouseClicked(event -> {
+            System.out.println("Someone clicked on me for the second time! Ability started " + characterPane.getId());
+            controller.prepareAbility();
+        });
+    }
+
     public void debugStud(){
         for (int i = 0; i < charIDs.size(); i++) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charIDs.get(i));

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
+import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,6 +33,10 @@ public class CharacterPane extends StackPane {
 
     private List<Pair<Integer, Integer>> freeStudSpots;
 
+    private int parNumber = 0;
+
+    private List<Integer> parameterList = new ArrayList<>();
+
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
@@ -44,7 +49,6 @@ public class CharacterPane extends StackPane {
         charView.setSmooth(true);
         charView.setCache(true);
         this.getChildren().add(charView);
-
     }
 
     public void createCharacter(int charID) {
@@ -109,8 +113,6 @@ public class CharacterPane extends StackPane {
                 freeStudSpots.add(spotToFree);
             }
         }
-
-
     }
 
     private void addNewStuds(HashMap<Integer, Color> newStuds){
@@ -123,7 +125,6 @@ public class CharacterPane extends StackPane {
                 studentPane.add(new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize),
                         freeSpot.getKey(), freeSpot.getValue());
                 freeStudSpots.remove(rand);
-
             }
         }
     }
@@ -137,6 +138,22 @@ public class CharacterPane extends StackPane {
         charView.setFitHeight(charHeight);
         charView.setSmooth(true);
         charView.setCache(true);
+    }
+
+    public void setAbilityParameter(int par) {
+        parameterList.add(par);
+    }
+
+    public boolean isParameterListFull() {
+        return parameterList.size() == parNumber;
+    }
+
+    public List<Integer> getAbilityParameters() {
+        return parameterList;
+    }
+
+    public void clearAbilityParameters() {
+        parameterList.clear();
     }
 
     public void debugStud(){

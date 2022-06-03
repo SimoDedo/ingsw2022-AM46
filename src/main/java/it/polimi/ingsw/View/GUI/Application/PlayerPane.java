@@ -42,7 +42,7 @@ public class PlayerPane extends GridPane {
         this.setAlignment(Pos.CENTER);
         this.setHgap(5);
 
-        boardPane = new BoardPane(nickname, isMainPlayer ? sizeBoardV : sizeBoardV * resizeFactor);
+        boardPane = new BoardPane(controller, nickname, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
         assistantContainerPane = new AssistantContainerPane(nickname, sizeBoardV / 2);
         // if (isMainPlayer) enableSelectAssistant();
@@ -135,6 +135,14 @@ public class PlayerPane extends GridPane {
     public void updateCoins(int coins){
         if(this.lookup("#coinsPane" + nickname) != null)
             ((Text)this.lookup("#coinsPane" + nickname)).setText(String.valueOf(coins));
+    }
+
+    public void enableSelectDR() {
+        boardPane.enableSelectDR();
+    }
+
+    public void disableSelectDR() {
+        boardPane.disableSelectDR();
     }
 
     public void enableSelectAssistant(){

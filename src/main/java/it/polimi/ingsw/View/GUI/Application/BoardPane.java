@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,8 +26,6 @@ public class BoardPane extends StackPane {
     private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
     private final double towerPct = ((3304.0 - 2560.0) / 3304.0) * 100;
 
-    private final HashMap<Color, Integer> tableOrder;
-
     private final GridPane mainGrid;
 
     private StudentContainerPane entrance;
@@ -34,26 +33,34 @@ public class BoardPane extends StackPane {
 
     private GridPane diningRoom;
     private HashMap<Color, StudentContainerPane> tables;
-    private List<Pair<Integer, Integer> > freeDNSpots;
+
+    private final HashMap<Color, Integer> tableOrder;
+
+    private List<Pair<Integer, Integer>> freeDRSpots;
 
     private GridPane professors;
 
     private GridPane towerSpace;
+
     private TowerColor towerColor;
+
     private int numOfTowers;
 
     private Comparator<Pair<Integer, Integer>> compareGridSpot = (p, p2) -> {
-        if(p.getValue() < p2.getValue()) return -1;
+        if (p.getValue() < p2.getValue()) return -1;
         else if (p.getValue() > p2.getValue()) return 1;
         else {
-            if(p.getKey() < p2.getKey()) return  -1;
+            if (p.getKey() < p2.getKey()) return  -1;
             else if (p.getKey() > p2.getKey()) return 1;
             else return 0;
         }
     };
+    private GUIController controller;
 
+    private int tableChosen;
 
-    public BoardPane(String nickname, double boardHeight) {
+    public BoardPane(GUIController controller, String nickname, double boardHeight) {
+        this.controller = controller;
         this.nickname = nickname;
         this.boardHeight = boardHeight;
         this.boardWidth = boardHeight * (3304.0 / 1413.0);
@@ -86,8 +93,48 @@ public class BoardPane extends StackPane {
 
         tableOrder = new HashMap<>(Map.of(Color.GREEN, 0, Color.RED, 1, Color.YELLOW, 2, Color.PINK, 3, Color.BLUE, 4));
 
-
         this.getChildren().add(mainGrid);
+    }
+
+    public void enableSelectDR() {
+        diningRoom.setOnMouseClicked(event -> {
+            System.out.println("Someone clicked on the dining room! " + diningRoom.getId());
+            controller.notifyDR();
+        });
+    }
+
+    public void disableSelectDR() {
+        diningRoom.setOnMouseClicked(event -> {
+            System.out.println("I'm disabled!");
+        });
+    }
+
+    public void enableSelectTables() {
+        disableSelectDR();
+        for (Map.Entry<Color, StudentContainerPane> entry : tables.entrySet()) {
+            entry.getValue().setOnMouseClicked(event -> {
+                System.out.println("Someone clicked on a table! " + entry.getValue().getId());
+                setTableChosen(tableOrder.get(entry.getKey())); //FIXME has to use actual ids and not their positional id
+                controller.notifyTableChar();
+            });
+        }
+    }
+
+    public void disableSelectTables() {
+        enableSelectDR();
+        for (StudentContainerPane table : tables.values()) {
+            table.setOnMouseClicked(event -> {
+                System.out.println("I'm a disabled table! " + table.getId());
+            });
+        }
+    }
+
+    public void setTableChosen(int tableID) {
+        this.tableChosen = tableID;
+    }
+
+    public int getTableChosen() {
+        return tableChosen;
     }
 
     private void createGrid(GridPane toCreate, double widthPct, int rows, int columns, double paddingHPct,
@@ -126,20 +173,20 @@ public class BoardPane extends StackPane {
         tables = new HashMap<>();
 
         for (Color color : Color.values()){
-            StudentContainerPane table = new StudentContainerPane("tablePane",tableIDs.get(color),
+            StudentContainerPane table = new StudentContainerPane("tablePane", tableIDs.get(color),
                     boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
             tables.put(color, table);
             diningRoom.add(table, 0, tableOrder.get(color));
         }
         mainGrid.add(diningRoom, 1, 0);
 
-        freeDNSpots = new ArrayList<>();
+        freeDRSpots = new ArrayList<>();
         for (int row = 0; row < 5; row++) {
             for(int col = 0 ; col < 10 ; col++){
-                freeDNSpots.add(new Pair<>(col, row));
+                freeDRSpots.add(new Pair<>(col, row));
             }
         }
-        freeDNSpots.sort(compareGridSpot);
+        freeDRSpots.sort(compareGridSpot);
     }
 
     public void createProfessors(){
@@ -207,7 +254,7 @@ public class BoardPane extends StackPane {
     }
 
     private void addNewStudentsToTable(Color tableColor, List<Integer> students){
-        List<Pair<Integer,Integer>> freeTableSpots = freeDNSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList();
+        List<Pair<Integer,Integer>> freeTableSpots = freeDRSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList();
         List<Node> studsBefore = entrance.getChildren();
         List<String> studsBeforeIDs = studsBefore.stream().map(Node::getId).toList();
         for (Integer stud : students){
@@ -245,7 +292,7 @@ public class BoardPane extends StackPane {
 
     public void debugPawn(){
         debugStudE();
-        debugStudDN();
+        debugStudDR();
         debugP();
         debugT();
     }
@@ -258,7 +305,7 @@ public class BoardPane extends StackPane {
         }
     }
 
-    private void debugStudDN(){
+    private void debugStudDR(){
         for(Color color : Color.values()){
             for (int i = 0; i < 10; i++) {
                 StudentView studentView = new StudentView(0, "student", color.toString().toLowerCase(), StudentView.studentSize);
