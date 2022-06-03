@@ -29,6 +29,7 @@ public class CharacterPane extends StackPane {
     private StudentContainerPane studentPane;
     private ImageView noEntryTile;
     private Text noEntryTileText;
+    private final ImageView coinOvercharge;
 
     private List<Pair<Integer, Integer>> freeStudSpots;
 
@@ -45,6 +46,14 @@ public class CharacterPane extends StackPane {
         charView.setCache(true);
         this.getChildren().add(charView);
 
+        Image coin = new Image("/world/coin.png", 50, 50, true, true);
+        coinOvercharge = new ImageView(coin);
+        coinOvercharge.setPreserveRatio(true);
+        coinOvercharge.setFitHeight(PawnView.pawnSize);
+        coinOvercharge.setVisible(false);
+        coinOvercharge.setEffect(new DropShadow());
+        this.getChildren().add(coinOvercharge);
+        StackPane.setAlignment(coinOvercharge, Pos.TOP_RIGHT);
     }
 
     public void createCharacter(int charID) {
@@ -81,12 +90,21 @@ public class CharacterPane extends StackPane {
         this.getChildren().add(noEntryTileText);
     }
 
-    public void updateCharacter(HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){
+    public void setCharacterImage(int charID) {
+        ImageView charView = (ImageView) this.lookup("#charView");
+        Image newChar = new Image("/chars/char" + charID + ".png", 200, 200, true, true);
+        charView.setImage(newChar);
+        charView.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
+        charView.setPreserveRatio(true);
+        charView.setFitHeight(charHeight);
+        charView.setSmooth(true);
+        charView.setCache(true);
+    }
+
+    public void updateCharacter(HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
         //Update students
-        if(newStuds.size() != 0){
-            removeOldStuds(newStuds);
-            addNewStuds(newStuds);
-        }
+        removeOldStuds(newStuds);
+        addNewStuds(newStuds);
         //Update no entry
         if(numOfNoEntryTiles > 0){
             noEntryTile.setVisible(true);
@@ -97,6 +115,8 @@ public class CharacterPane extends StackPane {
             noEntryTile.setVisible(false);
             noEntryTileText.setVisible(false);
         }
+        //Set overcharge
+        coinOvercharge.setVisible(isOvercharged);
     }
 
     private void removeOldStuds(HashMap<Integer, Color> newStuds){
@@ -126,17 +146,6 @@ public class CharacterPane extends StackPane {
 
             }
         }
-    }
-
-    public void setCharacterImage(int charID) {
-        ImageView charView = (ImageView) this.lookup("#charView");
-        Image newChar = new Image("/chars/char" + charID + ".png", 250, 250, true, true);
-        charView.setImage(newChar);
-        charView.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
-        charView.setPreserveRatio(true);
-        charView.setFitHeight(charHeight);
-        charView.setSmooth(true);
-        charView.setCache(true);
     }
 
     public void debugStud(){

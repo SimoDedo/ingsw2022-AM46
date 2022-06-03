@@ -189,6 +189,15 @@ public class CharacterManager  implements Serializable {
         return characters.get(ID -1) != null ? characters.get(ID - 1).getCost() : 0;
     }
 
+     /**
+     * Returns true if the given character is overcharged.
+     * @param ID the character to check
+     * @return true if the given character is overcharged.
+     */
+     public boolean getCharacterOvercharge(int ID){
+         return ! characters.get(ID -1).isFirstUse();
+     }
+
     /**
      * Getter for the number of entry tiles left on the character
      * @return the number of entry tiles left on the character

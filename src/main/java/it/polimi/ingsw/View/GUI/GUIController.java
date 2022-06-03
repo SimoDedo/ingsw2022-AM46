@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View.GUI;
 
+import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
@@ -283,6 +284,7 @@ public class GUIController {
                 cloudContainerPane.enableSelectCloud();
                 CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
                 charContainerPane.enableSelectCharacter();
+                charContainerPane.updateCharacter(6, new HashMap<>(), 89, true);
 
                 ((PlayerPane) guiApplication.lookup("playerPanePlayer0")).enableSelectAssistant();
             }
@@ -325,11 +327,18 @@ public class GUIController {
             if(game.getGameMode() == GameMode.EXPERT){
                 archipelagoPane.updateCoinHeap(game.getCoinsLeft());
                 for(Integer charID : game.getDrawnCharacterIDs())
-                    archipelagoPane.updateCharacter(charID , game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID));
+                    archipelagoPane.updateCharacter(charID , game.getCharacterStudents(charID),
+                            game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
             }
             for(Integer cloud : game.getCloudIDs()){
                 archipelagoPane.updateCloud(cloud, game.getCloudStudentsIDs(cloud));
             }
+        });
+    }
+
+    public void updateAssistants(String player, Integer assistantUsed, List<Integer> assistantsLeft){
+        GUIApplication.runLaterExecutor.execute(() -> {
+                ((PlayerPane)guiApplication.lookup("playerPane" + player)).updateAssistants(assistantUsed, assistantsLeft);
         });
     }
 

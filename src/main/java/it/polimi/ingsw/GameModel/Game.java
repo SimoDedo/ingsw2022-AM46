@@ -736,6 +736,11 @@ public class Game implements ObservableByClient, Serializable {
         }
 
         @Override
+        public boolean getCharacterOvercharge(int ID) {
+            return false;
+        }
+
+        @Override
         public int getNoEntryTilesCharacter(int ID) {
             return 0;
         }

@@ -355,7 +355,7 @@ public class GUIApplication extends Application {
 
         mainGrid.add(players, 1, 1);
 
-        mainGrid.setGridLinesVisible(true);
+        //mainGrid.setGridLinesVisible(true);
         mainScene = new Scene(root);
     }
 

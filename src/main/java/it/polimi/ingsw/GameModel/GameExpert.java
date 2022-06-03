@@ -243,6 +243,15 @@ public class GameExpert extends Game {
         }
 
         /**
+         * Returns true if the given character is overcharged.
+         * @param ID the character to check
+         * @return true if the given character is overcharged.
+         */
+        public boolean getCharacterOvercharge(int ID){
+            return characterManager.getCharacterOvercharge(ID);
+        }
+
+        /**
          * Getter for the number of entry tiles left on the character
          * @return the number of entry tiles left on the character
          */

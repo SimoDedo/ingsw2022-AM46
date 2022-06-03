@@ -139,8 +139,11 @@ public class GUI implements UI {
     public void displayBoard(ObservableByClient game, UserActionType actionTaken) {
         switch (actionTaken){
             case WAIT_GAME_START -> guiController.initialDraw(game, nickname);
+            case PLAY_ASSISTANT -> {
+                for(String nick : game.getPlayers())
+                    guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
+            }
         }
-
     }
 
     private void waitInput(){

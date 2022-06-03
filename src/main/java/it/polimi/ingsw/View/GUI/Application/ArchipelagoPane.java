@@ -182,8 +182,7 @@ public class ArchipelagoPane extends AnchorPane {
      * Updates island groups, merging islands on the GUI if they have been merged in the server model.
      * @param islandsConfiguration the current configuration of the islands inside island groups
      */
-    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration) {
-        //todo
+    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration) {//todo
     }
 
     /**
@@ -210,8 +209,8 @@ public class ArchipelagoPane extends AnchorPane {
      * @param newStuds a hashmap with each student's ID and color on the character
      * @param numOfNoEntryTiles the number of no-entry tiles on the character
      */
-    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles){ //TODO: add coin overcharge
-        charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles);
+    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+        charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles, isOvercharged);
     }
 
     /**
