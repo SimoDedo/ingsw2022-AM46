@@ -156,12 +156,12 @@ public class PlayerPane extends GridPane {
             ((Text)this.lookup("#coinsPane" + nickname)).setText(String.valueOf(coins));
     }
 
-    public void enableSelectDR() {
-        boardPane.enableSelectDR();
+    public void enableSelectTables() {
+        boardPane.enableSelectTables();
     }
 
-    public void disableSelectDR() {
-        boardPane.disableSelectDR();
+    public void disableSelectTables() {
+        boardPane.disableSelectTables();
     }
 
     public void enableSelectAssistant(){

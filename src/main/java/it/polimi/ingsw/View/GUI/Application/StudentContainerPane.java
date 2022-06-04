@@ -2,9 +2,13 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentContainerPane extends GridPane {
 
@@ -27,4 +31,11 @@ public class StudentContainerPane extends GridPane {
 
     }
 
+    public List<StudentView> getStudents() {
+        List<StudentView> retval = new ArrayList<>();
+        for (Node node : this.getChildren()) {
+            retval.add((StudentView) node);
+        }
+        return retval;
+    }
 }

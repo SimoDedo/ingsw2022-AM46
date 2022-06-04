@@ -1,6 +1,5 @@
 package it.polimi.ingsw.View.GUI;
 
-import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.GUI.Application.*;
@@ -222,7 +221,6 @@ public class GUIController {
             System.out.println("Wizard type chosen");
             // wizard lookup.gettext e switch case per trasformare in enum
             // fallisce se il campo è vuoto
-            waitForStart();
             startGame();
         }
         else {
@@ -255,6 +253,8 @@ public class GUIController {
         });
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public void startGame() {
         GUIApplication.runLaterExecutor.execute(() -> {
             guiApplication.switchToMain();
@@ -263,7 +263,7 @@ public class GUIController {
                 newGroup.add(i);
                 groupList.add(newGroup);
             }
-            if (debug) { //DELETEME debug
+            if (debug) { //FIXME transform into many small methods that enable/disable
                 HashMap<Color, Integer> table = new HashMap<>();
                 for (Color color : Color.values())
                     table.put(color, 0);
@@ -275,17 +275,22 @@ public class GUIController {
                 guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
                         List.of(0,1,2,3), List.of(2,5,6), 5);
                 archipelagoPane.debugStud();
+                archipelagoPane.enableSelectStudents();
 
-                archipelagoPane.enableSelectIsland();
-                CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
-                cloudContainerPane.enableSelectCloud();
+                // enableIslands();
+                enableClouds();
                 CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-                charContainerPane.enableSelectCharacter();
+                // charContainerPane.enableSelectCharacter();
+                charContainerPane.setCharacterChosen(5);
+                charContainerPane.enableSelectStudents();
                 charContainerPane.updateCharacter(6, new HashMap<>(), 89, true);
 
-                PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
-                playerPane.enableSelectAssistant();
-                playerPane.enableSelectDR();
+                BoardPane boardPane = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
+                boardPane.enableSelectStudentsDR();
+                boardPane.enableSelectStudentsEntrance();
+                enableAssistants();
+                // enableTables(); funziona eh
+
             }
         });
     }
@@ -341,6 +346,52 @@ public class GUIController {
         });
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void enableAssistants() {
+        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
+        playerPane.enableSelectAssistant();
+    }
+
+    public void disableAssistants() {
+        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
+        playerPane.disableSelectAssistant();
+    }
+
+    public void enableIslands() {
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        archipelagoPane.enableSelectIsland();
+    }
+
+    public void disableIslands() {
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        archipelagoPane.disableSelectIsland();
+    }
+
+    public void enableClouds() {
+        CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+        cloudContainerPane.enableSelectCloud();
+    }
+
+    public void disableClouds() {
+        CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+        cloudContainerPane.disableSelectCloud();
+    }
+
+    public void enableTables() {
+        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
+        playerPane.enableSelectTables();
+    }
+
+    public void disableTables() {
+        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
+        playerPane.disableSelectTables();
+    }
+
+    // wip
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Notifies gui that a card has been chosen. Used by assistant cards.
      */
@@ -372,6 +423,46 @@ public class GUIController {
         AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPanePlayer0");
         playerPane.moveAssistant(assistantPane.getAssistantChosen());
         playerPane.disableSelectAssistant();
+    }
+
+    public void notifyStudent() {
+        if (debug) {
+            System.out.println("Student chosen, somewhere");
+            studentSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public int getStudentChosen() {
+        // check islands
+        ArchipelagoPane islands = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        if (islands.getStudentChosen() != -1) {
+            System.out.println("island chosen: " + islands.getStudentChosen()); // DELETEME debug
+            return islands.getStudentChosen();
+        } else {
+            // check chars
+            CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            if (chars.getStudentChosen() != -1) {
+                System.out.println(chars.getStudentChosen()); // DELETEME debug
+                return chars.getStudentChosen();
+            } else {
+                // check board
+                BoardPane board = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
+                System.out.println(board.getStudentChosen());
+                return board.getStudentChosen();
+            }
+        }
+    }
+
+    public void studentSuccessful() {
+        ArchipelagoPane islands = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        BoardPane board = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
+        islands.setStudentChosen(-1);
+        chars.setStudentChosen(-1);
+        board.setStudentChosen(-1);
     }
 
     public void notifyCloud() {
@@ -406,30 +497,22 @@ public class GUIController {
         }
     }
 
-    public int getIslandOrDRChosen() {
-        ArchipelagoPane pane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        System.out.println("island chosen: " + pane.getIslandChosen()); // DELETEME debug
-        return pane.getIslandChosen();
+    public int getIslandOrTableChosen() {
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        if (archipelagoPane.getIslandChosen() != -1) {
+            System.out.println("island chosen: " + archipelagoPane.getIslandChosen()); // DELETEME debug
+            return archipelagoPane.getIslandChosen();
+        } else {
+            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
+            System.out.println("island chosen: " + boardPane.getTableChosen()); // DELETEME debug
+            return boardPane.getTableChosen();
+        }
     }
 
     public void islandSuccessful() {
         ArchipelagoPane pane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
         pane.setIslandChosen(-1);
         pane.disableSelectIsland();
-    }
-
-    public void notifyDR() {
-        if (debug) {
-            System.out.println("DR chosen");
-            DRSuccessful();
-        } else {
-            gui.notifyInput();
-        }
-    }
-
-    public void DRSuccessful() {
-        BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
-        boardPane.disableSelectDR();
     }
 
     public void notifyCharacter() {
@@ -500,6 +583,10 @@ public class GUIController {
             character.setAbilityParameter(boardPane.getTableChosen());
             if (character.isParameterListFull()) notifyAbility();
         }
+    }
+
+    public void notifyStudentChar() {
+
     }
 
     public void notifyAbility() {

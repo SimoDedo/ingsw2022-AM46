@@ -63,6 +63,7 @@ public class ArchipelagoPane extends AnchorPane {
     private List<Integer> islandsIDs;
 
     private int islandChosen;
+    private int studentChosen;
 
     /**
      * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
@@ -75,7 +76,7 @@ public class ArchipelagoPane extends AnchorPane {
         this.setPrefSize(archipelagoSide, archipelagoSide);
 
         for (int i = 0; i < 12; i++) {
-            IslandTilePane newIsland = new IslandTilePane(i);
+            IslandTilePane newIsland = new IslandTilePane(controller, this, i);
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
             newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
@@ -250,6 +251,40 @@ public class ArchipelagoPane extends AnchorPane {
 
     public int getIslandChosen() {
         return islandChosen;
+    }
+
+    public void enableSelectStudents() {
+        for (int islandID : islandsIDs) {
+            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            List<StudentView> students = island.getStudents();
+            for (StudentView student : students) {
+                student.setCallback(event -> {
+                    System.out.println("Student clicked in island! " + student.getId());
+                    this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
+                    controller.notifyStudent();
+                });
+            }
+        }
+    }
+
+    public void disableSelectStudents() {
+        for (int islandID : islandsIDs) {
+            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            List<StudentView> students = island.getStudents();
+            for (StudentView student : students) {
+                student.setCallback(event -> {
+                    System.out.println("I'm disabled! " + student.getId());
+                });
+            }
+        }
+    }
+
+    public void setStudentChosen(int studentID) {
+        this.studentChosen = studentID;
+    }
+
+    public int getStudentChosen() {
+        return studentChosen;
     }
 
     public void enableSelectIslandChar(CharContainerPane charContainerPane) {

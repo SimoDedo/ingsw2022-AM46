@@ -29,9 +29,11 @@ public class BoardPane extends StackPane {
     private final GridPane mainGrid;
 
     private StudentContainerPane entrance;
+
     private List<Pair<Integer, Integer> > freeEntranceSpots;
 
     private GridPane diningRoom;
+
     private HashMap<Color, StudentContainerPane> tables;
 
     private final HashMap<Color, Integer> tableOrder;
@@ -58,6 +60,7 @@ public class BoardPane extends StackPane {
     private GUIController controller;
 
     private int tableChosen;
+    private int studentChosen;
 
     public BoardPane(GUIController controller, String nickname, double boardHeight) {
         this.controller = controller;
@@ -96,22 +99,12 @@ public class BoardPane extends StackPane {
         this.getChildren().add(mainGrid);
     }
 
-    public void enableSelectDR() {
-        diningRoom.setOnMouseClicked(event -> {
-            System.out.println("Someone clicked on the dining room! " + diningRoom.getId());
-            controller.notifyDR();
-        });
-    }
-
-    public void disableSelectDR() {
-        diningRoom.setOnMouseClicked(event -> {
-            System.out.println("I'm disabled!");
-        });
-    }
-
     public void enableSelectTables() {
-        disableSelectDR();
+        System.out.println("testaggio");
         for (Map.Entry<Color, StudentContainerPane> entry : tables.entrySet()) {
+            System.out.println("DEBUGGGG " + entry.getValue().getId());
+            System.out.println("DEBUGGGG " + entry.getValue().getStudents());
+
             entry.getValue().setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on a table! " + entry.getValue().getId());
                 setTableChosen(tableOrder.get(entry.getKey())); //FIXME has to use actual ids and not their positional id
@@ -121,7 +114,6 @@ public class BoardPane extends StackPane {
     }
 
     public void disableSelectTables() {
-        enableSelectDR();
         for (StudentContainerPane table : tables.values()) {
             table.setOnMouseClicked(event -> {
                 System.out.println("I'm a disabled table! " + table.getId());
@@ -135,6 +127,41 @@ public class BoardPane extends StackPane {
 
     public int getTableChosen() {
         return tableChosen;
+    }
+
+    public void enableSelectStudentsEntrance() {
+        List<StudentView> entranceStudents = entrance.getStudents();
+        System.out.println(entranceStudents);
+        for (StudentView student : entranceStudents) {
+            System.out.println("setting callback on entrance student...");
+            student.setCallback(event -> {
+                System.out.println("Student clicked in entrance! " + student.getId());
+                this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
+                controller.notifyStudent();
+            });
+        }
+    }
+
+    public void enableSelectStudentsDR() {
+        List<StudentView> DRStudents = new ArrayList<>();
+        for (StudentContainerPane table : tables.values()) {
+            DRStudents.addAll(table.getStudents());
+        }
+        for (StudentView student : DRStudents) {
+            student.setCallback(event -> {
+                System.out.println("Student clicked in dining room! " + student.getId());
+                this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
+                controller.notifyStudent();
+            });
+        }
+    }
+
+    public void setStudentChosen(int studentID) {
+        this.studentChosen = studentID;
+    }
+
+    public int getStudentChosen() {
+        return studentChosen;
     }
 
     private void createGrid(GridPane toCreate, double widthPct, int rows, int columns, double paddingHPct,

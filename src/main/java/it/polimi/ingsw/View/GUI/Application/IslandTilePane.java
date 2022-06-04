@@ -2,6 +2,8 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
+import it.polimi.ingsw.View.GUI.GUIController;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -9,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -39,7 +42,7 @@ public class IslandTilePane extends StackPane {
     private StudentContainerPane studentPane;
     private List<Pair<Integer, Integer>> freeStudSpots;
 
-    public IslandTilePane(int index) {
+    public IslandTilePane(GUIController controller, ArchipelagoPane archipelago, int index) {
         this.index = index;
 
         Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png",
@@ -148,6 +151,14 @@ public class IslandTilePane extends StackPane {
                 freeStudSpots.remove(rand);
             }
         }
+    }
+
+    public List<StudentView> getStudents() {
+        List<StudentView> retval = new ArrayList<>();
+        for (Node node : studentPane.getChildren()) {
+            retval.add((StudentView) node);
+        }
+        return retval;
     }
 
     public Point2D getForwardMergePoint() {

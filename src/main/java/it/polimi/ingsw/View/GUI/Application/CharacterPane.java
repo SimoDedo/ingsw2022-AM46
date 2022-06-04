@@ -99,7 +99,7 @@ public class CharacterPane extends StackPane {
         ImageView charView = (ImageView) this.lookup("#charView");
         Image newChar = new Image("/chars/char" + charID + ".png", 200, 200, true, true);
         charView.setImage(newChar);
-        charView.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
+        charView.setEffect(new DropShadow());
         charView.setPreserveRatio(true);
         charView.setFitHeight(charHeight);
         charView.setSmooth(true);
@@ -148,6 +148,14 @@ public class CharacterPane extends StackPane {
                 freeStudSpots.remove(rand);
             }
         }
+    }
+
+    public List<StudentView> getStudents() {
+        List<StudentView> retval = new ArrayList<>();
+        for (Node node : studentPane.getChildren()) {
+            retval.add((StudentView) node);
+        }
+        return retval;
     }
 
     public void setAbilityParameter(int par) {

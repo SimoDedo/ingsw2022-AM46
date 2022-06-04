@@ -3,6 +3,9 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ public class CharContainerPane extends HBox {
     private int characterChosen;
 
     private List<Integer> charIDs;
+    private int studentChosen;
 
 
     public CharContainerPane(GUIController controller) {
@@ -46,6 +50,8 @@ public class CharContainerPane extends HBox {
     public void enableSelectCharacter() {
         for (Integer charID : charIDs) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
+            ImageView charImageView = (ImageView) characterPane.lookup("#charView");
+            charImageView.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
             int charIndex = charID;
             characterPane.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me!" + characterPane.getId());
@@ -78,6 +84,33 @@ public class CharContainerPane extends HBox {
             System.out.println("Someone clicked on me for the second time! Ability started " + characterPane.getId());
             controller.prepareAbility();
         });
+    }
+
+    public void enableSelectStudents() {
+        CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
+        for (StudentView student : characterPane.getStudents()) {
+            student.setCallback(event -> {
+                System.out.println("Someone clicked on a student in an activated character! " + student.getId());
+                setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
+                controller.notifyStudentChar();
+            });
+        }
+    }
+
+    public void disableSelectStudents() {
+
+    }
+
+    public void setStudentChosen(int studentID) {
+        this.studentChosen = studentID;
+    }
+
+    public int getStudentChosen() {
+        return studentChosen;
+    }
+
+    public void disableActivateCharacter() {
+        disableSelectCharacter();
     }
 
     public void debugStud(){
