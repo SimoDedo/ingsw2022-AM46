@@ -151,11 +151,7 @@ public class CharacterPane extends StackPane {
     }
 
     public List<StudentView> getStudents() {
-        List<StudentView> retval = new ArrayList<>();
-        for (Node node : studentPane.getChildren()) {
-            retval.add((StudentView) node);
-        }
-        return retval;
+        return studentPane.getStudents();
     }
 
     public void setAbilityParameter(int par) {

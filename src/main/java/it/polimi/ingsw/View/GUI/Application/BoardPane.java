@@ -134,10 +134,22 @@ public class BoardPane extends StackPane {
         System.out.println(entranceStudents);
         for (StudentView student : entranceStudents) {
             System.out.println("setting callback on entrance student...");
+            student.setEnabled();
             student.setCallback(event -> {
                 System.out.println("Student clicked in entrance! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
                 controller.notifyStudent();
+            });
+        }
+    }
+
+    public void disableSelectStudentsEntrance() {
+        List<StudentView> entranceStudents = entrance.getStudents();
+        System.out.println(entranceStudents);
+        for (StudentView student : entranceStudents) {
+            student.setDisabled();
+            student.setCallback(event -> {
+                System.out.println("Student clicked in entrance, but I'm disabled! " + student.getId());
             });
         }
     }
@@ -148,8 +160,24 @@ public class BoardPane extends StackPane {
             DRStudents.addAll(table.getStudents());
         }
         for (StudentView student : DRStudents) {
+            student.setEnabled();
             student.setCallback(event -> {
                 System.out.println("Student clicked in dining room! " + student.getId());
+                this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
+                controller.notifyStudent();
+            });
+        }
+    }
+
+    public void disableSelectStudentsDR() {
+        List<StudentView> DRStudents = new ArrayList<>();
+        for (StudentContainerPane table : tables.values()) {
+            DRStudents.addAll(table.getStudents());
+        }
+        for (StudentView student : DRStudents) {
+            student.setDisabled();
+            student.setCallback(event -> {
+                System.out.println("Student clicked in dining room, but I'm disabled! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
                 controller.notifyStudent();
             });
