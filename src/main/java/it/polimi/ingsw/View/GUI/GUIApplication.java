@@ -74,7 +74,7 @@ public class GUIApplication extends Application {
         }
         while (instance == null) {
             try {
-                Thread.sleep(100); // 450 is actually fine, but it might run slightly slower on some devices so...
+                Thread.sleep(50); // 450 is actually fine, but it might run slightly slower on some devices so...
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

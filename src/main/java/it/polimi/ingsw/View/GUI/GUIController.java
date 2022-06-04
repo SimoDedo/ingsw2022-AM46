@@ -600,6 +600,7 @@ public class GUIController {
             studentSuccessful();
         }
         else {
+            // gui.notifyInput();
         }
     }
     public void notifyStudentCharacter(){
@@ -795,6 +796,17 @@ public class GUIController {
 
     public void notifyStudentChar() {
 
+    }
+
+    public void notifyColorChar() {
+        if (debug) {
+            System.out.println("Color chosen for character");
+        } else {
+            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+
+            if (character.isParameterListFull()) notifyAbility();
+        }
     }
 
     public void notifyAbility() {

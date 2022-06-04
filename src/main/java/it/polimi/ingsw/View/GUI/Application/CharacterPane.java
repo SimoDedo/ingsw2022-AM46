@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.Utils.Enum.RequestParameter;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,6 +8,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -23,13 +23,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CharacterPane extends StackPane {
 
-    private int charID;
-
     double charHeight = 100.0, charWidth = charHeight/2;
 
     private StudentContainerPane studentPane;
+
     private ImageView noEntryTile;
+
     private Text noEntryTileText;
+
+    private HBox colorSelectionPane;
+
     private final ImageView coinOvercharge;
 
     private List<Pair<Integer, Integer>> freeStudSpots;
@@ -37,6 +40,8 @@ public class CharacterPane extends StackPane {
     private int parNumber = 0;
 
     private List<Integer> parameterList = new ArrayList<>();
+
+    private Color colorChosen;
 
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
@@ -62,7 +67,6 @@ public class CharacterPane extends StackPane {
     }
 
     public void createCharacter(int charID) {
-        this.charID = charID;
         studentPane = new StudentContainerPane("characterStudentPane", charID,
                 charWidth, charHeight, 100, 3, 3, 10.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
@@ -86,13 +90,16 @@ public class CharacterPane extends StackPane {
         noEntryTile.setFitHeight(PawnView.pawnSize);
         noEntryTile.setVisible(false);
         this.getChildren().add(noEntryTile);
+
         noEntryTileText.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
-        noEntryTileText.setVisible(false);
         noEntryTileText.setFill(javafx.scene.paint.Color.WHITE);
         noEntryTileText.setEffect(new DropShadow());
         noEntryTileText.setStyle("-fx-stroke: black;");
         noEntryTileText.setStyle("-fx-stroke-width: 3;");
+        noEntryTileText.setVisible(false);
         this.getChildren().add(noEntryTileText);
+
+        colorSelectionPane = new ColorSelectionPane(charID);
     }
 
     public void setCharacterImage(int charID) {
@@ -168,6 +175,22 @@ public class CharacterPane extends StackPane {
 
     public void clearAbilityParameters() {
         parameterList.clear();
+    }
+
+    public void setColor(Color color) {
+        int parameter = -1;
+        switch (color) { // todo check if this color order is right
+            case YELLOW -> parameter = 0;
+            case BLUE -> parameter = 1;
+            case GREEN -> parameter = 2;
+            case RED -> parameter = 3;
+            case PINK -> parameter = 4;
+        }
+        setAbilityParameter(parameter);
+    }
+
+    public Color getColor() {
+        return colorChosen;
     }
 
     public void debugStud(){

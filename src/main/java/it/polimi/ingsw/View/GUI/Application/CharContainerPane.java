@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CharContainerPane extends HBox {
 
@@ -22,7 +23,6 @@ public class CharContainerPane extends HBox {
 
     private List<Integer> charIDs;
     private int studentChosen;
-
 
     public CharContainerPane(GUIController controller) {
         super(5.0);
@@ -73,7 +73,7 @@ public class CharContainerPane extends HBox {
         for (Integer charID : charIDs) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
             characterPane.setOnMouseClicked(event -> {
-                System.out.println("I'm disabled");
+                System.out.println("I'm a disabled character");
             });
         }
     }
@@ -111,6 +111,26 @@ public class CharContainerPane extends HBox {
 
     public void disableActivateCharacter() {
         disableSelectCharacter();
+    }
+
+    public void enableSelectColor() {
+        HBox colorPane = (HBox) this.lookup("#char" + characterChosen + "ColorPane");
+        CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
+        for (Map.Entry<Color, Integer> entry : ColorSelectionPane.colorOrder.entrySet()) {
+            colorPane.getChildren().get(entry.getValue()).setOnMouseClicked(event -> {
+                characterPane.setColor(entry.getKey());
+                controller.notifyColorChar();
+            });
+        }
+    }
+
+    public void disableSelectColor() {
+        HBox colorPane = (HBox) this.lookup("#char" + characterChosen + "ColorPane");
+        for (Node node : colorPane.getChildren()) {
+            node.setOnMouseClicked(event -> {
+                System.out.println("I'm a disabled color");
+            });
+        }
     }
 
     public void debugStud(){
