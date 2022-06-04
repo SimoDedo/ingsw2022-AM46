@@ -308,6 +308,12 @@ public class CLI implements UI {
         });
     }
 
+    @Override
+    public void requestWaitStart() {
+        displayInfo("Please wait for all players to be ready and for your turn to start...");
+
+    }
+
     private void requestAssistant(){
         displayHand(this.nickname);
         displayPlayedCards();
@@ -470,6 +476,25 @@ public class CLI implements UI {
         for(String error : errorQueue)
             output.println(error);
         errorQueue.clear();
+    }
+
+    @Override
+    public void updateSetup(ObservableByClient game, UserActionType actionTaken) {
+        update(game);
+        if(actionTaken == UserActionType.TOWER_COLOR){ //TODO: just a draft on how it could work CLI side.
+            StringBuilder toPrint = new StringBuilder("Tower colors remaining:\n");
+            for (TowerColor towerColor : game.getAvailableTowerColors()){
+                toPrint.append(towerColor).append("\n");
+            }
+            displayMessage(toPrint.toString());
+        }
+        else {
+            StringBuilder toPrint = new StringBuilder("Wizards remaining:\n");
+            for (WizardType wizardType : game.getAvailableWizards()){
+                toPrint.append(wizardType).append("\n");
+            }
+            displayMessage(toPrint.toString());
+        }
     }
 
     @Override
@@ -674,7 +699,7 @@ public class CLI implements UI {
             if(game.getProfessorsOwner().get(c) != null && game.getProfessorsOwner().get(c).equals(nickname))
                 toPrint.append(colorMapping.get(c)).append("(Prof) ").append(RESET);
             if(game.getGameMode() == GameMode.EXPERT)
-                toPrint.append(colorMapping.get(c)).append("[").append(game.getCoinsLeft(nickname, c)).append("] ").append(RESET);
+                toPrint.append(colorMapping.get(c)).append("[").append(game.getTableCoinsLeft(nickname, c)).append("] ").append(RESET);
         }
 
         displayMessage(toPrint.toString());

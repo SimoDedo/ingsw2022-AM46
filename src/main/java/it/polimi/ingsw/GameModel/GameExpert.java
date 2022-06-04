@@ -164,6 +164,15 @@ public class GameExpert extends Game {
         }
 
         //region Characters
+
+        /**
+         * method to observe number of coins left in the bag.
+         * @return the number of coins of the given player
+         */
+        public int getCoinsLeft(){
+            return coinBag.getNumOfCoins();
+        }
+
         /**
          * method to observe number of coins of a given player.
          * @param nickname the player to check
@@ -229,6 +238,15 @@ public class GameExpert extends Game {
          */
         public int getCharacterCost(int ID){
             return characterManager.getCharacterCost(ID);
+        }
+
+        /**
+         * Returns true if the given character is overcharged.
+         * @param ID the character to check
+         * @return true if the given character is overcharged.
+         */
+        public boolean getCharacterOvercharge(int ID){
+            return characterManager.getCharacterOvercharge(ID);
         }
 
         /**

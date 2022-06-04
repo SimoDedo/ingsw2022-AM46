@@ -28,9 +28,13 @@ public interface UI {
 
     void requestWizard(ObservableByClient game);
 
+    void requestWaitStart();
+
     void displayInfo(String info);
 
     void displayError(String error, boolean isUrgent);
+
+    void updateSetup(ObservableByClient game, UserActionType actionTaken);
 
     void displayBoard(ObservableByClient game, UserActionType actionTaken);
 

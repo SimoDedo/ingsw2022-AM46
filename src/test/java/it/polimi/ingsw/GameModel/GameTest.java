@@ -484,7 +484,7 @@ class GameTest {
                 "When last tower is placed GameOverException is thrown");
         assertEquals(TowerColor.BLACK, game.determineWinner(),
                 "The winner should be the team who placed all towers");
-        assertEquals(0, game.getTowersLeft(TowerColor.BLACK),
+        assertEquals(0, game.getTowersLeft("Simo"),
                 "The winner should not have any towers left");
     }
 
@@ -535,7 +535,7 @@ class GameTest {
                 "When three islands are formed GameOverException is thrown");
         assertEquals(TowerColor.BLACK, game.determineWinner(),
                 "The winner should be the team who placed the most towers");
-        assertEquals(1, game.getTowersLeft(TowerColor.BLACK),
+        assertEquals(1, game.getTowersLeft("Simo"),
                 "In this scenario the winner should have 1 towers left (not 0)");
     }
 

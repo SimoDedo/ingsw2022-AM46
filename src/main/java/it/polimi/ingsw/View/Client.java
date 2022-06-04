@@ -9,6 +9,7 @@ import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.CLI.CLI;
+import it.polimi.ingsw.View.GUI.GUI;
 
 import java.io.*;
 import java.net.Socket;
@@ -64,7 +65,7 @@ public class Client {
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
             if (chosenUI.equals("gui"))
-                UI = new CLI(this); //FIXME: gui here
+                UI = new GUI(this);
         }
         defaultServerIP = "127.0.0.1";
         defaultServerPort = 4646;
@@ -86,7 +87,12 @@ public class Client {
         while (socket == null){ //Asks for server info
                 Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
-                serverPort = Integer.parseInt(serverInfo.get("port"));
+                try {
+                    serverPort = Integer.parseInt(serverInfo.get("port"));
+                }
+                catch (NumberFormatException e){
+                    serverPort = 0;
+                }
             connectToLobbyServer(serverIP, serverPort);
         }
 
@@ -124,7 +130,7 @@ public class Client {
     }
 
     /**
-     * Tries to log in by sending a login user action with chosen username.
+     * Tries to login by sending a login user action with chosen username.
      */
     private void tryLobbyLogin(){
         LoginUserAction login;
@@ -211,7 +217,7 @@ public class Client {
                     System.out.println("CLI selected!");
                 }
                 case 2 -> {
-                    UI = new CLI(this); //FIXME: fix when GUI done
+                    UI = new GUI(this);
                     System.out.println("GUI selected!");
                 }
                 default -> {
@@ -307,7 +313,7 @@ public class Client {
             //No input is accepted when here, client is waiting for others to complete their selection (and receive PLAY_ASSISTANT)
             //Commands are enabled but main thread isn't started yet. Commands are "pre-loaded".
             case WAIT_GAME_START -> {
-                UI.displayInfo("Please wait for all players to be ready and for your turn to start...");
+                UI.requestWaitStart();
             }
             //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
             //The possible actions are enabled and disabled by the client.
@@ -377,7 +383,9 @@ public class Client {
         List<Command> toDisable = new ArrayList<>();
         List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
-            case TOWER_COLOR, WAIT_GAME_START, WIZARD -> {
+            case TOWER_COLOR -> {}
+            case WIZARD, WAIT_GAME_START -> {
+                UI.updateSetup(update.getGame(), update.getUserActionTaken());
             }
             case PLAY_ASSISTANT -> {
                 toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
@@ -438,6 +446,7 @@ public class Client {
 
     /**
      * Receives a message from the server through the socket.
+     * @return the message received from the server, if converted successfully
      */
     private Message receiveMessage(){
         Object message = null;
@@ -466,12 +475,10 @@ public class Client {
     /**
      * Closes the application.
      */
-    private void reset(){
+    public void reset(){
         try {
             socket.close();
-        } catch (IOException e) {
-            System.exit(-1);
-        }
+        } catch (Exception ignored) {}
         System.exit(-1); //FIXME: actual reset
 
     }

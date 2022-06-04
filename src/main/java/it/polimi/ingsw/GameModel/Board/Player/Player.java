@@ -230,6 +230,14 @@ public class Player implements Serializable {
     }
 
     /**
+     * Returns the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     */
+    public int getEntranceID(){
+        return playerBoard.getEntranceID();
+    }
+
+    /**
      * Method to observe all the students in the entrance and their color
      * @return HashMap with the student ID as key and its color as object
      */
