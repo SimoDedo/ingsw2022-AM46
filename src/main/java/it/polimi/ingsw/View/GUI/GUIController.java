@@ -1,6 +1,10 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
+import it.polimi.ingsw.Network.Message.UserAction.MoveMotherNatureUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.MoveStudentUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.PlayAssistantUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.TakeFromCloudUserAction;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
@@ -15,29 +19,34 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class for controlling the GUIController based on method calls from the client.
  */
 public class GUIController {
 
-    GUI gui;
+    private final GUI gui;
     private final GUIApplication guiApplication;
+    private String nickname;
 
     private List<List<Integer>> groupList = new ArrayList<>();
 
-    private boolean debug = true;
+    private boolean debug = false;
 
     private boolean useBridges = false;
+
+    private UserActionType nextUserAction;
+    private boolean characterAbilityState = false;
 
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
         guiApplication.setController(this);
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void displayError(String errorDescription) {
@@ -340,52 +349,168 @@ public class GUIController {
         });
     }
 
+    public void updateTurnOrder(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ((TurnOrderPane)guiApplication.lookup("turnOrderPane")).updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder());
+        });
+    }
+
     public void updateAssistants(String player, Integer assistantUsed, List<Integer> assistantsLeft){
         GUIApplication.runLaterExecutor.execute(() -> {
                 ((PlayerPane)guiApplication.lookup("playerPane" + player)).updateAssistants(assistantUsed, assistantsLeft);
         });
     }
 
+    public void updatePlayerBoards(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            for(String player : game.getPlayers()){
+                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + player);
+                playerPane.updateEntrance(game.getEntranceStudentsIDs(player));
+                for(Color color : Color.values())
+                    playerPane.updateDiningRoom(color, game.getTableStudentsIDs(player, color));
+                playerPane.updateProfessors(game.getProfessorsOwner());
+                playerPane.updateTowers(game.getTowersLeft(player));
+                if(game.getGameMode() == GameMode.EXPERT)
+                    playerPane.updateCoins(game.getCoins(player));
+            }
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            archipelagoPane.updateBag(game.getBagStudentsLeft());
+        });
+    }
+
+    public void updateCloud(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            for(Integer cloudID : game.getCloudIDs()){
+                archipelagoPane.updateCloud(cloudID, game.getCloudStudentsIDs(cloudID));
+            }
+            archipelagoPane.updateBag(game.getBagStudentsLeft());
+        });
+    }
+
+    public void updateArchipelago(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            List<Integer> islandIDs = new ArrayList<>();
+            for (Integer group : game.getIslandTilesIDs().keySet())
+                islandIDs.addAll(game.getIslandTilesIDs().get(group));
+            archipelagoPane.updateMotherNature(game.getMotherNatureIslandTileID(), islandIDs);
+            archipelagoPane.updateIslandStudents(game.getIslandTilesStudentsIDs(), game.getArchipelagoStudentIDs());
+            HashMap<Integer,TowerColor> islandTowers = new HashMap<>();
+            for (Integer group : game.getIslandGroupsOwners().keySet()){
+                for(Integer islandID : game.getIslandTilesIDs().get(group)){
+                    islandTowers.put(islandID, game.getIslandGroupsOwners().get(group));
+                }
+            }
+            archipelagoPane.updateTowers(islandTowers);
+            archipelagoPane.updateBag(game.getBagStudentsLeft());
+        });
+    }
+
+    public void updateCharacters(ObservableByClient game){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            for(Integer charID : game.getDrawnCharacterIDs())
+                archipelagoPane.updateCharacter(charID, game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
+            archipelagoPane.updateCoinHeap(game.getCoinsLeft());
+        });
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void enableAssistants() {
-        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
-        playerPane.enableSelectAssistant();
+        nextUserAction = UserActionType.PLAY_ASSISTANT;
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            System.out.println(nickname);
+            playerPane.enableSelectAssistant();
+        });
     }
 
     public void disableAssistants() {
-        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
-        playerPane.disableSelectAssistant();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.disableSelectAssistant();
+        });
+    }
+
+    public void enableEntrance(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.enableSelectStudentsEntrance();
+        });
+    }
+
+    public void enableEntrance(UserActionType nextUserAction){
+        this.nextUserAction = nextUserAction;
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.enableSelectStudentsEntrance();
+        });
+    }
+
+    public void disableEntrance(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.disableSelectStudentsEntrance();
+        });
     }
 
     public void enableIslands() {
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        archipelagoPane.enableSelectIsland();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            archipelagoPane.enableSelectIsland();
+        });
+    }
+
+    public void enableIslands(UserActionType nextUserAction) {
+        this.nextUserAction = nextUserAction;
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            archipelagoPane.enableSelectIsland();
+        });
     }
 
     public void disableIslands() {
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        archipelagoPane.disableSelectIsland();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+            archipelagoPane.disableSelectIsland();
+        });
     }
 
     public void enableClouds() {
-        CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
-        cloudContainerPane.enableSelectCloud();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+            cloudContainerPane.enableSelectCloud();
+        });
     }
 
     public void disableClouds() {
-        CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
-        cloudContainerPane.disableSelectCloud();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
+            cloudContainerPane.disableSelectCloud();
+        });
     }
 
     public void enableTables() {
-        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
-        playerPane.enableSelectTables();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.enableSelectTables();
+        });
+    }
+
+    public void enableTables(Color color) {
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.enableSelectTables(color);
+        });
     }
 
     public void disableTables() {
-        PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPanePlayer0"));
-        playerPane.disableSelectTables();
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.disableSelectTables();
+        });
     }
 
     // wip
@@ -401,7 +526,10 @@ public class GUIController {
             assistantCardSuccessful();
         }
         else {
-            gui.notifyInput();
+            if(nextUserAction == UserActionType.PLAY_ASSISTANT)
+                gui.sendSelection(new PlayAssistantUserAction(nickname, getAssistantCardChosen()));
+            else
+                System.out.println("tf bro");
         }
     }
 
@@ -410,7 +538,7 @@ public class GUIController {
      *
      */
     public int getAssistantCardChosen() {
-        AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane0");
+        AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickname);
         System.out.println(pane.getAssistantChosen()); // DELETEME debug
         return pane.getAssistantChosen();
     }
@@ -419,8 +547,8 @@ public class GUIController {
      * Effectively moves the card to the discard pile. Used by gui.
      */
     public void assistantCardSuccessful() {
-        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPanePlayer0");
-        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPanePlayer0");
+        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nickname);
+        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickname);
         playerPane.moveAssistant(assistantPane.getAssistantChosen());
         playerPane.disableSelectAssistant();
     }
@@ -428,6 +556,55 @@ public class GUIController {
     public void notifyStudent() {
         if (debug) {
             System.out.println("Student chosen, somewhere");
+            studentSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public void notifyStudentEntrance(){
+        if (debug) {
+            System.out.println("Student chosen, entrance");
+            studentSuccessful();
+        }
+        else {
+            if(! characterAbilityState){
+                disableEntrance();
+                enableIslands();
+                enableTables(Color.valueOf(((StudentView)guiApplication.lookup("student"+getStudentEntrance())).getColor().toUpperCase()));
+            }
+            else
+                System.out.println("buhuuuuu");
+        }
+    }
+
+    public int getStudentEntrance(){
+        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
+        return board.getStudentChosen();
+    }
+
+    public void notifyStudentDR(){
+        if (debug) {
+            System.out.println("Student chosen, DR");
+            studentSuccessful();
+        }
+        else {
+            gui.notifyInput();
+        }
+    }
+
+    public void notifyStudentIsland(){
+        if (debug) {
+            System.out.println("Student chosen, island");
+            studentSuccessful();
+        }
+        else {
+        }
+    }
+    public void notifyStudentCharacter(){
+        if (debug) {
+            System.out.println("Student chosen, character");
             studentSuccessful();
         }
         else {
@@ -449,7 +626,7 @@ public class GUIController {
                 return chars.getStudentChosen();
             } else {
                 // check board
-                BoardPane board = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
+                BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
                 System.out.println(board.getStudentChosen());
                 return board.getStudentChosen();
             }
@@ -459,7 +636,7 @@ public class GUIController {
     public void studentSuccessful() {
         ArchipelagoPane islands = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
         CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        BoardPane board = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
+        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
         islands.setStudentChosen(-1);
         chars.setStudentChosen(-1);
         board.setStudentChosen(-1);
@@ -471,7 +648,7 @@ public class GUIController {
             cloudSuccessful();
         }
         else {
-            gui.notifyInput();
+            gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
         }
     }
 
@@ -493,8 +670,22 @@ public class GUIController {
             islandSuccessful();
         }
         else {
-            gui.notifyInput();
+            if(! characterAbilityState){
+                if(nextUserAction == UserActionType.MOVE_STUDENT){
+                    gui.sendSelection(new MoveStudentUserAction(nickname, getStudentEntrance(), getIslandOrTableChosen()));
+                }
+                else if( nextUserAction == UserActionType.MOVE_MOTHER_NATURE){
+                    gui.sendSelection(new MoveMotherNatureUserAction(nickname, getIslandChosen()));
+                }
+            }
+            else
+                System.out.println("monkey island");
         }
+    }
+
+    public int getIslandChosen(){
+        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+        return archipelagoPane.getIslandChosen();
     }
 
     public int getIslandOrTableChosen() {
@@ -503,7 +694,7 @@ public class GUIController {
             System.out.println("island chosen: " + archipelagoPane.getIslandChosen()); // DELETEME debug
             return archipelagoPane.getIslandChosen();
         } else {
-            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
+            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
             System.out.println("island chosen: " + boardPane.getTableChosen()); // DELETEME debug
             return boardPane.getTableChosen();
         }
@@ -572,13 +763,30 @@ public class GUIController {
         }
     }
 
+    public void notifyTable(){
+        if(debug){
+            System.out.println("Table chosen");
+        }
+        else {
+            if(! characterAbilityState){
+                gui.sendSelection(new MoveStudentUserAction(nickname, getStudentEntrance(), getTableChosen()));
+            }else
+                System.out.println("il ballo del qua qua");
+        }
+    }
+
+    public int getTableChosen(){
+        BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
+        return boardPane.getTableChosen();
+    }
+
     public void notifyTableChar() {
         if (debug) {
             System.out.println("Table chosen for character");
         } else {
             CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
             CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPanePlayer0");
+            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
 
             character.setAbilityParameter(boardPane.getTableChosen());
             if (character.isParameterListFull()) notifyAbility();
@@ -671,6 +879,14 @@ public class GUIController {
 
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, secondMergeDiff));
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(3, secondMergeDiff));
+    }
+
+    public void disableAll(){
+        guiApplication.disableAll();
+    }
+
+    public void enableAll(){
+        guiApplication.enableAll();
     }
 
 }

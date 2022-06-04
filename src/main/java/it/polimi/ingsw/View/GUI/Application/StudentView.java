@@ -10,9 +10,11 @@ public class StudentView extends PawnView {
 
     public static double studentSize = 15.0;
 
+    private String color;
+
     public StudentView(int id, String pawnType, String color, double size) {
         super(id, pawnType, color, size);
-
+        this.color = color;
     }
 
     public void setDisabled() {
@@ -31,5 +33,9 @@ public class StudentView extends PawnView {
 
     public void setCallback(EventHandler<MouseEvent> eventHandler) {
         this.setOnMouseClicked(eventHandler);
+    }
+
+    public String getColor() {
+        return color;
     }
 }

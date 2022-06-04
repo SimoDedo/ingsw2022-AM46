@@ -261,7 +261,7 @@ public class ArchipelagoPane extends AnchorPane {
                 student.setCallback(event -> {
                     System.out.println("Student clicked in island! " + student.getId());
                     this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                    controller.notifyStudent();
+                    controller.notifyStudentIsland();
                 });
             }
         }

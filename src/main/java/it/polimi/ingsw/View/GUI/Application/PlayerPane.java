@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,10 +137,8 @@ public class PlayerPane extends GridPane {
         boardPane.updateEntrance(students);
     }
 
-    public void updateDiningRoom(HashMap<Color, String> professors){
-        List<Color> professorsOwned = professors.entrySet().stream()
-                        .filter(e -> nickname.equals(e.getValue())).map(e -> e.getKey()).toList();
-        boardPane.updateProfessors(professorsOwned);
+    public void updateDiningRoom(Color color, List<Integer> studs){
+        boardPane.updateTable(color, studs);
     }
 
     public void updateProfessors(HashMap<Color, String> professors){
@@ -156,8 +155,28 @@ public class PlayerPane extends GridPane {
             ((Text)this.lookup("#coinsPane" + nickname)).setText(String.valueOf(coins));
     }
 
+    public void enableSelectStudentsEntrance() {
+        boardPane.enableSelectStudentsEntrance();
+    }
+
+    public void disableSelectStudentsEntrance() {
+        boardPane.disableSelectStudentsEntrance();
+    }
+
+    public void enableSelectStudentsDR() {
+        boardPane.enableSelectStudentsDR();
+    }
+
+    public void disableSelectStudentsDR() {
+        boardPane.disableSelectStudentsDR();
+    }
+
     public void enableSelectTables() {
         boardPane.enableSelectTables();
+    }
+
+    public void enableSelectTables(Color color) {
+        boardPane.enableSelectTables(color);
     }
 
     public void disableSelectTables() {

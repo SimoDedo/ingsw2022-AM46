@@ -2,6 +2,7 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import it.polimi.ingsw.Utils.Enum.Color;
 import javafx.util.Pair;
@@ -107,10 +109,18 @@ public class BoardPane extends StackPane {
 
             entry.getValue().setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on a table! " + entry.getValue().getId());
-                setTableChosen(tableOrder.get(entry.getKey())); //FIXME has to use actual ids and not their positional id
-                controller.notifyTableChar();
+                setTableChosen(Integer.parseInt(entry.getValue().getId().substring("tablePane".length())));
+                controller.notifyTable();
             });
         }
+    }
+
+    public void enableSelectTables(Color color) {
+        tables.get(color).setOnMouseClicked(event -> {
+            System.out.println("Someone clicked on a table! " + tables.get(color).getId());
+            setTableChosen(Integer.parseInt(tables.get(color).getId().substring("tablePane".length())));
+            controller.notifyTable();
+        });
     }
 
     public void disableSelectTables() {
@@ -138,7 +148,7 @@ public class BoardPane extends StackPane {
             student.setCallback(event -> {
                 System.out.println("Student clicked in entrance! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudent();
+                controller.notifyStudentEntrance();
             });
         }
     }
@@ -164,7 +174,7 @@ public class BoardPane extends StackPane {
             student.setCallback(event -> {
                 System.out.println("Student clicked in dining room! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudent();
+                controller.notifyStudentDR();
             });
         }
     }
@@ -178,8 +188,6 @@ public class BoardPane extends StackPane {
             student.setDisabled();
             student.setCallback(event -> {
                 System.out.println("Student clicked in dining room, but I'm disabled! " + student.getId());
-                this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudent();
             });
         }
     }
@@ -333,8 +341,9 @@ public class BoardPane extends StackPane {
     public void updateProfessors(List<Color> newProfessorsOwned){ //This isn't optimized like others, but now I have no will (also it's at max 5 pngs to reload I don't : care)
         professors.getChildren().clear();
         for(Color profColor : newProfessorsOwned){
-            professors.add(new PawnView(0, "professor", profColor.toString().toLowerCase(), StudentView.studentSize),
-                        0, tableOrder.get(profColor));
+            PawnView prof = new PawnView(0, "professor", profColor.toString().toLowerCase(), StudentView.studentSize);
+            professors.add(prof, 0, tableOrder.get(profColor));
+            GridPane.setHalignment(prof, HPos.CENTER);
         }
     }
 
@@ -342,14 +351,16 @@ public class BoardPane extends StackPane {
         if(newNumOfTowers < numOfTowers){
             towerSpace.getChildren().clear();
             for (int i = 0; i < newNumOfTowers ; i++) {
-                towerSpace.add(new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize),
-                        i%2, i/2);
+                PawnView tower = new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize);
+                GridPane.setHalignment(tower, HPos.CENTER);
+                towerSpace.add(tower, i%2, i/2);
             }
         }
         else if(newNumOfTowers > numOfTowers){
             for (int i = numOfTowers; i < newNumOfTowers ; i++) {
-                towerSpace.add(new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize),
-                        i%2, i/2);
+                PawnView tower = new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize);
+                towerSpace.add(tower, i%2, i/2);
+                GridPane.setHalignment(tower, HPos.CENTER);
             }
         }
         this.numOfTowers = newNumOfTowers;

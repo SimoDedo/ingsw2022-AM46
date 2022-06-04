@@ -115,8 +115,10 @@ public class IslandTilePane extends StackPane {
     }
 
     public void updateTower(TowerColor towerColor){
-        if (towerColor != null){
+        if (towerColor != null && towerColor != this.towerColor){
+            islandModifiersPane.getChildren().remove(islandModifiersPane.lookup("#tower0"));
             islandModifiersPane.add(new PawnView(0, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize), 0, 0);
+            this.towerColor = towerColor;
         }
     }
 

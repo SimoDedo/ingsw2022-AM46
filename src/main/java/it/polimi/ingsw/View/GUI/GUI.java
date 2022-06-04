@@ -3,6 +3,7 @@ package it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.UserAction.GameSettingsUserAction;
 import it.polimi.ingsw.Network.Message.UserAction.TowerColorUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.UserAction;
 import it.polimi.ingsw.Network.Message.UserAction.WizardUserAction;
 import it.polimi.ingsw.Utils.Enum.Command;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
@@ -48,6 +49,7 @@ public class GUI implements UI {
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
+        guiController.setNickname(nickname);
     }
 
     @Override
@@ -57,7 +59,33 @@ public class GUI implements UI {
 
     @Override
     public void updateCommands(List<Command> toDisable, List<Command> toEnable) {
+        for(Command command : toDisable)
+            parseDisableCommand(command);
+        for (Command command : toEnable)
+            parseEnableCommand(command);
+        guiController.enableAll();
+    }
 
+    private void parseEnableCommand(Command command){
+        switch (command){
+            case ASSISTANT -> guiController.enableAssistants();
+            case MOVE -> guiController.enableEntrance(UserActionType.MOVE_STUDENT);
+            case MOTHER_NATURE -> guiController.enableIslands(UserActionType.MOVE_MOTHER_NATURE);
+            case CLOUD -> guiController.enableClouds();
+        }
+    }
+
+    private void parseDisableCommand(Command command){
+        switch (command){
+            case ASSISTANT -> guiController.disableAssistants();
+            case MOVE -> {
+                guiController.disableEntrance();
+                guiController.disableIslands();
+                guiController.disableTables();
+            }
+            case MOTHER_NATURE -> guiController.disableIslands();
+            case CLOUD -> guiController.disableClouds();
+        }
     }
 
     @Override
@@ -140,10 +168,38 @@ public class GUI implements UI {
         switch (actionTaken){
             case WAIT_GAME_START -> guiController.initialDraw(game, nickname);
             case PLAY_ASSISTANT -> {
+                guiController.updateTurnOrder(game);
                 for(String nick : game.getPlayers())
                     guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
             }
+            case MOVE_STUDENT ->{
+                guiController.updateTurnOrder(game);
+                guiController.updatePlayerBoards(game);
+                guiController.updateArchipelago(game);
+            }
+            case MOVE_MOTHER_NATURE -> {
+                guiController.updateArchipelago(game);
+                guiController.updatePlayerBoards(game);
+            }
+            case TAKE_FROM_CLOUD -> {
+                guiController.updateCloud(game);
+                guiController.updatePlayerBoards(game);
+                guiController.updateTurnOrder(game);
+            }
+            case USE_CHARACTER -> {
+                guiController.updateCharacters(game);
+            }
+            case USE_ABILITY -> {
+                guiController.updatePlayerBoards(game);
+                guiController.updateArchipelago(game);
+                guiController.updatePlayerBoards(game);
+            }
         }
+    }
+
+    public void sendSelection(UserAction userAction){
+        guiController.disableAll();
+        client.sendUserAction(userAction);
     }
 
     private void waitInput(){

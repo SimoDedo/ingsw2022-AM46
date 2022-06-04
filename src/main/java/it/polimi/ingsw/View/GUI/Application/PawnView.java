@@ -18,7 +18,7 @@ public class PawnView extends ImageView {
         this.setFitHeight(size);
         this.setSmooth(true);
         this.setCache(true);
-        this.setPickOnBounds(true);
+        this.setPickOnBounds(false);
 
         this.setMouseTransparent(true);
     }

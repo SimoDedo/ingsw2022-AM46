@@ -491,5 +491,13 @@ public class GUIApplication extends Application {
 
     }
 
+    public void disableAll(){
+        this.lookup("mainContentPane").setDisable(true);
+    }
+
+
+    public void enableAll(){
+        this.lookup("mainContentPane").setDisable(false);
+    }
 }
 
