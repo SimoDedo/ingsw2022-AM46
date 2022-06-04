@@ -141,10 +141,11 @@ public class IslandTilePane extends StackPane {
     }
 
     public void updateStudents(List<Integer> newStudents,HashMap<Integer, Color> studColor){
+        //This only adds, remove function could be implemented but students are NEVER removed from islands in a real game
         List<Node> studsBefore = studentPane.getChildren();
         List<String> studsBeforeID = studsBefore.stream().map(Node::getId).toList();
         for (Integer stud : newStudents){
-            if(! studsBeforeID.contains("#student" + stud)){
+            if(! studsBeforeID.contains("student" + stud)){
                 int rand = new Random().nextInt(freeStudSpots.size());
                 studentPane.add(new StudentView(stud, "student", studColor.get(stud).toString().toLowerCase(), StudentView.studentSize),
                         freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());

@@ -48,8 +48,8 @@ public class BoardPane extends StackPane {
 
     private int numOfTowers;
 
-    private Comparator<Pair<Integer, Integer>> compareGridSpot = (p, p2) -> {
-        if (p.getValue() < p2.getValue()) return -1;
+    private final Comparator<Pair<Integer, Integer>> compareGridSpot = (p, p2) -> {
+        if(p.getValue() < p2.getValue()) return -1;
         else if (p.getValue() > p2.getValue()) return 1;
         else {
             if (p.getKey() < p2.getKey()) return  -1;
@@ -240,10 +240,12 @@ public class BoardPane extends StackPane {
         List<Node> studsBefore = new ArrayList<>(entrance.getChildren());
         List<String> studsNow = students.keySet().stream().map(id -> "student" + id).toList();
         for(Node studBefore : studsBefore){
-            if(! studsNow.contains(studBefore.getId())){
-                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getRowIndex(studBefore));
-                entrance.getChildren().remove(studBefore);
-                freeEntranceSpots.add(spotToFree);
+            if(studBefore instanceof StudentView){
+                if(! studsNow.contains(studBefore.getId())){
+                    Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getRowIndex(studBefore));
+                    entrance.getChildren().remove(studBefore);
+                    freeEntranceSpots.add(spotToFree);
+                }
             }
         }
         freeEntranceSpots.sort(compareGridSpot);
@@ -255,9 +257,10 @@ public class BoardPane extends StackPane {
         for (Map.Entry<Integer, Color> stud : students.entrySet()){
             if(! studsBeforeIDs.contains("student" + stud.getKey())){
                 Pair<Integer, Integer> freeSpot = freeEntranceSpots.get(0);
-                entrance.add(new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize),
-                        freeSpot.getKey(), freeSpot.getValue());
+                StudentView studToAdd = new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize);
+                entrance.add(studToAdd, freeSpot.getKey(), freeSpot.getValue());
                 freeEntranceSpots.remove(freeSpot);
+                GridPane.setHalignment(studToAdd, HPos.CENTER);
             }
         }
     }
@@ -271,25 +274,30 @@ public class BoardPane extends StackPane {
         List<Node> studsBefore = new ArrayList<>(tables.get(tableColor).getChildren());
         List<String> studsNow = students.stream().map(id -> "student" + id).toList();
         for(Node studBefore : studsBefore){
-            if(! studsNow.contains(studBefore.getId())){
-                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getColumnIndex(studBefore));
-                tables.get(tableColor).getChildren().remove(studBefore);
-                freeEntranceSpots.add(new Pair<>(spotToFree.getKey(), tableOrder.get(tableColor)));
+            if(studBefore instanceof StudentView){
+                if(! studsNow.contains(studBefore.getId())){
+                    Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(studBefore), GridPane.getColumnIndex(studBefore));
+                    tables.get(tableColor).getChildren().remove(studBefore);
+                    freeDRSpots.add(new Pair<>(spotToFree.getKey(), tableOrder.get(tableColor)));
+                }
             }
         }
-        freeEntranceSpots.sort(compareGridSpot);
+        freeDRSpots.sort(compareGridSpot);
     }
 
     private void addNewStudentsToTable(Color tableColor, List<Integer> students){
-        List<Pair<Integer,Integer>> freeTableSpots = freeDRSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList();
-        List<Node> studsBefore = entrance.getChildren();
+        List<Pair<Integer,Integer>> freeTableSpots =
+                new ArrayList<>(freeDRSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList());
+        List<Node> studsBefore = tables.get(tableColor).getChildren();
         List<String> studsBeforeIDs = studsBefore.stream().map(Node::getId).toList();
         for (Integer stud : students){
             if(! studsBeforeIDs.contains("student" + stud)){
                 Pair<Integer, Integer> freeSpot = freeTableSpots.get(0);
-                entrance.add(new StudentView(stud, "student", tableColor.toString().toLowerCase(),StudentView.studentSize),
-                        freeSpot.getKey(), freeSpot.getValue());
-                freeEntranceSpots.remove(freeSpot);
+                StudentView studToAdd = new StudentView(stud, "student", tableColor.toString().toLowerCase(),StudentView.studentSize);
+                tables.get(tableColor).add(studToAdd, freeSpot.getKey(), 0);
+                freeTableSpots.remove(freeSpot);
+                freeDRSpots.remove(freeSpot);
+                GridPane.setHalignment(studToAdd, HPos.CENTER);
             }
         }
     }
@@ -304,8 +312,10 @@ public class BoardPane extends StackPane {
 
     public void updateTowers(int newNumOfTowers){
         if(newNumOfTowers < numOfTowers){
-            for (int i = newNumOfTowers; i < numOfTowers ; i++) {
-                towerSpace.getChildren().remove(i%2, i/2);
+            towerSpace.getChildren().clear();
+            for (int i = 0; i < newNumOfTowers ; i++) {
+                towerSpace.add(new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize),
+                        i%2, i/2);
             }
         }
         else if(newNumOfTowers > numOfTowers){
