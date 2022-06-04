@@ -365,7 +365,7 @@ public class Game implements ObservableByClient, Serializable {
          */
         @Override
         public GameMode getGameMode(){
-            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.STANDARD;
+            return this instanceof GameExpert ? GameMode.EXPERT : GameMode.NORMAL;
         }
 
         /**

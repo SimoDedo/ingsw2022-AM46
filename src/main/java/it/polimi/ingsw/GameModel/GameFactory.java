@@ -9,7 +9,7 @@ public class GameFactory {
 
     public Game create(int numOfPlayers, GameMode gameMode) {
         return switch (gameMode) {
-            case STANDARD -> new Game(new GameConfig(numOfPlayers));
+            case NORMAL -> new Game(new GameConfig(numOfPlayers));
             case EXPERT -> new GameExpert(new GameConfig(numOfPlayers));
         };
     }
