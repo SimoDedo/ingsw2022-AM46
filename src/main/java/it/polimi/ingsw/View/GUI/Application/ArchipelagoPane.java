@@ -39,7 +39,7 @@ public class ArchipelagoPane extends AnchorPane {
     /**
      * The HBox that contains the student bag and the coin heap.
      */
-    private BagContainerPane bagContainer;
+    private final BagContainerPane bagContainer;
 
     /**
      * The HBox that contains the characters.
@@ -79,7 +79,10 @@ public class ArchipelagoPane extends AnchorPane {
             IslandTilePane newIsland = new IslandTilePane(controller, this, i);
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
-            newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
+            newIsland.relocate(
+                    centerPos + Math.cos(Math.PI/2 - Math.PI / 6 * i)*centerPos,
+                    centerPos - Math.sin(Math.PI/2 - Math.PI / 6 * i)*centerPos
+            );
         }
 
         // character container pane goes here
@@ -227,10 +230,9 @@ public class ArchipelagoPane extends AnchorPane {
     public void enableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            int finalIslandID = islandID;
             island.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me, an island tile! " + island.getId());
-                setIslandChosen(finalIslandID);
+                setIslandChosen(islandID);
                 controller.notifyIsland();
             });
         }
@@ -290,10 +292,9 @@ public class ArchipelagoPane extends AnchorPane {
     public void enableSelectIslandChar(CharContainerPane charContainerPane) {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            int finalIslandID = islandID;
             island.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me, an island tile! Character active... " + island.getId());
-                setIslandChosen(finalIslandID);
+                setIslandChosen(islandID);
                 controller.notifyIslandChar();
             });
         }

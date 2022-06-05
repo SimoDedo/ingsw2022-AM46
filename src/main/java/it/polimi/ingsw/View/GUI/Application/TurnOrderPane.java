@@ -35,7 +35,11 @@ public class TurnOrderPane extends HBox {
             toPut.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 15));
             if(nick.equals(currentPlayer)){
                 toPut.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_BOLD, 20));
-                toPut.setTextFill(Color.DARKRED);
+                if (phaseFormatted.equals("Planning")) {
+                    toPut.setTextFill(Color.DARKGREEN);
+                } else {
+                    toPut.setTextFill(Color.DARKRED);
+                }
             }
             this.getChildren().add(toPut);
         }
