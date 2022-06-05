@@ -27,7 +27,7 @@ public class StudentView extends PawnView {
     public void setEnabled() {
         this.setMouseTransparent(false);
         this.setEffect(new DropShadow(studentSize, Color.LIGHTCYAN));
-        this.setOnMouseEntered(mouseEvent -> this.setEffect(new DropShadow(studentSize*2, Color.BLUE)));
+        this.setOnMouseEntered(mouseEvent -> this.setEffect(new DropShadow(studentSize*2, Color.SEAGREEN)));
         this.setOnMouseExited(mouseEvent -> this.setEffect(new DropShadow(studentSize, Color.LIGHTCYAN)));
     }
 
