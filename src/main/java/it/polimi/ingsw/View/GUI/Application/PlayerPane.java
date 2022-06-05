@@ -9,12 +9,14 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +42,9 @@ public class PlayerPane extends GridPane {
         this.controller = controller;
         this.nickname = nickname;
         this.setId("playerPane" + nickname);
-        this.setHgap(1);
+        this.setHgap(5.0);
+        this.setVgap(5.0);
         this.setAlignment(Pos.CENTER);
-        this.setHgap(5);
 
         boardPane = new BoardPane(controller, nickname, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
@@ -52,9 +54,9 @@ public class PlayerPane extends GridPane {
     }
 
     public void setNickname(String nickname){
-        Text nickPane = new Text(nickname);
+        Text nickPane = new Text("   " + nickname);
         nickPane.setId("nickPane" + nickname);
-        nickPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 10));
+        nickPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 15.0));
         this.getChildren().add(0, nickPane);
     }
 

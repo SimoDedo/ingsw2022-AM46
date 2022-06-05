@@ -7,9 +7,7 @@ import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.View.GUI.Application.ArchipelagoPane;
 import it.polimi.ingsw.View.GUI.Application.PlayerPane;
 import it.polimi.ingsw.View.GUI.Application.TurnOrderPane;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
@@ -309,12 +307,12 @@ public class GUIApplication extends Application {
 
     public void createMainScene() {
         VBox root = new VBox();
-        root.setBackground(new Background(new BackgroundImage(
-                new Image("/general/bg6_unfocused.png"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-                BackgroundPosition.DEFAULT,
-                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
-        )));
+//        root.setBackground(new Background(new BackgroundImage(
+//                new Image("/general/bg6_unfocused.png"),
+//                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+//                BackgroundPosition.DEFAULT,
+//                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
+//        )));
         root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
 
@@ -322,17 +320,18 @@ public class GUIApplication extends Application {
         anchorPane.setId("mainContentPane");
         anchorPane.setStyle("-fx-font-family: 'Gill Sans MT'");
         root.getChildren().add(anchorPane);
+        setupScrollingBackground(anchorPane);
 
         GridPane mainGrid = new GridPane();
         mainGrid.setId("mainGrid");
-        mainGrid.setAlignment(Pos.CENTER);
+        mainGrid.setAlignment(Pos.TOP_CENTER);
         anchorPane.getChildren().add(mainGrid);
         AnchorPane.setRightAnchor(mainGrid, 0.0);
         AnchorPane.setBottomAnchor(mainGrid, 0.0);
         AnchorPane.setLeftAnchor(mainGrid, 0.0);
         AnchorPane.setTopAnchor(mainGrid, 0.0);
-        mainGrid.setPadding(new Insets(10.0, 5.0, 10.0, 5.0));
-        mainGrid.setHgap(20.0);
+        mainGrid.setPadding(new Insets(20.0, 10.0, 10.0, 10.0));
+        mainGrid.setHgap(30.0);
         mainGrid.setVgap(10.0);
 
         // turn order box
@@ -349,7 +348,7 @@ public class GUIApplication extends Application {
          */
 
         //Player boards
-        VBox players = new VBox(5.0);
+        VBox players = new VBox(10.0);
         players.setId("players");
         players.setAlignment(Pos.CENTER);
 
@@ -360,7 +359,8 @@ public class GUIApplication extends Application {
     }
 
     public void createPlayer(GameMode gameMode, String nickname, int entranceID, HashMap<Color,
-            Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer){
+            Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer) {
+
         VBox players = (VBox) this.lookup("players");
         PlayerPane player = new PlayerPane(controller, nickname, isMainPlayer);
         player.setNickname(nickname);
@@ -442,6 +442,30 @@ public class GUIApplication extends Application {
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50.0);
         grid.setVgap(50.0);
+    }
+
+    public void setupScrollingBackground(AnchorPane anchorPane) {
+        double bgWidth = stage.getWidth();
+        double bgHeight = stage.getHeight();
+        Image bgImage1 = new Image("/general/bg6_unfocused.png", bgWidth, bgHeight, false,
+                false, false);
+        Image bgImage2 = new Image("/general/bg6_flipped.png", bgWidth, bgHeight, false,
+                false, false);
+        ImageView bg1 = new ImageView(bgImage1);
+        ImageView bg2 = new ImageView(bgImage2);
+        anchorPane.getChildren().addAll(bg1, bg2);
+        TranslateTransition trans1 = new TranslateTransition(Duration.minutes(2.0), bg1);
+        trans1.setFromX(0);
+        trans1.setToX(bgWidth);
+        // trans1.setCycleCount(Animation.INDEFINITE);
+        TranslateTransition trans2 = new TranslateTransition(Duration.minutes(2.0), bg2);
+        trans2.setFromX(-bgWidth+1.0);
+        trans2.setToX(1.0);
+        // trans2.setCycleCount(Animation.INDEFINITE);
+        ParallelTransition parTrans = new ParallelTransition(trans1, trans2);
+        parTrans.setAutoReverse(true);
+        parTrans.setCycleCount(Animation.INDEFINITE);
+        parTrans.play();
     }
 
     public Node lookup(String id) {

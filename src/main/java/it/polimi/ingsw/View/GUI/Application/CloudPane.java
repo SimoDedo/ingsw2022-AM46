@@ -37,7 +37,7 @@ public class CloudPane extends StackPane {
 
     public void createCloud(int ID){
         studentPane = new StudentContainerPane("cloudStudentsPane", ID,
-                cloudSize, cloudSize, 100, 3, 3, 25.0, 25.0, 0.0);
+                cloudSize*0.95, cloudSize*0.95, 100, 3, 3, 25.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);

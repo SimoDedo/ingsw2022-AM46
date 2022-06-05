@@ -26,15 +26,15 @@ public class TurnOrderPane extends HBox {
     public void updateTurnOrderPane(Phase currentPhase, String currentPlayer, List<String> order){
         this.getChildren().clear();
         String phaseFormatted = currentPhase.toString().charAt(0) + currentPhase.toString().substring(1).toLowerCase();
-        Label phase = new Label(phaseFormatted + " phase" );
-        phase.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 15));
+        Label phase = new Label(phaseFormatted + " phase    | ");
+        phase.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
         this.getChildren().add(phase);
 
         for(String nick : order){
             Label toPut = new Label(nick);
             toPut.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 15));
             if(nick.equals(currentPlayer)){
-                toPut.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_BOLD, 15));
+                toPut.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_BOLD, 20));
                 toPut.setTextFill(Color.DARKRED);
             }
             this.getChildren().add(toPut);

@@ -16,8 +16,6 @@ public class CloudContainerPane extends HBox {
 
     static double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
 
-    private int cloudNumber;
-
     private int cloudChosen;
 
     private List<Integer> cloudsIDs;
@@ -38,7 +36,6 @@ public class CloudContainerPane extends HBox {
      */
     public void createClouds(int numOfPlayers, List<Integer> clouds) {
         cloudsIDs = new ArrayList<>();
-        this.cloudNumber = numOfPlayers;
         for (int i = 0; i < numOfPlayers; i++) {
             CloudPane cloudPane = new CloudPane();
             cloudPane.setId("cloudPane" + clouds.get(i));
