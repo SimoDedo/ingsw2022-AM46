@@ -169,16 +169,16 @@ public class IslandTilePane extends StackPane {
     public Point2D getForwardMergePoint() {
         int side;
         switch (index) {
-            case 0, 11 -> side = 0;
-            case 1, 2 -> side = 1;
-            case 3, 4 -> side = 2;
-            case 5, 6 -> side = 3;
-            case 7, 8 -> side = 4;
-            default -> side = 5;
+            case 0, 1 -> side = 2;
+            case 2, 3 -> side = 3;
+            case 4, 5 -> side = 4;
+            case 6, 7 -> side = 5;
+            case 8, 9 -> side = 0;
+            default -> side = 1;
         }
         Point2D mergePointDiff = new Point2D(
-                Math.cos(Math.PI/2 + Math.PI/3*side)* islandTileSize /2*shrinkConstant,
-                - Math.sin(Math.PI/2 + Math.PI/3*side)* islandTileSize /2*shrinkConstant
+                Math.cos(Math.PI/2 - Math.PI/3*side)* islandTileSize / 2.0 * shrinkConstant,
+                - Math.sin(Math.PI/2 - Math.PI/3*side)* islandTileSize/ 2.0 * shrinkConstant
         );
         forwardMergePoint = getCenter().add(mergePointDiff);
         return forwardMergePoint;
@@ -187,16 +187,16 @@ public class IslandTilePane extends StackPane {
     public Point2D getBackMergePoint() {
         int side;
         switch (index) {
-            case 0, 1 -> side = 3;
-            case 2, 3 -> side = 4;
-            case 4, 5 -> side = 5;
-            case 6, 7 -> side = 0;
-            case 8, 9 -> side = 1;
-            default -> side = 2;
+            case 1, 2 -> side = 5;
+            case 3, 4 -> side = 0;
+            case 5, 6 -> side = 1;
+            case 7, 8 -> side = 2;
+            case 9, 10 -> side = 3;
+            default -> side = 4;
         }
         Point2D mergePointDiff = new Point2D(
-                Math.cos(Math.PI/2 + Math.PI/3*side)* islandTileSize /2*shrinkConstant,
-                - Math.sin(Math.PI/2 + Math.PI/3*side)* islandTileSize /2*shrinkConstant
+                Math.cos(Math.PI/2 - Math.PI/3*side)* islandTileSize / 2.0 * shrinkConstant,
+                - Math.sin(Math.PI/2 - Math.PI/3*side)* islandTileSize/ 2.0 * shrinkConstant
         );
         backMergePoint = getCenter().add(mergePointDiff);
         return backMergePoint;
