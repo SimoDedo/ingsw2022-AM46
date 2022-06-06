@@ -9,6 +9,8 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -26,9 +28,12 @@ public class SocketConnection implements Runnable {
 
     private ObjectOutputStream outputStream;
 
+    private ExecutorService serverAction;
+
     private boolean active = true;
 
     public SocketConnection(Socket clientSocket, Server server) {
+        serverAction = Executors.newSingleThreadExecutor();
         this.socket = clientSocket;
         this.server = server;
         try {
@@ -106,10 +111,19 @@ public class SocketConnection implements Runnable {
         try {
             Object message = inputStream.readObject();
             action = (UserAction) message;
-            if(action instanceof PingUserAction)
-                sendMessage(new PingInfo());
-            else
-                server.parseAction(this, action);
+            serverAction.execute(()->{
+                if(action instanceof PingUserAction)
+                    sendMessage(new PingInfo());
+                else{
+                    try{
+                        server.parseAction(this, action);
+                    }
+                    catch (Throwable t){
+                        t.printStackTrace();
+                        this.close();
+                    }
+                }
+            });
         } catch (IOException | ClassNotFoundException e) {
             //e.printStackTrace();
             handleClosing();
