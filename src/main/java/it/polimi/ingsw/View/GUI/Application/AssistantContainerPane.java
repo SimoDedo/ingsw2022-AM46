@@ -17,15 +17,21 @@ public class AssistantContainerPane extends AnchorPane {
 
     private double assistantSize;
 
+    private double assistantGridGap = 2.0;
+
     private final GridPane assistantGrid;
+
     private int assistantChosen = -1;
-    private List<Integer> assistantsLeft;
+
+    private final List<Integer> assistantsLeft;
 
 
     public AssistantContainerPane(String nickname, double assistantSize) {
         this.nickname = nickname;
         this.assistantSize = assistantSize;
         assistantGrid = new GridPane();
+        assistantGrid.setHgap(assistantGridGap);
+        assistantGrid.setVgap(assistantGridGap);
         this.setId("assistantContainerPane" + nickname);
 
         assistantsLeft = new ArrayList<>();
@@ -37,7 +43,7 @@ public class AssistantContainerPane extends AnchorPane {
     }
 
     private void setAssistant(int ID){
-        Image assistant = new Image("/deck/animali_1_" + ID + "@3x.png", 200, 200, true, true);
+        Image assistant = new Image("/deck/assistant" + ID + ".png", 200, 200, true, true);
         ImageView imageViewAssistant = new ImageView(assistant);
         imageViewAssistant.setPreserveRatio(true);
         imageViewAssistant.setFitHeight(assistantSize);
@@ -51,6 +57,9 @@ public class AssistantContainerPane extends AnchorPane {
         for(Node assistantView : assistantGrid.getChildren()){
             ((ImageView) assistantView).setFitHeight(assistantSize);
         }
+        assistantGridGap = assistantGridGap * resizeFactor;
+        assistantGrid.setVgap(assistantGridGap);
+        assistantGrid.setHgap(assistantGridGap);
     }
 
     public void setAssistantChosen(int assistantID) {
