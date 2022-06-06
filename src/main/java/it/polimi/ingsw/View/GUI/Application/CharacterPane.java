@@ -31,15 +31,11 @@ public class CharacterPane extends StackPane {
 
     private Text noEntryTileText;
 
-    private HBox colorSelectionPane;
+    private ColorSelectionPane colorSelectionPane;
 
     private final ImageView coinOvercharge;
 
     private List<Pair<Integer, Integer>> freeStudSpots;
-
-    private int parNumber = 0;
-
-    private List<Integer> parameterList = new ArrayList<>();
 
     private Color colorChosen;
 
@@ -62,8 +58,10 @@ public class CharacterPane extends StackPane {
         coinOvercharge.setFitHeight(PawnView.pawnSize);
         coinOvercharge.setVisible(false);
         coinOvercharge.setEffect(new DropShadow());
+        coinOvercharge.setMouseTransparent(true);
         this.getChildren().add(coinOvercharge);
         StackPane.setAlignment(coinOvercharge, Pos.TOP_RIGHT);
+        this.setPickOnBounds(false);
     }
 
     public void createCharacter(int charID) {
@@ -89,6 +87,7 @@ public class CharacterPane extends StackPane {
         noEntryTile.setPreserveRatio(true);
         noEntryTile.setFitHeight(PawnView.pawnSize);
         noEntryTile.setVisible(false);
+        noEntryTile.setMouseTransparent(true);
         this.getChildren().add(noEntryTile);
 
         noEntryTileText.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
@@ -97,9 +96,12 @@ public class CharacterPane extends StackPane {
         noEntryTileText.setStyle("-fx-stroke: black;");
         noEntryTileText.setStyle("-fx-stroke-width: 3;");
         noEntryTileText.setVisible(false);
+        noEntryTileText.setMouseTransparent(true);
         this.getChildren().add(noEntryTileText);
 
         colorSelectionPane = new ColorSelectionPane(charID);
+        this.getChildren().add(colorSelectionPane);
+        StackPane.setAlignment(colorSelectionPane, Pos.CENTER);
     }
 
     public void setCharacterImage(int charID) {
@@ -135,10 +137,12 @@ public class CharacterPane extends StackPane {
         List<Node> oldStuds = new ArrayList<>(studentPane.getChildren());
         List<String> studsNow = newStuds.keySet().stream().map(id -> "student" + id).toList();
         for(Node oldStud : oldStuds){
-            if(! studsNow.contains(oldStud.getId())){
-                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(oldStud), GridPane.getRowIndex(oldStud));
-                studentPane.getChildren().remove(oldStud);
-                freeStudSpots.add(spotToFree);
+            if(oldStud instanceof StudentView) {
+                if (!studsNow.contains(oldStud.getId())) {
+                    Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(oldStud), GridPane.getRowIndex(oldStud));
+                    studentPane.getChildren().remove(oldStud);
+                    freeStudSpots.add(spotToFree);
+                }
             }
         }
     }
@@ -161,35 +165,11 @@ public class CharacterPane extends StackPane {
         return studentPane.getStudents();
     }
 
-    public void setAbilityParameter(int par) {
-        parameterList.add(par);
-    }
-
-    public boolean isParameterListFull() {
-        return parameterList.size() == parNumber;
-    }
-
-    public List<Integer> getAbilityParameters() {
-        return parameterList;
-    }
-
-    public void clearAbilityParameters() {
-        parameterList.clear();
-    }
-
     public void setColor(Color color) {
-        int parameter = -1;
-        switch (color) { // todo check if this color order is right
-            case YELLOW -> parameter = 0;
-            case BLUE -> parameter = 1;
-            case GREEN -> parameter = 2;
-            case RED -> parameter = 3;
-            case PINK -> parameter = 4;
-        }
-        setAbilityParameter(parameter);
+        colorChosen = color;
     }
 
-    public Color getColor() {
+    public Color getColorChosen() {
         return colorChosen;
     }
 

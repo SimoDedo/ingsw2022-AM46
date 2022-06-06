@@ -289,17 +289,6 @@ public class ArchipelagoPane extends AnchorPane {
         return studentChosen;
     }
 
-    public void enableSelectIslandChar(CharContainerPane charContainerPane) {
-        for (int islandID : islandsIDs) {
-            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            island.setOnMouseClicked(event -> {
-                System.out.println("Someone clicked on me, an island tile! Character active... " + island.getId());
-                setIslandChosen(islandID);
-                controller.notifyIslandChar();
-            });
-        }
-    }
-
     /**
      * Calculates the distance between the merging point of either of the two soon-to-be merged islands and the midpoint
      * of their merging points.

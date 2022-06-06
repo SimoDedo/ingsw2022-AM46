@@ -13,6 +13,7 @@ import it.polimi.ingsw.View.GUI.GUI;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -453,7 +454,14 @@ public class Client {
         try {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
+            if(e instanceof SocketTimeoutException){
+                System.err.println("Connection timed out: " + e.getLocalizedMessage());
+                UI.displayError("Connection timed out: " + e.getLocalizedMessage(), true);
+            }
+            else{
+                System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
+                UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
+            }
             reset();
         }
         if(!(message instanceof Message)){

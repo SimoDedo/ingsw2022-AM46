@@ -79,7 +79,8 @@ public class IslandTilePane extends StackPane {
         noEntryTile.setPreserveRatio(true);
         noEntryTile.setFitHeight(PawnView.pawnSize);
         noEntryTile.setVisible(false);
-        this.getChildren().add(noEntryTile);
+        islandModifiersPane.add(noEntryTile, 2,0);
+        GridPane.setHalignment(noEntryTile, HPos.CENTER);
         noEntryTileText = new Text();
         noEntryTileText.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
         noEntryTileText.setVisible(false);
@@ -87,7 +88,8 @@ public class IslandTilePane extends StackPane {
         noEntryTileText.setEffect(new DropShadow());
         noEntryTileText.setStyle("-fx-stroke: black;");
         noEntryTileText.setStyle("-fx-stroke-width: 3;");
-        this.getChildren().add(noEntryTileText);
+        islandModifiersPane.add(noEntryTileText, 2, 0);
+        GridPane.setHalignment(noEntryTileText, HPos.CENTER);
 
         /* debug
         PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);

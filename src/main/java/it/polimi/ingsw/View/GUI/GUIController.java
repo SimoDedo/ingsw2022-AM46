@@ -1,10 +1,7 @@
 package it.polimi.ingsw.View.GUI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
-import it.polimi.ingsw.Network.Message.UserAction.MoveMotherNatureUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.MoveStudentUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.PlayAssistantUserAction;
-import it.polimi.ingsw.Network.Message.UserAction.TakeFromCloudUserAction;
+import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
@@ -37,12 +34,16 @@ public class GUIController {
     private boolean useBridges = false;
 
     private UserActionType nextUserAction;
+
     private boolean characterAbilityState = false;
+    private List<RequestParameter> requestParameters;
+    private List<Integer> characterParameters;
 
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
         guiApplication.setController(this);
+        this.characterParameters = new ArrayList<>();
     }
 
     public void setNickname(String nickname) {
@@ -404,6 +405,17 @@ public class GUIController {
             }
             archipelagoPane.updateTowers(islandTowers);
             archipelagoPane.updateBag(game.getBagStudentsLeft());
+
+            HashMap<Integer,Integer> islandNoEntry = new HashMap<>();
+            for (Integer group : game.getIslandGroupsOwners().keySet()){
+                for(Integer islandID : game.getIslandTilesIDs().get(group)){
+                    if(game.getIslandTilesIDs().get(group).indexOf(islandID) == 0)
+                        islandNoEntry.put(islandID, game.getNoEntryTilesArchipelago().get(group));
+                    else
+                        islandNoEntry.put(islandID, 0);
+                }
+            }
+            archipelagoPane.updateNoEntry(islandNoEntry);
         });
     }
 
@@ -414,6 +426,10 @@ public class GUIController {
                 archipelagoPane.updateCharacter(charID, game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
             archipelagoPane.updateCoinHeap(game.getCoinsLeft());
         });
+    }
+
+    public void updateCharacterRequest(ObservableByClient game){
+        this.requestParameters = game.getCurrentRequestParameters();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -449,6 +465,20 @@ public class GUIController {
         });
     }
 
+    public void enableDRStudents(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.enableSelectStudentsDR();
+        });
+    }
+
+    public void disableDRStudents(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            playerPane.disableSelectStudentsDR();
+        });
+    }
+
     public void disableEntrance(){
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
@@ -479,6 +509,7 @@ public class GUIController {
     }
 
     public void enableClouds() {
+        nextUserAction = UserActionType.TAKE_FROM_CLOUD;
         GUIApplication.runLaterExecutor.execute(() -> {
             CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
             cloudContainerPane.enableSelectCloud();
@@ -513,6 +544,73 @@ public class GUIController {
         });
     }
 
+    public void enableCharacters(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.enableSelectCharacter();
+        });
+    }
+
+    public void disableCharacters(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.disableSelectCharacter();
+        });
+    }
+
+    public void enableCharacterAbility(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.enableActivateCharacter();
+        });
+    }
+
+    public void disableCharacterAbility(){
+        //characterAbilityState = false;
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.disableActivateCharacter();
+        });
+    }
+
+    public void enableStudentChar(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.enableSelectStudents();
+        });
+    }
+
+    public void disableStudentChar(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.disableSelectStudents();
+        });
+    }
+
+    public void enableColorChar(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.enableSelectColor();
+        });
+    }
+
+    public void disableColorChar(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+            charContainerPane.disableSelectColor();
+        });
+    }
+
+    public void enableLast(){
+        if(nextUserAction != null){
+            switch (nextUserAction){
+                case MOVE_STUDENT -> enableEntrance(UserActionType.MOVE_STUDENT);
+                case MOVE_MOTHER_NATURE -> enableIslands(UserActionType.MOVE_MOTHER_NATURE);
+                case TAKE_FROM_CLOUD -> enableClouds();
+            }
+        }
+    }
+
     // wip
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -523,7 +621,6 @@ public class GUIController {
     public void notifyAssistantCard() {
         if (debug) {
             System.out.println("Assistant card chosen");
-            assistantCardSuccessful();
         }
         else {
             if(nextUserAction == UserActionType.PLAY_ASSISTANT)
@@ -543,110 +640,74 @@ public class GUIController {
         return pane.getAssistantChosen();
     }
 
-    /**
-     * Effectively moves the card to the discard pile. Used by gui.
-     */
-    public void assistantCardSuccessful() {
-        PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nickname);
-        AssistantContainerPane assistantPane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickname);
-        playerPane.moveAssistant(assistantPane.getAssistantChosen());
-        playerPane.disableSelectAssistant();
-    }
-
-    public void notifyStudent() {
-        if (debug) {
-            System.out.println("Student chosen, somewhere");
-            studentSuccessful();
-        }
-        else {
-            gui.notifyInput();
-        }
-    }
 
     public void notifyStudentEntrance(){
         if (debug) {
             System.out.println("Student chosen, entrance");
-            studentSuccessful();
         }
         else {
             if(! characterAbilityState){
                 disableEntrance();
                 enableIslands();
-                enableTables(Color.valueOf(((StudentView)guiApplication.lookup("student"+getStudentEntrance())).getColor().toUpperCase()));
+                enableTables(Color.valueOf(((StudentView)guiApplication.lookup("student"+ getStudentBoard())).getColor().toUpperCase()));
             }
-            else
-                System.out.println("buhuuuuu");
+            else{
+                characterParameters.add(getStudentBoard());
+                requestParameters.remove(0);
+                parseNextRequestParameter();
+            }
         }
-    }
-
-    public int getStudentEntrance(){
-        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
-        return board.getStudentChosen();
     }
 
     public void notifyStudentDR(){
         if (debug) {
             System.out.println("Student chosen, DR");
-            studentSuccessful();
         }
         else {
-            gui.notifyInput();
+            if(characterAbilityState){
+                characterParameters.add(getStudentBoard());
+                requestParameters.remove(0);
+                parseNextRequestParameter();
+            }
         }
+    }
+
+    public int getStudentBoard(){
+        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
+        return board.getStudentChosen();
     }
 
     public void notifyStudentIsland(){
         if (debug) {
             System.out.println("Student chosen, island");
-            studentSuccessful();
         }
         else {
             // gui.notifyInput();
         }
     }
-    public void notifyStudentCharacter(){
+
+    public void notifyStudentChar(){
         if (debug) {
             System.out.println("Student chosen, character");
-            studentSuccessful();
         }
         else {
-            gui.notifyInput();
-        }
-    }
-
-    public int getStudentChosen() {
-        // check islands
-        ArchipelagoPane islands = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        if (islands.getStudentChosen() != -1) {
-            System.out.println("island chosen: " + islands.getStudentChosen()); // DELETEME debug
-            return islands.getStudentChosen();
-        } else {
-            // check chars
-            CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
-            if (chars.getStudentChosen() != -1) {
-                System.out.println(chars.getStudentChosen()); // DELETEME debug
-                return chars.getStudentChosen();
-            } else {
-                // check board
-                BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
-                System.out.println(board.getStudentChosen());
-                return board.getStudentChosen();
+            if(characterAbilityState){
+                characterParameters.add(getStudentChar());
+                requestParameters.remove(0);
+                parseNextRequestParameter();
             }
         }
     }
 
-    public void studentSuccessful() {
-        ArchipelagoPane islands = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+    public int getStudentChar(){
         CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
-        islands.setStudentChosen(-1);
-        chars.setStudentChosen(-1);
-        board.setStudentChosen(-1);
+        System.out.println(chars.getStudentChosen()); // DELETEME debug
+        return chars.getStudentChosen();
     }
 
     public void notifyCloud() {
         if (debug) {
             System.out.println("Cloud chosen");
-            cloudSuccessful();
         }
         else {
             gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
@@ -659,28 +720,25 @@ public class GUIController {
         return pane.getCloudChosen();
     }
 
-    public void cloudSuccessful() {
-        CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
-        pane.emptyCloud(pane.getCloudChosen());
-        pane.disableSelectCloud();
-    }
 
     public void notifyIsland() {
         if (debug) {
             System.out.println("Island chosen");
-            islandSuccessful();
         }
         else {
             if(! characterAbilityState){
                 if(nextUserAction == UserActionType.MOVE_STUDENT){
-                    gui.sendSelection(new MoveStudentUserAction(nickname, getStudentEntrance(), getIslandOrTableChosen()));
+                    gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getIslandChosen()));
                 }
                 else if( nextUserAction == UserActionType.MOVE_MOTHER_NATURE){
                     gui.sendSelection(new MoveMotherNatureUserAction(nickname, getIslandChosen()));
                 }
             }
-            else
-                System.out.println("monkey island");
+            else{
+                characterParameters.add(getIslandChosen());
+                requestParameters.remove(0);
+                parseNextRequestParameter();
+            }
         }
     }
 
@@ -689,31 +747,12 @@ public class GUIController {
         return archipelagoPane.getIslandChosen();
     }
 
-    public int getIslandOrTableChosen() {
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        if (archipelagoPane.getIslandChosen() != -1) {
-            System.out.println("island chosen: " + archipelagoPane.getIslandChosen()); // DELETEME debug
-            return archipelagoPane.getIslandChosen();
-        } else {
-            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
-            System.out.println("island chosen: " + boardPane.getTableChosen()); // DELETEME debug
-            return boardPane.getTableChosen();
-        }
-    }
-
-    public void islandSuccessful() {
-        ArchipelagoPane pane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-        pane.setIslandChosen(-1);
-        pane.disableSelectIsland();
-    }
-
     public void notifyCharacter() {
         if (debug) {
             System.out.println("Character chosen");
-            characterSuccessful();
         }
         else {
-            gui.notifyInput();
+            gui.sendSelection(new UseCharacterUserAction(nickname, getCharacterChosen()));
         }
     }
 
@@ -723,46 +762,6 @@ public class GUIController {
         return pane.getCharacterChosen();
     }
 
-    public void characterSuccessful() {
-        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        pane.enableActivateCharacter();
-    }
-
-    /**
-     * Method called when an activated character is pressed on.
-     */
-    public void prepareAbility() {
-        CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        int characterID = charContainerPane.getCharacterChosen();
-        CharacterPane character = (CharacterPane) charContainerPane.lookup("#characterPane" + characterID);
-
-        switch (characterID) {
-
-            case 2, 4, 6, 8: notifyAbility(); // no further action required, calling gui immediately
-
-            case 3, 5: {
-                ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-                archipelagoPane.enableSelectIslandChar(charContainerPane);
-            }
-            case 9, 12: {
-
-            }
-        }
-    }
-
-    public void notifyIslandChar() {
-        if (debug) {
-            System.out.println("Island chosen for character");
-        }
-        else {
-            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-            ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-
-            character.setAbilityParameter(archipelagoPane.getIslandChosen());
-            if (character.isParameterListFull()) notifyAbility();
-        }
-    }
 
     public void notifyTable(){
         if(debug){
@@ -770,7 +769,7 @@ public class GUIController {
         }
         else {
             if(! characterAbilityState){
-                gui.sendSelection(new MoveStudentUserAction(nickname, getStudentEntrance(), getTableChosen()));
+                gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getTableChosen()));
             }else
                 System.out.println("il ballo del qua qua");
         }
@@ -781,55 +780,59 @@ public class GUIController {
         return boardPane.getTableChosen();
     }
 
-    public void notifyTableChar() {
-        if (debug) {
-            System.out.println("Table chosen for character");
-        } else {
-            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-            BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
-
-            character.setAbilityParameter(boardPane.getTableChosen());
-            if (character.isParameterListFull()) notifyAbility();
-        }
-    }
-
-    public void notifyStudentChar() {
-
-    }
 
     public void notifyColorChar() {
         if (debug) {
             System.out.println("Color chosen for character");
         } else {
-            CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-            CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-
-            if (character.isParameterListFull()) notifyAbility();
+            System.out.println("ciaoooooooooooo");
+            if(characterAbilityState){
+                characterParameters.add(getColorChar());
+                requestParameters.remove(0);
+                parseNextRequestParameter();
+            }
         }
+    }
+
+    public int getColorChar(){
+        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
+        CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
+        return Arrays.stream(Color.values()).toList().indexOf(character.getColorChosen());
     }
 
     public void notifyAbility() {
         if (debug) {
             System.out.println("Ability activated (not really)");
-            abilitySuccessful();
         }
         else {
-            gui.notifyInput();
+            characterAbilityState = true;
+            parseNextRequestParameter();
         }
     }
 
-    public List<Integer> getAbilityParameters() {
-        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-        return character.getAbilityParameters();
-    }
-
-    public void abilitySuccessful() {
-        CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        pane.setCharacterChosen(-1);
-        CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
-        character.clearAbilityParameters();
+    private void parseNextRequestParameter(){
+        disableCharacterAbility();
+        disableClouds();
+        disableIslands();
+        disableTables();
+        disableEntrance();
+        disableStudentChar();
+        disableDRStudents();
+        disableColorChar();
+        if(requestParameters.size() != 0){
+            switch (requestParameters.get(0)){
+                case STUDENT_ENTRANCE -> enableEntrance();
+                case ISLAND -> enableIslands();
+                case STUDENT_DINING_ROOM -> enableDRStudents();
+                case STUDENT_CARD -> enableStudentChar();
+                case COLOR -> enableColorChar();
+            }
+        }
+        else{
+            characterAbilityState = false;
+            gui.sendSelection(new UseAbilityUserAction(nickname, characterParameters));
+            characterParameters.clear();
+        }
     }
 
     public void updateArchipelago() {

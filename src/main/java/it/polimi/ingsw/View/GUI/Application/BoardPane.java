@@ -141,9 +141,7 @@ public class BoardPane extends StackPane {
 
     public void enableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();
-        System.out.println(entranceStudents);
         for (StudentView student : entranceStudents) {
-            System.out.println("setting callback on entrance student...");
             student.setEnabled();
             student.setCallback(event -> {
                 System.out.println("Student clicked in entrance! " + student.getId());
@@ -155,7 +153,6 @@ public class BoardPane extends StackPane {
 
     public void disableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();
-        System.out.println(entranceStudents);
         for (StudentView student : entranceStudents) {
             student.setDisabled();
             student.setCallback(event -> {

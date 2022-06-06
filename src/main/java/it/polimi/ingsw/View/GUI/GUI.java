@@ -69,9 +69,18 @@ public class GUI implements UI {
     private void parseEnableCommand(Command command){
         switch (command){
             case ASSISTANT -> guiController.enableAssistants();
-            case MOVE -> guiController.enableEntrance(UserActionType.MOVE_STUDENT);
+            case MOVE -> {
+                guiController.disableTables();
+                guiController.disableIslands();
+                guiController.enableEntrance(UserActionType.MOVE_STUDENT);
+            }
             case MOTHER_NATURE -> guiController.enableIslands(UserActionType.MOVE_MOTHER_NATURE);
             case CLOUD -> guiController.enableClouds();
+            case CHARACTER -> guiController.enableCharacters();
+            case ABILITY -> {
+                guiController.enableCharacterAbility();
+                guiController.enableLast();
+            }
         }
     }
 
@@ -85,6 +94,11 @@ public class GUI implements UI {
             }
             case MOTHER_NATURE -> guiController.disableIslands();
             case CLOUD -> guiController.disableClouds();
+            case CHARACTER -> guiController.disableCharacters();
+            case ABILITY -> {
+                guiController.disableCharacterAbility();
+                guiController.enableLast();
+            }
         }
     }
 
@@ -180,6 +194,7 @@ public class GUI implements UI {
             case MOVE_MOTHER_NATURE -> {
                 guiController.updateArchipelago(game);
                 guiController.updatePlayerBoards(game);
+                guiController.updateCharacters(game);
             }
             case TAKE_FROM_CLOUD -> {
                 guiController.updateCloud(game);
@@ -187,12 +202,16 @@ public class GUI implements UI {
                 guiController.updateTurnOrder(game);
             }
             case USE_CHARACTER -> {
+                guiController.updatePlayerBoards(game);
                 guiController.updateCharacters(game);
+                guiController.updateCharacterRequest(game);
             }
             case USE_ABILITY -> {
                 guiController.updatePlayerBoards(game);
                 guiController.updateArchipelago(game);
                 guiController.updatePlayerBoards(game);
+                guiController.updateCharacters(game);
+                guiController.updateCharacterRequest(game);
             }
         }
     }
