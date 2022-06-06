@@ -266,7 +266,7 @@ public class GameExpert extends Game {
          */
         @Override
             public List<RequestParameter> getCurrentRequestParameters() {
-                return characterManager.getCurrentRequestParameters();
+                return new ArrayList<>(characterManager.getCurrentRequestParameters());
         }
 
     //endregion

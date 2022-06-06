@@ -747,7 +747,7 @@ public class Game implements ObservableByClient, Serializable {
 
         @Override
         public List<RequestParameter> getCurrentRequestParameters() {
-            return null;
+            return new ArrayList<>();
         }
 
         //endregion
