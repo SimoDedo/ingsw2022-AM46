@@ -30,7 +30,8 @@ public class BagContainerPane extends HBox {
     }
 
     public void updateCoinHeap(int coinsLeft) {
-        ((BagPane)this.lookup("#coinsBagPane")).updateCount(coinsLeft);
+        if(this.lookup("#coinsBagPane") != null)
+            ((BagPane)this.lookup("#coinsBagPane")).updateCount(coinsLeft);
     }
 
 }

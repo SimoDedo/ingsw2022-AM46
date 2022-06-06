@@ -71,13 +71,15 @@ public class CharContainerPane extends HBox {
     }
 
     public void disableSelectCharacter() {
-        for (Integer charID : charIDs) {
-            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
-            ImageView charImageView = (ImageView) characterPane.lookup("#charView");
-            charImageView.setEffect(new DropShadow());
-            characterPane.setOnMouseClicked(event -> {
-                System.out.println("I'm a disabled character");
-            });
+        if(charIDs != null){
+            for (Integer charID : charIDs) {
+                CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
+                ImageView charImageView = (ImageView) characterPane.lookup("#charView");
+                charImageView.setEffect(new DropShadow());
+                characterPane.setOnMouseClicked(event -> {
+                    System.out.println("I'm a disabled character");
+                });
+            }
         }
     }
 

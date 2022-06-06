@@ -416,6 +416,8 @@ public class GUIController {
                 }
             }
             archipelagoPane.updateNoEntry(islandNoEntry);
+
+            archipelagoPane.updateMerge(game.getIslandTilesIDs());
         });
     }
 
@@ -517,6 +519,7 @@ public class GUIController {
     }
 
     public void disableClouds() {
+        System.out.println("wttffff"); //FIXME: cloud selectable after turn i dont get it
         GUIApplication.runLaterExecutor.execute(() -> {
             CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
             cloudContainerPane.disableSelectCloud();
@@ -566,7 +569,6 @@ public class GUIController {
     }
 
     public void disableCharacterAbility(){
-        //characterAbilityState = false;
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
             charContainerPane.disableActivateCharacter();
@@ -835,60 +837,10 @@ public class GUIController {
         }
     }
 
-    public void updateArchipelago() {
-
-        /* version with movement:
-         compare old groupList with new groupList, in the island tiles number order
-         pick tile from old list
-         pick group from new list
-         group contains tile?
-             if no-> go to next group in new list
-             if yes-> old tile group and new tile group have same size?
-                 if yes-> go to next tile in old list
-                 if no-> tile has been merged in this group (either stuck to it, or was sandwiched between two groups that united)
-                 goto algorithm below
-
-         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-         Point2D mergeDiff = archipelagoPane.calcMergeDiff(j - 1, j);
-         archipelagoPane.relocateBack(j, mergeDiff);
-         for i in (tiles contained in the same group as j - 1 AND less than j, so merge only works in one direction and is easier to predict) :
-         archipelagoPane.relocateForward(i, mergeDiff);
-        */
-
-        /* version with bridges:
-        bridges only appear when an island is conquered => when an islandgroup changes size
-        we only check new and old group sizes, back to back
-        if the size is the same, nothing has changed. go to the next group
-        otherwise,
-        call setBridge(i, tower color) on every tile index i inside the group (redundant if the color hasn't changed and
-        there's only been an addition to the group, but whatever since this single line encompasses both addition and
-        re-conquest
-        */
-
-        //example code:
-
-        /*ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");// DELETEME debug tutta questa sezione
-        if (useBridges) {
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(0, TowerColor.WHITE));
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(2, TowerColor.GREY));
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.setBridge(4, TowerColor.BLACK));
-        }
-        else {
-            final Point2D mergeDiff = archipelagoPane.calcMergeDiff(2, 3);
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(3, mergeDiff));
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, mergeDiff));
-
-
-            final Point2D mergeDiff2 = archipelagoPane.calcMergeDiff(4, 5);
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, mergeDiff2));
-            GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(4, mergeDiff2));
-        }*/
-    }
-
     public void debugFunction1() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
 
-        final Point2D secondMergeDiff = archipelagoPane.calcMergeDiff(3, 4);
+        final Point2D secondMergeDiff = archipelagoPane.calcMergeDiffMedian(3, 4);
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(4, secondMergeDiff));
         GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, secondMergeDiff));
 
