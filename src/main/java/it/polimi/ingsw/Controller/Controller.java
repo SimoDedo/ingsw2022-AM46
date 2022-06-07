@@ -167,6 +167,8 @@ public class Controller {
                         int cloudID = ((TakeFromCloudUserAction) userAction).getCloudID();
                         takeFromCloud(nickname, cloudID);
                     }
+                    case END_TURN -> endTurn(nickname);
+
                 }
             }
         }
@@ -506,17 +508,11 @@ public class Controller {
             return;
             //TODO: other exceptions should be thrown and handled
         }
+        expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.END_TURN);
+        sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TAKE_FROM_CLOUD,
+                turnController.getCurrentPlayer(), UserActionType.END_TURN, "End your turn"));
 
-        try { //If there is a next player that has to play its Action phase, sends request to him
-            turnController.nextTurn();
-            expectedUserAction.clear();
-            expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT);
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TAKE_FROM_CLOUD,
-                    turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT, "Move student from entrance"));
-        }
-        catch (IllegalStateException phaseDone){ //If instead all players have played, phase is switched
-            endOfRoundOperations(nickname, UserActionType.TAKE_FROM_CLOUD);
-        }
+
     }
 
     /**
@@ -580,6 +576,23 @@ public class Controller {
         else {
             sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_ABILITY,
                     turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used, may now use another"));
+        }
+    }
+
+
+    /** End the turn of the player specified by the nickname.
+     * @param nickname of the player who requested their turn to end.
+     */
+    private void endTurn(String nickname){
+        try { //If there is a next player that has to play its Action phase, sends request to him
+            turnController.nextTurn();
+            expectedUserAction.clear();
+            expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT);
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.END_TURN,
+                    turnController.getCurrentPlayer(), UserActionType.MOVE_STUDENT, "Move student from entrance"));
+        }
+        catch (IllegalStateException phaseDone){ //If instead all players have played, phase is switched
+            endOfRoundOperations(nickname, UserActionType.END_TURN);
         }
     }
 

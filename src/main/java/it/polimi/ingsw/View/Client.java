@@ -251,7 +251,7 @@ public class Client {
             //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
             //The possible actions are enabled and disabled by the client.
             case PLAY_ASSISTANT -> {
-                toDisable.addAll(Arrays.asList(Command.CLOUD, Command.CHARACTER));
+                toDisable.addAll(Arrays.asList(Command.END_TURN, Command.CHARACTER));
                 toEnable.add(Command.ASSISTANT);
                 if(!gameStarted){
                     gameStarted = true;
@@ -295,6 +295,13 @@ public class Client {
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
             }
+            case END_TURN -> {
+                toDisable.add(Command.CLOUD);
+                toEnable.add(Command.END_TURN);
+
+                UI.displayBoard(update.getGame(), update.getUserActionTaken());
+                UI.updateCommands(toDisable, toEnable);
+            }
         }
 
 
@@ -313,7 +320,7 @@ public class Client {
             case TOWER_COLOR, WAIT_GAME_START, WIZARD -> {
             }
             case PLAY_ASSISTANT -> {
-                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
+                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.END_TURN, Command.CHARACTER, Command.ABILITY));
                 if(!gameStarted){
                     gameStarted = true;
                     toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
@@ -326,7 +333,7 @@ public class Client {
 
             }
             case MOVE_STUDENT -> {
-                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
+                toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.END_TURN, Command.CHARACTER, Command.ABILITY));
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
             }

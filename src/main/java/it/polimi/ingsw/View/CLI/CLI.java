@@ -429,14 +429,10 @@ public class CLI implements UI {
     }
 
     public void requestEndTurn(){
-        displayMessage("Would you to play a character before ending your turn? y/n");
 
-        String endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
+        UserAction endTurnRequest = new EndTurnUserAction(nickname);
+        client.sendUserAction(endTurnRequest);
 
-        if(endTurnSelection.equals("n")){
-            UserAction endTurnRequest = new EndTurnUserAction(nickname);
-            client.sendUserAction(endTurnRequest);
-        }
     }
 
     @Override

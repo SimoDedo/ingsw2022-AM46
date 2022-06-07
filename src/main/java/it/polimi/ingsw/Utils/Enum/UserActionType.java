@@ -12,8 +12,9 @@ public enum UserActionType {
     TAKE_FROM_CLOUD("has chosen a cloud", "is choosing a cloud"),
     USE_CHARACTER("has used a character", null),
     USE_ABILITY("has activated a character ability", "can activate a character ability"),
-    END_GAME,
-    END_TURN;
+    END_TURN("has ended their turn", "can end their turn"),
+    END_GAME;
+
 
     private String actionTakenDesc;
     private String actionToTakeDesc;
