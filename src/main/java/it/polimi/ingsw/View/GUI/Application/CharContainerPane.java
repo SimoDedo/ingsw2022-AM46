@@ -44,15 +44,21 @@ public class CharContainerPane extends HBox {
         }
     }
 
-    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
-        ((CharacterPane)this.lookup("#characterPane" + ID)).updateCharacter(newStuds, numOfNoEntryTiles, isOvercharged);
+    public void updateCharacter(int ID, boolean isActive, int usesLeft,HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+        ((CharacterPane)this.lookup("#characterPane" + ID)).updateCharacter(isActive, usesLeft,newStuds, numOfNoEntryTiles, isOvercharged);
     }
 
     public void enableSelectCharacter() {
         for (Integer charID : charIDs) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
             ImageView charImageView = (ImageView) characterPane.lookup("#charView");
-            charImageView.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
+            charImageView.setEffect(Effects.enabledCharacterShadow);
+            characterPane.setOnMouseEntered(e -> {
+                charImageView.setEffect(Effects.hoveringCharacterShadow);
+            });
+            characterPane.setOnMouseExited(e -> {
+                charImageView.setEffect(Effects.enabledCharacterShadow);
+            });
             int charIndex = charID;
             characterPane.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me!" + characterPane.getId());
@@ -74,8 +80,8 @@ public class CharContainerPane extends HBox {
         if(charIDs != null){
             for (Integer charID : charIDs) {
                 CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
-                ImageView charImageView = (ImageView) characterPane.lookup("#charView");
-                charImageView.setEffect(new DropShadow());
+                characterPane.setOnMouseEntered(e -> {});
+                characterPane.setOnMouseExited(e -> {});
                 characterPane.setOnMouseClicked(event -> {
                     System.out.println("I'm a disabled character");
                 });
@@ -85,7 +91,15 @@ public class CharContainerPane extends HBox {
 
     public void enableActivateCharacter() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
-        characterPane.setEffect(new DropShadow(50.0, javafx.scene.paint.Color.WHITE));
+        ImageView charImageView = (ImageView) characterPane.lookup("#charView");
+
+        charImageView.setEffect(Effects.activatedCharacterShadow);
+        characterPane.setOnMouseEntered(e -> {
+            charImageView.setEffect(Effects.hoveringCharacterShadow);
+        });
+        characterPane.setOnMouseExited(e -> {
+            charImageView.setEffect(Effects.activatedCharacterShadow);
+        });
         characterPane.setOnMouseClicked(event -> {
             System.out.println("Someone clicked on me for the second time! Ability started " + characterPane.getId());
             controller.notifyAbility();
@@ -94,7 +108,6 @@ public class CharContainerPane extends HBox {
 
     public void enableSelectStudents() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
-        characterPane.setEffect(new DropShadow());
         for (StudentView student : characterPane.getStudents()) {
             student.setEnabled();
             student.setCallback(event -> {
@@ -107,7 +120,6 @@ public class CharContainerPane extends HBox {
 
     public void disableSelectStudents() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
-        characterPane.setEffect(new DropShadow());
         for (StudentView student : characterPane.getStudents()) {
             student.setDisabled();
             student.setCallback(event -> {
@@ -134,6 +146,13 @@ public class CharContainerPane extends HBox {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
             colorPane.setVisible(true);
             for (Map.Entry<Color, Integer> entry : ColorSelectionPane.colorOrder.entrySet()) {
+                colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentShadow);
+                colorPane.getChildren().get(entry.getValue()).setOnMouseEntered(event -> {
+                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.hoveringStudentShadow);
+                });
+                colorPane.getChildren().get(entry.getValue()).setOnMouseExited(event -> {
+                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentShadow);
+                });
                 colorPane.getChildren().get(entry.getValue()).setOnMouseClicked(event -> {
                     characterPane.setColor(entry.getKey());
                     System.out.println("no vabbè hai premuto un colore, assurdo");
@@ -148,6 +167,9 @@ public class CharContainerPane extends HBox {
             ColorSelectionPane colorPane = (ColorSelectionPane) this.lookup("#char" + characterChosen + "ColorPane");
             colorPane.setVisible(false);
             for (Node node : colorPane.getChildren()) {
+                node.setEffect(Effects.disabledStudentShadow);
+                node.setOnMouseEntered(event -> {});
+                node.setOnMouseExited(event -> {});
                 node.setOnMouseClicked(event -> {
                     System.out.println("I'm a disabled color");
                 });

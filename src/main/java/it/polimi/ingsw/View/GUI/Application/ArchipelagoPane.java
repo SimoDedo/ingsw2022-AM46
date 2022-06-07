@@ -61,12 +61,11 @@ public class ArchipelagoPane extends AnchorPane {
     private List<Integer> islandsIDs;
 
     private HashMap<Integer, List<Integer>> islandConfiguration;
+    private int movePower;
+    private int islandGroupMN;
 
     private int islandChosen;
     private int studentChosen;
-
-    private Object animationLock;
-    private boolean isMergeDone;
 
     /**
      * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
@@ -74,7 +73,6 @@ public class ArchipelagoPane extends AnchorPane {
      * @param controller the controller class that will handle events inside this pane
      */
     public ArchipelagoPane(GUIController controller) {
-        animationLock = new Object();
         this.controller = controller;
         this.setId("archipelagoPane");
         this.setPrefSize(archipelagoSide, archipelagoSide);
@@ -158,6 +156,16 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     /**
+     * Updates move power used to show which islands are selectable, along with the group occupied by mother nature
+     * @param movePower the current move power of the player
+     * @param motherNatureIslandGroup the island group that contains mother nature
+     */
+    public void updateMovePower(int movePower, int motherNatureIslandGroup){
+        this.movePower = movePower;
+        this.islandGroupMN = motherNatureIslandGroup;
+    }
+
+    /**
      * Updates all islands on the presence (and color) of a tower on them.
      * @param towers a hashmap with all the islands that have a tower on them and their associated color
      */
@@ -214,8 +222,8 @@ public class ArchipelagoPane extends AnchorPane {
      * @param newStuds a hashmap with each student's ID and color on the character
      * @param numOfNoEntryTiles the number of no-entry tiles on the character
      */
-    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
-        charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles, isOvercharged);
+    public void updateCharacter(int ID, boolean isActive, int usesLeft, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+        charContainer.updateCharacter(ID, isActive, usesLeft,newStuds, numOfNoEntryTiles, isOvercharged);
     }
 
     /**
@@ -289,10 +297,18 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
-
     public void enableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            ImageView islandView = (ImageView) island.lookup("#islandView");
+            islandView.setEffect(Effects.enabledIslandShadow);
+            island.setOnMouseEntered(e ->{
+                islandView.setEffect(Effects.hoveringIslandShadow);
+            });
+            island.setOnMouseExited(e ->{
+                islandView.setEffect(Effects.enabledIslandShadow);
+
+            });
             island.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me, an island tile! " + island.getId());
                 setIslandChosen(islandID);
@@ -301,9 +317,37 @@ public class ArchipelagoPane extends AnchorPane {
         }
     }
 
+    public void enableSelectIslandReachable() {
+        for (int i = 1; i <= movePower; i++) {
+            int group = islandGroupMN + i < islandConfiguration.size() ?
+                    islandGroupMN + i : islandGroupMN + i - islandConfiguration.size();
+            for (Integer islandID : islandConfiguration.get(group)){
+                IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+                ImageView islandView = (ImageView) island.lookup("#islandView");
+                islandView.setEffect(Effects.enabledIslandShadow);
+                island.setOnMouseEntered(e ->{
+                    islandView.setEffect(Effects.hoveringIslandShadow);
+                });
+                island.setOnMouseExited(e ->{
+                    islandView.setEffect(Effects.enabledIslandShadow);
+
+                });
+                island.setOnMouseClicked(event -> {
+                    System.out.println("Someone clicked on me, an island tile! " + island.getId());
+                    setIslandChosen(islandID);
+                    controller.notifyIsland();
+                });
+            }
+        }
+    }
+
     public void disableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            ImageView islandView = (ImageView) island.lookup("#islandView");
+            islandView.setEffect(Effects.disabledIslandShadow);
+            island.setOnMouseEntered(e ->{});
+            island.setOnMouseExited(e ->{});
             island.setOnMouseClicked(event -> {
                 System.out.println("I'm disabled! " + island.getId());
             });
@@ -407,7 +451,6 @@ public class ArchipelagoPane extends AnchorPane {
                         new KeyValue(translate.yProperty(), mergeDiff.getY(), customInterpolator))
         );
         timeline.setCycleCount(1);
-        timeline.setOnFinished(e -> onMergeFinished());
         timeline.play();
     }
 
@@ -419,13 +462,6 @@ public class ArchipelagoPane extends AnchorPane {
     public void relocateBack(int index, Point2D mergeDiff) {
         Point2D reverseMergeDiff = new Point2D(- mergeDiff.getX(), - mergeDiff.getY());
         relocateForward(index, reverseMergeDiff);
-    }
-
-    public void onMergeFinished(){
-        synchronized (animationLock){
-            isMergeDone = true;
-            animationLock.notifyAll();
-        }
     }
 
     /**

@@ -187,6 +187,7 @@ public class GUI implements UI {
                     guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
             }
             case MOVE_STUDENT ->{
+                guiController.updateCharacters(game);
                 guiController.updateTurnOrder(game);
                 guiController.updatePlayerBoards(game);
                 guiController.updateArchipelago(game);
@@ -197,11 +198,13 @@ public class GUI implements UI {
                 guiController.updateCharacters(game);
             }
             case TAKE_FROM_CLOUD -> {
+                guiController.updateCharacters(game);
                 guiController.updateCloud(game);
                 guiController.updatePlayerBoards(game);
                 guiController.updateTurnOrder(game);
             }
             case USE_CHARACTER -> {
+                guiController.updateArchipelago(game);
                 guiController.updatePlayerBoards(game);
                 guiController.updateCharacters(game);
                 guiController.updateCharacterRequest(game);

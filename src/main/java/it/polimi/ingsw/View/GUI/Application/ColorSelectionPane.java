@@ -31,7 +31,7 @@ public class ColorSelectionPane extends VBox {
             colorView.setId("char" + charID + "Color" + color.toString().toLowerCase());
             Image colorImage = new Image("/chars/color_" + color.toString().toLowerCase() + ".png");
             colorView.setImage(colorImage);
-            colorView.setEffect(new DropShadow(colorSize/2.0, javafx.scene.paint.Color.BLACK));
+            colorView.setEffect(Effects.disabledStudentShadow);
             colorView.setPreserveRatio(true);
             colorView.setFitHeight(colorSize);
             colorView.setSmooth(true);

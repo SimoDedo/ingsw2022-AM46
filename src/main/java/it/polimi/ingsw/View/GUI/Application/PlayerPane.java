@@ -27,7 +27,7 @@ public class PlayerPane extends GridPane {
 
     private final String nickname;
 
-    private double sizeBoardV = 170.0;
+    public final static double sizeBoardV = 170.0;
     private final double resizeFactor = 0.85;
     private double sizeDiscard = 80.0;
     private double sizeCoin = 30.0;
@@ -189,9 +189,12 @@ public class PlayerPane extends GridPane {
         Pane discard = (Pane) this.lookup("#discardPane"+nickname);
         List<String> ids = discard.getChildren().stream().map(Node::getId).toList();
 
+        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickname);
         for(int i = 1; i < 11; i++){
             ImageView assistant = (ImageView) this.lookup("#assistant"+nickname+i);
             if(assistant != null && !ids.contains("assistant"+nickname+i)) {
+                assistant.setEffect(Effects.enabledAssistantShadow);
+                assistantContainerPane.setZoomOnAssistant(assistant, Effects.hoveringAssistantShadow, Effects.enabledAssistantShadow);
                 int assistantID = i;
                 assistant.setOnMouseClicked(event -> {
                     System.out.println("Someone clicked on me! " + assistant.getId());
@@ -203,10 +206,14 @@ public class PlayerPane extends GridPane {
     }
 
     public void disableSelectAssistant(){
+        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickname);
         for(int i = 1; i < 11; i++){
             ImageView assistant = (ImageView) this.lookup("#assistant"+nickname+i);
-            if(assistant != null)
+            if(assistant != null) {
+                assistant.setEffect(Effects.disabledAssistantShadow);
+                assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantShadow, Effects.disabledAssistantShadow);
                 assistant.setOnMouseClicked(event -> System.out.println("Im disabled"));
+            }
         }
     }
 

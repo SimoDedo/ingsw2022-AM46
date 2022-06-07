@@ -293,7 +293,7 @@ public class GUIController {
                 // charContainerPane.enableSelectCharacter();
                 charContainerPane.setCharacterChosen(5);
                 charContainerPane.enableSelectStudents();
-                charContainerPane.updateCharacter(6, new HashMap<>(), 89, true);
+                charContainerPane.updateCharacter(6, true, 3,new HashMap<>(), 89, true);
 
                 BoardPane boardPane = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
                 boardPane.enableSelectStudentsDR();
@@ -341,7 +341,7 @@ public class GUIController {
             if(game.getGameMode() == GameMode.EXPERT){
                 archipelagoPane.updateCoinHeap(game.getCoinsLeft());
                 for(Integer charID : game.getDrawnCharacterIDs())
-                    archipelagoPane.updateCharacter(charID , game.getCharacterStudents(charID),
+                    archipelagoPane.updateCharacter(charID, false, 0, game.getCharacterStudents(charID),
                             game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
             }
             for(Integer cloud : game.getCloudIDs()){
@@ -392,11 +392,14 @@ public class GUIController {
     public void updateArchipelago(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
+
             List<Integer> islandIDs = new ArrayList<>();
             for (Integer group : game.getIslandTilesIDs().keySet())
                 islandIDs.addAll(game.getIslandTilesIDs().get(group));
             archipelagoPane.updateMotherNature(game.getMotherNatureIslandTileID(), islandIDs);
+            archipelagoPane.updateMovePower(game.getActualMovePower(nickname), game.getMotherNatureIslandGroupIdx());
             archipelagoPane.updateIslandStudents(game.getIslandTilesStudentsIDs(), game.getArchipelagoStudentIDs());
+
             HashMap<Integer,TowerColor> islandTowers = new HashMap<>();
             for (Integer group : game.getIslandGroupsOwners().keySet()){
                 for(Integer islandID : game.getIslandTilesIDs().get(group)){
@@ -425,7 +428,8 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
             for(Integer charID : game.getDrawnCharacterIDs())
-                archipelagoPane.updateCharacter(charID, game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
+                archipelagoPane.updateCharacter(charID, game.getActiveCharacterID() == charID, game.getActiveCharacterUsesLeft(),
+                        game.getCharacterStudents(charID), game.getNoEntryTilesCharacter(charID), game.getCharacterOvercharge(charID));
             archipelagoPane.updateCoinHeap(game.getCoinsLeft());
         });
     }
@@ -499,7 +503,10 @@ public class GUIController {
         this.nextUserAction = nextUserAction;
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-            archipelagoPane.enableSelectIsland();
+            if(nextUserAction == UserActionType.MOVE_MOTHER_NATURE)
+                archipelagoPane.enableSelectIslandReachable();
+            else
+                archipelagoPane.enableSelectIsland();
         });
     }
 
@@ -712,6 +719,7 @@ public class GUIController {
             System.out.println("Cloud chosen");
         }
         else {
+            nextUserAction = null;
             gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
         }
     }

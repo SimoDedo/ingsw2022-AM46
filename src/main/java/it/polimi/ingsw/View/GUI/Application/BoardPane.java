@@ -38,6 +38,8 @@ public class BoardPane extends StackPane {
 
     private HashMap<Color, StudentContainerPane> tables;
 
+    private HashMap<Color, StackPane> shadowedTablePanes;
+
     private final HashMap<Color, Integer> tableOrder;
 
     private List<Pair<Integer, Integer>> freeDRSpots;
@@ -116,6 +118,22 @@ public class BoardPane extends StackPane {
     }
 
     public void enableSelectTables(Color color) {
+        shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
+        shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.16); " +
+                "-fx-background-insets: 0; " +
+                "-fx-background-radius: 0; ");
+        tables.get(color).setOnMouseEntered(e -> {
+            shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.27); " +
+                    "-fx-background-insets: 0; " +
+                    "-fx-background-radius: 0; ");
+            shadowedTablePanes.get(color).setEffect(Effects.hoveringTableGlow);
+        });
+        tables.get(color).setOnMouseExited(e -> {
+            shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.16); " +
+                    "-fx-background-insets: 0; " +
+                    "-fx-background-radius: 0; ");
+            shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
+        });
         tables.get(color).setOnMouseClicked(event -> {
             System.out.println("Someone clicked on a table! " + tables.get(color).getId());
             setTableChosen(Integer.parseInt(tables.get(color).getId().substring("tablePane".length())));
@@ -125,9 +143,15 @@ public class BoardPane extends StackPane {
 
     public void disableSelectTables() {
         for (StudentContainerPane table : tables.values()) {
+            table.setOnMouseExited(null);
+            table.setOnMouseEntered(null);
             table.setOnMouseClicked(event -> {
                 System.out.println("I'm a disabled table! " + table.getId());
             });
+        }
+        for (StackPane shadowedPane : shadowedTablePanes.values()) {
+            shadowedPane.setEffect(Effects.disabledTableGLow);
+            shadowedPane.setStyle(null);
         }
     }
 
@@ -231,12 +255,20 @@ public class BoardPane extends StackPane {
         diningRoom.setId("diningRoomPane" + nickname);
 
         tables = new HashMap<>();
+        shadowedTablePanes = new HashMap<>();
 
         for (Color color : Color.values()){
+            StackPane shadowedPane = new StackPane();
+            shadowedPane.setEffect(Effects.disabledTableGLow);
+            shadowedTablePanes.put(color, shadowedPane);
             StudentContainerPane table = new StudentContainerPane("tablePane", tableIDs.get(color),
                     boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
+            table.setPickOnBounds(true);
             tables.put(color, table);
-            diningRoom.add(table, 0, tableOrder.get(color));
+            diningRoom.add(shadowedPane, 0, tableOrder.get(color));
+
+            shadowedPane.getChildren().add(table);
+            //diningRoom.add(table, 0 , tableOrder.get(color)); //alternative to above, this way no effect is applied to student on table
         }
         mainGrid.add(diningRoom, 1, 0);
 

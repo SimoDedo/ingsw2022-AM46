@@ -5,6 +5,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -23,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CharacterPane extends StackPane {
 
-    double charHeight = 100.0, charWidth = charHeight/2;
+    public static double charHeight = 100.0, charWidth = charHeight/2;
 
     private StudentContainerPane studentPane;
 
@@ -35,13 +36,19 @@ public class CharacterPane extends StackPane {
 
     private final ImageView coinOvercharge;
 
+    private final Text usesLeft;
+
     private List<Pair<Integer, Integer>> freeStudSpots;
 
     private Color colorChosen;
 
+    protected Effect currentEffect;
+
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
+        currentEffect = Effects.disabledCharacterShadow;
+
         Image character = new Image("/chars/char_back.png");
         ImageView charView = new ImageView(character);
         charView.setId("charView");
@@ -61,6 +68,18 @@ public class CharacterPane extends StackPane {
         coinOvercharge.setMouseTransparent(true);
         this.getChildren().add(coinOvercharge);
         StackPane.setAlignment(coinOvercharge, Pos.TOP_RIGHT);
+
+        usesLeft = new Text("0");
+        usesLeft.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
+        usesLeft.setFill(javafx.scene.paint.Color.WHITE);
+        usesLeft.setEffect(new DropShadow());
+        usesLeft.setStyle("-fx-stroke: black;");
+        usesLeft.setStyle("-fx-stroke-width: 3;");
+        usesLeft.setMouseTransparent(true);
+        usesLeft.setVisible(false);
+        this.getChildren().add(usesLeft);
+        StackPane.setAlignment(usesLeft, Pos.BOTTOM_LEFT);
+
         this.setPickOnBounds(false);
     }
 
@@ -115,7 +134,7 @@ public class CharacterPane extends StackPane {
         charView.setCache(true);
     }
 
-    public void updateCharacter(HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+    public void updateCharacter(boolean isActive, int usesLeft,HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
         //Update students
         removeOldStuds(newStuds);
         addNewStuds(newStuds);
@@ -131,6 +150,22 @@ public class CharacterPane extends StackPane {
         }
         //Set overcharge
         coinOvercharge.setVisible(isOvercharged);
+        ImageView charView = ((ImageView) this.lookup(("#charView")));
+        if(isActive){
+            charView.setEffect(Effects.activatedCharacterShadow);
+            if(usesLeft > 0){
+                this.usesLeft.setText(Integer.toString(usesLeft));
+                this.usesLeft.setVisible(true);
+            }
+            else
+                this.usesLeft.setVisible(false);
+        }
+        else {
+            charView.setEffect(Effects.disabledCharacterShadow);
+            this.usesLeft.setVisible(false);
+
+        }
+
     }
 
     private void removeOldStuds(HashMap<Integer, Color> newStuds){

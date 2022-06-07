@@ -2,6 +2,7 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -48,7 +49,8 @@ public class AssistantContainerPane extends AnchorPane {
         imageViewAssistant.setPreserveRatio(true);
         imageViewAssistant.setFitHeight(assistantSize);
         imageViewAssistant.setId("assistant" + nickname + ID);
-        setZoomOnAssistant(imageViewAssistant);
+        imageViewAssistant.setEffect(Effects.disabledAssistantShadow);
+        setZoomOnAssistant(imageViewAssistant, Effects.disabledStudentShadow, Effects.disabledAssistantShadow);
         assistantGrid.add(imageViewAssistant, (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
     }
 
@@ -78,9 +80,9 @@ public class AssistantContainerPane extends AnchorPane {
         }
     }
 
-    private void setZoomOnAssistant(ImageView imageView){
+    public void setZoomOnAssistant(ImageView imageView, Effect onEnter, Effect onExit){
         imageView.onMouseEnteredProperty().set(event -> {
-            imageView.setEffect(new DropShadow(10.0, Color.SEAGREEN));
+            imageView.setEffect(onEnter);
             ImageView toZoom = new ImageView(imageView.getImage());
             toZoom.setId("toZoomAssistant");
             toZoom.setPreserveRatio(true);
@@ -97,7 +99,7 @@ public class AssistantContainerPane extends AnchorPane {
             }
         });
         imageView.onMouseExitedProperty().set(event -> {
-            imageView.setEffect(null);
+            imageView.setEffect(onExit);
             for(Node node : this.getChildren()){
                 if(node.getId() != null && node.getId().equals("toZoomAssistant")){
                     this.getChildren().remove(node);

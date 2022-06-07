@@ -46,10 +46,11 @@ public class IslandTilePane extends StackPane {
         this.index = index;
 
         Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png",
-                300, 300, true, true);
+        300, 300, true, true);
         ImageView imageView = new ImageView(islandTileBackground);
+        imageView.setId("islandView");
+        imageView.setEffect(Effects.disabledIslandShadow);
         imageView.setRotate(60 * ThreadLocalRandom.current().nextInt(partyMode ? 6 : 1));
-        imageView.setEffect(new DropShadow());
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(islandTileSize);
         imageView.setSmooth(true);
