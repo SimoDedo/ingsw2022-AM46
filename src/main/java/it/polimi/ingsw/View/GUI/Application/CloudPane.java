@@ -3,7 +3,6 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -27,7 +26,6 @@ public class CloudPane extends StackPane {
         Image cloud = new Image("/clouds/cloud_card_" + ThreadLocalRandom.current().nextInt(0, 5) + ".png",
                 200, 200, true, true);
         ImageView cloudView = new ImageView(cloud);
-        cloudView.setEffect(new DropShadow());
         cloudView.setPreserveRatio(true);
         cloudView.setFitHeight(75.0);
         cloudView.setSmooth(true);
@@ -37,7 +35,7 @@ public class CloudPane extends StackPane {
 
     public void createCloud(int ID){
         studentPane = new StudentContainerPane("cloudStudentsPane", ID,
-                cloudSize, cloudSize, 100, 3, 3, 25.0, 25.0, 0.0);
+                cloudSize*0.95, cloudSize*0.95, 100, 3, 3, 25.0, 25.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polimi.ingsw.Utils.Enum.Command;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 public interface UI {
@@ -32,10 +33,12 @@ public interface UI {
 
     void displayInfo(String info);
 
-    void displayError(String error, boolean isUrgent);
+    void displayError(String error, boolean isFatal);
 
     void updateSetup(ObservableByClient game, UserActionType actionTaken);
 
     void displayBoard(ObservableByClient game, UserActionType actionTaken);
+
+    void displayWinners(TowerColor winner, List<String> winners);
 
 }

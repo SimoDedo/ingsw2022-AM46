@@ -7,6 +7,7 @@ import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,8 +44,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
      * @param owner the player who activated this character
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player owner) throws  IllegalStateException{
-        if (wasUsedThisTurn) throw new IllegalStateException("Already activated.");
+    public List<RequestParameter> useCharacter(Player owner) throws  IllegalStateException, IllegalArgumentException{
         if(requestParameters.contains(RequestParameter.STUDENT_DINING_ROOM)){
             int emptyTables = 0;
             for(Color color : Color.values()){
@@ -54,6 +54,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
             if(emptyTables == 5)
                 throw new IllegalStateException("This character requires at least one student to be in your Dining Room.");
         }
+        owner.takeCoins(cost);
 
         this.owner = owner;
         if (isFirstUse) {
@@ -62,7 +63,7 @@ public abstract class AbstractCharacter implements Character, Serializable {
         }
         wasUsedThisTurn = true;
 
-        return requestParameters;
+        return new ArrayList<>(requestParameters);
     }
 
     /**

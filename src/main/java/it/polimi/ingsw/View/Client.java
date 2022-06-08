@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
+import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
 import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -13,6 +14,7 @@ import it.polimi.ingsw.View.GUI.GUI;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +42,8 @@ public class Client {
     private InputStream in;
     private ObjectInputStream inObj;
 
+    private final ExecutorService mainThread;
+
     /**
      * Thread queue where all operations that must request something to the user are executed.
      */
@@ -55,12 +59,14 @@ public class Client {
     private ExecutorService pingExecutor;
 
     private boolean gameStarted;
+    private boolean isToReset;
 
     /**
      * Constructor for the Client
      * @param chosenUI represents a CLI or a GUI.
      */
     public Client(String chosenUI){
+        isToReset = false;
         if(chosenUI != null){
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
@@ -69,6 +75,7 @@ public class Client {
         }
         defaultServerIP = "127.0.0.1";
         defaultServerPort = 4646;
+        mainThread = Executors.newSingleThreadExecutor();
         requestQueue = Executors.newSingleThreadExecutor();
         infoQueue = Executors.newSingleThreadExecutor();
         gameStarted = false;
@@ -81,10 +88,11 @@ public class Client {
      * is started.
      */
     public void start(){
-        if(UI == null) //Skipped if --cli or --gui option
-            askCLIorGUI();
-
-        while (socket == null){ //Asks for server info
+        mainThread.execute(() ->{
+            isToReset = false;
+            if(UI == null) //Skipped if --cli or --gui option
+                askCLIorGUI();
+            while (socket == null){ //Asks for server info
                 Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
                 try {
@@ -93,19 +101,22 @@ public class Client {
                 catch (NumberFormatException e){
                     serverPort = 0;
                 }
-            connectToLobbyServer(serverIP, serverPort);
-        }
+                connectToLobbyServer(serverIP, serverPort);
+            }
 
-        startPing(); //Starts heartbeat with lobby server on another thread
-        requestQueue.execute(() -> {
-            nickname = UI.requestNickname();
-            UI.setNickname(nickname);
-            tryLobbyLogin();
+            startPing(); //Starts heartbeat with lobby server on another thread
+            requestQueue.execute(() -> {
+                nickname = UI.requestNickname();
+                UI.setNickname(nickname);
+                tryLobbyLogin();
+            });
+
+            while (! isToReset){
+                Message message = receiveMessage();
+                if (message != null)
+                    parseMessage(message);
+            }
         });
-
-        while (true){
-            parseMessage( receiveMessage() );
-        }
     }
 
     //region Server connection
@@ -145,7 +156,7 @@ public class Client {
         try {
             socket.close();
         } catch (IOException e) {
-            UI.displayError("Error in disconnecting from server: " + e.getLocalizedMessage(), true);
+            fatalError("Error in disconnecting from server.");
         }
     }
 
@@ -164,8 +175,7 @@ public class Client {
             socket.setSoTimeout(2000);
             UI.displayInfo("Connected to match server.");
         } catch (IOException e) {
-            UI.displayError("Could not connect to match server: " + e, true);
-            reset();
+            fatalError("Could not connect to match server.");
         }
         sendUserAction(new LoginUserAction(nickname));
     }
@@ -191,8 +201,7 @@ public class Client {
             error = true;
         }
         if (error){
-            UI.displayError("Error occurred while shutting down ping." , true);
-            reset();
+            fatalError("Error occurred while shutting down ping.");
         }
     }
     //endregion
@@ -259,9 +268,8 @@ public class Client {
             UI.displayError(message.toString(), false);
             parseUpdate(lastUpdate);
         }
-        else{
-            UI.displayError("Server didn't send correct information.", true);
-            reset();
+        else if (message instanceof LogoutSuccessfulInfo){
+            disconnectFromServer();
         }
     }
 
@@ -364,7 +372,6 @@ public class Client {
             }
         }
 
-
         if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
             UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
     }
@@ -416,7 +423,12 @@ public class Client {
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
-                UI.displayInfo("Team " + update.getGame().getWinner() + " has WON!!!");
+                List<String> winners = update.getGame().getPlayerTeams().entrySet().stream()
+                        .filter(e -> e.getValue().equals(update.getGame().getWinner()))
+                        .map(Map.Entry::getKey)
+                        .toList();
+                UI.displayWinners(update.getGame().getWinner(), winners);
+                logoutFromServer();
             }
         }
 
@@ -439,8 +451,7 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            UI.displayError("Unable to write to server: " + e.getLocalizedMessage(), true);
-            reset();
+            fatalError("Unable to write to server.");
         }
     }
 
@@ -453,12 +464,23 @@ public class Client {
         try {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
-            reset();
+            if(e instanceof SocketTimeoutException){
+                System.err.println("Connection timed out: " + e.getLocalizedMessage());
+                fatalError("Connection timed out.");
+            }
+            else if(e instanceof EOFException){
+                System.err.println("Someone disconnected.");
+                fatalError("Someone disconnected.");
+            }
+            else{
+                System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
+                fatalError("Unable to receive messages from server.");
+            }
+            return null;
         }
         if(!(message instanceof Message)){
-            UI.displayError("Server didn't send correct information.", true);
-            reset();
+            fatalError("Server didn't send correct information.");
+            return null;
         }
         return (Message) message;
     }
@@ -472,14 +494,41 @@ public class Client {
         System.out.flush();
     }
 
+
     /**
      * Closes the application.
      */
+    public void close() {
+        System.exit(-1);
+    }
+
     public void reset(){
+        gameStarted = false;
+        nickname = null;
+        socket = null;
+
+        start();
+    }
+
+    public void fatalError(String errorDescription){
+        if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
+            disconnectFromServer();
+            infoQueue.execute(() -> {
+                UI.displayError(errorDescription, true);
+            });
+        }
+    }
+
+    private void logoutFromServer(){
+        sendUserAction(new LogoutUserAction(nickname));
+    }
+
+    private void disconnectFromServer(){
+        isToReset = true;
+        stopPing();
         try {
             socket.close();
-        } catch (Exception ignored) {}
-        System.exit(-1); //FIXME: actual reset
-
+        } catch (Exception ignored) {
+        }
     }
 }

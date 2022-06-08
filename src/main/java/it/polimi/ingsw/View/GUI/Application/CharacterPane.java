@@ -5,6 +5,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -23,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CharacterPane extends StackPane {
 
-    double charHeight = 100.0, charWidth = charHeight/2;
+    public static double charHeight = 100.0, charWidth = charHeight/2;
 
     private StudentContainerPane studentPane;
 
@@ -31,21 +32,23 @@ public class CharacterPane extends StackPane {
 
     private Text noEntryTileText;
 
-    private HBox colorSelectionPane;
+    private ColorSelectionPane colorSelectionPane;
 
     private final ImageView coinOvercharge;
 
+    private final Text usesLeft;
+
     private List<Pair<Integer, Integer>> freeStudSpots;
 
-    private int parNumber = 0;
-
-    private List<Integer> parameterList = new ArrayList<>();
-
     private Color colorChosen;
+
+    protected Effect currentEffect;
 
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
+        currentEffect = Effects.disabledCharacterShadow;
+
         Image character = new Image("/chars/char_back.png");
         ImageView charView = new ImageView(character);
         charView.setId("charView");
@@ -62,8 +65,22 @@ public class CharacterPane extends StackPane {
         coinOvercharge.setFitHeight(PawnView.pawnSize);
         coinOvercharge.setVisible(false);
         coinOvercharge.setEffect(new DropShadow());
+        coinOvercharge.setMouseTransparent(true);
         this.getChildren().add(coinOvercharge);
         StackPane.setAlignment(coinOvercharge, Pos.TOP_RIGHT);
+
+        usesLeft = new Text("0");
+        usesLeft.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
+        usesLeft.setFill(javafx.scene.paint.Color.WHITE);
+        usesLeft.setEffect(new DropShadow());
+        usesLeft.setStyle("-fx-stroke: black;");
+        usesLeft.setStyle("-fx-stroke-width: 3;");
+        usesLeft.setMouseTransparent(true);
+        usesLeft.setVisible(false);
+        this.getChildren().add(usesLeft);
+        StackPane.setAlignment(usesLeft, Pos.BOTTOM_LEFT);
+
+        this.setPickOnBounds(false);
     }
 
     public void createCharacter(int charID) {
@@ -89,6 +106,7 @@ public class CharacterPane extends StackPane {
         noEntryTile.setPreserveRatio(true);
         noEntryTile.setFitHeight(PawnView.pawnSize);
         noEntryTile.setVisible(false);
+        noEntryTile.setMouseTransparent(true);
         this.getChildren().add(noEntryTile);
 
         noEntryTileText.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20));
@@ -97,9 +115,12 @@ public class CharacterPane extends StackPane {
         noEntryTileText.setStyle("-fx-stroke: black;");
         noEntryTileText.setStyle("-fx-stroke-width: 3;");
         noEntryTileText.setVisible(false);
+        noEntryTileText.setMouseTransparent(true);
         this.getChildren().add(noEntryTileText);
 
         colorSelectionPane = new ColorSelectionPane(charID);
+        this.getChildren().add(colorSelectionPane);
+        StackPane.setAlignment(colorSelectionPane, Pos.CENTER);
     }
 
     public void setCharacterImage(int charID) {
@@ -113,7 +134,7 @@ public class CharacterPane extends StackPane {
         charView.setCache(true);
     }
 
-    public void updateCharacter(HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+    public void updateCharacter(boolean isActive, int usesLeft,HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
         //Update students
         removeOldStuds(newStuds);
         addNewStuds(newStuds);
@@ -129,16 +150,34 @@ public class CharacterPane extends StackPane {
         }
         //Set overcharge
         coinOvercharge.setVisible(isOvercharged);
+        ImageView charView = ((ImageView) this.lookup(("#charView")));
+        if(isActive){
+            charView.setEffect(Effects.activatedCharacterShadow);
+            if(usesLeft > 0){
+                this.usesLeft.setText(Integer.toString(usesLeft));
+                this.usesLeft.setVisible(true);
+            }
+            else
+                this.usesLeft.setVisible(false);
+        }
+        else {
+            charView.setEffect(Effects.disabledCharacterShadow);
+            this.usesLeft.setVisible(false);
+
+        }
+
     }
 
     private void removeOldStuds(HashMap<Integer, Color> newStuds){
         List<Node> oldStuds = new ArrayList<>(studentPane.getChildren());
         List<String> studsNow = newStuds.keySet().stream().map(id -> "student" + id).toList();
         for(Node oldStud : oldStuds){
-            if(! studsNow.contains(oldStud.getId())){
-                Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(oldStud), GridPane.getRowIndex(oldStud));
-                studentPane.getChildren().remove(oldStud);
-                freeStudSpots.add(spotToFree);
+            if(oldStud instanceof StudentView) {
+                if (!studsNow.contains(oldStud.getId())) {
+                    Pair<Integer, Integer> spotToFree = new Pair<>(GridPane.getColumnIndex(oldStud), GridPane.getRowIndex(oldStud));
+                    studentPane.getChildren().remove(oldStud);
+                    freeStudSpots.add(spotToFree);
+                }
             }
         }
     }
@@ -161,35 +200,11 @@ public class CharacterPane extends StackPane {
         return studentPane.getStudents();
     }
 
-    public void setAbilityParameter(int par) {
-        parameterList.add(par);
-    }
-
-    public boolean isParameterListFull() {
-        return parameterList.size() == parNumber;
-    }
-
-    public List<Integer> getAbilityParameters() {
-        return parameterList;
-    }
-
-    public void clearAbilityParameters() {
-        parameterList.clear();
-    }
-
     public void setColor(Color color) {
-        int parameter = -1;
-        switch (color) { // todo check if this color order is right
-            case YELLOW -> parameter = 0;
-            case BLUE -> parameter = 1;
-            case GREEN -> parameter = 2;
-            case RED -> parameter = 3;
-            case PINK -> parameter = 4;
-        }
-        setAbilityParameter(parameter);
+        colorChosen = color;
     }
 
-    public Color getColor() {
+    public Color getColorChosen() {
         return colorChosen;
     }
 

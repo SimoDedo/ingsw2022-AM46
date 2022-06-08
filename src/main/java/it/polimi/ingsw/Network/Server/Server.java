@@ -14,5 +14,7 @@ public interface Server {
 
     void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction);
 
+    void handleLogout(String nickname);
+
     void close();
 }

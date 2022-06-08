@@ -81,9 +81,7 @@ public class CharacterManager  implements Serializable {
             if (character != null && character.wasUsedThisTurn())
                 throw new IllegalStateException("You can only use a character at a time");
         }
-        int cost = characters.get(ID - 1).getCost(); //Using the character may increase the cost, we must use the cost before activation
-        currentRequestParameters = characters.get(ID - 1).useCharacter(player); //This could throw exceptions -> first we try to activate then actually remove coin and set as active
-        player.takeCoins(cost);
+        currentRequestParameters = characters.get(ID - 1).useCharacter(player); //This could throw exceptions
         currentCharacter = characters.get(ID - 1);
         return currentRequestParameters;
     }

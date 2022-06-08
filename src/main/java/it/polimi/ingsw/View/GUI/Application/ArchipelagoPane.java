@@ -3,10 +3,7 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -15,9 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class contains most of the game elements, except for those that are specific to players. The islands, clouds,
@@ -39,7 +34,7 @@ public class ArchipelagoPane extends AnchorPane {
     /**
      * The HBox that contains the student bag and the coin heap.
      */
-    private BagContainerPane bagContainer;
+    private final BagContainerPane bagContainer;
 
     /**
      * The HBox that contains the characters.
@@ -62,6 +57,10 @@ public class ArchipelagoPane extends AnchorPane {
      */
     private List<Integer> islandsIDs;
 
+    private HashMap<Integer, List<Integer>> islandConfiguration;
+    private int movePower;
+    private int islandGroupMN;
+
     private int islandChosen;
     private int studentChosen;
 
@@ -79,7 +78,10 @@ public class ArchipelagoPane extends AnchorPane {
             IslandTilePane newIsland = new IslandTilePane(controller, this, i);
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
-            newIsland.relocate(centerPos +  Math.cos(Math.PI / 6 * i)*centerPos, centerPos - Math.sin(Math.PI / 6 * i)*centerPos);
+            newIsland.relocate(
+                    centerPos + Math.cos(Math.PI/2 - Math.PI / 6 * i)*centerPos,
+                    centerPos - Math.sin(Math.PI/2 - Math.PI / 6 * i)*centerPos
+            );
         }
 
         // character container pane goes here
@@ -106,11 +108,13 @@ public class ArchipelagoPane extends AnchorPane {
      */
     public void createIslands(int motherNatureIsland, List<Integer> islands){
         this.islandsIDs = new ArrayList<>();
+        this.islandConfiguration = new HashMap<>();
         //Finishes creating islands
         for (int i = 0; i < 12; i++) {
             IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
             islandTilePane.setId("islandTilePane" + islands.get(i));
             this.islandsIDs.add(islands.get(i));
+            this.islandConfiguration.put(i, new ArrayList<>(List.of(islands.get(i))));
             islandTilePane.createIslandTile(islands.get(i));
         }
         updateMotherNature(motherNatureIsland, islands);
@@ -149,6 +153,16 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     /**
+     * Updates move power used to show which islands are selectable, along with the group occupied by mother nature
+     * @param movePower the current move power of the player
+     * @param motherNatureIslandGroup the island group that contains mother nature
+     */
+    public void updateMovePower(int movePower, int motherNatureIslandGroup){
+        this.movePower = movePower;
+        this.islandGroupMN = motherNatureIslandGroup;
+    }
+
+    /**
      * Updates all islands on the presence (and color) of a tower on them.
      * @param towers a hashmap with all the islands that have a tower on them and their associated color
      */
@@ -182,13 +196,6 @@ public class ArchipelagoPane extends AnchorPane {
     }
 
     /**
-     * Updates island groups, merging islands on the GUI if they have been merged in the server model.
-     * @param islandsConfiguration the current configuration of the islands inside island groups
-     */
-    public void updateMerge(HashMap<Integer, List<Integer>> islandsConfiguration) {//todo
-    }
-
-    /**
      * Updates a single cloud on the presence, number and color of students on it.
      * @param cloud the ID of the cloud to update
      * @param studs a hashmap with each student's ID and color on the cloud
@@ -212,8 +219,8 @@ public class ArchipelagoPane extends AnchorPane {
      * @param newStuds a hashmap with each student's ID and color on the character
      * @param numOfNoEntryTiles the number of no-entry tiles on the character
      */
-    public void updateCharacter(int ID, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
-        charContainer.updateCharacter(ID, newStuds, numOfNoEntryTiles, isOvercharged);
+    public void updateCharacter(int ID, boolean isActive, int usesLeft, HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
+        charContainer.updateCharacter(ID, isActive, usesLeft,newStuds, numOfNoEntryTiles, isOvercharged);
     }
 
     /**
@@ -224,21 +231,119 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer.updateCoinHeap(coinsLeft);
     }
 
+    /**
+     * Updates island groups, merging islands on the GUI if they have been merged in the server model.
+     * @param newIslandsConfiguration the current configuration of the islands inside island groups
+     */
+    public void updateMerge(HashMap<Integer, List<Integer>> newIslandsConfiguration) {
+        if(newIslandsConfiguration.size() < islandConfiguration.size()){
+            //Find old groups to merge
+            ArrayList<Integer> groupsToMerge = new ArrayList<>();
+            for (Integer islandGroup : islandConfiguration.keySet()){
+                if(! newIslandsConfiguration.containsValue(islandConfiguration.get(islandGroup)))
+                    groupsToMerge.add(islandGroup);
+            }
+            groupsToMerge.sort(Comparator.comparingInt(g -> g));
+
+            System.out.println(islandConfiguration);
+            System.out.println(newIslandsConfiguration);
+            if(groupsToMerge.size() == 2){ //If only to groups to merge, merges them by making them move to each other
+                if(groupsToMerge.get(0) == 0 && groupsToMerge.get(1) == islandConfiguration.size() - 1){
+                    //Reorder groups so that idx 0 has to move back if merge between 0 and last
+                    groupsToMerge.clear();
+                    groupsToMerge.add(islandConfiguration.size() - 1);
+                    groupsToMerge.add(0);
+                }
+
+                Point2D mergeDiff = calcMergeDiffMedian(
+                        islandConfiguration.get(groupsToMerge.get(0)).get(islandConfiguration.get(groupsToMerge.get(0)).size() - 1),
+                        islandConfiguration.get(groupsToMerge.get(1)).get(0)
+                );
+                for (Integer islandForward : islandConfiguration.get(groupsToMerge.get(0)))
+                    relocateForward(islandForward, mergeDiff);
+                for(Integer islandBack : islandConfiguration.get(groupsToMerge.get(1)))
+                    relocateBack(islandBack, mergeDiff);
+
+            }
+            else if(groupsToMerge.size() == 3){ //If three groups are merging, then the central one will stay still
+                if(groupsToMerge.get(0) == 0 && groupsToMerge.get(2) == islandConfiguration.size() - 1){
+                    //Reorder groups so that idx 1 is always the central group
+                    int toMove = groupsToMerge.get(1);
+                    if (toMove == 1) {
+                        Collections.rotate(groupsToMerge ,1); // 0,1,Last -> Last,0,1
+                    } else { //toMove == islandConfiguration.size() - 2
+                        Collections.rotate(groupsToMerge ,-1); // 0,Last-1,Last -> Last-1,Last,0
+                    }
+                }
+
+                Point2D mergeDiff1 = calcMergeDiff(
+                        islandConfiguration.get(groupsToMerge.get(0)).get(islandConfiguration.get(groupsToMerge.get(0)).size() - 1),
+                        islandConfiguration.get(groupsToMerge.get(1)).get(0)
+                );
+                Point2D mergeDiff2 = calcMergeDiff(
+                        islandConfiguration.get(groupsToMerge.get(1)).get(islandConfiguration.get(groupsToMerge.get(1)).size() - 1),
+                        islandConfiguration.get(groupsToMerge.get(2)).get(0)
+                );
+                for (Integer islandForward : islandConfiguration.get(groupsToMerge.get(0)))
+                    relocateForward(islandForward, mergeDiff1);
+                for(Integer islandBack : islandConfiguration.get(groupsToMerge.get(2)))
+                    relocateBack(islandBack, mergeDiff2);
+            }
+            this.islandConfiguration = newIslandsConfiguration;
+        }
+    }
+
     public void enableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            int finalIslandID = islandID;
+            ImageView islandView = (ImageView) island.lookup("#islandView");
+            islandView.setEffect(Effects.enabledIslandShadow);
+            island.setOnMouseEntered(e ->{
+                islandView.setEffect(Effects.hoveringIslandShadow);
+            });
+            island.setOnMouseExited(e ->{
+                islandView.setEffect(Effects.enabledIslandShadow);
+
+            });
             island.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me, an island tile! " + island.getId());
-                setIslandChosen(finalIslandID);
+                setIslandChosen(islandID);
                 controller.notifyIsland();
             });
+        }
+    }
+
+    public void enableSelectIslandReachable() {
+        for (int i = 1; i <= movePower; i++) {
+            int group = islandGroupMN + i < islandConfiguration.size() ?
+                    islandGroupMN + i : islandGroupMN + i - islandConfiguration.size();
+            for (Integer islandID : islandConfiguration.get(group)){
+                IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+                ImageView islandView = (ImageView) island.lookup("#islandView");
+                islandView.setEffect(Effects.enabledIslandShadow);
+                island.setOnMouseEntered(e ->{
+                    islandView.setEffect(Effects.hoveringIslandShadow);
+                });
+                island.setOnMouseExited(e ->{
+                    islandView.setEffect(Effects.enabledIslandShadow);
+
+                });
+                island.setOnMouseClicked(event -> {
+                    System.out.println("Someone clicked on me, an island tile! " + island.getId());
+                    setIslandChosen(islandID);
+                    controller.notifyIsland();
+                });
+            }
         }
     }
 
     public void disableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
+            ImageView islandView = (ImageView) island.lookup("#islandView");
+            islandView.setEffect(Effects.disabledIslandShadow);
+            island.setOnMouseEntered(e ->{});
+            island.setOnMouseExited(e ->{});
             island.setOnMouseClicked(event -> {
                 System.out.println("I'm disabled! " + island.getId());
             });
@@ -287,16 +392,19 @@ public class ArchipelagoPane extends AnchorPane {
         return studentChosen;
     }
 
-    public void enableSelectIslandChar(CharContainerPane charContainerPane) {
-        for (int islandID : islandsIDs) {
-            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            int finalIslandID = islandID;
-            island.setOnMouseClicked(event -> {
-                System.out.println("Someone clicked on me, an island tile! Character active... " + island.getId());
-                setIslandChosen(finalIslandID);
-                controller.notifyIslandChar();
-            });
-        }
+    /**
+     * Calculates the distance between the merging point of either of the two soon-to-be merged islands and the midpoint
+     * of their merging points.
+     * @param forwardIndex the index of the island that will move forward to merge
+     * @param backIndex the island index of the island that will move backward to merge
+     * @return the coordinates representing the distance
+     */
+    public Point2D calcMergeDiffMedian(int forwardIndex, int backIndex) {
+        IslandTilePane backIsland = (IslandTilePane) this.lookup("#islandTilePane" + backIndex);
+        Point2D backMergePoint = backIsland.getBackMergePoint();
+        IslandTilePane forwardIsland = (IslandTilePane) this.lookup("#islandTilePane" + forwardIndex);
+        Point2D forwardMergePoint = forwardIsland.getForwardMergePoint();
+        return backMergePoint.midpoint(forwardMergePoint).subtract(forwardMergePoint);
     }
 
     /**
@@ -311,7 +419,7 @@ public class ArchipelagoPane extends AnchorPane {
         Point2D backMergePoint = backIsland.getBackMergePoint();
         IslandTilePane forwardIsland = (IslandTilePane) this.lookup("#islandTilePane" + forwardIndex);
         Point2D forwardMergePoint = forwardIsland.getForwardMergePoint();
-        return backMergePoint.midpoint(forwardMergePoint).subtract(forwardMergePoint);
+        return backMergePoint.subtract(forwardMergePoint);
     }
 
     /**
@@ -331,10 +439,10 @@ public class ArchipelagoPane extends AnchorPane {
             }
         };
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(500),
+                new KeyFrame(Duration.ZERO,
                         new KeyValue(translate.xProperty(), 0d, customInterpolator),
                         new KeyValue(translate.yProperty(), 0d, customInterpolator)),
-                new KeyFrame(Duration.millis(2000),
+                new KeyFrame(Duration.millis(1000),
                         new KeyValue(translate.xProperty(), mergeDiff.getX(), customInterpolator),
                         new KeyValue(translate.yProperty(), mergeDiff.getY(), customInterpolator))
         );

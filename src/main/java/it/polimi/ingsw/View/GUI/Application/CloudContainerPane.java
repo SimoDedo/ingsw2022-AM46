@@ -16,8 +16,6 @@ public class CloudContainerPane extends HBox {
 
     static double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
 
-    private int cloudNumber;
-
     private int cloudChosen;
 
     private List<Integer> cloudsIDs;
@@ -38,7 +36,6 @@ public class CloudContainerPane extends HBox {
      */
     public void createClouds(int numOfPlayers, List<Integer> clouds) {
         cloudsIDs = new ArrayList<>();
-        this.cloudNumber = numOfPlayers;
         for (int i = 0; i < numOfPlayers; i++) {
             CloudPane cloudPane = new CloudPane();
             cloudPane.setId("cloudPane" + clouds.get(i));
@@ -60,12 +57,16 @@ public class CloudContainerPane extends HBox {
         return cloudChosen;
     }
 
-    public void emptyCloud(int cloudChosen) { //todo
-    }
-
     public void enableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
+            cloudPane.setEffect(Effects.enabledCloudShadow);
+            cloudPane.setOnMouseEntered(e ->{
+                cloudPane.setEffect(Effects.hoveringCloudShadow);
+            });
+            cloudPane.setOnMouseExited(e ->{
+                cloudPane.setEffect(Effects.enabledCloudShadow);
+            });
             int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
                 System.out.println("Someone clicked on me!" + cloudPane.getId());
@@ -78,6 +79,9 @@ public class CloudContainerPane extends HBox {
     public void disableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
+            cloudPane.setEffect(Effects.disabledCloudShadow);
+            cloudPane.setOnMouseEntered(e ->{});
+            cloudPane.setOnMouseExited(e ->{});
             cloudPane.setOnMouseClicked(event -> {
                 System.out.println("I'm disabled");
             });

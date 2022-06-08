@@ -15,20 +15,21 @@ public class StudentView extends PawnView {
     public StudentView(int id, String pawnType, String color, double size) {
         super(id, pawnType, color, size);
         this.color = color;
+        this.setEffect(Effects.disabledStudentShadow);
     }
 
     public void setDisabled() {
         this.setMouseTransparent(true);
-        this.setEffect(new DropShadow(studentSize/2, Color.DIMGREY));
+        this.setEffect(Effects.disabledStudentShadow);
         this.setOnMouseEntered(mouseEvent -> {});
         this.setOnMouseExited(mouseEvent -> {});
     }
 
     public void setEnabled() {
         this.setMouseTransparent(false);
-        this.setEffect(new DropShadow(studentSize, Color.LIGHTCYAN));
-        this.setOnMouseEntered(mouseEvent -> this.setEffect(new DropShadow(studentSize*2, Color.BLUE)));
-        this.setOnMouseExited(mouseEvent -> this.setEffect(new DropShadow(studentSize, Color.LIGHTCYAN)));
+        this.setEffect(Effects.enabledStudentShadow);
+        this.setOnMouseEntered(mouseEvent -> this.setEffect(Effects.hoveringStudentShadow));
+        this.setOnMouseExited(mouseEvent -> this.setEffect(Effects.enabledStudentShadow));
     }
 
     public void setCallback(EventHandler<MouseEvent> eventHandler) {
