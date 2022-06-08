@@ -42,6 +42,8 @@ public class Client {
     private InputStream in;
     private ObjectInputStream inObj;
 
+    private final ExecutorService mainThread;
+
     /**
      * Thread queue where all operations that must request something to the user are executed.
      */
@@ -73,6 +75,7 @@ public class Client {
         }
         defaultServerIP = "127.0.0.1";
         defaultServerPort = 4646;
+        mainThread = Executors.newSingleThreadExecutor();
         requestQueue = Executors.newSingleThreadExecutor();
         infoQueue = Executors.newSingleThreadExecutor();
         gameStarted = false;
@@ -85,11 +88,11 @@ public class Client {
      * is started.
      */
     public void start(){
-        isToReset = false;
-        if(UI == null) //Skipped if --cli or --gui option
-            askCLIorGUI();
-
-        while (socket == null){ //Asks for server info
+        mainThread.execute(() ->{
+            isToReset = false;
+            if(UI == null) //Skipped if --cli or --gui option
+                askCLIorGUI();
+            while (socket == null){ //Asks for server info
                 Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
                 try {
@@ -98,21 +101,22 @@ public class Client {
                 catch (NumberFormatException e){
                     serverPort = 0;
                 }
-            connectToLobbyServer(serverIP, serverPort);
-        }
+                connectToLobbyServer(serverIP, serverPort);
+            }
 
-        startPing(); //Starts heartbeat with lobby server on another thread
-        requestQueue.execute(() -> {
-            nickname = UI.requestNickname();
-            UI.setNickname(nickname);
-            tryLobbyLogin();
+            startPing(); //Starts heartbeat with lobby server on another thread
+            requestQueue.execute(() -> {
+                nickname = UI.requestNickname();
+                UI.setNickname(nickname);
+                tryLobbyLogin();
+            });
+
+            while (! isToReset){
+                Message message = receiveMessage();
+                if (message != null)
+                    parseMessage(message);
+            }
         });
-
-        while (! isToReset){
-            Message message = receiveMessage();
-            if (message != null)
-                parseMessage(message);
-        }
     }
 
     //region Server connection
@@ -335,8 +339,6 @@ public class Client {
                 UI.updateCommands(toDisable, toEnable);
             }
             case MOVE_STUDENT -> {
-                UI.displayWinners(TowerColor.BLACK, new ArrayList<>(List.of("lol")));
-                logoutFromServer();
                 toDisable.add(Command.ASSISTANT);
                 if(update.getGame().getGameMode() == GameMode.EXPERT && update.getGame().getActiveCharacterID() == -1)
                     toEnable.add(Command.CHARACTER);
@@ -406,8 +408,6 @@ public class Client {
 
             }
             case MOVE_STUDENT -> {
-                UI.displayWinners(TowerColor.BLACK, new ArrayList<>(List.of("lol")));
-                logoutFromServer();
                 toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
@@ -453,7 +453,6 @@ public class Client {
         } catch (IOException e) {
             fatalError("Unable to write to server.");
         }
-
     }
 
     /**
@@ -500,17 +499,23 @@ public class Client {
      * Closes the application.
      */
     public void close() {
-        try {
-            socket.close();
-        } catch (Exception ignored) {
-        }
         System.exit(-1);
+    }
+
+    public void reset(){
+        gameStarted = false;
+        nickname = null;
+        socket = null;
+
+        start();
     }
 
     public void fatalError(String errorDescription){
         if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
-            UI.displayError(errorDescription, true);
             disconnectFromServer();
+            infoQueue.execute(() -> {
+                UI.displayError(errorDescription, true);
+            });
         }
     }
 

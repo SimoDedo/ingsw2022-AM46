@@ -12,10 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class contains most of the game elements, except for those that are specific to players. The islands, clouds,
@@ -238,7 +235,7 @@ public class ArchipelagoPane extends AnchorPane {
      * Updates island groups, merging islands on the GUI if they have been merged in the server model.
      * @param newIslandsConfiguration the current configuration of the islands inside island groups
      */
-    public void updateMerge(HashMap<Integer, List<Integer>> newIslandsConfiguration) {//fixme
+    public void updateMerge(HashMap<Integer, List<Integer>> newIslandsConfiguration) {
         if(newIslandsConfiguration.size() < islandConfiguration.size()){
             //Find old groups to merge
             ArrayList<Integer> groupsToMerge = new ArrayList<>();
@@ -270,13 +267,12 @@ public class ArchipelagoPane extends AnchorPane {
             }
             else if(groupsToMerge.size() == 3){ //If three groups are merging, then the central one will stay still
                 if(groupsToMerge.get(0) == 0 && groupsToMerge.get(2) == islandConfiguration.size() - 1){
-                    //Reorder groups so that idx 1 is always the central
+                    //Reorder groups so that idx 1 is always the central group
                     int toMove = groupsToMerge.get(1);
-                    groupsToMerge.remove(1);
                     if (toMove == 1) {
-                        groupsToMerge.add(2, toMove);
+                        Collections.rotate(groupsToMerge ,1); // 0,1,Last -> Last,0,1
                     } else { //toMove == islandConfiguration.size() - 2
-                        groupsToMerge.add(0, toMove);
+                        Collections.rotate(groupsToMerge ,-1); // 0,Last-1,Last -> Last-1,Last,0
                     }
                 }
 
@@ -285,7 +281,7 @@ public class ArchipelagoPane extends AnchorPane {
                         islandConfiguration.get(groupsToMerge.get(1)).get(0)
                 );
                 Point2D mergeDiff2 = calcMergeDiff(
-                        islandConfiguration.get(groupsToMerge.get(1)).get(islandConfiguration.get(groupsToMerge.get(0)).size() - 1),
+                        islandConfiguration.get(groupsToMerge.get(1)).get(islandConfiguration.get(groupsToMerge.get(1)).size() - 1),
                         islandConfiguration.get(groupsToMerge.get(2)).get(0)
                 );
                 for (Integer islandForward : islandConfiguration.get(groupsToMerge.get(0)))
@@ -443,10 +439,10 @@ public class ArchipelagoPane extends AnchorPane {
             }
         };
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(500),
+                new KeyFrame(Duration.ZERO,
                         new KeyValue(translate.xProperty(), 0d, customInterpolator),
                         new KeyValue(translate.yProperty(), 0d, customInterpolator)),
-                new KeyFrame(Duration.millis(2000),
+                new KeyFrame(Duration.millis(1000),
                         new KeyValue(translate.xProperty(), mergeDiff.getX(), customInterpolator),
                         new KeyValue(translate.yProperty(), mergeDiff.getY(), customInterpolator))
         );

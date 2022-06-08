@@ -524,6 +524,8 @@ public class CLI implements UI {
             toPrint.append("you lost! Team ").append(winner).append(" has won.");
         }
         this.displayInfo(toPrint.toString());
+        notifyServerResponse();
+        endGame();
     }
 
     private void endGame() {

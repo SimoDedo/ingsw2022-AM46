@@ -70,6 +70,10 @@ public class GUIController {
         gui.close();
     }
 
+    public void switchToLogin(){
+        GUIApplication.runLaterExecutor.execute(guiApplication::switchToLogin);
+    }
+
     public void connectToIP() {
         if(debug){
             String IP = ( (TextField) guiApplication.lookup("ipField")).getText();
@@ -191,19 +195,17 @@ public class GUIController {
         List<String> wiz = wizards.stream()
                 .map(w -> w.toString().charAt(0) + w.toString().substring(1).toLowerCase())
                 .toList();
-        if(! guiApplication.lookup("towerWizardPane").isDisable()){
-            GUIApplication.runLaterExecutor.execute(() -> {
-                if(! guiApplication.lookup("colorChoice").isDisable() ){
-                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(tc);
-                    ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
-                }
-                if(! guiApplication.lookup("wizardChoice").isDisable() ) {
-                    ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getItems().setAll(wiz);
-                    ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getSelectionModel().select(0);
-                }
-                guiApplication.lookup("towerWizardButton").requestFocus();
-            });
-        }
+        GUIApplication.runLaterExecutor.execute(() -> {
+            if(! guiApplication.lookup("colorChoice").isDisable() ){
+                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(tc);
+                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
+            }
+            if(! guiApplication.lookup("wizardChoice").isDisable() ) {
+                ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getItems().setAll(wiz);
+                ((ChoiceBox<String>) guiApplication.lookup("wizardChoice")).getSelectionModel().select(0);
+            }
+            guiApplication.lookup("towerWizardButton").requestFocus();
+        });
     }
 
     public void towerColorSuccessful(){
@@ -226,7 +228,7 @@ public class GUIController {
 
     public TowerColor getTowerColorChosen(){
         String choice = ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getValue();
-        return TowerColor.valueOf(choice.toUpperCase());
+        return TowerColor.valueOf(choice == null ? null : choice.toUpperCase());
     }
 
     public void sendWizardType() {
@@ -530,7 +532,6 @@ public class GUIController {
     }
 
     public void disableClouds() {
-        System.out.println("wttffff"); //FIXME: cloud selectable after turn i dont get it
         GUIApplication.runLaterExecutor.execute(() -> {
             CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
             cloudContainerPane.disableSelectCloud();
@@ -908,8 +909,12 @@ public class GUIController {
             endGameDialogue.setHeaderText("The end");
             endGameDialogue.setContentText("end.");
             endGameDialogue.showAndWait();
-            Platform.exit();
-            gui.close();
+            //Platform.exit(); //DEBUG
+            //gui.close();
+            guiApplication.createLoginScene();
+            guiApplication.createGameSetupScene();
+            guiApplication.createMainScene();
+            gui.reset();
         });
     }
 

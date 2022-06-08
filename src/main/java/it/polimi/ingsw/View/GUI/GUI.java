@@ -29,6 +29,7 @@ public class GUI implements UI {
     private final Object waitInputLock;
     private boolean waitingInput;
 
+    private boolean resetting;
     private boolean loggedIn;
     private boolean chosenTC;
 
@@ -41,10 +42,24 @@ public class GUI implements UI {
 
         loggedIn = false;
         chosenTC = false;
+        resetting = false;
     }
 
     public void close() {
         client.close();
+    }
+
+    public void reset(){
+        resetting = true;
+        nickname = null;
+        waitingInput = false;
+
+        loggedIn = false;
+        chosenTC = false;
+
+        notifySetupInput();
+
+        client.reset();
     }
 
     @Override
@@ -110,7 +125,9 @@ public class GUI implements UI {
 
     @Override
     public Map<String, String> requestServerInfo(String defaultIP, int defaultPort) {
+        resetting = false;
         //show the scene, but on login already showing.
+        guiController.switchToLogin();
         waitSetupInput();
         return guiController.getIPChosen();
     }
@@ -128,7 +145,8 @@ public class GUI implements UI {
         loggedIn = true;
         guiController.enableGameSettings();
         waitSetupInput();
-        client.sendUserAction(
+        if(! resetting)
+            client.sendUserAction(
                 new GameSettingsUserAction(nickname, guiController.getNumOfPlayerChosen(), guiController.getGameModeChosen() ));
     }
 
@@ -142,7 +160,8 @@ public class GUI implements UI {
         guiController.showTowerWizard();
         guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         waitSetupInput();
-        client.sendUserAction(new TowerColorUserAction(this.nickname, guiController.getTowerColorChosen()));
+        if(! resetting)
+            client.sendUserAction(new TowerColorUserAction(this.nickname, guiController.getTowerColorChosen()));
     }
 
     @Override
@@ -156,7 +175,8 @@ public class GUI implements UI {
             waitSetupInput();
         //guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         // causes automatic selection to be reset, however it's needed if somehow the real time updating fails. but it shouldn't so it's removed for now
-        client.sendUserAction(new WizardUserAction(this.nickname, guiController.getWizardChosen()));
+        if(! resetting)
+            client.sendUserAction(new WizardUserAction(this.nickname, guiController.getWizardChosen()));
     }
 
     @Override
@@ -180,43 +200,52 @@ public class GUI implements UI {
 
     @Override
     public void displayBoard(ObservableByClient game, UserActionType actionTaken) {
-        switch (actionTaken){
-            case WAIT_GAME_START -> guiController.initialDraw(game, nickname);
-            case PLAY_ASSISTANT -> {
-                guiController.updateTurnOrder(game);
-                for(String nick : game.getPlayers())
-                    guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
+        if(actionTaken != null){
+            switch (actionTaken){
+                case WAIT_GAME_START -> guiController.initialDraw(game, nickname);
+                case PLAY_ASSISTANT -> {
+                    guiController.updateTurnOrder(game);
+                    for(String nick : game.getPlayers())
+                        guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
+                }
+                case MOVE_STUDENT ->{
+                    guiController.updateCharacters(game);
+                    guiController.updateTurnOrder(game);
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateArchipelago(game);
+                }
+                case MOVE_MOTHER_NATURE -> {
+                    guiController.updateArchipelago(game);
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateCharacters(game);
+                }
+                case TAKE_FROM_CLOUD -> {
+                    guiController.updateCharacters(game);
+                    guiController.updateCloud(game);
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateTurnOrder(game);
+                }
+                case USE_CHARACTER -> {
+                    guiController.updateArchipelago(game);
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateCharacters(game);
+                    guiController.updateCharacterRequest(game);
+                }
+                case USE_ABILITY -> {
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateArchipelago(game);
+                    guiController.updatePlayerBoards(game);
+                    guiController.updateCharacters(game);
+                    guiController.updateCharacterRequest(game);
+                }
             }
-            case MOVE_STUDENT ->{
-                guiController.updateCharacters(game);
-                guiController.updateTurnOrder(game);
-                guiController.updatePlayerBoards(game);
-                guiController.updateArchipelago(game);
-            }
-            case MOVE_MOTHER_NATURE -> {
-                guiController.updateArchipelago(game);
-                guiController.updatePlayerBoards(game);
-                guiController.updateCharacters(game);
-            }
-            case TAKE_FROM_CLOUD -> {
-                guiController.updateCharacters(game);
-                guiController.updateCloud(game);
-                guiController.updatePlayerBoards(game);
-                guiController.updateTurnOrder(game);
-            }
-            case USE_CHARACTER -> {
-                guiController.updateArchipelago(game);
-                guiController.updatePlayerBoards(game);
-                guiController.updateCharacters(game);
-                guiController.updateCharacterRequest(game);
-            }
-            case USE_ABILITY -> {
-                guiController.updatePlayerBoards(game);
-                guiController.updateArchipelago(game);
-                guiController.updatePlayerBoards(game);
-                guiController.updateCharacters(game);
-                guiController.updateCharacterRequest(game);
-            }
+        }
+        else {
+            guiController.updateCharacters(game);
+            guiController.updateTurnOrder(game);
+            guiController.updatePlayerBoards(game);
+            guiController.updateArchipelago(game);
+            guiController.updateCloud(game);
         }
     }
 
