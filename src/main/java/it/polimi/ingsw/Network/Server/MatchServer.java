@@ -12,7 +12,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -128,7 +127,7 @@ public class MatchServer implements Server, Runnable {
                 connection.close();
                 System.err.println("Match server on port " + port + " closed connection with: \"" + nickname + "\" (" + connection.getInetAddress() +")");
             }
-            unregisterClient(connection.getInetAddress(), nickname, connection);
+            unregisterClient(nickname);
         }
         try {
             serverSocket.close();
@@ -185,6 +184,7 @@ public class MatchServer implements Server, Runnable {
             if (!isFull()) {
                 System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port);
                 registerClient(IP, nickname, socketConnection);
+                socketConnection.setNickname(nickname);
                 controller.loginHandle(nickname);
             } else {
                 socketConnection.sendMessage(new LoginError("The server is full!"));
@@ -200,13 +200,21 @@ public class MatchServer implements Server, Runnable {
         }
     }
 
+    @Override
+    public void handleLogout(String nickname){
+        System.out.println("\"" + nickname + "\" (" + connectionMap.get(nickname).getInetAddress() + ") logged out from match server on port " + port);
+        unregisterClient(nickname);
+        if(connectionMap.isEmpty())
+            close();
+    }
+
     public void registerClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
         connectionMap.put(nickname, socketConnection);
         lobbyServer.registerClient(nickname, IP);
     }
 
-    public void unregisterClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
-        connectionMap.remove(nickname, socketConnection);
-        lobbyServer.unregisterClient(nickname, IP);
+    public void unregisterClient(String nickname) {
+        connectionMap.remove(nickname);
+        lobbyServer.handleLogout(nickname);
     }
 }

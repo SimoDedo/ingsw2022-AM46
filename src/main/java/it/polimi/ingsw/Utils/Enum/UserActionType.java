@@ -17,7 +17,8 @@ public enum UserActionType {
     USE_CHARACTER("has used a character", null),
     USE_ABILITY("has activated a character ability", "can activate a character ability"),
     END_GAME,
-    END_TURN;
+    END_TURN,
+    DISCONNECT;
 
     private String actionTakenDesc;
     private String actionToTakeDesc;

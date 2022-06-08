@@ -7,6 +7,7 @@ import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
@@ -37,7 +38,7 @@ public class GUIController {
 
     private boolean characterAbilityState = false;
     private List<RequestParameter> requestParameters;
-    private List<Integer> characterParameters;
+    private final List<Integer> characterParameters;
 
     public GUIController(GUI gui) {
         this.gui = gui;
@@ -50,7 +51,7 @@ public class GUIController {
         this.nickname = nickname;
     }
 
-    public void displayError(String errorDescription) {
+    public void displayError(String errorDescription, boolean isGameEnding) {
         GUIApplication.runLaterExecutor.execute(() -> {
             Alert errorDialog = new Alert(Alert.AlertType.ERROR);
             Stage stage = (Stage) errorDialog.getDialogPane().getScene().getWindow();
@@ -59,8 +60,11 @@ public class GUIController {
             errorDialog.setHeaderText("Wrong action!");
             errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
             errorDialog.showAndWait();
+            if(isGameEnding)
+                endGame();;
         });
     }
+
 
     public void close() {
         gui.close();
@@ -74,7 +78,7 @@ public class GUIController {
             connectToIPSuccessful(); // DELETEME debug
         }
         else {
-            gui.notifyInput();
+            gui.notifySetupInput();
         }
     }
 
@@ -98,7 +102,7 @@ public class GUIController {
             connectWithNicknameSuccessful(); // DELETEME debug
         }
         else {
-            gui.notifyInput();
+            gui.notifySetupInput();
         }
     }
 
@@ -140,7 +144,7 @@ public class GUIController {
             showTowerWizard(); // DELETEME debug
         }
         else {
-            gui.notifyInput();
+            gui.notifySetupInput();
         }
     }
 
@@ -216,7 +220,7 @@ public class GUIController {
             System.out.println("Tower color chosen"); // DELETEME debug
         }
         else{
-            gui.notifyInput();
+            gui.notifySetupInput();
         }
     }
 
@@ -234,7 +238,7 @@ public class GUIController {
             startGame();
         }
         else {
-            gui.notifyInput();
+            gui.notifySetupInput();
         }
     }
 
@@ -862,6 +866,51 @@ public class GUIController {
 
     public void enableAll(){
         guiApplication.enableAll();
+    }
+
+    public void displayWinners(TowerColor winner, List<String> winners){
+        String title;
+        StringBuilder toPrint = new StringBuilder();
+        if(winners.contains(nickname)){
+            title = "Winner!";
+            toPrint.append("CONGRATULATIONS ");
+            for(String player : winners){
+                toPrint.append(player).append(" ");
+            }
+            toPrint.append("!! Team ").append(winner).append(" has WON!!!");
+        }
+        else {
+            title = "Loser!";
+            toPrint.append("Too bad! ");
+            for(String player : winners){
+                toPrint.append(player).append(" ");
+            }
+            toPrint.append("you lost! Team ").append(winner).append(" has won.");
+        }
+        GUIApplication.runLaterExecutor.execute(() -> {
+            Alert winnerDialogue = new Alert(Alert.AlertType.INFORMATION);
+            Stage stage = (Stage) winnerDialogue.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("/general/icon.png"));
+            winnerDialogue.setTitle(title);
+            winnerDialogue.setHeaderText("Game ended!");
+            winnerDialogue.setContentText(toPrint.toString());
+            winnerDialogue.showAndWait();
+            endGame();
+        });
+    }
+
+    public void endGame(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            Alert endGameDialogue = new Alert(Alert.AlertType.INFORMATION);
+            Stage stage = (Stage) endGameDialogue.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("/general/icon.png"));
+            endGameDialogue.setTitle("End");
+            endGameDialogue.setHeaderText("The end");
+            endGameDialogue.setContentText("end.");
+            endGameDialogue.showAndWait();
+            Platform.exit();
+            gui.close();
+        });
     }
 
 }

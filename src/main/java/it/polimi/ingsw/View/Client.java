@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
+import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
 import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -56,12 +57,14 @@ public class Client {
     private ExecutorService pingExecutor;
 
     private boolean gameStarted;
+    private boolean isToReset;
 
     /**
      * Constructor for the Client
      * @param chosenUI represents a CLI or a GUI.
      */
     public Client(String chosenUI){
+        isToReset = false;
         if(chosenUI != null){
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
@@ -82,6 +85,7 @@ public class Client {
      * is started.
      */
     public void start(){
+        isToReset = false;
         if(UI == null) //Skipped if --cli or --gui option
             askCLIorGUI();
 
@@ -104,8 +108,10 @@ public class Client {
             tryLobbyLogin();
         });
 
-        while (true){
-            parseMessage( receiveMessage() );
+        while (! isToReset){
+            Message message = receiveMessage();
+            if (message != null)
+                parseMessage(message);
         }
     }
 
@@ -146,7 +152,7 @@ public class Client {
         try {
             socket.close();
         } catch (IOException e) {
-            UI.displayError("Error in disconnecting from server: " + e.getLocalizedMessage(), true);
+            fatalError("Error in disconnecting from server.");
         }
     }
 
@@ -165,8 +171,7 @@ public class Client {
             socket.setSoTimeout(2000);
             UI.displayInfo("Connected to match server.");
         } catch (IOException e) {
-            UI.displayError("Could not connect to match server: " + e, true);
-            reset();
+            fatalError("Could not connect to match server.");
         }
         sendUserAction(new LoginUserAction(nickname));
     }
@@ -192,8 +197,7 @@ public class Client {
             error = true;
         }
         if (error){
-            UI.displayError("Error occurred while shutting down ping." , true);
-            reset();
+            fatalError("Error occurred while shutting down ping.");
         }
     }
     //endregion
@@ -260,9 +264,8 @@ public class Client {
             UI.displayError(message.toString(), false);
             parseUpdate(lastUpdate);
         }
-        else{
-            UI.displayError("Server didn't send correct information.", true);
-            reset();
+        else if (message instanceof LogoutSuccessfulInfo){
+            disconnectFromServer();
         }
     }
 
@@ -332,6 +335,8 @@ public class Client {
                 UI.updateCommands(toDisable, toEnable);
             }
             case MOVE_STUDENT -> {
+                UI.displayWinners(TowerColor.BLACK, new ArrayList<>(List.of("lol")));
+                logoutFromServer();
                 toDisable.add(Command.ASSISTANT);
                 if(update.getGame().getGameMode() == GameMode.EXPERT && update.getGame().getActiveCharacterID() == -1)
                     toEnable.add(Command.CHARACTER);
@@ -364,7 +369,6 @@ public class Client {
                 UI.updateCommands(toDisable, toEnable);
             }
         }
-
 
         if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
             UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
@@ -402,6 +406,8 @@ public class Client {
 
             }
             case MOVE_STUDENT -> {
+                UI.displayWinners(TowerColor.BLACK, new ArrayList<>(List.of("lol")));
+                logoutFromServer();
                 toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.CLOUD, Command.CHARACTER, Command.ABILITY));
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
@@ -417,7 +423,12 @@ public class Client {
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
-                UI.displayInfo("Team " + update.getGame().getWinner() + " has WON!!!");
+                List<String> winners = update.getGame().getPlayerTeams().entrySet().stream()
+                        .filter(e -> e.getValue().equals(update.getGame().getWinner()))
+                        .map(Map.Entry::getKey)
+                        .toList();
+                UI.displayWinners(update.getGame().getWinner(), winners);
+                logoutFromServer();
             }
         }
 
@@ -440,9 +451,9 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            UI.displayError("Unable to write to server: " + e.getLocalizedMessage(), true);
-            reset();
+            fatalError("Unable to write to server.");
         }
+
     }
 
     /**
@@ -456,17 +467,21 @@ public class Client {
         } catch (IOException | ClassNotFoundException e) {
             if(e instanceof SocketTimeoutException){
                 System.err.println("Connection timed out: " + e.getLocalizedMessage());
-                UI.displayError("Connection timed out: " + e.getLocalizedMessage(), true);
+                fatalError("Connection timed out.");
+            }
+            else if(e instanceof EOFException){
+                System.err.println("Someone disconnected.");
+                fatalError("Someone disconnected.");
             }
             else{
                 System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
-                UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
+                fatalError("Unable to receive messages from server.");
             }
-            reset();
+            return null;
         }
         if(!(message instanceof Message)){
-            UI.displayError("Server didn't send correct information.", true);
-            reset();
+            fatalError("Server didn't send correct information.");
+            return null;
         }
         return (Message) message;
     }
@@ -480,14 +495,35 @@ public class Client {
         System.out.flush();
     }
 
+
     /**
      * Closes the application.
      */
-    public void reset(){
+    public void close() {
         try {
             socket.close();
-        } catch (Exception ignored) {}
-        System.exit(-1); //FIXME: actual reset
+        } catch (Exception ignored) {
+        }
+        System.exit(-1);
+    }
 
+    public void fatalError(String errorDescription){
+        if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
+            UI.displayError(errorDescription, true);
+            disconnectFromServer();
+        }
+    }
+
+    private void logoutFromServer(){
+        sendUserAction(new LogoutUserAction(nickname));
+    }
+
+    private void disconnectFromServer(){
+        isToReset = true;
+        stopPing();
+        try {
+            socket.close();
+        } catch (Exception ignored) {
+        }
     }
 }

@@ -126,6 +126,7 @@ public class LobbyServer implements Server {
         else {
             System.out.println("\"" + loginAction.getNickname() + "\" (" + socketConnection.getInetAddress() + ") logged in.");
             registerClient(loginAction.getNickname(), socketConnection.getInetAddress());
+            socketConnection.setNickname(loginAction.getNickname());
             MatchServer serverToConnect = null;
             for (MatchServer server : matchServers) {
                 if (server.isInitialized() && !server.isFull()) {
@@ -145,6 +146,11 @@ public class LobbyServer implements Server {
         }
     }
 
+    @Override
+    public void handleLogout(String nickname){
+        unregisterClient(nickname);
+    }
+
 
     public void deleteMatch(MatchServer matchServer){
         matchServers.remove(matchServer);
@@ -155,8 +161,8 @@ public class LobbyServer implements Server {
 
     }
 
-    public void unregisterClient(String nickname, InetAddress IP) {
-        registeredNicks.remove(nickname, IP);
-        System.out.println("\"" + nickname + "\" (" + IP + ") logged out.");
+    public void unregisterClient(String nickname) {
+        System.out.println("\"" + nickname + "\" (" + registeredNicks.get(nickname) + ") logged out from Lobby.");
+        registeredNicks.remove(nickname);
     }
 }

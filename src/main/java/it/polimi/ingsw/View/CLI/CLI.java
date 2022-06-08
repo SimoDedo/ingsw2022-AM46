@@ -467,9 +467,10 @@ public class CLI implements UI {
     }
 
     @Override
-    public void displayError(String error, boolean isUrgent) {
-        if(isUrgent){
+    public void displayError(String error, boolean isFatal) {
+        if(isFatal){
             System.out.println(RED + error + RESET);
+            endGame();
         }
         else
             errorQueue.add(RED + error +"\nPlease retry.\n" + RESET);
@@ -503,6 +504,30 @@ public class CLI implements UI {
     @Override
     public void displayBoard(ObservableByClient game, UserActionType actionTaken) {
         update(game);
+    }
+
+    @Override
+    public void displayWinners(TowerColor winner, List<String> winners) {
+        StringBuilder toPrint = new StringBuilder();
+        if(winners.contains(nickname)){
+            toPrint.append("CONGRATULATIONS ");
+            for(String player : winners){
+                toPrint.append(player).append(" ");
+            }
+            toPrint.append("!! Team ").append(winner).append(" has WON!!!");
+        }
+        else {
+            toPrint.append("Too bad! ");
+            for(String player : winners){
+                toPrint.append(player).append(" ");
+            }
+            toPrint.append("you lost! Team ").append(winner).append(" has won.");
+        }
+        this.displayInfo(toPrint.toString());
+    }
+
+    private void endGame() {
+        System.exit(0);
     }
 
     private void displayWelcome() {

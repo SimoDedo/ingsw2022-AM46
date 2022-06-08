@@ -6,6 +6,7 @@ import it.polimi.ingsw.Network.Message.UserAction.TowerColorUserAction;
 import it.polimi.ingsw.Network.Message.UserAction.UserAction;
 import it.polimi.ingsw.Network.Message.UserAction.WizardUserAction;
 import it.polimi.ingsw.Utils.Enum.Command;
+import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 import it.polimi.ingsw.View.Client;
 import it.polimi.ingsw.View.UI;
@@ -43,7 +44,7 @@ public class GUI implements UI {
     }
 
     public void close() {
-        client.reset();
+        client.close();
     }
 
     @Override
@@ -110,14 +111,14 @@ public class GUI implements UI {
     @Override
     public Map<String, String> requestServerInfo(String defaultIP, int defaultPort) {
         //show the scene, but on login already showing.
-        waitInput();
+        waitSetupInput();
         return guiController.getIPChosen();
     }
 
     @Override
     public String requestNickname() {
         guiController.connectToIPSuccessful();
-        waitInput();
+        waitSetupInput();
         return guiController.getNicknameChosen();
     }
 
@@ -126,7 +127,7 @@ public class GUI implements UI {
         guiController.connectWithNicknameSuccessful();
         loggedIn = true;
         guiController.enableGameSettings();
-        waitInput();
+        waitSetupInput();
         client.sendUserAction(
                 new GameSettingsUserAction(nickname, guiController.getNumOfPlayerChosen(), guiController.getGameModeChosen() ));
     }
@@ -140,7 +141,7 @@ public class GUI implements UI {
         guiController.showGameMode(game);
         guiController.showTowerWizard();
         guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
-        waitInput();
+        waitSetupInput();
         client.sendUserAction(new TowerColorUserAction(this.nickname, guiController.getTowerColorChosen()));
     }
 
@@ -152,7 +153,7 @@ public class GUI implements UI {
             guiController.towerColorSuccessful();
         }
         else
-            waitInput();
+            waitSetupInput();
         //guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         // causes automatic selection to be reset, however it's needed if somehow the real time updating fails. but it shouldn't so it's removed for now
         client.sendUserAction(new WizardUserAction(this.nickname, guiController.getWizardChosen()));
@@ -173,8 +174,8 @@ public class GUI implements UI {
     }
 
     @Override
-    public void displayError(String error, boolean isUrgent) {
-        guiController.displayError(error);
+    public void displayError(String error, boolean isFatal) {
+        guiController.displayError(error, isFatal);
     }
 
     @Override
@@ -219,12 +220,17 @@ public class GUI implements UI {
         }
     }
 
+    @Override
+    public void displayWinners(TowerColor winner, List<String> winners) {
+        guiController.displayWinners(winner, winners);
+    }
+
     public void sendSelection(UserAction userAction){
         guiController.disableAll();
         client.sendUserAction(userAction);
     }
 
-    private void waitInput(){
+    private void waitSetupInput(){
         synchronized (waitInputLock){
             waitingInput = true;
             while (waitingInput){
@@ -238,7 +244,7 @@ public class GUI implements UI {
         }
     }
 
-    public void notifyInput(){
+    public void notifySetupInput(){
         synchronized (waitInputLock){
             waitingInput = false;
             waitInputLock.notifyAll();
