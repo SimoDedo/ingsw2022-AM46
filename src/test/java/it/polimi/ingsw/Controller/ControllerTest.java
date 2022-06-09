@@ -161,8 +161,11 @@ class ControllerTest {
 
         int cloudId = game.getCloudIDs().get(0);
         controller.receiveUserAction(new TakeFromCloudUserAction(firstPlayer, cloudId));
+        assertEquals(UserActionType.END_TURN, controller.getExpectedUserAction().get(firstPlayer),
+                "The first player, after taking from cloud, is expected end its turn");
+        controller.receiveUserAction(new EndTurnUserAction(firstPlayer));
         assertNull(controller.getExpectedUserAction().get(firstPlayer),
-                "The first player, after taking from cloud, is not expected to do an action");
+                "The first player, after ending its turn, is not expected to do an action");
     }
 
     /**
@@ -208,6 +211,8 @@ class ControllerTest {
 
             int cloudId = game.getCloudIDs().get(i);
             controller.receiveUserAction(new TakeFromCloudUserAction(game.getCurrentPlayer(), cloudId));
+
+            controller.receiveUserAction(new EndTurnUserAction(game.getCurrentPlayer()));
         }
 
         assertEquals(UserActionType.PLAY_ASSISTANT, controller.getExpectedUserAction().get(firstPlayer),

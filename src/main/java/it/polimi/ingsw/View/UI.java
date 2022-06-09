@@ -39,6 +39,6 @@ public interface UI {
 
     void displayBoard(ObservableByClient game, UserActionType actionTaken);
 
-    void displayWinners(TowerColor winner, List<String> winners);
+    void displayWinners(TowerColor winner, List<String> winners, List<String> losers);
 
 }

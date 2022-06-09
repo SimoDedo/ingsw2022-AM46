@@ -114,8 +114,8 @@ public class LobbyServer implements Server {
         if (registeredNicks.containsKey(loginAction.getNickname())) {
             socketConnection.sendMessage(new LoginError("Nickname already taken. Choose another one!"));
         }
-        else if(loginAction.getNickname().length() > 50){
-            socketConnection.sendMessage(new LoginError("Nickname too long. Choose a nickname not longer than 50 characters!"));
+        else if(loginAction.getNickname().length() > 15){
+            socketConnection.sendMessage(new LoginError("Nickname too long. Choose a nickname not longer than 15 characters!"));
         }
         else if(loginAction.getNickname() == null || loginAction.getNickname().equals("")){
             socketConnection.sendMessage(new LoginError("Nickname can't be empty!"));

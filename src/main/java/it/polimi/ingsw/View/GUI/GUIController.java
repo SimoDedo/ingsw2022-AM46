@@ -614,6 +614,19 @@ public class GUIController {
         });
     }
 
+    public void enableEndTurn(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            TurnOrderPane turnOrderPane = (TurnOrderPane) guiApplication.lookup("turnOrderPane");
+            turnOrderPane.enableEndTurn();
+        });
+    }
+
+    public void disableEndTurn(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            TurnOrderPane turnOrderPane = (TurnOrderPane) guiApplication.lookup("turnOrderPane");
+            turnOrderPane.disableEndTurn();
+        });
+    }
     public void enableLast(){
         if(nextUserAction != null){
             switch (nextUserAction){
@@ -623,8 +636,6 @@ public class GUIController {
             }
         }
     }
-
-    // wip
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -849,6 +860,14 @@ public class GUIController {
         }
     }
 
+    public void notifyEndTurn(){
+        if(debug){
+            System.out.println("ended turn");
+        }else{
+            gui.sendSelection(new EndTurnUserAction(nickname));
+        }
+    }
+
     public void debugFunction1() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
 
@@ -868,7 +887,7 @@ public class GUIController {
         guiApplication.enableAll();
     }
 
-    public void displayWinners(TowerColor winner, List<String> winners){
+    public void displayWinners(TowerColor winner, List<String> winners, List<String> losers){
         String title;
         StringBuilder toPrint = new StringBuilder();
         if(winners.contains(nickname)){
@@ -882,7 +901,7 @@ public class GUIController {
         else {
             title = "Loser!";
             toPrint.append("Too bad! ");
-            for(String player : winners){
+            for(String player : losers){
                 toPrint.append(player).append(" ");
             }
             toPrint.append("you lost! Team ").append(winner).append(" has won.");

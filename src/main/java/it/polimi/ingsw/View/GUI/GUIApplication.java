@@ -335,7 +335,7 @@ public class GUIApplication extends Application {
         mainGrid.setVgap(10.0);
 
         // turn order box
-        mainGrid.add(new TurnOrderPane(), 0, 0);
+        mainGrid.add(new TurnOrderPane(controller), 0, 0);
 
         // archipelago
         mainGrid.add(new ArchipelagoPane(controller), 0, 1);

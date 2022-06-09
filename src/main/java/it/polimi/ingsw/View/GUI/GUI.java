@@ -97,6 +97,7 @@ public class GUI implements UI {
                 guiController.enableCharacterAbility();
                 guiController.enableLast();
             }
+            case END_TURN -> guiController.enableEndTurn();
         }
     }
 
@@ -115,6 +116,7 @@ public class GUI implements UI {
                 guiController.disableCharacterAbility();
                 guiController.enableLast();
             }
+            case END_TURN -> guiController.disableEndTurn();
         }
     }
 
@@ -215,9 +217,10 @@ public class GUI implements UI {
                     guiController.updateArchipelago(game);
                 }
                 case MOVE_MOTHER_NATURE -> {
+                    guiController.updateCharacters(game);
                     guiController.updateArchipelago(game);
                     guiController.updatePlayerBoards(game);
-                    guiController.updateCharacters(game);
+                    guiController.updateCloud(game);
                 }
                 case TAKE_FROM_CLOUD -> {
                     guiController.updateCharacters(game);
@@ -238,6 +241,13 @@ public class GUI implements UI {
                     guiController.updateCharacters(game);
                     guiController.updateCharacterRequest(game);
                 }
+                case END_TURN -> {
+                    guiController.updateTurnOrder(game);
+                    guiController.updateCloud(game);
+                    guiController.updatePlayerBoards(game);
+                    for(String nick : game.getPlayers())
+                        guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));
+                }
             }
         }
         else {
@@ -250,8 +260,8 @@ public class GUI implements UI {
     }
 
     @Override
-    public void displayWinners(TowerColor winner, List<String> winners) {
-        guiController.displayWinners(winner, winners);
+    public void displayWinners(TowerColor winner, List<String> winners, List<String> losers) {
+        guiController.displayWinners(winner, winners, losers);
     }
 
     public void sendSelection(UserAction userAction){

@@ -482,9 +482,9 @@ public class Controller {
         }
         else{
             //If it's the last round, clouds are disabled and cloud selection is skipped (since useless, it's the last round no one cares)
-            //CHECKME: always to disable clouds?
-            expectedUserAction.clear();
-            endOfRoundOperations(nickname, UserActionType.MOVE_MOTHER_NATURE); //Since its last round, WinnerInfo will be sent.
+            expectedUserAction.put(nickname, UserActionType.END_TURN);
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.MOVE_MOTHER_NATURE,
+                    nickname, UserActionType.END_TURN, "Take from cloud"));
         }
     }
 

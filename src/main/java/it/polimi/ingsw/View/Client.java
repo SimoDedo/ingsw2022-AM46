@@ -419,7 +419,7 @@ public class Client {
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
             }
-            case MOVE_MOTHER_NATURE, USE_ABILITY, TAKE_FROM_CLOUD -> {
+            case MOVE_MOTHER_NATURE, USE_ABILITY, TAKE_FROM_CLOUD, END_TURN -> {
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
             }
@@ -434,7 +434,11 @@ public class Client {
                         .filter(e -> e.getValue().equals(update.getGame().getWinner()))
                         .map(Map.Entry::getKey)
                         .toList();
-                UI.displayWinners(update.getGame().getWinner(), winners);
+                List<String> losers = update.getGame().getPlayerTeams().entrySet().stream()
+                        .filter(e -> ! e.getValue().equals(update.getGame().getWinner()))
+                        .map(Map.Entry::getKey)
+                        .toList();
+                UI.displayWinners(update.getGame().getWinner(), winners, losers);
                 logoutFromServer();
             }
         }

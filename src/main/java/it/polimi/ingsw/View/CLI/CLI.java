@@ -75,7 +75,7 @@ public class CLI implements UI {
                 String commandString = "";
                 do {
                     try { commandString = parser.readLine();
-                    } catch (HelpException e) { displayHelp(); }
+                    } catch (HelpException e) {commandString = "help";} //Help is not directly displayed here to not interfere with loop
                 } while(commandString.equals(""));
                 clearScreen();
 
@@ -547,11 +547,13 @@ public class CLI implements UI {
         client.sendUserAction(moveStudentRequest);
     }
 
-    /**
-     * TODO:Gives the option to purchase and activate a character right before ending the turn
-     */
+
     private void requestEndTurn(){
-        displayMessage("Would you to play a character before ending your turn? y/n");
+        //TODO:Gives the option to purchase and activate a character right before ending the turn
+        // i don't think it's really needed, before ending the turn it's clear that you can use a character
+        UserAction endTurnRequest = new EndTurnUserAction(nickname);
+        client.sendUserAction(endTurnRequest);
+/*        displayMessage("Would you to play a character before ending your turn? y/n");
 
 
         String endTurnSelection = "";
@@ -563,7 +565,7 @@ public class CLI implements UI {
         if(endTurnSelection.equals("n")){
             UserAction endTurnRequest = new EndTurnUserAction(nickname);
             client.sendUserAction(endTurnRequest);
-        }
+        }*/
     }
 
     private void displayMessage(String message) {
@@ -626,7 +628,7 @@ public class CLI implements UI {
     }
 
     @Override
-    public void displayWinners(TowerColor winner, List<String> winners) {
+    public void displayWinners(TowerColor winner, List<String> winners, List<String> losers) {
         StringBuilder toPrint = new StringBuilder();
         if(winners.contains(nickname)){
             toPrint.append("CONGRATULATIONS ");
@@ -637,7 +639,7 @@ public class CLI implements UI {
         }
         else {
             toPrint.append("Too bad! ");
-            for(String player : winners){
+            for(String player : losers){
                 toPrint.append(player).append(" ");
             }
             toPrint.append("you lost! Team ").append(winner).append(" has won.");
