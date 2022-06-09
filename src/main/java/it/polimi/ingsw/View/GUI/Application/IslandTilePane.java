@@ -3,7 +3,6 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -11,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -34,10 +32,10 @@ public class IslandTilePane extends StackPane {
 
     private Point2D forwardMergePoint, backMergePoint;
 
-    private GridPane islandModifiersPane;
-    private ImageView motherNature;
-    private ImageView noEntryTile;
-    private Text noEntryTileText;
+    private final GridPane islandModifiersPane;
+    private final ImageView motherNature;
+    private final ImageView noEntryTile;
+    private final Text noEntryTileText;
     private final VBox gridContainer;
     private StudentContainerPane studentPane;
     private List<Pair<Integer, Integer>> freeStudSpots;

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import javafx.scene.effect.*;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 public class Effects {

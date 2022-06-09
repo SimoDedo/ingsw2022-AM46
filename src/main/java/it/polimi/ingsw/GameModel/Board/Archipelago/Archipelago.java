@@ -12,7 +12,6 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 
-import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.*;
 

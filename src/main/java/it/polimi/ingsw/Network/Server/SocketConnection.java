@@ -28,7 +28,7 @@ public class SocketConnection implements Runnable {
 
     private ObjectOutputStream outputStream;
 
-    private ExecutorService serverAction;
+    private final ExecutorService serverAction;
 
     private String nickname;
 

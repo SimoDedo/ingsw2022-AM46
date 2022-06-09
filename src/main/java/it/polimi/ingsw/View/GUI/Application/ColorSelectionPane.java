@@ -1,11 +1,8 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import javafx.geometry.Insets;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;

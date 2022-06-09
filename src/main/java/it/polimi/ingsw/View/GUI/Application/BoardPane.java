@@ -2,7 +2,6 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import it.polimi.ingsw.Utils.Enum.Color;
 import javafx.util.Pair;
@@ -21,8 +19,8 @@ public class BoardPane extends StackPane {
 
     private final String nickname;
 
-    private double boardHeight;
-    private double boardWidth;
+    private final double boardHeight;
+    private final double boardWidth;
     private final double entrancePct = (500.0/3304.0) * 100;
     private final double diningRoomPct = ((2270.0 - 500.0) /3304.0) * 100;
     private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
@@ -61,7 +59,7 @@ public class BoardPane extends StackPane {
             else return 0;
         }
     };
-    private GUIController controller;
+    private final GUIController controller;
 
     private int tableChosen;
     private int studentChosen;

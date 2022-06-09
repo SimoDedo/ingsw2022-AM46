@@ -7,7 +7,6 @@ import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
@@ -28,11 +27,11 @@ public class GUIController {
     private final GUIApplication guiApplication;
     private String nickname;
 
-    private List<List<Integer>> groupList = new ArrayList<>();
+    private final List<List<Integer>> groupList = new ArrayList<>();
 
-    private boolean debug = false;
+    private final boolean debug = false;
 
-    private boolean useBridges = false;
+    private final boolean useBridges = false;
 
     private UserActionType nextUserAction;
 
@@ -61,7 +60,7 @@ public class GUIController {
             errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
             errorDialog.showAndWait();
             if(isGameEnding)
-                endGame();;
+                endGame();
         });
     }
 

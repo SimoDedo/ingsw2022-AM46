@@ -3,8 +3,6 @@ package it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import org.junit.jupiter.api.Test;
 
-import java.io.InvalidObjectException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

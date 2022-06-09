@@ -3,7 +3,6 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Phase;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;

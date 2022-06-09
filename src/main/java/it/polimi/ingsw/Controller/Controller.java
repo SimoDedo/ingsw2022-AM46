@@ -534,7 +534,7 @@ public class Controller {
             return;
         }
 
-        if(requestParameters.size() == 0 && ((GameExpert) game).getActiveCharacterMaxUses() == 1){
+        if(requestParameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
             //If no selection is required and character can only be used once, ability is instantly activated.
             // The second condition is always true, but if we were to add new characters that request no parameters
             // but can be used more than once, they shouldn't be used automatically
@@ -572,7 +572,7 @@ public class Controller {
             }
             //TODO: other exceptions should be thrown and handled. done? to check
         }
-        if(parameters.size() == 0 && ((GameExpert) game).getActiveCharacterMaxUses() == 1){
+        if(parameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
             sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_CHARACTER,
                     turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used automatically"));
         }

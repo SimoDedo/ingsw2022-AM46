@@ -2,15 +2,13 @@ package it.polimi.ingsw.View.GUI.Application;
 
 
 import javafx.event.EventHandler;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 public class StudentView extends PawnView {
 
     public static double studentSize = 15.0;
 
-    private String color;
+    private final String color;
 
     public StudentView(int id, String pawnType, String color, double size) {
         super(id, pawnType, color, size);

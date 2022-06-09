@@ -3,7 +3,6 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class CloudContainerPane extends HBox {
 
-    private GUIController controller;
+    private final GUIController controller;
 
     static double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
 

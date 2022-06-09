@@ -20,11 +20,11 @@ import java.util.Map;
  */
 public class GUI implements UI {
 
-    private Client client;
+    private final Client client;
 
     private String nickname;
 
-    private GUIController guiController;
+    private final GUIController guiController;
 
     private final Object waitInputLock;
     private boolean waitingInput;

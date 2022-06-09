@@ -391,7 +391,7 @@ public class CLI implements UI {
         int assistantIDSelection = -1;
 
         do {
-            try { assistantIDSelection = parser.readNumberFromSelection(game.getCardsLeft(nickname));;
+            try { assistantIDSelection = parser.readNumberFromSelection(game.getCardsLeft(nickname));
             } catch (HelpException e) { displayHelp("assistant"); }
         } while(assistantIDSelection == -1);
 

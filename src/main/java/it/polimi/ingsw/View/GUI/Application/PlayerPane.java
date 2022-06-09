@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class PlayerPane extends GridPane {
 
-    private GUIController controller;
+    private final GUIController controller;
 
     private final String nickname;
 

@@ -6,11 +6,10 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 
 
 public class Log extends TextArea {
-    private StringBuilder log;
+    private final StringBuilder log;
 
     public Log() {
         log = new StringBuilder("Log");
