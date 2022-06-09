@@ -54,7 +54,11 @@ class NoEntryCharacterTest {
         CharacterFactory factory = new CharacterFactory();
         NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
         char5.removeNoEntryTile();
-        char5.useCharacter(new Player());
+        Player test = new Player();
+        test.awardCoin();
+        test.awardCoin();
+        test.awardCoin();
+        char5.useCharacter(test);
         char5.resetUseState();
         assertEquals(char5.getNoEntryTiles(), 3); //no entry tiles unchanged
         assertNull(char5.getOwner());

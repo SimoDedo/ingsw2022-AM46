@@ -23,7 +23,11 @@ class StudentMoverCharacterTest {
     void testUseAbility() {
         CharacterFactory factory = new CharacterFactory();
         StudentMoverCharacter char7 = (StudentMoverCharacter) factory.create(7, new Bag());
-        char7.useCharacter(new Player());
+        Player test = new Player();
+        test.awardCoin();
+        test.awardCoin();
+        test.awardCoin();
+        char7.useCharacter(test);
         List<Integer> parameterList = new ArrayList<>();
         char7.useAbility((list) -> {}, parameterList);
         assertEquals(char7.getUsesLeft(), 2);
@@ -36,7 +40,11 @@ class StudentMoverCharacterTest {
     void testResetUseState() {
         CharacterFactory factory = new CharacterFactory();
         StudentMoverCharacter char7 = (StudentMoverCharacter) factory.create(7, new Bag());
-        char7.useCharacter(new Player());
+        Player test = new Player();
+        test.awardCoin();
+        test.awardCoin();
+        test.awardCoin();
+        char7.useCharacter(test);
         List<Integer> parameterList = new ArrayList<>();
         char7.useAbility((list) -> {}, parameterList);
         char7.resetUseState();
