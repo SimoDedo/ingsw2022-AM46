@@ -26,7 +26,7 @@ public class Table extends StudentContainer {
      * @param student to place in the table
      * @throws FullTableException if the table cannot accept any more students
      * @throws IllegalArgumentException if the color of the student is not correct for the table (should never happen)
-     * @return true if coin is to be awarded
+     * @return true if a coin is to be awarded
      */
     public boolean placeStudent(Student student) throws FullTableException, IllegalArgumentException{
         boolean giveCoin = false;
@@ -35,9 +35,13 @@ public class Table extends StudentContainer {
             case 5 -> { if(!coins[1]){ coins[1] = true; giveCoin = true; } }
             case 8 -> { if(!coins[2]){ coins[2] = true; giveCoin = true; } }
         }
-        if(pawnCount() == 10){ throw new FullTableException(); }
+        if(isFull()){ throw new FullTableException("Can't add a student to a full table!"); }
         placePawn(student);
         return giveCoin;
+    }
+
+    public boolean isFull(){
+        return pawnCount() == 10;
     }
 
     public int getScore(){

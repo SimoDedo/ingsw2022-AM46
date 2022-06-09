@@ -555,7 +555,7 @@ public class Controller {
             ((GameExpert) game).useAbility(parameters);
         }
         catch (NoSuchElementException | IllegalArgumentException | IllegalStateException
-                | LastRoundException | GameOverException e){
+                | FullTableException | LastRoundException | GameOverException e){
             if(e instanceof  GameOverException){
                 gameOverOperations();
                 return;

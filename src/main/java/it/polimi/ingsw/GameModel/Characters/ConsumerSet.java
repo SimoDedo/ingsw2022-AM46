@@ -97,21 +97,26 @@ public class ConsumerSet {
             Student studentFromEntrance, studentFromDR;
 
             try { // entrance -> DR
-                studentFromEntrance = activator.removeStudentByID(list.get(0));
-                try { //try adding to DR
-                    if(activator.addToDR(studentFromEntrance)){
-                        try{ //Try awarding coin
-                            coinBag.removeCoin();
-                            activator.awardCoin();
-                        }catch ( ArithmeticException e){e.printStackTrace();}
+                studentFromEntrance = activator.getStudentFromEntrance(list.get(0));
+                if(activator.getTable(studentFromEntrance.getColor()).isFull())
+                    throw new FullTableException("Can't add a student to a full table!");
+                else{
+                    studentFromEntrance = activator.removeStudentByID(list.get(0));
+                    try { //try adding to DR
+                        if(activator.addToDR(studentFromEntrance)){
+                            try{ //Try awarding coin
+                                coinBag.removeCoin();
+                                activator.awardCoin();
+                            }catch ( ArithmeticException e){e.printStackTrace();}
+                        }
                     }
-                }
-                catch (FullTableException fte) { fte.printStackTrace(); }
+                    catch (FullTableException fte) { fte.printStackTrace(); }
 
-                studentFromDR = activator.removeStudentByID(list.get(1));
-                activator.addToEntrance(studentFromDR);
+                    studentFromDR = activator.removeStudentByID(list.get(1));
+                    activator.addToEntrance(studentFromDR);
+                }
             }
-            catch (NoSuchElementException e) { // DR -> entrance
+            catch (NoSuchElementException e) { // DR -> entrance (actually never used)
                 studentFromDR = activator.removeStudentByID(list.get(0));
                 activator.addToEntrance(studentFromDR);
 

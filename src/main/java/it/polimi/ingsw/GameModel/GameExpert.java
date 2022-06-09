@@ -54,14 +54,18 @@ public class GameExpert extends Game {
         Student student = player.getStudentFromEntrance(studentID);
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID){
-            student.getStudentContainer().removePawn(student);
-            if(potentialTable.placeStudent(student))
-                awardCoin(nickname);
+            if(!potentialTable.isFull()){
+                student.getStudentContainer().removePawn(student);
+                if(potentialTable.placeStudent(student))
+                    awardCoin(nickname);
+                checkAndMoveProfessor(players, student.getColor());
+            }
+            else
+                throw new FullTableException("Can't add a student to a full table!");
         }
         else {
             archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
         }
-        checkAndMoveProfessor(players, student.getColor());
     }
 
     /**
@@ -126,7 +130,7 @@ public class GameExpert extends Game {
      */
     public void useAbility(List<Integer> parameterList)
             throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
-            LastRoundException, GameOverException {
+            FullTableException, LastRoundException, GameOverException {
         characterManager.useAbility(parameterList);
     }
 

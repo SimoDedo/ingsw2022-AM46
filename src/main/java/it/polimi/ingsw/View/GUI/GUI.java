@@ -206,6 +206,7 @@ public class GUI implements UI {
             switch (actionTaken){
                 case WAIT_GAME_START -> guiController.initialDraw(game, nickname);
                 case PLAY_ASSISTANT -> {
+                    guiController.updateCloud(game);
                     guiController.updateTurnOrder(game);
                     for(String nick : game.getPlayers())
                         guiController.updateAssistants(nick, game.getCardsPlayedThisRound().get(nick), game.getCardsLeft(nick));

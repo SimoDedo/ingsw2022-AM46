@@ -188,9 +188,13 @@ public class Game implements ObservableByClient, Serializable {
         Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present? to be tested if added
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID){
-            student.getStudentContainer().removePawn(student);
-            potentialTable.placeStudent(student);
-            checkAndMoveProfessor(players, student.getColor());
+            if(!potentialTable.isFull()){
+                student.getStudentContainer().removePawn(student);
+                potentialTable.placeStudent(student);
+                checkAndMoveProfessor(players, student.getColor());
+            }
+            else
+                throw new FullTableException("Can't add a student to a full table!");
         }
         else {
             archipelago.placeStudent(student, archipelago.getIslandTileByID(containerID)); // will have to throw exception
@@ -425,7 +429,9 @@ public class Game implements ObservableByClient, Serializable {
          */
         @Override
         public int getActualMovePower(String nickname){
-            return cardsPlayedThisRound.get(players.getByNickname(nickname)).getMovePower();
+            if(cardsPlayedThisRound.get(players.getByNickname(nickname)) != null)
+                return cardsPlayedThisRound.get(players.getByNickname(nickname)).getMovePower();
+            else  return 0;
         }
 
 

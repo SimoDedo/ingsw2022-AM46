@@ -7,6 +7,7 @@ import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
+import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.Exceptions.LastRoundException;
 import it.polimi.ingsw.Utils.PlayerList;
@@ -94,7 +95,7 @@ public class CharacterManager  implements Serializable {
      */
     public void useAbility(List<Integer> parameterList)
             throws NoSuchElementException, IllegalArgumentException, IllegalStateException,
-            LastRoundException, GameOverException {
+            FullTableException, LastRoundException, GameOverException {
         if(currentCharacter == null)
             throw new IllegalStateException("No character was activated!");
         else if(currentCharacter.getUsesLeft() <= 0)
