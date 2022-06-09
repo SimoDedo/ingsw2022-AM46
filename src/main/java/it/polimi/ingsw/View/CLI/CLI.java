@@ -2,6 +2,7 @@ package it.polimi.ingsw.View.CLI;
 
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Utils.Enum.*;
+import it.polimi.ingsw.Utils.Exceptions.HelpException;
 import it.polimi.ingsw.Utils.InputParser;
 
 import it.polimi.ingsw.Network.Message.UserAction.*;
@@ -53,6 +54,9 @@ public class CLI implements UI {
         mapColors();
     }
 
+    /**
+     * @param nickname of the player using this interface
+     */
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -68,7 +72,11 @@ public class CLI implements UI {
         operations.execute(() -> {
             boolean quit = false;
             while (!quit){
-                String commandString = parser.readLine();
+                String commandString = "";
+                do {
+                    try { commandString = parser.readLine();
+                    } catch (HelpException e) { displayHelp(); }
+                } while(commandString.equals(""));
                 clearScreen();
 
                 Command command = mapCommand(commandString);
@@ -195,14 +203,19 @@ public class CLI implements UI {
 
     private int requestServerPort(int defaultPort){
         int port = -1;
+        // hmm....
+        String portString = "loop";
         while (port<0 || port>65535){
             displayMessage(String.format("Choose server port [press enter for %d]:", defaultPort));
-            String s = parser.readLine();
+            do {
+                try { portString = parser.readLine();
+                } catch (HelpException e) { displayHelp("port"); }
+            } while(portString.equals("loop"));
             try{
-                port = Integer.parseInt(s);
+                port = Integer.parseInt(portString);
             }
             catch (NumberFormatException ignored){}
-            if(s.equals(""))
+            if(portString.equals(""))
                 port = defaultPort;
             clearScreen();
             if(port <=0 || port>65535) {
@@ -214,30 +227,46 @@ public class CLI implements UI {
 
     private String requestServerIP(String defaultIP){
         displayMessage(String.format("Choose server IP [press enter for %s]:", defaultIP));
-        String s = parser.readLine();
-        if(s.equals(""))
-            s = defaultIP;
+        String IPString = "loop";
+        do {
+            try { IPString = parser.readLine();
+            } catch (HelpException e) { displayHelp("IP"); }
+        } while(IPString.equals("loop"));
+
+        if(IPString.equals(""))
+            IPString = defaultIP;
         clearScreen();
-        return s;
+        return IPString;
     }
 
+    /**
+     * Asks for the user to choose a nickname, which is then sent to the server
+     * @return the nickname to be saved here and in the Client class, after server confirmation
+     */
     @Override
     public String requestNickname() {
         displayWelcome();
         displayErrorQueue();
         displayMessage("Choose a nickname:");
-        String nickname = parser.readLine();
-        clearScreen();
-        while (nickname == null || nickname.equals("")
-                ||! Character.isLetterOrDigit(nickname.charAt(0)) || nickname.length() > 50){ //Check also done server side
-            displayMessage("Nickname should start with a letter or number and should be less than 50 characters long! Choose another nickname:");
-            nickname = parser.readLine();
-            clearScreen();
-        }
+
+        String nickname = "";
+
+        do {
+            try { nickname = parser.readLine();
+                clearScreen();
+                if(nickname.equals("") || !Character.isLetterOrDigit(nickname.charAt(0)) || nickname.length() > 50){
+                    displayMessage("Nickname should start with a letter or number and should be less than 50 characters " +
+                            "long! Choose another nickname:");
+                }
+            } catch (HelpException e) { displayHelp("nick"); }
+        } while(nickname.equals("") || !Character.isLetterOrDigit(nickname.charAt(0)) || nickname.length() > 50);
 
         return nickname;
     }
 
+    /**
+     * Groups GameMode and player number requests into GameSettingsUserAction
+     */
     @Override
     public void requestGameSettings(){
         displayErrorQueue();
@@ -252,16 +281,38 @@ public class CLI implements UI {
         });
     }
 
+    /**
+     * Asks for the (first) user to choose if the game that will be created should be of Game or GameExpert type
+     * @return the chosen game mode
+     */
     private GameMode requestGameMode(){
         displayMessage("Select a game mode:\n1 Normal\n2 Expert");
-        return GameMode.values()[parser.readBoundNumber(1, 2) - 1];
+        int gameModeSelection = -1;
+        do {
+            try { gameModeSelection = parser.readBoundNumber(1, 2);
+            } catch (HelpException e) { displayHelp("game-mode"); }
+        } while(gameModeSelection == -1);
+
+        return GameMode.values()[gameModeSelection - 1];
     }
 
+    /**
+     * Asks for the (first) user to choose how many players will be able to connect to this match (2-4)
+     * @return the chosen number of players
+     */
     private int requestPlayerNumber(){
         displayMessage("Select how many players will participate in the game [2,3 or 4]:");
-        return parser.readBoundNumber(2, 4);
+        int playerNumberSelection = -1;
+        do {
+            try { playerNumberSelection = parser.readBoundNumber(2, 4);
+            } catch (HelpException e) { displayHelp("player-num"); }
+        } while(playerNumberSelection == -1);
+        return playerNumberSelection ;
     }
 
+    /**
+     * Asks for the user to pick a tower color from the available ones
+     */
     @Override
     public void requestTowerColor(ObservableByClient game){
         update(game);
@@ -269,6 +320,7 @@ public class CLI implements UI {
         operations.execute(() ->{
             List<TowerColor> available = this.game.getAvailableTowerColors();
             int sel = 1;
+            int towerColorSelection = -1;
 
             displayPlayersInfo();
             StringBuilder toPrint = new StringBuilder("Please choose a tower color:\n");
@@ -277,7 +329,13 @@ public class CLI implements UI {
                 sel++;
             }
             displayMessage(toPrint.toString());
-            TowerColor selection = available.get(parser.readBoundNumber(1, available.size()) - 1);
+
+            do {
+                try { towerColorSelection = parser.readBoundNumber(1, available.size());
+                } catch (HelpException e) { displayHelp("tower-color"); }
+            } while(towerColorSelection == -1);
+
+            TowerColor selection = available.get(towerColorSelection - 1);
 
             clearScreen();
             UserAction towerColorRequest = new TowerColorUserAction(nickname, selection);
@@ -285,6 +343,9 @@ public class CLI implements UI {
         });
     }
 
+    /**
+     * Asks the user to choose a WizardType from a list of available ones
+     */
     @Override
     public void requestWizard(ObservableByClient game){
         update(game);
@@ -292,6 +353,7 @@ public class CLI implements UI {
         operations.execute(() -> {
             List<WizardType> available = this.game.getAvailableWizards();
             int sel = 1;
+            int wizardTypeSelection = -1;
 
             displayPlayersInfo();
             StringBuilder toPrint = new StringBuilder("Please choose your wizard:\n");
@@ -300,7 +362,12 @@ public class CLI implements UI {
                 sel++;
             }
             displayMessage(toPrint.toString());
-            WizardType selection = available.get(parser.readBoundNumber(1, available.size()) - 1);
+
+            do {
+                try { wizardTypeSelection = parser.readBoundNumber(1, available.size());
+                } catch (HelpException e) { displayHelp("wizard"); }
+            } while(wizardTypeSelection == -1);
+            WizardType selection = available.get(wizardTypeSelection - 1);
 
             clearScreen();
             UserAction wizardRequest = new WizardUserAction(nickname, selection);
@@ -313,18 +380,29 @@ public class CLI implements UI {
         displayInfo("Please wait for all players to be ready and for your turn to start...");
 
     }
-
+    /**
+     * Asks user to pick an assistant to play from the ones he is holding
+     */
     private void requestAssistant(){
         displayHand(this.nickname);
         displayPlayedCards();
         displayMessage("Type the number of the assistant you would like to play.");
 
-        int assistantIDSelection = parser.readNumberFromSelection(game.getCardsLeft(nickname));
+        int assistantIDSelection = -1;
+
+        do {
+            try { assistantIDSelection = parser.readNumberFromSelection(game.getCardsLeft(nickname));;
+            } catch (HelpException e) { displayHelp("assistant"); }
+        } while(assistantIDSelection == -1);
+
         UserAction assistantRequest = new PlayAssistantUserAction(nickname, assistantIDSelection);
 
         client.sendUserAction(assistantRequest);
     }
 
+    /**
+     * Asks for the user to select a student from his entrance, then asks where to move it.
+     */
     private void requestMoveFromEntrance(){
         HashMap<Integer, Color> studentIDs = game.getEntranceStudentsIDs(nickname);
 
@@ -332,9 +410,16 @@ public class CLI implements UI {
         displayMessage("Select a student from your entrance:");
         int studentID = selectStudentFromContainer(RequestParameter.STUDENT_ENTRANCE, -1);
         int destinationID;
+        int destinationType = -1;
 
         displayMessage("Select destination type:\n1: Islands\n2: Dining Room");
-        if(parser.readBoundNumber(1, 2) == 1){
+
+        do {
+            try { destinationType = parser.readBoundNumber(1, 2);
+            } catch (HelpException e) { displayHelp("entrance-dst"); }
+        } while(destinationType == -1);
+
+        if(destinationType == 1){
             displayArchipelago();
             displayMessage("Select the island group number you would like to place your student in:");
             destinationID = selectIslandTileFromIdx();
@@ -347,14 +432,22 @@ public class CLI implements UI {
         client.sendUserAction(moveStudentRequest);
     }
 
+    /**
+     * Asks user to decide how many steps mother nature will take. Sends destination island ID to client.
+     */
     private void requestMotherNature(){
         HashMap<Integer, List<Integer>> islandGroups = game.getIslandTilesIDs();
         int movePower = game.getActualMovePower(nickname);
+        int steps = -1;
 
         displayArchipelago();
         displayMessage(String.format("Type the number of spaces mother nature should move (max %d):", movePower));
 
-        int steps = parser.readBoundNumber(1, movePower);
+        do {
+            try { steps = parser.readBoundNumber(1, movePower);
+            } catch (HelpException e) { displayHelp("mother-nature"); }
+        } while(steps == -1);
+
         int dstIslandGroup = game.getMotherNatureIslandGroupIdx() + steps;
         dstIslandGroup = dstIslandGroup < islandGroups.size() ?
                 dstIslandGroup : dstIslandGroup - islandGroups.size();
@@ -365,27 +458,48 @@ public class CLI implements UI {
         client.sendUserAction(moveMotherNatureRequest);
     }
 
+    /**
+     * Asks user to pick a cloud, then translates the user selection to a cloud ID using the cloudMap
+     */
     private void requestCloud(){
         List<Integer> clouds = game.getCloudIDs();
         displayClouds();
         displayMessage("Type the number of the cloud you would like to choose.");
+        int cloudIdxSelection = -1;
 
-        int cloudSelection = clouds.get(parser.readBoundNumber(1, game.getCloudIDs().size()) - 1);
-        UserAction cloudRequest = new TakeFromCloudUserAction(nickname, cloudSelection);
+        do {
+            try { cloudIdxSelection = parser.readBoundNumber(1, game.getCloudIDs().size());
+            } catch (HelpException e) { displayHelp("cloud"); }
+        } while(cloudIdxSelection == -1);
+
+        int cloudIDSelection = clouds.get(cloudIdxSelection - 1);
+        UserAction cloudRequest = new TakeFromCloudUserAction(nickname, cloudIDSelection);
 
         client.sendUserAction(cloudRequest);
     }
 
+    /**
+     * Asks for the user to purchase a character by typing its ID
+     */
     private void requestCharacter(){
         displayCharactersDetailed();
         displayMessage("Select the number of the character you want to activate!");
 
-        int characterID = parser.readNumberFromSelection(game.getDrawnCharacterIDs());
+        int characterID = -1;
+        do {
+            try { characterID = parser.readNumberFromSelection(game.getDrawnCharacterIDs());
+            } catch (HelpException e) { displayHelp("character"); }
+        } while(characterID == -1);
+
         UserAction characterRequest = new UseCharacterUserAction(nickname, characterID);
 
         client.sendUserAction(characterRequest);
     }
 
+    /**
+     * Goes through the current request parameters and asks for the user to fill in all the information necessary to
+     * use the character's ability
+     */
     private void requestCharacterAbility(){
         List<RequestParameter> requestedParameters = game.getCurrentRequestParameters();
         int characterID = game.getActiveCharacterID();
@@ -433,10 +547,18 @@ public class CLI implements UI {
         client.sendUserAction(moveStudentRequest);
     }
 
+    /**
+     * TODO:Gives the option to purchase and activate a character right before ending the turn
+     */
     private void requestEndTurn(){
         displayMessage("Would you to play a character before ending your turn? y/n");
 
-        String endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
+
+        String endTurnSelection = "";
+        do {
+            try { endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
+            } catch (HelpException e) { displayHelp("end-turn"); }
+        } while(endTurnSelection.equals(""));
 
         if(endTurnSelection.equals("n")){
             UserAction endTurnRequest = new EndTurnUserAction(nickname);
@@ -600,10 +722,50 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
+    /**
+     * Whenever user input is requested, if the user types "help" instead of one of the expected inputs a help
+     * message is printed based on the context
+     * @param context where the help function has been called from
+     */
+    private void displayHelp(String context){
+        switch (context){
+            case "port" -> displayMessage("Input the port of the server you would like to connect to. Press enter for" +
+                    "the default port");
+            case "IP" -> displayMessage("Input the IP of the server you would like to connect to. Press enter for the" +
+                    "default IP");
+            case "nick" -> displayMessage("Input an unique nickname (everything is allowed except for \"help\").");
+            case "student-color" -> displayMessage("Type the name of the color of the student you would like to pick " +
+                    "from the available ones.");
+            case "color" -> displayMessage("Type the name of any color you would like to select.");
+            case "island" -> displayMessage("Type the number of the island group you would like to select.");
+            case "tower-color" -> displayMessage("Type the name of the tower color you would like to pick.");
+            case "game-mode" -> displayMessage("Type 1 to play without characters or 2 to play with characters enabled.");
+            case "player-num" -> displayMessage("Type the number of players that will participate in this match.");
+            case "wizard" -> displayMessage("Type the name of the wizard faction you would like to pick.");
+            case "assistant" -> displayMessage("Choose an assistant to play by typing it's ID (the ID is equal to the " +
+                    "turn order number).");
+            case "cloud" -> displayMessage("Type the number of the cloud whose students you would like to add " +
+                    "to your entrance.");
+            case "mother-nature" -> displayMessage("Decide how much the mother nature pawn will advance by typing the " +
+                    "number of steps, limited by the assistant card you played this turn.\n " +
+                    "If you have purchased character 4 this turn you may choose to move two extra steps.");
+            case "entrance-dst" -> displayMessage("Choose a destination type between islands or dining room by " +
+                    "typing 1 for the former and 2 for the latter.");
+            case "character" -> displayMessage("Type the number corresponding to the ID of the character you " +
+                    "would like to purchase.");
+            //TODO: character can be played at the end of turn??
+            case "end-turn" -> displayMessage("Type \"y\" if you would like to end your turn, or \"n\" if you " +
+                    "would like to purchase a character or use a character ability.");
+        }
+    }
+
     private void displayInvalid(){
         displayMessage("Unrecognized command - please type help for a list of available commands.");
     }
 
+    /**
+     * Displays all the information on the ongoing match
+     */
     private void standings(){
         displayPlayersInfo();
         output.print("\033[1A"); //Move cursor up to not leave empty line
@@ -801,6 +963,10 @@ public class CLI implements UI {
         displayMessage(toPrint.toString());
     }
 
+
+    /**
+     * displays commands that are currently being accepted by the server
+     */
     private void displayAvailableCommands(){
         StringBuilder toPrint = new StringBuilder(
                 "These are the available " + CYAN + "info " + RESET + "and " + RED + "game " + RESET + "commands right now:\n");
@@ -824,7 +990,10 @@ public class CLI implements UI {
         //output.flush();
     }
 
-
+    /**
+     * @param students each student's color
+     * @return a string displaying how many students there are for each color
+     */
     private String studentFrequencyString(List<Color> students){
         HashMap<Color, Integer> frequencyMap = new LinkedHashMap<>();
         for(Color c : students){
@@ -843,8 +1012,17 @@ public class CLI implements UI {
         return colorFrequency.toString();
     }
 
+    /**
+     * Returns the ID of a student chosen from the container specified by the parameters
+     * @param type of student container the student is being selected from, can be entrance, dining room or empty if
+     *             the container in question is a character.
+     * @param characterID the ID of the character from which the student is being selected. -1 if the container is
+     *                   not a character
+     * @return the ID of the selected student
+     */
     private int selectStudentFromContainer(RequestParameter type, int characterID){
         int studentID;
+        String colorSelectionString = "";
         Color colorSelection;
         HashMap<Integer, Color> studentIDs;
 
@@ -861,26 +1039,57 @@ public class CLI implements UI {
             default -> throw new IllegalArgumentException("Given request parameter does not pertain to student choice"); //never here
         }
 
-        colorSelection = Color.valueOf(parser.readLineFromSelection(studentIDs.values().stream()
-                .map(Object::toString).collect(Collectors.toList())).toUpperCase());
+        do{
+            try{ colorSelectionString = parser.readLineFromSelection(studentIDs.values().stream()
+                    .map(Object::toString).collect(Collectors.toList()));
+            } catch (HelpException e) { displayHelp("student-color"); }
+        } while (colorSelectionString.equals(""));
+
+        colorSelection = Color.valueOf(colorSelectionString.toUpperCase());
         studentID = studentIDs.entrySet().stream().filter(o -> o.getValue() == colorSelection)
                 .map(Map.Entry::getKey).findAny().orElse(-1);
 
         return studentID;
     }
 
+    /**
+     * Asks for the user to select an island group by typing its index, then returns the first tile's ID in that group
+     * @return the ID of an island tile contained by the selected island group
+     */
     //Method lets select from 1 to size -> it will be displayed this way, not from 0 to size - 1. Then subtracts 1 to
     // have actual island group selected
     private int selectIslandTileFromIdx(){
-        return game.getIslandTilesIDs().get(parser.readBoundNumber(1, game.getIslandTilesIDs().size()) - 1).get(0);
+        int groupIdxSelection = -1;
+        do{
+            try{ groupIdxSelection = parser.readBoundNumber(1, game.getIslandTilesIDs().size());
+            } catch (HelpException e){ displayHelp("island"); }
+        } while (groupIdxSelection == -1);
+
+        return game.getIslandTilesIDs().get(groupIdxSelection - 1).get(0);
     }
 
+    /**
+     * Asks for the user to select a student color from all the possible values
+     * @return selected color
+     */
     private Color selectColor(){
-        //print colors?
-        return Color.valueOf(parser.readLineFromSelection(Arrays.stream(Color.values())
-                .map(Object::toString).collect(Collectors.toList())).toUpperCase());
+        String colorSelection = "";
+
+        do{
+            //lambda maps the contents of the array of available colors to String to check against user input
+            try{ colorSelection = parser.readLineFromSelection(Arrays.stream(Color.values())
+                    .map(Object::toString).collect(Collectors.toList()));
+            } catch (HelpException e) { displayHelp("color");}
+        } while (colorSelection.equals(""));
+
+        return Color.valueOf(colorSelection.toUpperCase());
     }
 
+
+    /**
+     * @param ID of the character to display the info of
+     * @return a string with the character ID and cost and, if applicable, the students, no entry tiles and uses left.
+     */
     private String characterStringShort(int ID){
         StringBuilder toPrint = new StringBuilder();
         if(ID < 10)
@@ -904,6 +1113,10 @@ public class CLI implements UI {
         return toPrint.toString();
     }
 
+    /**
+     * @param ID of the character to display the info of
+     * @return a string with the character ID and cost and, if applicable, the students, no entry tiles and uses left.
+     */
     private String characterStringDetailed(int ID){
         StringBuilder toPrint = new StringBuilder();
         toPrint.append(String.format("Character %d\nCost:%d\nDescription: %s\n",
