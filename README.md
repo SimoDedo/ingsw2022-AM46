@@ -37,7 +37,7 @@ Made by:
 | Communication protocol   |    🟢    |
 | Client & view            |    🟢    |
 | CLI                      |    🟢    |
-| GUI                      |    🟡    |
+| GUI                      |    🟢    |
 
 🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
 
@@ -94,7 +94,7 @@ The project will include:
   - [x] Client
   - [x] Communication protocol
   - [x] CLI
-  - [ ] GUI
+  - [x] GUI
 
 - **Finalization**
   - [ ] Polishing
@@ -126,6 +126,8 @@ The project will include:
   + **0.9.1**: build CLI 
   + **0.9.2**: finished Client and CLI
   + **0.9.3**: GUI draft and login/setup screens
+  + **0.9.4**: finished GUI
+  + **0.9.5**: GUI polishing and bug fixes
 ---
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
