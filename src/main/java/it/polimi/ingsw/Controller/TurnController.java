@@ -5,7 +5,13 @@ import it.polimi.ingsw.Utils.Enum.Phase;
 
 public class TurnController {
     private Game game;
+    /**
+     * The number of student to move each action phase
+     */
     private int studentsToMove;
+    /**
+     * Keeps track of how many students have been moved in the current player's action phase
+     */
     private int studentsMovedByCurrentPlayer;
 
     public TurnController(){}

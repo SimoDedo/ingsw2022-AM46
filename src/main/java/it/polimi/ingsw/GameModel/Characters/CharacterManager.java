@@ -14,7 +14,6 @@ import it.polimi.ingsw.Utils.PlayerList;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -23,15 +22,11 @@ import java.util.stream.Collectors;
  */
 public class CharacterManager  implements Serializable {
 
-    private Archipelago archipelago;
-    private Bag bag;
-    private PlayerList playerList;
-    private ProfessorSet professorSet;
-    private List<AbstractCharacter> characters = new ArrayList<>(12);
+    private final List<AbstractCharacter> characters = new ArrayList<>(12);
     private AbstractCharacter currentCharacter;
     private List<RequestParameter> currentRequestParameters = new ArrayList<>();
-    transient private CharacterFactory charFactory = new CharacterFactory();
-    transient private ConsumerSet consumerSet;
+    final transient private CharacterFactory charFactory = new CharacterFactory();
+    final transient private ConsumerSet consumerSet;
 
     /**
      * Constructor for the CharacterManager. Selects three random characters to create.
@@ -41,10 +36,6 @@ public class CharacterManager  implements Serializable {
      * @param professorSet the game's professor set
      */
     public CharacterManager(Archipelago archipelago, Bag bag, PlayerList playerList, ProfessorSet professorSet, CoinBag coinbag) {
-        this.archipelago = archipelago;
-        this.bag = bag;
-        this.playerList = playerList;
-        this.professorSet = professorSet;
         consumerSet = new ConsumerSet(archipelago, bag, playerList, professorSet, characters, coinbag);
         List<Integer> IDs = selectRandomCharIDs();
         for (int i = 0; i < 12; i++) {
@@ -90,9 +81,8 @@ public class CharacterManager  implements Serializable {
             if (character != null && character.wasUsedThisTurn())
                 throw new IllegalStateException("You can only use a character at a time");
         }
-        player.takeCoins(characters.get(ID - 1).getCost());
+        currentRequestParameters = characters.get(ID - 1).useCharacter(player); //This could throw exceptions
         currentCharacter = characters.get(ID - 1);
-        currentRequestParameters = currentCharacter.useCharacter(player);
         return currentRequestParameters;
     }
 
@@ -187,6 +177,15 @@ public class CharacterManager  implements Serializable {
     public int getCharacterCost(int ID){
         return characters.get(ID -1) != null ? characters.get(ID - 1).getCost() : 0;
     }
+
+     /**
+     * Returns true if the given character is overcharged.
+     * @param ID the character to check
+     * @return true if the given character is overcharged.
+     */
+     public boolean getCharacterOvercharge(int ID){
+         return ! characters.get(ID -1).isFirstUse();
+     }
 
     /**
      * Getter for the number of entry tiles left on the character

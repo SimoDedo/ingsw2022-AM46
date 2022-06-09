@@ -3,12 +3,10 @@ package it.polimi.ingsw.Network.Message.Info;
 import it.polimi.ingsw.Network.Message.Message;
 
 /**
- * Class that models a request sent by the server to a client.
- * It contains a string describing the request, and a list of RequestParameters.
- * the client who receives this list will proceed with a selection to create a UserAction in response to the request.
+ * Class that models generic information sent by the server to a client.
+ * It contains a string describing the information.
  */
-public class Info extends Message {
-
+public abstract class Info extends Message {
 
     /**
      * Used in toString method

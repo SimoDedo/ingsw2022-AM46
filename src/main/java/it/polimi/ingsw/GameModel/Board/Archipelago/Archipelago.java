@@ -87,7 +87,7 @@ public class Archipelago implements Serializable {
      * @param islandTileDestination Island group selected by the user
      * @param moveCount Allowed island that MotherNature can move
      */
-    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) {
+    public void moveMotherNature(IslandTile islandTileDestination, int moveCount) throws IllegalArgumentException {
         moveMotherNatureStrategy.moveMotherNature(getMotherNatureIslandTile(), islandTileDestination, moveCount, islandGroups);
     }
 
@@ -313,7 +313,7 @@ public class Archipelago implements Serializable {
 
     /**
      * Searches all IslandTiles to find which students each contains
-     * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+     * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
      */
     public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
         HashMap<Integer, List<Integer>> studentIDs = new LinkedHashMap<>();

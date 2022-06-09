@@ -117,6 +117,13 @@ public interface ObservableByClient {
         List<Integer> getCardsLeft(String nickname);
 
         /**
+         * Returns the ID of the entrance of a player, or -1 if the nickname doesn't exist
+         * @param nickname the player to query
+         * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
+         */
+        int getEntranceID(String nickname);
+
+        /**
          * Method to observe all the students in the entrance and their color
          * @return HashMap with the student ID as key and its color as object
          */
@@ -136,14 +143,20 @@ public interface ObservableByClient {
         List<Integer> getTableStudentsIDs(String nickname, Color color);
 
         /**
-         * Returns the amount of towers contained in the TowerSpace of a given team
-         * @param towerColor the nickname of the player to check
+         * Returns the amount of towers contained in the TowerSpace of a given player
+         * @param nickname the nickname of the player to check
          * @return the amount of towers contained in the TowerSpace
          */
-        int getTowersLeft(TowerColor towerColor);
+        int getTowersLeft(String nickname);
 
 
-        int getCoinsLeft(String nickname, Color color);
+        /**
+         * Returns the number of coins left to be taken from the table of a given color
+         * @param nickname the player whose table are checked
+         * @param color the color of the table to check
+         * @return the number of coins left to be taken
+         */
+        int getTableCoinsLeft(String nickname, Color color);
 
 
         /**
@@ -179,10 +192,10 @@ public interface ObservableByClient {
 
         //region Bag
         /**
-         * Method to observe all the students in the bag and their color
-         * @return HashMap with the student ID as key and its color as object
+         * Method to observe how many students are left in the abg
+         * @return the number of students left in the bag
          */
-        HashMap<Integer, Color> getBagStudentsIDs();
+        int getBagStudentsLeft();
         //endregion
 
         //region Archipelago
@@ -194,7 +207,7 @@ public interface ObservableByClient {
 
         /**
          * Searches all IslandTiles to find which students each contains
-         * @return A HashMap containing as Key the idx of the IslandTile, as object a list of StudentIDs
+         * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
          */
         HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs();
 
@@ -228,6 +241,12 @@ public interface ObservableByClient {
         //endregion
 
         //region Characters
+        /**
+         * method to observe number of coins left in the bag.
+         * @return the number of coins of the given player
+         */
+        int getCoinsLeft();
+
         /**
          * method to observe number of coins of a given player.
          * @param nickname the player to check
@@ -273,6 +292,13 @@ public interface ObservableByClient {
          * @return the cost
          */
         int getCharacterCost(int ID);
+
+        /**
+         * Returns true if the given character is overcharged.
+         * @param ID the character to check
+         * @return true if the given character is overcharged.
+         */
+        boolean getCharacterOvercharge(int ID);
 
         /**
          * Getter for the number of entry tiles left on the character

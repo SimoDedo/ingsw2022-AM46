@@ -5,7 +5,6 @@ package it.polimi.ingsw.Utils.Enum;
  */
 public enum RequestParameter {
     STUDENT_ENTRANCE,
-    ISLAND_OR_TABLE,
     ISLAND,
     STUDENT_DINING_ROOM,
     STUDENT_CARD,

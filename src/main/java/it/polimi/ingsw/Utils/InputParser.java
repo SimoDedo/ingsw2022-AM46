@@ -1,8 +1,9 @@
 package it.polimi.ingsw.Utils;
 
+import it.polimi.ingsw.Utils.Exceptions.HelpException;
+
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class InputParser {
@@ -14,13 +15,15 @@ public class InputParser {
         this.input = new Scanner(System.in);
     }
 
-    public String readLine() {
+    public String readLine() throws HelpException{
         synchronized (input){
-            return input.nextLine();
+            String line = input.nextLine();
+            if(line.equalsIgnoreCase("help")) throw new HelpException();
+            return line;
         }
     }
 
-    public int readNumber() {
+    public int readNumber() throws HelpException{
         boolean found = false;
         int number = 0;
         while(!found){
@@ -36,7 +39,7 @@ public class InputParser {
         return number;
     }
 
-    public int readBoundNumber(int lo, int hi) {
+    public int readBoundNumber(int lo, int hi) throws HelpException{
         int number = readNumber();
         while(number < lo || number > hi){
             System.out.printf("The number must be between %d and %d%n", lo, hi);
@@ -45,7 +48,7 @@ public class InputParser {
         return number;
     }
 
-    public int readNumberFromSelection(Collection<Integer> choices){
+    public int readNumberFromSelection(Collection<Integer> choices) throws HelpException{
         int number = readNumber();
         while(!choices.contains(number)){
             System.out.println("The number must be one of the following: " + Arrays.toString(choices.toArray()));
@@ -54,7 +57,7 @@ public class InputParser {
         return number;
     }
 
-    public String readLineFromSelection(Collection<String> choices){
+    public String readLineFromSelection(Collection<String> choices) throws HelpException{
         choices = choices.stream().map(String::toUpperCase).toList();
         String line = readLine();
         while(!choices.contains(line.toUpperCase())){

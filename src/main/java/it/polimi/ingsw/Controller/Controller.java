@@ -3,11 +3,11 @@ package it.polimi.ingsw.Controller;
 import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.GameExpert;
 import it.polimi.ingsw.GameModel.GameFactory;
+import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.IllegalActionError;
 import it.polimi.ingsw.Network.Message.Error.IllegalSelectionError;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
-import it.polimi.ingsw.Network.Message.Info.*;
 import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Network.Server.MatchServer;
@@ -54,14 +54,24 @@ public class Controller {
     private int playersReady;
 
     /**
-     * HashMap that contains nickname of a user and the expectedUserAction.
+     * HashMap that contains nickname of a user and the expectedUserAction. The expected user action represent
+     * the user must take in order for the game state to evolve
      */
     private final HashMap<String, UserActionType> expectedUserAction;
 
+    /**
+     * True when game settings have been selected and thus game is created
+     */
     private boolean initialized;
 
+    /**
+     * True when the first planning phase has started
+     */
     private boolean gameStarted;
 
+    /**
+     * True whenever the round being played is the last
+     */
     private boolean isLastRound;
 
     /**
@@ -80,7 +90,8 @@ public class Controller {
     }
 
     /**
-     * Constructor for the controller. Creates a controller in its starting state, waiting for someone to login.
+     * Constructor for the controller used in testing. Creates a controller in its starting state,
+     * waiting for someone to login. The server is set to null and messages won't actually be sent over the network.
      */
     public Controller(){
         this.server = null;
@@ -103,7 +114,7 @@ public class Controller {
      * If the UserAction pertains to a Login or a Character usage, it gets handled separately.
      * Otherwise, it is first checked if the request can be accepted and then examined based on its type.
      * After being parsed, one or more private controller methods are called. These methods change the game state
-     * along with sending info or errors to the user.
+     * along with sending an update or an error to the user.
      * @param userAction the action taken by the user.
      */
     public void receiveUserAction(UserAction userAction){
@@ -176,12 +187,10 @@ public class Controller {
 
     /**
      * Handles login of a given player. It is assumed that the received nickname is unique.
-     * If the player who connects is the first to do so, starts by requesting game mode parameters.
+     * If the player who connects is the first to do so, starts by expecting game mode parameters.
      * If it isn't, adds the player only if the game parameters have been chosen and the game isn't already full,
-     * otherwise returns a login error.
-     * To those players, it requests the tower color.
-     * In either case, the first request from the controller is sent here, and thus here the
-     * main request/userAction loop with user starts.
+     * otherwise returns a login error. The choice of a tower color is expected of them.
+     * In either case, the first update from the controller is sent here.
      * @param nickname nickname of the player trying to join the game. Assumed unique.
      */
     public void loginHandle(String nickname){ //Check on username uniqueness done by SERVER (needs to be unique between ALL games and controllers. Assumed here unique.)
@@ -201,10 +210,10 @@ public class Controller {
                             "Choose your tower color"));
                 }
                 else { //If there is no more space
-                    sendErrorToUser(nickname, new LoginError("Lobby is complete!"));
+                    sendErrorToUser(nickname, new LoginError("Game ha no more spot available!"));
                 }
             }
-            else{ //If he has yet to choose game settings
+            else{ //If game settings have not been chosen yet
                 sendErrorToUser(nickname, new LoginError("Lobby has not yet chosen game settings."));
             }
         }
@@ -213,11 +222,11 @@ public class Controller {
     /**
      * Handles UseCharacter and UseAbility UserActions.
      * Both are denied if the game isn't an expert game, if the game hasn't started yet, if the player sending
-     * is not the current player and if it isn't the action phase.
-     * Additionally, UseAbility UserAction gets denied if no character had previously been activated and if
+     * is not the current player or if it isn't the action phase.
+     * Additionally, UseAbility UserActions get denied if no character had previously been activated and if
      * no uses are left.
-     * If all these conditions are met, it tries to activate the character or its ability, and retrieves the
-     * next character request, which is then returned.
+     * If all these conditions are met, it tries to activate the character or its ability, which will either
+     * trigger the sending of an update or an error
      * @param userAction the action taken by the user.
      */
     private void characterRequestHandle(UserAction userAction){
@@ -250,28 +259,8 @@ public class Controller {
     }
 
     /**
-     * Method to send a request to the user. It asks the server to do this operation.
-     * @param info the info to send.
-     */
-    private void sendInfoToUser(String nickname , Info info){
-        if(server != null)
-            server.sendMessage(nickname, info);
-        else
-            System.out.println(info);
-    }
-    /**
-     * Method to send a request to all users. It asks the server to do this operation.
-     * @param info the info to send.
-     */
-    private void sendInfoToAllUsers(Info info){
-        if(server != null)
-            server.sendAll(info);
-        else
-            System.out.println(info);
-    }
-
-    /**
-     * Method to send a request to all users. It asks the server to do this operation.
+     * Method to send an update to all users. It asks the (match) server to do this operation.
+     * If no server was set on initialization, the update is instead printed (used for testing).
      * @param update the info to send.
      */
     private void sendUpdateToAllUsers(Update update){
@@ -282,8 +271,9 @@ public class Controller {
     }
 
     /**
-     * Method to send errors
+     * Method to send errors to a specific user.
      * @param error error to send
+     * @param nickname the user to send the error to
      */
     public void sendErrorToUser(String nickname, Error error){
         if(server != null)
@@ -305,7 +295,7 @@ public class Controller {
     //region Game handle
 
     /**
-     * Sets the game settings. Returns a tower color request.
+     * Sets the game settings. Then, sends an update. The user is then expected to choose a tower color.
      * @param numOfPlayers the number of players of the game.
      * @param gameMode the game mode of the game.
      */
@@ -322,7 +312,7 @@ public class Controller {
     }
 
     /**
-     * Creates a game.
+     * Creates the game.
      */
     private void createGame(){
         game = gameFactory.create(numOfPlayers, gameMode);
@@ -330,8 +320,8 @@ public class Controller {
     }
 
     /**
-     * Adds player to the game. Returns an error if the team of that TowerColor is already full. Otherwise,
-     * returns a wizard request.
+     * Adds player to the game with the tower color chosen. Sends an error if the team of that TowerColor is already
+     * full. Otherwise, sends an update. User is then expected to choose a wizard.
      * @param nickname the player who chose.
      * @param towerColor the tower color chosen.
      */
@@ -351,8 +341,8 @@ public class Controller {
     }
 
     /**
-     * Assigns wizard to a player. Returns an error if wizard was already chosen. Otherwise, returns null
-     * since before sending the next request all player must have chosen their wizard.
+     * Assigns wizard to a player. Sends an error if wizard was already chosen. Otherwise, sends an update.
+     * The player who chose is not expected to take any action while waiting for the game to start.
      * @param nickname the player who chose.
      * @param wizardType the wizard chosen.
      */
@@ -371,7 +361,7 @@ public class Controller {
     }
 
     /**
-     * Starts the actual game. Returns the first play assistant request to the (random) first player.
+     * Starts the actual game. Sends the first update expecting a PlayAssistantUserAction.
      */
     private void startGame(){
         turnController.startGame();
@@ -392,9 +382,12 @@ public class Controller {
     }
 
     /**
-     * Plays the assistant chosen. Returns an error if no card with such ID exists or if card can't be played.
-     * If no error occurs, either sends a play assistant request to the next player or changes the phase and
-     * sends a move student request to the first player of th action phase.
+     * Plays the assistant chosen.
+     * Sends an error if no assistant with such ID exists or if that assistant can't be played.
+     * If no error occurs, sends an update.
+     * The turn is progressed and either the next player is expected to play an assistant, or the phase is switched
+     * and the first player is expected to move a student.
+     * If this is the last turn to be played, performs last round operations.
      * @param nickname the player who played the card.
      * @param assistantID the ID of the assistant to play.
      */
@@ -427,9 +420,10 @@ public class Controller {
     }
 
     /**
-     * Move the student from the entrance to the selected destination. Returns an error if the action selected
-     * is illegal. If no error occurs, checks if the right amount of students have been moved this turn.
-     * If there are students to move, the last request is re-made. Otherwise, a move mother nature request is sent.
+     * Moves the student from the entrance to the selected destination.
+     * Sends an error if the action selected is illegal.
+     * If no error occurs, sends an update.
+     * Either the player has more students to move (and is expected to do so), or is expected to move mother nature.
      * @param nickname the player who moved the student
      * @param studentID the ID of the student to move
      * @param destinationID the ID of the destination (table or island)
@@ -457,10 +451,12 @@ public class Controller {
     }
 
     /**
-     * Moves mother nature to the selected island. Returns an error if the chosen island is beyond player's reach.
-     * If the game ends (either because only 3 groups remain or a team has no more towers) an end game request is
-     * sent. Then, a take from cloud request is ent if this isn't le last round. If it is, take from cloud is skipped
-     * and endRoundOperations are performed (which will return an end game request, since it is the last round).
+     * Moves mother nature to the selected island.
+     * Sends an error if the chosen island is beyond player's reach.
+     * If the game ends, end game operations are performed.
+     * Otherwise, an update is sent.
+     * The user is expected to choose a cloud, unless this is the last turn, in which case end of round operations
+     * are performed.
      * @param nickname the player who move mother nature.
      * @param islandID the destination island of mother nature
      */
@@ -493,9 +489,10 @@ public class Controller {
     }
 
     /**
-     * Takes contents of a cloud and puts them in the user's entrance. Returns error if cloud was already taken.
-     * Otherwise, it either returns a move student request to the next player or, if all players have finished their
-     * action phase, performs end of round operations (which return the next request to make).
+     * Takes the contents of chosen cloud and puts them in the user's entrance.
+     * Sends an error if the cloud was already taken.
+     * The turn is progressed and if there is a next player, it is expected to move a student and an update is sent.
+     * Otherwise, end of round operations are performed.
      * @param nickname the player who took from the cloud.
      * @param cloudID the cloud selected.
      */
@@ -516,10 +513,10 @@ public class Controller {
     }
 
     /**
-     * Uses (in the sense that it gets paid for) a character. Returns an error if the character can't be used.
-     * Otherwise, returns character request.
-     * If no selection is required to the user, the ability is immediately activated, then a character
-     * request is returned.
+     * Uses (in the sense that it gets paid for) a character.
+     * Sends an error if the character can't be used.
+     * If no error occurs, sends an update.
+     * If no selection is required to the user, the ability is instead immediately activated.
      * @param nickname the player who used the character.
      * @param characterID the ID of the character used.
      */
@@ -533,7 +530,7 @@ public class Controller {
             return;
         }
 
-        if(requestParameters.size() == 0 && ((GameExpert) game).getActiveCharacterMaxUses() == 1){
+        if(requestParameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
             //If no selection is required and character can only be used once, ability is instantly activated.
             // The second condition is always true, but if we were to add new characters that request no parameters
             // but can be used more than once, they shouldn't be used automatically
@@ -546,8 +543,10 @@ public class Controller {
     }
 
     /**
-     * Uses the ability of the active character. If the selection contains wrong values, an Error is returned.
-     * Otherwise, the ability is used and a new character request is returned with one less use left.
+     * Uses the ability of the active character.
+     * Sends an error if any of the chosen parameters are illegal.
+     * If no error occurs, an update is sent.
+     * If this is the last turn to be played, performs last round operations.
      * @param nickname the player who used the ability.
      * @param parameters the parameters to use the ability.
      */
@@ -569,7 +568,7 @@ public class Controller {
             }
             //TODO: other exceptions should be thrown and handled. done? to check
         }
-        if(parameters.size() == 0 && ((GameExpert) game).getActiveCharacterMaxUses() == 1){
+        if(parameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
             sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_CHARACTER,
                     turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used automatically"));
         }
@@ -579,6 +578,7 @@ public class Controller {
         }
     }
 
+    //Following methods are used by those above, not directly called in parsing
 
     /** End the turn of the player specified by the nickname.
      * @param nickname of the player who requested their turn to end.
@@ -600,10 +600,12 @@ public class Controller {
 
     /**
      * Performs actions at end of round.
-     * If it catches that the game has ended, calls gameOverOperations and returns an end game request.
-     * Otherwise, progresses to next phase and refills the clouds, then returns a play assistant request to the
-     * first player of the planning phase.
-     * either request to send the client or an end game request
+     * If the game has ended, it performs end of round operations.
+     * Otherwise, progresses to next phase and refills the clouds, then sends an update.
+     * The first user of the planning phase is expected to play an assistant.
+     * If this is the last turn to be played, performs last round operations.
+     * @param lastPlayerToAct the player who had taken the last user action.
+     * @param lastUserActionTaken the user action that ended the round.
      */
     private void endOfRoundOperations(String lastPlayerToAct, UserActionType lastUserActionTaken){
         try { //perform end of round operations
@@ -627,7 +629,8 @@ public class Controller {
 
     /**
      * Operations done when the current round is set to be the last.
-     * Sets the last round on the game and disables its cloud, then sets lastRound true on the controller.
+     * To be called whenever a LastRoundException is caught.
+     * Sets the last round on the game and disables its clouds, then sets lastRound as true on the controller.
      */
     private void lastRoundOperations(){
         game.setLastRound();
@@ -636,10 +639,11 @@ public class Controller {
     }
 
     /**
-     * Determines the game winner and sens an end game request. The request contains the winner of the game and has
-     * no recipient; it will later be sent to all players.
+     * Sends an update and clears the expected user actions;
+     * no player is expected to play in this game now that it ended.
      */
     private void gameOverOperations(){
+        expectedUserAction.clear();
         TowerColor winner = game.determineWinner();
         sendUpdateToAllUsers(new Update(game, null, null,
                 null, UserActionType.END_GAME, "Winner has been determined, end game"));
@@ -648,25 +652,21 @@ public class Controller {
     //endregion
 
     //region testing methods
-    /**
-     * Used in testing.
-     * Allows to skip the controller state to be expecting a certain move.
-     * @param nickname User who we are expecting an action from
-     * @param expectedUserAction UserAction expected of the user
-     */
-    protected void setExpectedUserAction(String nickname, UserActionType expectedUserAction){
-        this.expectedUserAction.put(nickname, expectedUserAction);
-    }
 
+    /**
+     * Protected method that allows unit tests to observe the action that is expected.
+     * It is useful to check the correct evolution of the controller state.
+     * @return a hash map containing a nickname as key and the expected user action as value.
+     */
     protected HashMap<String, UserActionType> getExpectedUserAction() {
         return expectedUserAction;
     }
 
-    protected void  clearExpectedUserAction(){
-        this.expectedUserAction.clear();
-    }
-
-    protected Game getGame(){
+    /**
+     * Protected method that allows tests to observe the game in order to observe its state and query the controller.
+     * @return an ObservableByClient, which is the game controlled.
+     */
+    protected ObservableByClient getGame(){
         return game;
     }
     //endregion

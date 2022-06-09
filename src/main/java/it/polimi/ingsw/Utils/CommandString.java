@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Utils;
 
+/**
+ * Class that contains static strings which represent the command that the user must write in the CLI.
+ */
 public class CommandString {
     public static final String help = "help";
     public static final String table = "table";

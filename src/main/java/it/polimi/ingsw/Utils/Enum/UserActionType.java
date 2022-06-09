@@ -1,5 +1,9 @@
 package it.polimi.ingsw.Utils.Enum;
 
+/**
+ * Represents the possible user action that the user can take.
+ * Each also has two description used to show info to the user.
+ */
 public enum UserActionType {
     LOGIN,
     GAME_SETTINGS("has chosen the game settings", "is choosing the game settings"),
@@ -13,8 +17,8 @@ public enum UserActionType {
     USE_CHARACTER("has used a character", null),
     USE_ABILITY("has activated a character ability", "can activate a character ability"),
     END_TURN("has ended their turn", "can end their turn"),
-    END_GAME;
-
+    END_GAME,
+    DISCONNECT;
 
     private String actionTakenDesc;
     private String actionToTakeDesc;

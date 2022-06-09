@@ -7,7 +7,6 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.GameConfig;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.Utils.Exceptions.GameOverException;
 import it.polimi.ingsw.Utils.PlayerList;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -69,10 +68,9 @@ class IslandGroupTest {
 
     /**
      *  Tests that team correctly conquers
-     * @throws GameOverException not used
      */
     @Test
-    void conquer() throws GameOverException {
+    void conquer(){
         IslandGroup islandGroup = new IslandGroup(true);
         Bag bag = new Bag();
         bag.fillRemaining();

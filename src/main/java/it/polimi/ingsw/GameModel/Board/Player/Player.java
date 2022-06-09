@@ -19,7 +19,7 @@ public class Player implements Serializable {
     private Wizard wizard;
     private final boolean isTowerHolder;
 
-    private TowerColor towerColor;
+    private final TowerColor towerColor;
 
     private int coins;
 
@@ -227,6 +227,14 @@ public class Player implements Serializable {
      */
     public List<Integer> getCardsLeft(){
         return wizard.getCardsLeft();
+    }
+
+    /**
+     * Returns the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
+     */
+    public int getEntranceID(){
+        return playerBoard.getEntranceID();
     }
 
     /**

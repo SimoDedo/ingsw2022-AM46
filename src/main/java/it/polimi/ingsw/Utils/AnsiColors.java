@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Utils;
 
+/**
+ * Class that contains static string used to print colors in CLI.
+ */
 public class AnsiColors {
     public static final String RESET = "\u001B[0m";
     // Regular Colors

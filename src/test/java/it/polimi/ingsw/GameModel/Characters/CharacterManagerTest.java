@@ -343,7 +343,8 @@ class CharacterManagerTest {
         professorSet.setOwner(Color.RED, playerList.getByNickname("Simo"));
         archipelago.resolveIslandGroup(0, playerList, professorSet);
 
-        assertNull(archipelago.getTowerColorOfIslandGroup(0), "A no entry tile was placed, thus no resolving should take place");
+        assertNull(archipelago.getTowerColorOfIslandGroup(0),
+                "A no entry tile was placed, thus no resolving should take place");
         assertEquals(3, archipelago.getNoEntryTiles().get(0),
                 "Three no entry tile should be placed, since one was used");
         assertEquals(1, ((NoEntryCharacter)manager.getCharacterByID(5)).getNoEntryTiles(),
@@ -526,6 +527,7 @@ class CharacterManagerTest {
      * saved contains the entrance student. We repeat this process 2 times changing the color of the DN student, since
      * it can be used up to 2 times.
      * The correct assignment of coin when using the ability is also tested.
+     * Finally, we also test that the character cannot be activated when your dining room is empty
      */
     @RepeatedTest(10)
     void useC10() throws FullTableException {
@@ -549,7 +551,10 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
+        assertThrows(IllegalStateException.class,() -> manager.useCharacter(playerList.getByNickname("Simo"), testingCharID));
+        playerList.getByNickname("Simo").addToDR(new Student(Color.RED, null)); //add a student to avoid error
         manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+
 
 
         List<Integer> parameterList = new ArrayList<>();

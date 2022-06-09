@@ -72,6 +72,7 @@ public class MatchServer implements Server, Runnable {
             try {
                 tempSocket = serverSocket.accept();
                 SocketConnection newConnection = new SocketConnection(tempSocket, this);
+                System.out.println(newConnection.getInetAddress() + " connected to match server on port " + port);
                 executor.execute(newConnection);
             } catch (IOException ioe) {
                 if(isActive()){
@@ -124,9 +125,9 @@ public class MatchServer implements Server, Runnable {
             String nickname = entry.getKey();
             if(connection.isActive()){
                 connection.close();
-                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname +"\"");
+                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname + "\" (" + connection.getInetAddress() +")");
             }
-            unregisterClient(connection.getInetAddress(), nickname, connection);
+            unregisterClient(nickname);
         }
         try {
             serverSocket.close();
@@ -181,8 +182,9 @@ public class MatchServer implements Server, Runnable {
         String nickname = loginAction.getNickname();
         if (awaitingMap.containsKey(nickname) && awaitingMap.containsValue(IP) && awaitingMap.get(nickname).equals(IP)){
             if (!isFull()) {
-                System.out.println("\"" + loginAction.getNickname() + "\" connected to match server on port " + port);
+                System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port);
                 registerClient(IP, nickname, socketConnection);
+                socketConnection.setNickname(nickname);
                 controller.loginHandle(nickname);
             } else {
                 socketConnection.sendMessage(new LoginError("The server is full!"));
@@ -198,13 +200,21 @@ public class MatchServer implements Server, Runnable {
         }
     }
 
+    @Override
+    public void handleLogout(String nickname){
+        System.out.println("\"" + nickname + "\" (" + connectionMap.get(nickname).getInetAddress() + ") logged out from match server on port " + port);
+        unregisterClient(nickname);
+        if(connectionMap.isEmpty())
+            close();
+    }
+
     public void registerClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
         connectionMap.put(nickname, socketConnection);
         lobbyServer.registerClient(nickname, IP);
     }
 
-    public void unregisterClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
-        connectionMap.remove(nickname, socketConnection);
-        lobbyServer.unregisterClient(nickname, IP);
+    public void unregisterClient(String nickname) {
+        connectionMap.remove(nickname);
+        lobbyServer.handleLogout(nickname);
     }
 }

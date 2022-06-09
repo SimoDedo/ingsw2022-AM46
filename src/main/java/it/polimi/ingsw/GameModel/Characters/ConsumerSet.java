@@ -45,7 +45,7 @@ public class ConsumerSet {
         });
 
         consumers.add((list) -> { // C2
-            Player activator = ((StrategyCharacter) characters.get(1)).getOwner();
+            Player activator = characters.get(1).getOwner();
             professorSet.setCheckAndMoveProfessorStrategy(new CheckAndMoveProfessorStrategyC2(activator));
         });
 
@@ -81,7 +81,7 @@ public class ConsumerSet {
         });
 
         consumers.add((list) -> { // C8
-            Player activator = ((StrategyCharacter) characters.get(7)).getOwner();
+            Player activator = characters.get(7).getOwner();
             archipelago.setResolveStrategy(new ResolveStrategyC8(activator));
         });
 

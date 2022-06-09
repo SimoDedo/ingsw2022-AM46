@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
+import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
 import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Info.ServerLoginInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -9,9 +10,11 @@ import it.polimi.ingsw.Network.Message.Update.Update;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.View.CLI.CLI;
+import it.polimi.ingsw.View.GUI.GUI;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +31,9 @@ public class Client {
 
     private String nickname;
 
+    /**
+     * The last update receive. It is used to ask again the UI for input when error is received.
+     */
     private Update lastUpdate;
 
     private Socket socket;
@@ -36,55 +42,90 @@ public class Client {
     private InputStream in;
     private ObjectInputStream inObj;
 
+    private final ExecutorService mainThread;
+
+    /**
+     * Thread queue where all operations that must request something to the user are executed.
+     */
     private final ExecutorService requestQueue;
+    /**
+     * Thread queue where all operations that must only show information to the user are executed.
+     */
     private final ExecutorService infoQueue;
     private Ping ping;
+    /**
+     * Executor which will only execute ping related threads.
+     */
     private ExecutorService pingExecutor;
-    private final Thread mainThread;
 
     private boolean gameStarted;
+    private boolean isToReset;
 
+    /**
+     * Constructor for the Client
+     * @param chosenUI represents a CLI or a GUI.
+     */
     public Client(String chosenUI){
+        isToReset = false;
         if(chosenUI != null){
             if(chosenUI.equals("cli"))
                 UI = new CLI(this);
             if (chosenUI.equals("gui"))
-                UI = new CLI(this); //FIXME: gui here
+                UI = new GUI(this);
         }
         defaultServerIP = "127.0.0.1";
         defaultServerPort = 4646;
+        mainThread = Executors.newSingleThreadExecutor();
         requestQueue = Executors.newSingleThreadExecutor();
         infoQueue = Executors.newSingleThreadExecutor();
         gameStarted = false;
-        mainThread = new Thread(() -> UI.startGame());
     }
 
-
+    /**
+     * Main method that starts by requesting whether the user wants to use a CLI or a GUI.
+     * Then, server IP and port are requested though the chosen UI, the connection is established
+     * and the ping is started. A nickname is then requested and finally the main loop of receiving server responses
+     * is started.
+     */
     public void start(){
-        if(UI == null) //Skipped if --cli or --gui option
-            askCLIorGUI();
-
-        while (socket == null){ //Asks for server info
+        mainThread.execute(() ->{
+            isToReset = false;
+            if(UI == null) //Skipped if --cli or --gui option
+                askCLIorGUI();
+            while (socket == null){ //Asks for server info
                 Map<String, String> serverInfo = UI.requestServerInfo(defaultServerIP, defaultServerPort);
                 serverIP = serverInfo.get("IP");
-                serverPort = Integer.parseInt(serverInfo.get("port"));
-            connectToLobbyServer(serverIP, serverPort);
-        }
+                try {
+                    serverPort = Integer.parseInt(serverInfo.get("port"));
+                }
+                catch (NumberFormatException e){
+                    serverPort = 0;
+                }
+                connectToLobbyServer(serverIP, serverPort);
+            }
 
-        startPing(); //Starts heartbeat with lobby server on another thread
-        requestQueue.execute(() -> {
-            nickname = UI.requestNickname();
-            UI.setNickname(nickname);
-            tryLobbyLogin();
+            startPing(); //Starts heartbeat with lobby server on another thread
+            requestQueue.execute(() -> {
+                nickname = UI.requestNickname();
+                UI.setNickname(nickname);
+                tryLobbyLogin();
+            });
+
+            while (! isToReset){
+                Message message = receiveMessage();
+                if (message != null)
+                    parseMessage(message);
+            }
         });
-
-        while (true){
-            parseMessage( receiveMessage() );
-        }
     }
 
     //region Server connection
 
+    /**
+     * Tries to connect to the lobby server at the given address.
+     * @param IP ip to connect to
+     * @param port port to connect to
+     */
     private void connectToLobbyServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
@@ -93,26 +134,37 @@ public class Client {
             in = socket.getInputStream();
             inObj  = new ObjectInputStream(in);
             UI.displayInfo("Connected to lobby server.");
-            socket.setSoTimeout(2000);
+            socket.setSoTimeout(5000);
         } catch (IOException e) {
-            UI.displayError("Could not connect to server.", false);
+            UI.displayError("Could not connect to server: " + e.getLocalizedMessage(), false);
         }
     }
 
+    /**
+     * Tries to login by sending a login user action with chosen username.
+     */
     private void tryLobbyLogin(){
         LoginUserAction login;
         login = new LoginUserAction(nickname);
         sendUserAction(login);
     }
 
+    /**
+     * Disconnects user from server.
+     */
     private void disconnectFromLobby(){
         try {
             socket.close();
         } catch (IOException e) {
-            UI.displayError("Error in disconnecting from server", true);
+            fatalError("Error in disconnecting from server.");
         }
     }
 
+    /**
+     * Tries to connect to the match server at the given address.
+     * @param IP ip to connect to
+     * @param port port to connect to
+     */
     private void connectToMatchServer(String IP, int port){
         try{
             socket = new Socket(IP, port);
@@ -123,18 +175,23 @@ public class Client {
             socket.setSoTimeout(2000);
             UI.displayInfo("Connected to match server.");
         } catch (IOException e) {
-            UI.displayError("Could not connect to match server. Error: " + e, true);
-            reset();
+            fatalError("Could not connect to match server.");
         }
         sendUserAction(new LoginUserAction(nickname));
     }
 
+    /**
+     * Starts ping with the server to which the socket is connected.
+     */
     private void startPing(){
         ping = new Ping(this);
         pingExecutor = Executors.newSingleThreadExecutor();
         pingExecutor.execute(ping);
     }
 
+    /**
+     * Stops ping with the server to which the socket is connected. Waits for the ping to have stopped before returning.
+     */
     private void stopPing(){
         pingExecutor.shutdownNow();
         boolean error;
@@ -144,12 +201,14 @@ public class Client {
             error = true;
         }
         if (error){
-            UI.displayError("Error occurred while shutting down ping.", true);
-            reset();
+            fatalError("Error occurred while shutting down ping.");
         }
     }
     //endregion
 
+    /**
+     * Asks on the terminal whether the user wants to play with CLI or GUI
+     */
     private void askCLIorGUI(){
         Scanner sysIn = new Scanner(System.in);
         int viewChoice = 0;
@@ -167,7 +226,7 @@ public class Client {
                     System.out.println("CLI selected!");
                 }
                 case 2 -> {
-                    UI = new CLI(this); //FIXME: fix when GUI done
+                    UI = new GUI(this);
                     System.out.println("GUI selected!");
                 }
                 default -> {
@@ -178,6 +237,11 @@ public class Client {
     }
 
     //region Parsing
+
+    /**
+     * Parses a received message.
+     * @param message a message sent by the server.
+     */
     private void parseMessage(Message message){
         if(message instanceof PingInfo){
             ping.received();
@@ -204,28 +268,39 @@ public class Client {
             UI.displayError(message.toString(), false);
             parseUpdate(lastUpdate);
         }
-        else{
-            UI.displayError("Server didn't send correct information.", true);
-            reset();
+        else if (message instanceof LogoutSuccessfulInfo){
+            disconnectFromServer();
         }
     }
 
+    /**
+     * If the server sent an update, this method parses the update based on the action taking player.
+     * If the action taking player of the update is this client, then executes in a thread queue.
+     * If it isn't, it executes on a different thread queue.
+     * This allows the Client to make request of the user and show them info in parallel.
+     * @param update the update received.
+     */
     private void parseUpdate(Update update){
         if(nickname.equals(update.getActionTakingPlayer()) && update.getNextUserAction() != null){
             lastUpdate = update;
             requestQueue.execute(() ->{
                 requestAction(update);
-                UI.notifyServerResponse(gameStarted);
+                UI.notifyServerResponse();
             });
         }
         else {
             infoQueue.execute(() -> {
                 displayInfo(update);
-                UI.notifyServerResponse(gameStarted);
+                UI.notifyServerResponse();
             });
         }
     }
 
+    /**
+     * Parses the update on the premise of making the user a request of some kind, either by directly
+     * requesting it or by enabling and disabling commands that allow the user to take an action.
+     * @param update the update received.
+     */
     private void requestAction(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
@@ -246,7 +321,7 @@ public class Client {
             //No input is accepted when here, client is waiting for others to complete their selection (and receive PLAY_ASSISTANT)
             //Commands are enabled but main thread isn't started yet. Commands are "pre-loaded".
             case WAIT_GAME_START -> {
-                UI.displayInfo("Please wait for all players to be ready and for your turn to start...");
+                UI.requestWaitStart();
             }
             //During the game, a main thread is started that puts CLI/GUI in cycle waiting for an action to be chosen.
             //The possible actions are enabled and disabled by the client.
@@ -258,7 +333,7 @@ public class Client {
                     toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
                     if(update.getGame().getGameMode() == GameMode.EXPERT)
                         toEnable.add(Command.CHARACTER_INFO);
-                    mainThread.start();
+                    UI.startGame();
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
@@ -304,11 +379,16 @@ public class Client {
             }
         }
 
-
         if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
             UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
     }
 
+    /**
+     * Parses the update on the premise of showing the player some information.
+     * Nothing will be requested of the user, at most some commands will be disabled based on what action is
+     * expected to be taken.
+     * @param update the update received.
+     */
     private void displayInfo(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
@@ -317,7 +397,9 @@ public class Client {
         List<Command> toDisable = new ArrayList<>();
         List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
-            case TOWER_COLOR, WAIT_GAME_START, WIZARD -> {
+            case TOWER_COLOR -> {}
+            case WIZARD, WAIT_GAME_START -> {
+                UI.updateSetup(update.getGame(), update.getUserActionTaken());
             }
             case PLAY_ASSISTANT -> {
                 toDisable.addAll(Arrays.asList(Command.ASSISTANT, Command.END_TURN, Command.CHARACTER, Command.ABILITY));
@@ -326,7 +408,7 @@ public class Client {
                     toEnable.addAll(Arrays.asList(Command.QUIT, Command.HELP, Command.CARDS, Command.TABLE, Command.ORDER));
                     if(update.getGame().getGameMode() == GameMode.EXPERT)
                         toEnable.add(Command.CHARACTER_INFO);
-                    mainThread.start();
+                    UI.startGame();
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
@@ -348,7 +430,12 @@ public class Client {
                 }
                 UI.displayBoard(update.getGame(), update.getUserActionTaken());
                 UI.updateCommands(toDisable, toEnable);
-                UI.displayInfo("Team " + update.getGame().getWinner() + " has WON!!!");
+                List<String> winners = update.getGame().getPlayerTeams().entrySet().stream()
+                        .filter(e -> e.getValue().equals(update.getGame().getWinner()))
+                        .map(Map.Entry::getKey)
+                        .toList();
+                UI.displayWinners(update.getGame().getWinner(), winners);
+                logoutFromServer();
             }
         }
 
@@ -359,6 +446,11 @@ public class Client {
     //endregion
 
     //region Network send/receive
+
+    /**
+     * Sends a UserAction through the socket.
+     * @param userAction the UserAction to be sen.
+     */
     public synchronized void sendUserAction(UserAction userAction){
         try {
             outObj.writeObject(userAction);
@@ -366,39 +458,84 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            UI.displayError("Unable to write to server.", true);
-            reset();
+            fatalError("Unable to write to server.");
         }
     }
 
+    /**
+     * Receives a message from the server through the socket.
+     * @return the message received from the server, if converted successfully
+     */
     private Message receiveMessage(){
         Object message = null;
         try {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            UI.displayError("Unable to receive messages from server: " + e.getLocalizedMessage(), true);
-            reset();
+            if(e instanceof SocketTimeoutException){
+                System.err.println("Connection timed out: " + e.getLocalizedMessage());
+                fatalError("Connection timed out.");
+            }
+            else if(e instanceof EOFException){
+                System.err.println("Someone disconnected.");
+                fatalError("Someone disconnected.");
+            }
+            else{
+                System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
+                fatalError("Unable to receive messages from server.");
+            }
+            return null;
         }
         if(!(message instanceof Message)){
-            UI.displayError("Server sending wrong objects", true);
-            reset();
+            fatalError("Server didn't send correct information.");
+            return null;
         }
         return (Message) message;
     }
     //endregion
 
+    /**
+     * Clears the terminal.
+     */
     private void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    private void reset(){
+
+    /**
+     * Closes the application.
+     */
+    public void close() {
+        System.exit(-1);
+    }
+
+    public void reset(){
+        gameStarted = false;
+        nickname = null;
+        socket = null;
+
+        start();
+    }
+
+    public void fatalError(String errorDescription){
+        if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
+            disconnectFromServer();
+            infoQueue.execute(() -> {
+                UI.displayError(errorDescription, true);
+            });
+        }
+    }
+
+    private void logoutFromServer(){
+        sendUserAction(new LogoutUserAction(nickname));
+    }
+
+    private void disconnectFromServer(){
+        isToReset = true;
+        stopPing();
         try {
             socket.close();
-        } catch (IOException e) {
-            System.exit(-1);
+        } catch (Exception ignored) {
         }
-        System.exit(-1); //FIXME: actual reset
-
     }
 }

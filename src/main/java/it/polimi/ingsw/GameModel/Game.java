@@ -3,15 +3,11 @@ package it.polimi.ingsw.GameModel;
 import it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago;
 import it.polimi.ingsw.GameModel.Board.Bag;
 import it.polimi.ingsw.GameModel.Board.CloudTile;
-import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.AssistantCard;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Board.Player.Table;
 import it.polimi.ingsw.GameModel.Board.ProfessorSet;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
-import it.polimi.ingsw.GameModel.Characters.AbstractCharacter;
-import it.polimi.ingsw.GameModel.Characters.CharacterManager;
-import it.polimi.ingsw.Network.Server.Server;
 import it.polimi.ingsw.Utils.Enum.*;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import it.polimi.ingsw.Utils.Exceptions.GameOverException;
@@ -529,6 +525,19 @@ public class Game implements ObservableByClient, Serializable {
         }
 
         /**
+         * Returns the ID of the entrance of a player, or -1 if the nickname doesn't exist
+         * @param nickname the player to query
+         * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
+         */
+        public int getEntranceID(String nickname){
+            Player p = players.getByNickname(nickname);
+            if(p != null)
+                return p.getEntranceID();
+            else
+                return -1;
+        }
+
+        /**
          * Method to observe all the students in the entrance and their color
          * @return HashMap with the student ID as key and its color as object
          */
@@ -554,12 +563,12 @@ public class Game implements ObservableByClient, Serializable {
         }
 
         /**
-         * Returns the amount of towers contained in the TowerSpace of a given team
-         * @param towerColor the nickname of the player to check
+         * Returns the amount of towers contained in the TowerSpace of a given player
+         * @param nickname the nickname of the player to check
          * @return the amount of towers contained in the TowerSpace
          */
-        public int getTowersLeft(TowerColor towerColor){
-            return players.getTowerHolder(towerColor).getTowersLeft();
+        public int getTowersLeft(String nickname){
+            return players.getByNickname(nickname).getTowersLeft();
         }
 
             /**
@@ -574,7 +583,7 @@ public class Game implements ObservableByClient, Serializable {
                 return  result;
             }
 
-        public int getCoinsLeft(String nickname, Color color){
+        public int getTableCoinsLeft(String nickname, Color color){
             return getPlayerByNickname(nickname).getCoinsLeft(color);
         }
             //endregion
@@ -616,11 +625,11 @@ public class Game implements ObservableByClient, Serializable {
     //endregion
         //region Bag
         /**
-         * Method to observe all the students in the bag and their color
-         * @return HashMap with the student ID as key and its color as object
+         * Method to observe how many students are left in the abg
+         * @return the number of students left in the bag
          */
-        public HashMap<Integer, Color> getBagStudentsIDs(){//Probably not needed
-            return  bag.getStudentIDsAndColor();
+        public int getBagStudentsLeft(){//Probably not needed
+            return  bag.getPawnIDs().size();
         }
         //endregion
         //region Archipelago
@@ -685,6 +694,12 @@ public class Game implements ObservableByClient, Serializable {
         //endregion
         //region CharacterManager
 
+
+        @Override
+        public int getCoinsLeft() {
+            return 0;
+        }
+
         @Override
         public int getCoins(String nickname) {
             return 0;
@@ -721,13 +736,18 @@ public class Game implements ObservableByClient, Serializable {
         }
 
         @Override
+        public boolean getCharacterOvercharge(int ID) {
+            return false;
+        }
+
+        @Override
         public int getNoEntryTilesCharacter(int ID) {
             return 0;
         }
 
         @Override
         public List<RequestParameter> getCurrentRequestParameters() {
-            return null;
+            return new ArrayList<>();
         }
 
         //endregion

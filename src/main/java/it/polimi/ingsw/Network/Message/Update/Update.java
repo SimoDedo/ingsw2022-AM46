@@ -1,28 +1,37 @@
 package it.polimi.ingsw.Network.Message.Update;
 
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.Message;
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 
+/**
+ * Main class that represent the server's response to a Client UserAction.
+ * The state is sent in its entirety through the use of an interface which exposes only observer methods.
+ */
 public class Update extends Message {
 
     private final ObservableByClient game;
 
+    /**
+     * The UserAction that triggered this update to be sent
+     */
     private final UserActionType userActionTaken;
 
-    private final String playerActionTaken;
-
     /**
-     * String that represents the player who should take the action requested in this update.
-     * All other players will treat use this update only to show information
+     * The player who took the UserActionTaken
      */
-    private final String actionTakingPlayer;
+    private final String playerActionTaken;
 
     /**
      * The action that is expected from the action taking player.
      */
     private final UserActionType nextUserAction;
+
+    /**
+     * String that represents the player who should take the action expected in this update.
+     * All other players will treat use this update only to show information
+     */
+    private final String actionTakingPlayer;
 
     private final String info;
 

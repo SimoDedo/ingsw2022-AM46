@@ -127,8 +127,9 @@ public class TurnManager implements Serializable {
      */
     public void nextPhase() {
         switch (currentPhase) {
-            case IDLE, ACTION -> //determinePlanningOrder(); already a method in game that calls determinePlanningOrder, why also here? am I missing smth?
-                    currentPhase = Phase.PLANNING;
+            case IDLE, ACTION -> {
+                currentPhase = Phase.PLANNING;
+            }
             case PLANNING -> currentPhase = Phase.ACTION;
         }
     }
