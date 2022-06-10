@@ -358,11 +358,11 @@ public class GUIApplication extends Application {
         mainScene = new Scene(root);
     }
 
-    public void createPlayer(GameMode gameMode, String nickname, int entranceID, HashMap<Color,
+    public void createPlayer(GameMode gameMode, String nickname, int nickID , int entranceID, HashMap<Color,
             Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer) {
 
         VBox players = (VBox) this.lookup("players");
-        PlayerPane player = new PlayerPane(controller, nickname, isMainPlayer);
+        PlayerPane player = new PlayerPane(controller, nickname, nickID,isMainPlayer);
         player.setNickname(nickname);
         player.createBoard(entranceID, tablesIDs, towerColor, numOfTowers);
         player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer, wizardType);

@@ -14,6 +14,7 @@ import java.util.List;
 public class AssistantContainerPane extends AnchorPane {
 
     private final String nickname;
+    private final int nickID;
 
     private double assistantSize;
 
@@ -26,13 +27,14 @@ public class AssistantContainerPane extends AnchorPane {
     private final List<Integer> assistantsLeft;
 
 
-    public AssistantContainerPane(String nickname, double assistantSize) {
+    public AssistantContainerPane(String nickname, int nickID, double assistantSize) {
         this.nickname = nickname;
+        this.nickID = nickID;
         this.assistantSize = assistantSize;
         assistantGrid = new GridPane();
         assistantGrid.setHgap(assistantGridGap);
         assistantGrid.setVgap(assistantGridGap);
-        this.setId("assistantContainerPane" + nickname);
+        this.setId("assistantContainerPane" + nickID);
 
         assistantsLeft = new ArrayList<>();
         for (int i = 1; i < 11; i++) {
@@ -47,7 +49,7 @@ public class AssistantContainerPane extends AnchorPane {
         ImageView imageViewAssistant = new ImageView(assistant);
         imageViewAssistant.setPreserveRatio(true);
         imageViewAssistant.setFitHeight(assistantSize);
-        imageViewAssistant.setId("assistant" + nickname + ID);
+        imageViewAssistant.setId("assistant" + nickID + ID);
         imageViewAssistant.setEffect(Effects.disabledAssistantShadow);
         setZoomOnAssistant(imageViewAssistant, Effects.disabledStudentShadow, Effects.disabledAssistantShadow);
         assistantGrid.add(imageViewAssistant, (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
@@ -74,7 +76,7 @@ public class AssistantContainerPane extends AnchorPane {
     public void updateAssistant(List<Integer> newAssistantsLeft){
         for(Integer assistant : assistantsLeft){
             if(! newAssistantsLeft.contains(assistant)){
-                this.lookup("#assistant" + nickname + assistant).setVisible(false);
+                this.lookup("#assistant" + nickID + assistant).setVisible(false);
             }
         }
     }

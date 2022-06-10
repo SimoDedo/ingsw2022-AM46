@@ -26,6 +26,7 @@ public class PlayerPane extends GridPane {
     private final GUIController controller;
 
     private final String nickname;
+    private final int nickID;
 
     public final static double sizeBoardV = 170.0;
     private final double resizeFactor = 0.85;
@@ -38,17 +39,18 @@ public class PlayerPane extends GridPane {
     private final AssistantContainerPane assistantContainerPane;
 
 
-    public PlayerPane(GUIController controller, String nickname, boolean isMainPlayer) {
+    public PlayerPane(GUIController controller, String nickname, int nickID, boolean isMainPlayer) {
         this.controller = controller;
         this.nickname = nickname;
-        this.setId("playerPane" + nickname);
+        this.nickID = nickID;
+        this.setId("playerPane" + nickID);
         this.setHgap(5.0);
         this.setVgap(5.0);
         this.setAlignment(Pos.CENTER);
 
-        boardPane = new BoardPane(controller, nickname, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
+        boardPane = new BoardPane(controller, nickname, nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
-        assistantContainerPane = new AssistantContainerPane(nickname, sizeBoardV / 2);
+        assistantContainerPane = new AssistantContainerPane(nickname, nickID,sizeBoardV / 2);
         // if (isMainPlayer) enableSelectAssistant();
         // else disableSelectAssistant();
     }
@@ -73,13 +75,13 @@ public class PlayerPane extends GridPane {
         sizeDiscard = isMainPlayer ? sizeDiscard : sizeDiscard * resizeFactor;
         Image discard = new Image("/deck/" + wizardType.toString().toLowerCase() + ".png", 200, 200, true, true);
         wizardView = new ImageView(discard);
-        wizardView.setId("wizard" + nickname);
+        wizardView.setId("wizard" + nickID);
         wizardView.setPreserveRatio(true);
         wizardView.setFitWidth(sizeDiscard);
         wizardView.setEffect(new DropShadow());
 
         StackPane discardPane = new StackPane();
-        discardPane.setId("discardPane" + nickname);
+        discardPane.setId("discardPane" + nickID);
         discardPane.getChildren().add(wizardView);
 
         discardCoinPane.getChildren().add(discardPane);
@@ -92,7 +94,7 @@ public class PlayerPane extends GridPane {
             imageViewCoin.setEffect(new DropShadow());
 
             Text coinsPane = new Text(String.valueOf(3));
-            coinsPane.setId("coinsPane" + nickname);
+            coinsPane.setId("coinsPane" + nickID);
             coinsPane.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, sizeCoin * 0.75));
             coinsPane.setFill(javafx.scene.paint.Color.WHITE);
             coinsPane.setEffect(new DropShadow(20, javafx.scene.paint.Color.BLACK));
@@ -117,9 +119,9 @@ public class PlayerPane extends GridPane {
     }
 
     public void updateAssistants(Integer assistantUsed, List<Integer> assistantsLeft){
-        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickname + assistantUsed);
+        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickID + assistantUsed);
         assistantContainerPane.updateAssistant(assistantsLeft);
-        StackPane discardPane = (StackPane) this.lookup("#discardPane" + nickname);
+        StackPane discardPane = (StackPane) this.lookup("#discardPane" + nickID);
         if(assistantUsed == null){
             discardPane.getChildren().clear();
             discardPane.getChildren().add(wizardView);
@@ -153,8 +155,8 @@ public class PlayerPane extends GridPane {
     }
 
     public void updateCoins(int coins){
-        if(this.lookup("#coinsPane" + nickname) != null)
-            ((Text)this.lookup("#coinsPane" + nickname)).setText(String.valueOf(coins));
+        if(this.lookup("#coinsPane" + nickID) != null)
+            ((Text)this.lookup("#coinsPane" + nickID)).setText(String.valueOf(coins));
     }
 
     public void enableSelectStudentsEntrance() {
@@ -186,13 +188,13 @@ public class PlayerPane extends GridPane {
     }
 
     public void enableSelectAssistant(){
-        Pane discard = (Pane) this.lookup("#discardPane"+nickname);
+        Pane discard = (Pane) this.lookup("#discardPane"+nickID);
         List<String> ids = discard.getChildren().stream().map(Node::getId).toList();
 
-        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickname);
+        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickID);
         for(int i = 1; i < 11; i++){
-            ImageView assistant = (ImageView) this.lookup("#assistant"+nickname+i);
-            if(assistant != null && !ids.contains("assistant"+nickname+i)) {
+            ImageView assistant = (ImageView) this.lookup("#assistant"+nickID+i);
+            if(assistant != null && !ids.contains("assistant"+nickID+i)) {
                 assistant.setEffect(Effects.enabledAssistantShadow);
                 assistantContainerPane.setZoomOnAssistant(assistant, Effects.hoveringAssistantShadow, Effects.enabledAssistantShadow);
                 int assistantID = i;
@@ -206,9 +208,9 @@ public class PlayerPane extends GridPane {
     }
 
     public void disableSelectAssistant(){
-        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickname);
+        AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickID);
         for(int i = 1; i < 11; i++){
-            ImageView assistant = (ImageView) this.lookup("#assistant"+nickname+i);
+            ImageView assistant = (ImageView) this.lookup("#assistant"+nickID+i);
             if(assistant != null) {
                 assistant.setEffect(Effects.disabledAssistantShadow);
                 assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantShadow, Effects.disabledAssistantShadow);
@@ -218,12 +220,12 @@ public class PlayerPane extends GridPane {
     }
 
     public void moveAssistant(int ID){
-        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickname + ID);
+        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickID + ID);
         assistant.setOnMouseClicked(event -> System.out.println("Im disabled")); //Now can't be clicked (I'm a fkn genius)
 
         assistant.setVisible(false);
 
-        Pane discard = (Pane) this.lookup("#discardPane"+nickname);
+        Pane discard = (Pane) this.lookup("#discardPane"+nickID);
         discard.getChildren().clear();
 
         ImageView discarded = new ImageView(assistant.getImage());

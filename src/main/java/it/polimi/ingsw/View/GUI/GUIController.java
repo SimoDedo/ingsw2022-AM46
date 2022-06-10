@@ -26,6 +26,7 @@ public class GUIController {
     private final GUI gui;
     private final GUIApplication guiApplication;
     private String nickname;
+    private HashMap<String, Integer> nickMap;
 
     private final List<List<Integer>> groupList = new ArrayList<>();
 
@@ -283,8 +284,8 @@ public class GUIController {
                 for (Color color : Color.values())
                     table.put(color, 0);
                 for (int i = 0; i < 3; i++) {
-                    guiApplication.createPlayer(GameMode.EXPERT,"Player" + i,0 , table, TowerColor.WHITE, 8, WizardType.KING,i == 0);
-                    ((BoardPane) guiApplication.lookup("boardPane"+"Player" + i)).debugPawn();
+                    guiApplication.createPlayer(GameMode.EXPERT,"Player" + i, i,0 , table, TowerColor.WHITE, 8, WizardType.KING,i == 0);
+                    ((BoardPane) guiApplication.lookup("boardPane"+ i)).debugPawn();
                 }
                 ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
                 guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
@@ -311,14 +312,17 @@ public class GUIController {
     }
 
     public void initialDraw(ObservableByClient game, String nickname){ //THIS WILL GET DIVIDED IN MORE METHOD which will be reused by GUI
+        nickMap = new HashMap<>();
+        for(String nick : game.getPlayers())
+            nickMap.put(nick, game.getPlayers().indexOf(nick));
         GUIApplication.runLaterExecutor.execute(() -> {
             //Draws players
-            guiApplication.createPlayer(game.getGameMode(), nickname, game.getEntranceID(nickname),
+            guiApplication.createPlayer(game.getGameMode(), nickname, nickMap.get(nickname),game.getEntranceID(nickname),
                     game.getTableIDs(nickname), game.getPlayerTeams().get(nickname), game.getTowersLeft(nickname),
                     game.getPlayersWizardType().get(nickname),true);
             for(String other : game.getPlayers()){
                 if(! other.equals(nickname)){
-                    guiApplication.createPlayer(game.getGameMode(), other, game.getEntranceID(other),
+                    guiApplication.createPlayer(game.getGameMode(), other, nickMap.get(other),game.getEntranceID(other),
                             game.getTableIDs(other), game.getPlayerTeams().get(other), game.getTowersLeft(other),
                             game.getPlayersWizardType().get(other), false);
                 }
@@ -332,7 +336,7 @@ public class GUIController {
                     game.getDrawnCharacterIDs(), game.getMotherNatureIslandTileID());
 
             for(String nick : game.getPlayers()){
-                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nick);
+                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nick));
                 playerPane.updateEntrance(game.getEntranceStudentsIDs(nick));
                 playerPane.updateTowers(game.getTowersLeft(nick));
                 if(game.getGameMode() == GameMode.EXPERT)
@@ -363,14 +367,14 @@ public class GUIController {
 
     public void updateAssistants(String player, Integer assistantUsed, List<Integer> assistantsLeft){
         GUIApplication.runLaterExecutor.execute(() -> {
-                ((PlayerPane)guiApplication.lookup("playerPane" + player)).updateAssistants(assistantUsed, assistantsLeft);
+                ((PlayerPane)guiApplication.lookup("playerPane" + nickMap.get(player))).updateAssistants(assistantUsed, assistantsLeft);
         });
     }
 
     public void updatePlayerBoards(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             for(String player : game.getPlayers()){
-                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + player);
+                PlayerPane playerPane = (PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(player));
                 playerPane.updateEntrance(game.getEntranceStudentsIDs(player));
                 for(Color color : Color.values())
                     playerPane.updateDiningRoom(color, game.getTableStudentsIDs(player, color));
@@ -448,7 +452,7 @@ public class GUIController {
     public void enableAssistants() {
         nextUserAction = UserActionType.PLAY_ASSISTANT;
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             System.out.println(nickname);
             playerPane.enableSelectAssistant();
         });
@@ -456,14 +460,14 @@ public class GUIController {
 
     public void disableAssistants() {
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.disableSelectAssistant();
         });
     }
 
     public void enableEntrance(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectStudentsEntrance();
         });
     }
@@ -471,28 +475,28 @@ public class GUIController {
     public void enableEntrance(UserActionType nextUserAction){
         this.nextUserAction = nextUserAction;
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectStudentsEntrance();
         });
     }
 
     public void enableDRStudents(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectStudentsDR();
         });
     }
 
     public void disableDRStudents(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.disableSelectStudentsDR();
         });
     }
 
     public void disableEntrance(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.disableSelectStudentsEntrance();
         });
     }
@@ -539,21 +543,21 @@ public class GUIController {
 
     public void enableTables() {
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectTables();
         });
     }
 
     public void enableTables(Color color) {
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectTables(color);
         });
     }
 
     public void disableTables() {
         GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickname));
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.disableSelectTables();
         });
     }
@@ -661,7 +665,7 @@ public class GUIController {
      *
      */
     public int getAssistantCardChosen() {
-        AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickname);
+        AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickMap.get(nickname));
         System.out.println(pane.getAssistantChosen()); // DELETEME debug
         return pane.getAssistantChosen();
     }
@@ -699,7 +703,7 @@ public class GUIController {
     }
 
     public int getStudentBoard(){
-        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickname));
+        BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickMap.get(nickname)));
         return board.getStudentChosen();
     }
 
@@ -803,7 +807,7 @@ public class GUIController {
     }
 
     public int getTableChosen(){
-        BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickname);
+        BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickMap.get(nickname));
         return boardPane.getTableChosen();
     }
 
