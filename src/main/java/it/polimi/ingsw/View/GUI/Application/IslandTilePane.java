@@ -94,6 +94,8 @@ public class IslandTilePane extends StackPane {
         islandModifiersPane.add(noEntryTileText, 2, 0);
         GridPane.setHalignment(noEntryTileText, HPos.CENTER);
 
+        this.setPickOnBounds(false);
+
         /* debug
         PawnView tower = new PawnView(0, "tower", "white", PawnView.pawnSize);
         islandModifiersPane.add(tower, 0, 0);

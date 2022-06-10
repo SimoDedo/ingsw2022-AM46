@@ -31,6 +31,8 @@ public class CloudPane extends StackPane {
         cloudView.setSmooth(true);
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
+
+        this.setPickOnBounds(false);
     }
 
     public void createCloud(int ID){

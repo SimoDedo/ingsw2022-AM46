@@ -5,12 +5,15 @@ import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
 import it.polimi.ingsw.View.GUI.Application.ArchipelagoPane;
+import it.polimi.ingsw.View.GUI.Application.CharacterDetailPane;
 import it.polimi.ingsw.View.GUI.Application.PlayerPane;
 import it.polimi.ingsw.View.GUI.Application.TurnOrderPane;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,6 +30,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -45,11 +49,13 @@ public class GUIApplication extends Application {
 
     private GUIController controller;
 
-    public final static Executor runLaterExecutor = Platform::runLater;
+    private final List<EventHandler<KeyEvent>> keyEvents = new ArrayList<>();
 
     public GUIApplication() {
         instance = this;
     }
+
+    public final static Executor runLaterExecutor = Platform::runLater;
 
     public static GUIApplication getInstance() {
         /*
@@ -355,6 +361,8 @@ public class GUIApplication extends Application {
         mainGrid.add(players, 1, 1);
 
         //mainGrid.setGridLinesVisible(true);
+
+        keyEvents.clear();
         mainScene = new Scene(root);
     }
 
@@ -375,8 +383,31 @@ public class GUIApplication extends Application {
         ArchipelagoPane archipelagoPane = ((ArchipelagoPane) this.lookup("archipelagoPane"));
         archipelagoPane.createIslands(motherNatureIsland, islandIDs);
         archipelagoPane.createClouds(numOfPlayers, cloudIDs);
-        if(gameMode.equals(GameMode.EXPERT))
+        if(gameMode.equals(GameMode.EXPERT)){
+            CharacterDetailPane characterDetailPane = new CharacterDetailPane();
+            characterDetailPane.setId("characterDetailPane");
+            characterDetailPane.addCharacters(characterIDs);
+
+            mainScene.addEventHandler(KeyEvent.KEY_PRESSED, e ->{
+                if (e.getCode() == KeyCode.H && ! characterDetailPane.isActive()) {
+                    characterDetailPane.setVisible(true);
+                    characterDetailPane.setActive(true);
+                    disableAll();
+                }
+                else if((e.getCode() == KeyCode.H || e.getCode() == KeyCode.ESCAPE) && characterDetailPane.isActive()){
+                    characterDetailPane.setVisible(false);
+                    characterDetailPane.setActive(false);
+                    enableAll();
+                }
+
+            });
+            AnchorPane.setRightAnchor(characterDetailPane, 50.0);
+            AnchorPane.setTopAnchor(characterDetailPane, 50.0);
+            AnchorPane mainContentPane = (AnchorPane) this.lookup("mainContentPane");
+            mainContentPane.getChildren().add(characterDetailPane);
+
             archipelagoPane.createCharacterAndHeap(characterIDs);
+        }
     }
 
     public void setupStage() {
@@ -513,6 +544,9 @@ public class GUIApplication extends Application {
         stage.setTitle("Eriantys AM46: Game");
         fadeIn(getContent(mainScene));
 
+    }
+
+    private void addOnKeyPressedToMain(EventHandler<? super KeyEvent> value){
     }
 
     public void disableAll(){
