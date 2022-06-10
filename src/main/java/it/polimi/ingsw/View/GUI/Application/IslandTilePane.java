@@ -39,9 +39,13 @@ public class IslandTilePane extends StackPane {
     private final VBox gridContainer;
     private StudentContainerPane studentPane;
     private List<Pair<Integer, Integer>> freeStudSpots;
+    private double currentStudSize;
+    private int currentStudGridSize;
 
     public IslandTilePane(GUIController controller, ArchipelagoPane archipelago, int index) {
         this.index = index;
+        currentStudSize = StudentView.studentSize;
+        currentStudGridSize = 4;
 
         Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png",
         300, 300, true, true);
@@ -102,14 +106,15 @@ public class IslandTilePane extends StackPane {
 
     public void createIslandTile(int ID){
         studentPane = new StudentContainerPane("islandStudentsPane", ID,
-                islandTileSize, islandTileSize *0.8, 100, 4, 4, 25.0, 0.0, 0.0);
+                islandTileSize, islandTileSize *0.8, 100, currentStudGridSize, currentStudGridSize,
+                25.0, 0.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
         gridContainer.getChildren().add(studentPane);
         freeStudSpots = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < currentStudGridSize; i++) {
+            for (int j = 0; j < currentStudGridSize; j++) {
                 freeStudSpots.add(new Pair<>(i, j));
             }
         }
@@ -150,11 +155,45 @@ public class IslandTilePane extends StackPane {
         for (Integer stud : newStudents){
             if(! studsBeforeID.contains("student" + stud)){
                 int rand = new Random().nextInt(freeStudSpots.size());
-                studentPane.add(new StudentView(stud, "student", studColor.get(stud).toString().toLowerCase(), StudentView.studentSize),
+                studentPane.add(new StudentView(stud, "student", studColor.get(stud).toString().toLowerCase(), currentStudSize),
                         freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());
                 freeStudSpots.remove(rand);
+                if(freeStudSpots.size() == 0){
+                    resizeStudGrid();
+                }
             }
         }
+    }
+
+    private void resizeStudGrid(){
+        currentStudGridSize++;
+        currentStudSize = currentStudSize * 7/8;
+        int ID = Integer.parseInt(studentPane.getId().substring("islandStudentsPane".length()));
+        StudentContainerPane newStudGrid = new StudentContainerPane("islandStudentsPane", ID,
+                islandTileSize, islandTileSize *0.8, 100, currentStudGridSize, currentStudGridSize,
+                25.0, 0.0, 0.0);
+
+        List<Node> studsBefore = new ArrayList<>(studentPane.getChildren());
+        for(Node stud : studsBefore){
+            if(stud instanceof StudentView){
+                Pair<Integer, Integer> spot = new Pair<>(GridPane.getColumnIndex(stud), GridPane.getRowIndex(stud));
+                studentPane.getChildren().remove(stud);
+                newStudGrid.add(
+                        new StudentView(Integer.parseInt(stud.getId().substring("student".length())) ,"student",
+                                ((StudentView) stud).getColor(),currentStudSize),
+                        spot.getKey(), spot.getValue()
+                );
+            }
+        }
+        for (int i = 0; i < currentStudGridSize; i++) {
+            freeStudSpots.add(new Pair<>(i, currentStudGridSize - 1));
+            if(i != currentStudGridSize - 1)
+                freeStudSpots.add(new Pair<>(currentStudGridSize - 1, i));
+        }
+
+        gridContainer.getChildren().remove(studentPane);
+        gridContainer.getChildren().add(newStudGrid);
+        studentPane = newStudGrid;
     }
 
     public List<StudentView> getStudents() {

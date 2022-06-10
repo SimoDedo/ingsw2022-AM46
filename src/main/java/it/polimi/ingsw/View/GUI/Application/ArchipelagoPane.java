@@ -6,9 +6,12 @@ import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
@@ -98,6 +101,17 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer = new BagContainerPane();
         this.getChildren().add(bagContainer);
         bagContainer.relocate(centerPos - 15.0, centerPos - 30.0);
+
+        // end turn button goes here
+        Button endTurn = new Button("End turn");
+        endTurn.setId("endButton");
+        endTurn.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 13));
+        endTurn.setOnAction(event -> {
+            controller.notifyEndTurn();
+        });
+        this.getChildren().add(endTurn);
+
+        endTurn.relocate(centerPos + 24, centerPos + 175.0);
     }
 
     /**

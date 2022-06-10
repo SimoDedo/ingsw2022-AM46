@@ -52,6 +52,7 @@ public class CharContainerPane extends HBox {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
             ImageView charImageView = (ImageView) characterPane.lookup("#charView");
             charImageView.setEffect(Effects.enabledCharacterShadow);
+            characterPane.currentEffect = Effects.enabledCharacterShadow;
             characterPane.setOnMouseEntered(e -> {
                 charImageView.setEffect(Effects.hoveringCharacterShadow);
             });
@@ -79,6 +80,13 @@ public class CharContainerPane extends HBox {
         if(charIDs != null){
             for (Integer charID : charIDs) {
                 CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
+                ImageView charImageView = (ImageView) characterPane.lookup("#charView");
+                if(characterPane.currentEffect != Effects.activatedCharacterShadow){
+                    characterPane.currentEffect = Effects.disabledCharacterShadow;
+                    charImageView.setEffect(Effects.disabledCharacterShadow);
+                }
+                else
+                    charImageView.setEffect(characterPane.currentEffect);
                 characterPane.setOnMouseEntered(e -> {});
                 characterPane.setOnMouseExited(e -> {});
                 characterPane.setOnMouseClicked(event -> {
@@ -93,6 +101,7 @@ public class CharContainerPane extends HBox {
         ImageView charImageView = (ImageView) characterPane.lookup("#charView");
 
         charImageView.setEffect(Effects.activatedCharacterShadow);
+        characterPane.currentEffect = Effects.activatedCharacterShadow;
         characterPane.setOnMouseEntered(e -> {
             charImageView.setEffect(Effects.hoveringCharacterShadow);
         });

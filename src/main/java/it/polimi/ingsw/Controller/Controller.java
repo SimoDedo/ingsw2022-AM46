@@ -578,7 +578,6 @@ public class Controller {
         }
     }
 
-    //Following methods are used by those above, not directly called in parsing
 
     /** End the turn of the player specified by the nickname.
      * @param nickname of the player who requested their turn to end.
@@ -596,7 +595,7 @@ public class Controller {
         }
     }
 
-    //used by above
+    //Following methods are used by those above, not directly called in parsing
 
     /**
      * Performs actions at end of round.

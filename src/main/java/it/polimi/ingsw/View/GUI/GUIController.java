@@ -615,16 +615,17 @@ public class GUIController {
     }
 
     public void enableEndTurn(){
+        nextUserAction = UserActionType.END_TURN;
         GUIApplication.runLaterExecutor.execute(() -> {
-            TurnOrderPane turnOrderPane = (TurnOrderPane) guiApplication.lookup("turnOrderPane");
-            turnOrderPane.enableEndTurn();
+            Button endTurn = (Button) guiApplication.lookup("endButton");
+            endTurn.setVisible(true);
         });
     }
 
     public void disableEndTurn(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            TurnOrderPane turnOrderPane = (TurnOrderPane) guiApplication.lookup("turnOrderPane");
-            turnOrderPane.disableEndTurn();
+            Button endTurn = (Button) guiApplication.lookup("endButton");
+            endTurn.setVisible(false);
         });
     }
     public void enableLast(){
@@ -633,6 +634,7 @@ public class GUIController {
                 case MOVE_STUDENT -> enableEntrance(UserActionType.MOVE_STUDENT);
                 case MOVE_MOTHER_NATURE -> enableIslands(UserActionType.MOVE_MOTHER_NATURE);
                 case TAKE_FROM_CLOUD -> enableClouds();
+                case END_TURN -> enableEndTurn();
             }
         }
     }
@@ -844,6 +846,7 @@ public class GUIController {
         disableStudentChar();
         disableDRStudents();
         disableColorChar();
+        disableEndTurn();
         if(requestParameters.size() != 0){
             switch (requestParameters.get(0)){
                 case STUDENT_ENTRANCE -> enableEntrance();
@@ -864,6 +867,7 @@ public class GUIController {
         if(debug){
             System.out.println("ended turn");
         }else{
+            nextUserAction = null;
             gui.sendSelection(new EndTurnUserAction(nickname));
         }
     }
