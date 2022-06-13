@@ -28,8 +28,6 @@ public class GUIController {
     private String nickname;
     private HashMap<String, Integer> nickMap;
 
-    private final List<List<Integer>> groupList = new ArrayList<>();
-
     private final boolean debug = false;
 
     private final boolean useBridges = false;
@@ -58,10 +56,17 @@ public class GUIController {
             stage.getIcons().add(new Image("/general/icon.png"));
             errorDialog.setTitle("Error");
             errorDialog.setHeaderText("Wrong action!");
-            errorDialog.setContentText(errorDescription + ". Please choose another move or select Help > Game Rules to get further info!");
+            errorDialog.setContentText(errorDescription + ". Please choose another move!");
             errorDialog.showAndWait();
             if(isGameEnding)
                 endGame();
+        });
+    }
+
+    public void displayInfo(String info) {
+        System.out.println("display info called " + info);
+        GUIApplication.runLaterExecutor.execute(() -> {
+            ((Log) guiApplication.lookup("log")).push(info);
         });
     }
 
@@ -115,7 +120,7 @@ public class GUIController {
     }
 
     public void connectWithNicknameSuccessful() {
-        GUIApplication.runLaterExecutor.execute(() -> guiApplication.switchToGameSetup());
+        GUIApplication.runLaterExecutor.execute(guiApplication::switchToGameSetup);
         if (debug) {
             enableGameSettings(); // DELETEME debug
         }
@@ -274,12 +279,7 @@ public class GUIController {
     public void startGame() {
         GUIApplication.runLaterExecutor.execute(() -> {
             guiApplication.switchToMain();
-            for (int i = 0; i < 12; i++) {
-                List<Integer> newGroup = new ArrayList<>();
-                newGroup.add(i);
-                groupList.add(newGroup);
-            }
-            if (debug) { //FIXME transform into many small methods that enable/disable
+            if (debug) {
                 HashMap<Color, Integer> table = new HashMap<>();
                 for (Color color : Color.values())
                     table.put(color, 0);
@@ -398,7 +398,7 @@ public class GUIController {
         });
     }
 
-    public void updateArchipelago(ObservableByClient game){
+    public void updateArchipelago(ObservableByClient game) {
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
 
@@ -710,9 +710,6 @@ public class GUIController {
     public void notifyStudentIsland(){
         if (debug) {
             System.out.println("Student chosen, island");
-        }
-        else {
-            // gui.notifyInput();
         }
     }
 

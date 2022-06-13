@@ -4,10 +4,7 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.GameMode;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import it.polimi.ingsw.View.GUI.Application.ArchipelagoPane;
-import it.polimi.ingsw.View.GUI.Application.CharacterDetailPane;
-import it.polimi.ingsw.View.GUI.Application.PlayerPane;
-import it.polimi.ingsw.View.GUI.Application.TurnOrderPane;
+import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -48,8 +45,6 @@ public class GUIApplication extends Application {
     private Stage stage;
 
     private GUIController controller;
-
-    private final List<EventHandler<KeyEvent>> keyEvents = new ArrayList<>();
 
     public GUIApplication() {
         instance = this;
@@ -134,7 +129,6 @@ public class GUIApplication extends Application {
 
         Label loginSceneTitle = new Label("Login");
         loginSceneTitle.setFont(Font.font("Eras Demi ITC", 30));
-        // loginSceneTitle.setStyle("-fx-font-family: 'Era'; -fx-font-size: 30; -fx-font-weight: bolder");
         gridContainer.getChildren().add(loginSceneTitle);
 
         GridPane ipPane = new GridPane();
@@ -340,8 +334,9 @@ public class GUIApplication extends Application {
         mainGrid.setHgap(30.0);
         mainGrid.setVgap(10.0);
 
-        // turn order box
+        // turn order box and log
         mainGrid.add(new TurnOrderPane(controller), 0, 0);
+        mainGrid.add(new Log(), 1, 0);
 
         // archipelago
         mainGrid.add(new ArchipelagoPane(controller), 0, 1);
@@ -362,7 +357,6 @@ public class GUIApplication extends Application {
 
         //mainGrid.setGridLinesVisible(true);
 
-        keyEvents.clear();
         mainScene = new Scene(root);
     }
 
