@@ -330,8 +330,8 @@ public class GUIApplication extends Application {
         AnchorPane.setBottomAnchor(mainGrid, 0.0);
         AnchorPane.setLeftAnchor(mainGrid, 0.0);
         AnchorPane.setTopAnchor(mainGrid, 0.0);
-        mainGrid.setPadding(new Insets(20.0, 10.0, 10.0, 10.0));
-        mainGrid.setHgap(30.0);
+        mainGrid.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
+        mainGrid.setHgap(20.0);
         mainGrid.setVgap(10.0);
 
         // turn order box and log
