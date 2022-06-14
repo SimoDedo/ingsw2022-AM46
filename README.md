@@ -8,12 +8,9 @@ Online implementation of the tabletop game [Eriantys](https://craniointernationa
 - [Overview](#overview)
     + [Made with](#made-with)
     + [Specification](#specification)
-<!--- 
-- [The project](#the-project)
-    + [Structure](#structure)
-    + [Game rules](#game-rules)
-    + [Network](#network)
--->
+- [Installation](#installation)
+    + [Requirements](#requirements)
+    + [Run](#run)
 - [Active development](#active-development)
   * [Roadmap](#roadmap)
   * [Changelog](#changelog)
@@ -52,15 +49,14 @@ The project will include:
 - source code of the **implementation**: game rules, networking, CLI, GUI, additional specifications etc.
 - source code of the **unit tests**.
 
-<!---
-# The project
-### Structure
-*WIP*
-### Game rules
-*WIP*
-### Network
-*WIP*
--->
+---
+
+# Installation
+WIP
+## Requirements
+WIP
+## Run
+WIP
 
 ---
 
@@ -76,8 +72,8 @@ The project will include:
     - [x] MVC diagram
     - [x] Communication protocol diagram
   - [x] Complete UML diagram
-  - [ ] Final UML diagram, automatically generated from code
   - [x] GUI design
+  - [ ] Final UML diagram, automatically generated from code
   
 - **Implementation**
   - [x] Game rules
@@ -97,7 +93,7 @@ The project will include:
   - [x] GUI
 
 - **Finalization**
-  - [ ] Polishing
+  - [x] Polishing
   - [ ] Publishing
 
 ## Changelog
@@ -128,6 +124,7 @@ The project will include:
   + **0.9.3**: GUI draft and login/setup screens
   + **0.9.4**: finished GUI
   + **0.9.5**: GUI polishing and bug fixes
+
 ---
 
 ![Second banner](https://user-images.githubusercontent.com/24454017/158022778-42af81b4-8f8f-4718-aa24-aef71a2143a2.jpg "Eriantys end banner")
