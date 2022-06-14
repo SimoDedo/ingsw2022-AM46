@@ -31,7 +31,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
                 endingIslandGroupNumber = islandGroups.indexOf(islandGroup);
         }
         moveCountNeeded = moveCount(startingIslandGroupNumber + 1, endingIslandGroupNumber + 1, islandGroups.size());
-        if(moveCountNeeded == 0 || moveCountNeeded > moveCount)
+        if(moveCountNeeded > moveCount)
             throw new IllegalArgumentException("Move power is not enough to make this move!");
         else{
             MotherNature motherNature = islandTileStarting.removeMotherNature();
@@ -49,7 +49,7 @@ public class MoveMotherNatureStrategyStandard implements MoveMotherNatureStrateg
      */
     private int moveCount(int startingNumber, int endingNumber, int maxNumber){
         int temp = endingNumber - startingNumber;
-        if(temp < 0)
+        if(temp <= 0)
             return maxNumber + temp;
         else
             return temp;

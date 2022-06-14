@@ -6,9 +6,12 @@ import it.polimi.ingsw.View.GUI.GUIController;
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
@@ -98,6 +101,15 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer = new BagContainerPane();
         this.getChildren().add(bagContainer);
         bagContainer.relocate(centerPos - 15.0, centerPos - 30.0);
+
+        // end turn button goes here
+        Button endTurn = new Button("End turn");
+        endTurn.setId("endButton");
+        endTurn.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 13));
+        endTurn.setOnAction(event -> controller.notifyEndTurn());
+        this.getChildren().add(endTurn);
+
+        endTurn.relocate(centerPos + 24, centerPos + 175.0);
     }
 
     /**
@@ -245,8 +257,6 @@ public class ArchipelagoPane extends AnchorPane {
             }
             groupsToMerge.sort(Comparator.comparingInt(g -> g));
 
-            System.out.println(islandConfiguration);
-            System.out.println(newIslandsConfiguration);
             if(groupsToMerge.size() == 2){ //If only to groups to merge, merges them by making them move to each other
                 if(groupsToMerge.get(0) == 0 && groupsToMerge.get(1) == islandConfiguration.size() - 1){
                     //Reorder groups so that idx 0 has to move back if merge between 0 and last
@@ -298,15 +308,9 @@ public class ArchipelagoPane extends AnchorPane {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
             ImageView islandView = (ImageView) island.lookup("#islandView");
             islandView.setEffect(Effects.enabledIslandShadow);
-            island.setOnMouseEntered(e ->{
-                islandView.setEffect(Effects.hoveringIslandShadow);
-            });
-            island.setOnMouseExited(e ->{
-                islandView.setEffect(Effects.enabledIslandShadow);
-
-            });
+            island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandShadow));
+            island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
             island.setOnMouseClicked(event -> {
-                System.out.println("Someone clicked on me, an island tile! " + island.getId());
                 setIslandChosen(islandID);
                 controller.notifyIsland();
             });
@@ -321,15 +325,9 @@ public class ArchipelagoPane extends AnchorPane {
                 IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
                 ImageView islandView = (ImageView) island.lookup("#islandView");
                 islandView.setEffect(Effects.enabledIslandShadow);
-                island.setOnMouseEntered(e ->{
-                    islandView.setEffect(Effects.hoveringIslandShadow);
-                });
-                island.setOnMouseExited(e ->{
-                    islandView.setEffect(Effects.enabledIslandShadow);
-
-                });
+                island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandShadow));
+                island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
                 island.setOnMouseClicked(event -> {
-                    System.out.println("Someone clicked on me, an island tile! " + island.getId());
                     setIslandChosen(islandID);
                     controller.notifyIsland();
                 });
@@ -345,7 +343,6 @@ public class ArchipelagoPane extends AnchorPane {
             island.setOnMouseEntered(e ->{});
             island.setOnMouseExited(e ->{});
             island.setOnMouseClicked(event -> {
-                System.out.println("I'm disabled! " + island.getId());
             });
         }
     }
@@ -356,32 +353,6 @@ public class ArchipelagoPane extends AnchorPane {
 
     public int getIslandChosen() {
         return islandChosen;
-    }
-
-    public void enableSelectStudents() {
-        for (int islandID : islandsIDs) {
-            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            List<StudentView> students = island.getStudents();
-            for (StudentView student : students) {
-                student.setCallback(event -> {
-                    System.out.println("Student clicked in island! " + student.getId());
-                    this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                    controller.notifyStudentIsland();
-                });
-            }
-        }
-    }
-
-    public void disableSelectStudents() {
-        for (int islandID : islandsIDs) {
-            IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
-            List<StudentView> students = island.getStudents();
-            for (StudentView student : students) {
-                student.setCallback(event -> {
-                    System.out.println("I'm disabled! " + student.getId());
-                });
-            }
-        }
     }
 
     public void setStudentChosen(int studentID) {

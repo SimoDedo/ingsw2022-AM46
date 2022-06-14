@@ -151,7 +151,7 @@ public class CharacterPane extends StackPane {
         coinOvercharge.setVisible(isOvercharged);
         ImageView charView = ((ImageView) this.lookup(("#charView")));
         if(isActive){
-            charView.setEffect(Effects.activatedCharacterShadow);
+            this.currentEffect = Effects.activatedCharacterShadow;
             if(usesLeft > 0){
                 this.usesLeft.setText(Integer.toString(usesLeft));
                 this.usesLeft.setVisible(true);
@@ -160,9 +160,8 @@ public class CharacterPane extends StackPane {
                 this.usesLeft.setVisible(false);
         }
         else {
-            charView.setEffect(Effects.disabledCharacterShadow);
+            this.currentEffect = Effects.disabledCharacterShadow;
             this.usesLeft.setVisible(false);
-
         }
 
     }

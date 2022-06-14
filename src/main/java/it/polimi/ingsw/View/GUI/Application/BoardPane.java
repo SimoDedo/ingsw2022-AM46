@@ -17,7 +17,7 @@ import java.util.*;
 
 public class BoardPane extends StackPane {
 
-    private final String nickname;
+    private final int nickID;
 
     private final double boardHeight;
     private final double boardWidth;
@@ -64,13 +64,13 @@ public class BoardPane extends StackPane {
     private int tableChosen;
     private int studentChosen;
 
-    public BoardPane(GUIController controller, String nickname, double boardHeight) {
+    public BoardPane(GUIController controller, int nickID, double boardHeight) {
         this.controller = controller;
-        this.nickname = nickname;
+        this.nickID = nickID;
         this.boardHeight = boardHeight;
         this.boardWidth = boardHeight * (3304.0 / 1413.0);
 
-        this.setId("boardPane" + nickname);
+        this.setId("boardPane" + nickID);
         Image playerBoard = new Image("/world/board_roundedcorners.png", 600, 600,true, false);
         ImageView imageViewPB = new ImageView(playerBoard);
         imageViewPB.setPreserveRatio(true);
@@ -102,13 +102,8 @@ public class BoardPane extends StackPane {
     }
 
     public void enableSelectTables() {
-        System.out.println("testaggio");
         for (Map.Entry<Color, StudentContainerPane> entry : tables.entrySet()) {
-            System.out.println("DEBUGGGG " + entry.getValue().getId());
-            System.out.println("DEBUGGGG " + entry.getValue().getStudents());
-
             entry.getValue().setOnMouseClicked(event -> {
-                System.out.println("Someone clicked on a table! " + entry.getValue().getId());
                 setTableChosen(Integer.parseInt(entry.getValue().getId().substring("tablePane".length())));
                 controller.notifyTable();
             });
@@ -133,7 +128,6 @@ public class BoardPane extends StackPane {
             shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
         });
         tables.get(color).setOnMouseClicked(event -> {
-            System.out.println("Someone clicked on a table! " + tables.get(color).getId());
             setTableChosen(Integer.parseInt(tables.get(color).getId().substring("tablePane".length())));
             controller.notifyTable();
         });
@@ -144,7 +138,6 @@ public class BoardPane extends StackPane {
             table.setOnMouseExited(null);
             table.setOnMouseEntered(null);
             table.setOnMouseClicked(event -> {
-                System.out.println("I'm a disabled table! " + table.getId());
             });
         }
         for (StackPane shadowedPane : shadowedTablePanes.values()) {
@@ -166,7 +159,6 @@ public class BoardPane extends StackPane {
         for (StudentView student : entranceStudents) {
             student.setEnabled();
             student.setCallback(event -> {
-                System.out.println("Student clicked in entrance! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
                 controller.notifyStudentEntrance();
             });
@@ -178,7 +170,6 @@ public class BoardPane extends StackPane {
         for (StudentView student : entranceStudents) {
             student.setDisabled();
             student.setCallback(event -> {
-                System.out.println("Student clicked in entrance, but I'm disabled! " + student.getId());
             });
         }
     }
@@ -191,7 +182,6 @@ public class BoardPane extends StackPane {
         for (StudentView student : DRStudents) {
             student.setEnabled();
             student.setCallback(event -> {
-                System.out.println("Student clicked in dining room! " + student.getId());
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
                 controller.notifyStudentDR();
             });
@@ -206,7 +196,6 @@ public class BoardPane extends StackPane {
         for (StudentView student : DRStudents) {
             student.setDisabled();
             student.setCallback(event -> {
-                System.out.println("Student clicked in dining room, but I'm disabled! " + student.getId());
             });
         }
     }
@@ -250,7 +239,7 @@ public class BoardPane extends StackPane {
     public void createDiningRoom(HashMap<Color, Integer> tableIDs){
         diningRoom = new GridPane();
         createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.7, 0.0);
-        diningRoom.setId("diningRoomPane" + nickname);
+        diningRoom.setId("diningRoomPane" + nickID);
 
         tables = new HashMap<>();
         shadowedTablePanes = new HashMap<>();
@@ -281,7 +270,7 @@ public class BoardPane extends StackPane {
 
     public void createProfessors(){
         professors = new GridPane();
-        professors.setId("professorPane" + nickname);
+        professors.setId("professorPane" + nickID);
         createGrid(professors, professorPct, 5, 1, 6.0, 7.7, 0.0);
         mainGrid.add(professors,2,0);
     }
@@ -289,7 +278,7 @@ public class BoardPane extends StackPane {
     public void createTowerSpace(TowerColor towerColor, int number){
         this.towerColor = towerColor;
         towerSpace = new GridPane();
-        towerSpace.setId("towerSpacePane" + nickname);
+        towerSpace.setId("towerSpacePane" + nickID);
         createGrid(towerSpace, towerPct, 4, 2, 12, 10, 0);
         mainGrid.add(towerSpace, 3, 0);
     }

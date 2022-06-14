@@ -193,6 +193,7 @@ public class GUI implements UI {
 
     @Override
     public void displayInfo(String info) {
+        guiController.displayInfo(info);
     }
 
     @Override
@@ -243,6 +244,7 @@ public class GUI implements UI {
                     guiController.updateCharacterRequest(game);
                 }
                 case END_TURN -> {
+                    guiController.updateCharacters(game);
                     guiController.updateTurnOrder(game);
                     guiController.updateCloud(game);
                     guiController.updatePlayerBoards(game);
