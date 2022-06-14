@@ -28,8 +28,6 @@ public class GUIController {
     private String nickname;
     private HashMap<String, Integer> nickMap;
 
-    private final boolean debug = false;
-
     private final boolean useBridges = false;
 
     private UserActionType nextUserAction;
@@ -64,9 +62,9 @@ public class GUIController {
     }
 
     public void displayInfo(String info) {
-        System.out.println("display info called " + info);
         GUIApplication.runLaterExecutor.execute(() -> {
-            ((Log) guiApplication.lookup("log")).push(info);
+            if (guiApplication.lookup("log") != null)
+                ((Log) guiApplication.lookup("log")).push(info);
         });
     }
 
@@ -80,15 +78,7 @@ public class GUIController {
     }
 
     public void connectToIP() {
-        if(debug){
-            String IP = ( (TextField) guiApplication.lookup("ipField")).getText();
-            String port = ( (TextField) guiApplication.lookup("portField")).getText();
-            System.out.println("Connecting to " + IP + ":" + port); // DELETEME debug
-            connectToIPSuccessful(); // DELETEME debug
-        }
-        else {
-            gui.notifySetupInput();
-        }
+        gui.notifySetupInput();
     }
 
     public Map<String, String> getIPChosen(){
@@ -105,14 +95,7 @@ public class GUIController {
     }
 
     public void connectWithNickname() {
-        if(debug){
-            String nickname = ( (TextField) guiApplication.lookup("nickField")).getText();
-            System.out.println("Connecting with nickname " + nickname); // DELETEME debug
-            connectWithNicknameSuccessful(); // DELETEME debug
-        }
-        else {
-            gui.notifySetupInput();
-        }
+        gui.notifySetupInput();
     }
 
     public String getNicknameChosen(){
@@ -121,9 +104,6 @@ public class GUIController {
 
     public void connectWithNicknameSuccessful() {
         GUIApplication.runLaterExecutor.execute(guiApplication::switchToGameSetup);
-        if (debug) {
-            enableGameSettings(); // DELETEME debug
-        }
     }
 
     public void enableGameSettings() {
@@ -144,17 +124,7 @@ public class GUIController {
     }
 
     public void sendGameSettings() {
-        if(debug){
-            // if something's missing: do nothing
-            // sending stuff to client; if successful
-            guiApplication.lookup("gameSettingsPane").setDisable(true);
-            guiApplication.lookup("towerWizardPane").setDisable(false);
-            guiApplication.lookup("towerWizardButton").requestFocus();
-            showTowerWizard(); // DELETEME debug
-        }
-        else {
-            gui.notifySetupInput();
-        }
+        gui.notifySetupInput();
     }
 
     public int getNumOfPlayerChosen(){
@@ -182,11 +152,6 @@ public class GUIController {
             guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("towerWizardPane").setDisable(false);
             guiApplication.lookup("towerWizardButton").requestFocus();
-
-            if(debug){
-                ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getSelectionModel().select(0);
-                ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getSelectionModel().select(0);
-            }
         });
     }
 
@@ -214,21 +179,11 @@ public class GUIController {
     }
 
     public void towerColorSuccessful(){
-        GUIApplication.runLaterExecutor.execute(() -> {
-            guiApplication.lookup("colorChoice").setDisable(true);
-        });
+        GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("colorChoice").setDisable(true));
     }
 
     public void sendTowerColor() {
-        if(debug){
-            // TowerColor lookup.gettext e switch case per trasformare in enum
-            // fallisce se il campo è vuoto
-            //towercolor disable
-            System.out.println("Tower color chosen"); // DELETEME debug
-        }
-        else{
-            gui.notifySetupInput();
-        }
+        gui.notifySetupInput();
     }
 
     public TowerColor getTowerColorChosen(){
@@ -237,16 +192,7 @@ public class GUIController {
     }
 
     public void sendWizardType() {
-        if(debug){
-            // if tower color is null, don't do anything!!!!!!!!!
-            System.out.println("Wizard type chosen");
-            // wizard lookup.gettext e switch case per trasformare in enum
-            // fallisce se il campo è vuoto
-            startGame();
-        }
-        else {
-            gui.notifySetupInput();
-        }
+        gui.notifySetupInput();
     }
 
     public WizardType getWizardChosen(){
@@ -277,41 +223,10 @@ public class GUIController {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void startGame() {
-        GUIApplication.runLaterExecutor.execute(() -> {
-            guiApplication.switchToMain();
-            if (debug) {
-                HashMap<Color, Integer> table = new HashMap<>();
-                for (Color color : Color.values())
-                    table.put(color, 0);
-                for (int i = 0; i < 3; i++) {
-                    guiApplication.createPlayer(GameMode.EXPERT,"Player" + i, i,0 , table, TowerColor.WHITE, 8, WizardType.KING,i == 0);
-                    ((BoardPane) guiApplication.lookup("boardPane"+ i)).debugPawn();
-                }
-                ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
-                guiApplication.createArchipelago(3, GameMode.EXPERT, List.of(0,1,2,3,4,5,6,7,8,9,10,11),
-                        List.of(0,1,2,3), List.of(2,5,6), 5);
-                archipelagoPane.debugStud();
-                archipelagoPane.enableSelectStudents();
-
-                // enableIslands();
-                enableClouds();
-                CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-                // charContainerPane.enableSelectCharacter();
-                charContainerPane.setCharacterChosen(5);
-                charContainerPane.enableSelectStudents();
-                charContainerPane.updateCharacter(6, true, 3,new HashMap<>(), 89, true);
-
-                BoardPane boardPane = ((BoardPane) guiApplication.lookup("boardPanePlayer0"));
-                boardPane.enableSelectStudentsDR();
-                boardPane.enableSelectStudentsEntrance();
-                enableAssistants();
-                // enableTables(); funziona eh
-
-            }
-        });
+        GUIApplication.runLaterExecutor.execute(guiApplication::switchToMain);
     }
 
-    public void initialDraw(ObservableByClient game, String nickname){ //THIS WILL GET DIVIDED IN MORE METHOD which will be reused by GUI
+    public void initialDraw(ObservableByClient game, String nickname) {
         nickMap = new HashMap<>();
         for(String nick : game.getPlayers())
             nickMap.put(nick, game.getPlayers().indexOf(nick));
@@ -360,15 +275,13 @@ public class GUIController {
     }
 
     public void updateTurnOrder(ObservableByClient game){
-        GUIApplication.runLaterExecutor.execute(() -> {
-            ((TurnOrderPane)guiApplication.lookup("turnOrderPane")).updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder());
-        });
+        GUIApplication.runLaterExecutor.execute(() -> ((TurnOrderPane)guiApplication.lookup("turnOrderPane"))
+                .updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder()));
     }
 
     public void updateAssistants(String player, Integer assistantUsed, List<Integer> assistantsLeft){
-        GUIApplication.runLaterExecutor.execute(() -> {
-                ((PlayerPane)guiApplication.lookup("playerPane" + nickMap.get(player))).updateAssistants(assistantUsed, assistantsLeft);
-        });
+        GUIApplication.runLaterExecutor.execute(() -> ((PlayerPane)guiApplication.lookup("playerPane" + nickMap.get(player)))
+                .updateAssistants(assistantUsed, assistantsLeft));
     }
 
     public void updatePlayerBoards(ObservableByClient game){
@@ -453,7 +366,6 @@ public class GUIController {
         nextUserAction = UserActionType.PLAY_ASSISTANT;
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
-            System.out.println(nickname);
             playerPane.enableSelectAssistant();
         });
     }
@@ -649,15 +561,10 @@ public class GUIController {
      * Notifies gui that a card has been chosen. Used by assistant cards.
      */
     public void notifyAssistantCard() {
-        if (debug) {
-            System.out.println("Assistant card chosen");
-        }
-        else {
-            if(nextUserAction == UserActionType.PLAY_ASSISTANT)
-                gui.sendSelection(new PlayAssistantUserAction(nickname, getAssistantCardChosen()));
-            else
-                System.out.println("tf bro");
-        }
+        if (nextUserAction == UserActionType.PLAY_ASSISTANT)
+            gui.sendSelection(new PlayAssistantUserAction(nickname, getAssistantCardChosen()));
+        else
+            System.out.println("Error in notifyAssistantCard: wrong user action");
     }
 
     /**
@@ -666,39 +573,28 @@ public class GUIController {
      */
     public int getAssistantCardChosen() {
         AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickMap.get(nickname));
-        System.out.println(pane.getAssistantChosen()); // DELETEME debug
         return pane.getAssistantChosen();
     }
 
 
     public void notifyStudentEntrance(){
-        if (debug) {
-            System.out.println("Student chosen, entrance");
+        if (!characterAbilityState) {
+            disableEntrance();
+            enableIslands();
+            enableTables(Color.valueOf(((StudentView)guiApplication.lookup("student"+ getStudentBoard())).getColor().toUpperCase()));
         }
         else {
-            if(! characterAbilityState){
-                disableEntrance();
-                enableIslands();
-                enableTables(Color.valueOf(((StudentView)guiApplication.lookup("student"+ getStudentBoard())).getColor().toUpperCase()));
-            }
-            else{
-                characterParameters.add(getStudentBoard());
-                requestParameters.remove(0);
-                parseNextRequestParameter();
-            }
+            characterParameters.add(getStudentBoard());
+            requestParameters.remove(0);
+            parseNextRequestParameter();
         }
     }
 
     public void notifyStudentDR(){
-        if (debug) {
-            System.out.println("Student chosen, DR");
-        }
-        else {
-            if(characterAbilityState){
-                characterParameters.add(getStudentBoard());
-                requestParameters.remove(0);
-                parseNextRequestParameter();
-            }
+        if (characterAbilityState) {
+            characterParameters.add(getStudentBoard());
+            requestParameters.remove(0);
+            parseNextRequestParameter();
         }
     }
 
@@ -707,135 +603,90 @@ public class GUIController {
         return board.getStudentChosen();
     }
 
-    public void notifyStudentIsland(){
-        if (debug) {
-            System.out.println("Student chosen, island");
-        }
-    }
-
     public void notifyStudentChar(){
-        if (debug) {
-            System.out.println("Student chosen, character");
-        }
-        else {
-            if(characterAbilityState){
-                characterParameters.add(getStudentChar());
-                requestParameters.remove(0);
-                parseNextRequestParameter();
-            }
+        if (characterAbilityState) {
+            characterParameters.add(getStudentChar());
+            requestParameters.remove(0);
+            parseNextRequestParameter();
         }
     }
 
-    public int getStudentChar(){
+    public int getStudentChar() {
         CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        System.out.println(chars.getStudentChosen()); // DELETEME debug
         return chars.getStudentChosen();
     }
 
     public void notifyCloud() {
-        if (debug) {
-            System.out.println("Cloud chosen");
-        }
-        else {
-            nextUserAction = null;
-            gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
-        }
+        nextUserAction = null;
+        gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
     }
 
     public int getCloudChosen() {
         CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
-        System.out.println(pane.getCloudChosen()); // DELETEME debug
         return pane.getCloudChosen();
     }
 
 
     public void notifyIsland() {
-        if (debug) {
-            System.out.println("Island chosen");
-        }
-        else {
-            if(! characterAbilityState){
-                if(nextUserAction == UserActionType.MOVE_STUDENT){
-                    gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getIslandChosen()));
-                }
-                else if( nextUserAction == UserActionType.MOVE_MOTHER_NATURE){
-                    gui.sendSelection(new MoveMotherNatureUserAction(nickname, getIslandChosen()));
-                }
+        if (!characterAbilityState) {
+            if (nextUserAction == UserActionType.MOVE_STUDENT) {
+                gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getIslandChosen()));
             }
-            else{
-                characterParameters.add(getIslandChosen());
-                requestParameters.remove(0);
-                parseNextRequestParameter();
+            else if (nextUserAction == UserActionType.MOVE_MOTHER_NATURE) {
+                gui.sendSelection(new MoveMotherNatureUserAction(nickname, getIslandChosen()));
             }
+        } else {
+            characterParameters.add(getIslandChosen());
+            requestParameters.remove(0);
+            parseNextRequestParameter();
         }
     }
 
-    public int getIslandChosen(){
+    public int getIslandChosen() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
         return archipelagoPane.getIslandChosen();
     }
 
     public void notifyCharacter() {
-        if (debug) {
-            System.out.println("Character chosen");
-        }
-        else {
-            gui.sendSelection(new UseCharacterUserAction(nickname, getCharacterChosen()));
-        }
+        gui.sendSelection(new UseCharacterUserAction(nickname, getCharacterChosen()));
     }
 
     public int getCharacterChosen() {
         CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
-        System.out.println(pane.getCharacterChosen()); // DELETEME debug
         return pane.getCharacterChosen();
     }
 
 
-    public void notifyTable(){
-        if(debug){
-            System.out.println("Table chosen");
-        }
-        else {
-            if(! characterAbilityState){
-                gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getTableChosen()));
-            }else
-                System.out.println("il ballo del qua qua");
-        }
+    public void notifyTable() {
+        if (!characterAbilityState) {
+            gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getTableChosen()));
+        } else
+            System.out.println("Error in notifyTable: character ability already true");
     }
 
-    public int getTableChosen(){
+    public int getTableChosen() {
         BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickMap.get(nickname));
         return boardPane.getTableChosen();
     }
 
 
     public void notifyColorChar() {
-        if (debug) {
-            System.out.println("Color chosen for character");
-        } else {
-            System.out.println("ciaoooooooooooo");
-            if(characterAbilityState){
-                characterParameters.add(getColorChar());
-                requestParameters.remove(0);
-                parseNextRequestParameter();
-            }
+        if (characterAbilityState) {
+            characterParameters.add(getColorChar());
+            requestParameters.remove(0);
+            parseNextRequestParameter();
         }
     }
 
-    public int getColorChar(){
+    public int getColorChar() {
         CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
         CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
         return Arrays.stream(Color.values()).toList().indexOf(character.getColorChosen());
     }
 
     public void notifyAbility() {
-        if (debug) {
-            System.out.println("Ability activated (not really)");
-        }
-        else {
-            characterAbilityState = true;
-            parseNextRequestParameter();
-        }
+        characterAbilityState = true;
+        parseNextRequestParameter();
     }
 
     private void parseNextRequestParameter(){
@@ -848,40 +699,24 @@ public class GUIController {
         disableDRStudents();
         disableColorChar();
         disableEndTurn();
-        if(requestParameters.size() != 0){
-            switch (requestParameters.get(0)){
+        if (requestParameters.size() != 0) {
+            switch (requestParameters.get(0)) {
                 case STUDENT_ENTRANCE -> enableEntrance();
                 case ISLAND -> enableIslands();
                 case STUDENT_DINING_ROOM -> enableDRStudents();
                 case STUDENT_CARD -> enableStudentChar();
                 case COLOR -> enableColorChar();
             }
-        }
-        else{
+        } else {
             characterAbilityState = false;
             gui.sendSelection(new UseAbilityUserAction(nickname, characterParameters));
             characterParameters.clear();
         }
     }
 
-    public void notifyEndTurn(){
-        if(debug){
-            System.out.println("ended turn");
-        }else{
-            nextUserAction = null;
-            gui.sendSelection(new EndTurnUserAction(nickname));
-        }
-    }
-
-    public void debugFunction1() {
-        ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane"); // DELETEME debug tutta questa sezione
-
-        final Point2D secondMergeDiff = archipelagoPane.calcMergeDiffMedian(3, 4);
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(4, secondMergeDiff));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateBack(5, secondMergeDiff));
-
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(2, secondMergeDiff));
-        GUIApplication.runLaterExecutor.execute(() -> archipelagoPane.relocateForward(3, secondMergeDiff));
+    public void notifyEndTurn() {
+        nextUserAction = null;
+        gui.sendSelection(new EndTurnUserAction(nickname));
     }
 
     public void disableAll(){
@@ -932,8 +767,6 @@ public class GUIController {
             endGameDialogue.setHeaderText("The end");
             endGameDialogue.setContentText("end.");
             endGameDialogue.showAndWait();
-            //Platform.exit(); //DEBUG
-            //gui.close();
             guiApplication.createLoginScene();
             guiApplication.createGameSetupScene();
             guiApplication.createMainScene();

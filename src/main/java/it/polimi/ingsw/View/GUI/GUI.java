@@ -193,6 +193,7 @@ public class GUI implements UI {
 
     @Override
     public void displayInfo(String info) {
+        guiController.displayInfo(info);
     }
 
     @Override

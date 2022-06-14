@@ -48,7 +48,7 @@ public class PlayerPane extends GridPane {
         this.setVgap(5.0);
         this.setAlignment(Pos.CENTER);
 
-        boardPane = new BoardPane(controller, nickname, nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
+        boardPane = new BoardPane(controller, nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
         assistantContainerPane = new AssistantContainerPane(nickname, nickID,sizeBoardV / 2);
         // if (isMainPlayer) enableSelectAssistant();
@@ -199,7 +199,6 @@ public class PlayerPane extends GridPane {
                 assistantContainerPane.setZoomOnAssistant(assistant, Effects.hoveringAssistantShadow, Effects.enabledAssistantShadow);
                 int assistantID = i;
                 assistant.setOnMouseClicked(event -> {
-                    System.out.println("Someone clicked on me! " + assistant.getId());
                     assistantContainerPane.setAssistantChosen(assistantID);
                     controller.notifyAssistantCard();
                 });
@@ -214,14 +213,14 @@ public class PlayerPane extends GridPane {
             if(assistant != null) {
                 assistant.setEffect(Effects.disabledAssistantShadow);
                 assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantShadow, Effects.disabledAssistantShadow);
-                assistant.setOnMouseClicked(event -> System.out.println("Im disabled"));
             }
         }
     }
 
     public void moveAssistant(int ID){
         ImageView assistant = (ImageView) this.lookup("#assistant"+ nickID + ID);
-        assistant.setOnMouseClicked(event -> System.out.println("Im disabled")); //Now can't be clicked (I'm a fkn genius)
+        assistant.setOnMouseClicked(event -> {}
+        ); //Now can't be clicked (I'm a fkn genius)
 
         assistant.setVisible(false);
 

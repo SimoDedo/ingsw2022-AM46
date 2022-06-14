@@ -60,15 +60,10 @@ public class CloudContainerPane extends HBox {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
             cloudPane.setEffect(Effects.enabledCloudShadow);
-            cloudPane.setOnMouseEntered(e ->{
-                cloudPane.setEffect(Effects.hoveringCloudShadow);
-            });
-            cloudPane.setOnMouseExited(e ->{
-                cloudPane.setEffect(Effects.enabledCloudShadow);
-            });
+            cloudPane.setOnMouseEntered(e -> cloudPane.setEffect(Effects.hoveringCloudShadow));
+            cloudPane.setOnMouseExited(e -> cloudPane.setEffect(Effects.enabledCloudShadow));
             int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
-                System.out.println("Someone clicked on me!" + cloudPane.getId());
                 setCloudChosen(finalCloudID);
                 controller.notifyCloud();
             });
@@ -82,7 +77,6 @@ public class CloudContainerPane extends HBox {
             cloudPane.setOnMouseEntered(e ->{});
             cloudPane.setOnMouseExited(e ->{});
             cloudPane.setOnMouseClicked(event -> {
-                System.out.println("I'm disabled");
             });
         }
     }

@@ -54,7 +54,6 @@ public class Log extends VBox {
     }
 
     private void fadeOut(Label label, Timeline timeline, double startingOpacity) {
-        System.out.println("fadeout called " + label.getId() + " " + startingOpacity);
 
         timeline.setOnFinished(event -> {});
         timeline.stop();
