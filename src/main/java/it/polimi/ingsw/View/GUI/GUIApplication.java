@@ -12,6 +12,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -471,8 +473,9 @@ public class GUIApplication extends Application implements ObservableGUI{
     }
 
     public void setupScrollingBackground(AnchorPane anchorPane) {
-        double bgWidth = stage.getWidth();
-        double bgHeight = stage.getHeight();
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        double bgWidth = screenBounds.getWidth();
+        double bgHeight = screenBounds.getHeight();
         Image bgImage1 = new Image("/general/bg6_unfocused.png", bgWidth, bgHeight, false,
                 false, false);
         Image bgImage2 = new Image("/general/bg6_flipped.png", bgWidth, bgHeight, false,
