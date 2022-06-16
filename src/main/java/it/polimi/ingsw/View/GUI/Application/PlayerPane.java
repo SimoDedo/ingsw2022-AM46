@@ -219,27 +219,9 @@ public class PlayerPane extends GridPane implements ObservableGUI {
             if(assistant != null) {
                 assistant.setEffect(Effects.disabledAssistantShadow);
                 assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantShadow, Effects.disabledAssistantShadow);
+                assistant.setOnMouseClicked(event -> {});
             }
         }
     }
 
-    public void moveAssistant(int ID){
-        ImageView assistant = (ImageView) this.lookup("#assistant"+ nickID + ID);
-        assistant.setOnMouseClicked(event -> {}
-        ); //Now can't be clicked (I'm a fkn genius)
-
-        assistant.setVisible(false);
-
-        Pane discard = (Pane) this.lookup("#discardPane"+nickID);
-        discard.getChildren().clear();
-
-        ImageView discarded = new ImageView(assistant.getImage());
-        discarded.setFitWidth(sizeDiscard);
-        discarded.setPreserveRatio(true);
-        discarded.setSmooth(true);
-        discarded.setEffect(new DropShadow());
-        discard.getChildren().add(discarded);
-        assistantContainerPane.setAssistantChosen(-1);
-        enableSelectAssistant();
-    }
 }

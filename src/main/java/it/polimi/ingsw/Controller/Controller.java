@@ -569,7 +569,7 @@ public class Controller {
             //TODO: other exceptions should be thrown and handled. done? to check
         }
         if(parameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
-            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_CHARACTER,
+            sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_ABILITY,
                     turnController.getCurrentPlayer(), UserActionType.USE_ABILITY, "Ability used automatically"));
         }
         else {

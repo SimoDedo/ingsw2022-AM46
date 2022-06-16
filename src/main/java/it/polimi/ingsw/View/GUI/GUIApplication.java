@@ -41,6 +41,8 @@ public class GUIApplication extends Application implements ObservableGUI{
 
     private Scene loginScene, gameSetupScene, mainScene;
 
+    private Log log;
+
     private Stage stage;
 
     private ObserverGUI observer;
@@ -214,6 +216,11 @@ public class GUIApplication extends Application implements ObservableGUI{
         )));
         AnchorPane anchorPane = setupScene(root);
 
+        log = new Log();
+        anchorPane.getChildren().add(log);
+        AnchorPane.setRightAnchor(log, 30.0);
+        AnchorPane.setTopAnchor(log, 30.0);
+
         VBox gridContainer = new VBox();
         gridContainer.setAlignment(Pos.CENTER);
         gridContainer.setPadding(new Insets(20.0, 0.0, 0.0, 0.0));
@@ -336,7 +343,6 @@ public class GUIApplication extends Application implements ObservableGUI{
 
         // turn order box and log
         mainGrid.add(new TurnOrderPane(), 0, 0);
-        mainGrid.add(new Log(), 1, 0);
 
         // archipelago
         ArchipelagoPane archipelagoPane = new ArchipelagoPane();
@@ -538,6 +544,7 @@ public class GUIApplication extends Application implements ObservableGUI{
 
     public void switchToMain() {
         stage.setScene(mainScene);
+        ((GridPane) this.lookup("mainGrid")).add(log, 1, 0);
         stage.show();
         stage.setTitle("Eriantys AM46: Game");
         fadeIn(getContent(mainScene));
