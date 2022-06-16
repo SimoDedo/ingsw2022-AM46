@@ -5,8 +5,7 @@ import it.polimi.ingsw.Network.Message.UserAction.UserAction;
 
 /**
  * Interface for all the server classes in the project. Servers have common methods based on having
- * similar functions, for example handling client login, registering and unregistering clients, and
- * more.
+ * similar functions.
  */
 public interface Server {
 

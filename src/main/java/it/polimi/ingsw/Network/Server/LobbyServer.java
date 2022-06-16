@@ -29,7 +29,10 @@ public class LobbyServer implements Server {
 
     private final int mainPort = 4646;
 
-    private int maxPort = mainPort + 1;
+    /**
+     * A map for storing each usable port and whether it is currently occupied by a match server or not (true = occupied).
+     */
+    private final Map<Integer, Boolean> matchPorts = new LinkedHashMap<>();
 
     private ServerSocket mainSocket;
 
@@ -45,6 +48,9 @@ public class LobbyServer implements Server {
      */
     public LobbyServer() {
         executor = Executors.newCachedThreadPool();
+        for (int i = mainPort+1; i < mainPort+100; i++) {
+            matchPorts.put(i, false);
+        }
     }
 
     public void startServer(){
@@ -94,10 +100,11 @@ public class LobbyServer implements Server {
         }
     }
 
-    public int createMatchPort() {
-        int tmp = maxPort;
-        maxPort++;
-        return tmp;
+    public int getMatchPort() {
+        for (Integer port : matchPorts.keySet()) {
+            if (!matchPorts.get(port)) return port;
+        }
+        return 0;
     }
 
     @Override
@@ -111,17 +118,21 @@ public class LobbyServer implements Server {
     }
 
     public void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction) {
+        int port = getMatchPort();
         if (registeredNicks.containsKey(loginAction.getNickname())) {
             socketConnection.sendMessage(new LoginError("Nickname already taken. Choose another one!"));
         }
-        else if(loginAction.getNickname().length() > 15){
+        else if (loginAction.getNickname().length() > 15) {
             socketConnection.sendMessage(new LoginError("Nickname too long. Choose a nickname not longer than 15 characters!"));
         }
-        else if(loginAction.getNickname() == null || loginAction.getNickname().equals("")){
+        else if (loginAction.getNickname() == null || loginAction.getNickname().equals("")) {
             socketConnection.sendMessage(new LoginError("Nickname can't be empty!"));
         }
-        else if(! Character.isLetterOrDigit(loginAction.getNickname().charAt(0))){
+        else if (!Character.isLetterOrDigit(loginAction.getNickname().charAt(0))) {
             socketConnection.sendMessage(new LoginError("Nickname should start with a letter or number!"));
+        }
+        else  if (port == 0) {
+            socketConnection.sendMessage(new LoginError("The server is currently full. Please retry later!"));
         }
         else {
             System.out.println("\"" + loginAction.getNickname() + "\" (" + socketConnection.getInetAddress() + ") logged in.");
@@ -135,7 +146,8 @@ public class LobbyServer implements Server {
                 }
             }
             if (serverToConnect == null) {
-                serverToConnect = new MatchServer(this, createMatchPort());
+                serverToConnect = new MatchServer(this, port);
+                matchPorts.replace(port, true);
                 executor.execute(serverToConnect);
                 matchServers.add(serverToConnect);
             }
@@ -147,13 +159,14 @@ public class LobbyServer implements Server {
     }
 
     @Override
-    public void handleLogout(String nickname){
+    public void handleLogout(String nickname) {
         unregisterClient(nickname);
     }
 
 
-    public void deleteMatch(MatchServer matchServer){
+    public void deleteMatch(MatchServer matchServer) {
         matchServers.remove(matchServer);
+        matchPorts.replace(matchServer.getPort(), false);
     }
 
     public void registerClient(String nickname, InetAddress IP) {

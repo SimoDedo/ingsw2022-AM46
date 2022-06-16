@@ -75,11 +75,11 @@ public class MatchServer implements Server, Runnable {
                 System.out.println(newConnection.getInetAddress() + " connected to match server on port " + port);
                 executor.execute(newConnection);
             } catch (IOException ioe) {
-                if(isActive()){
+                if (isActive()) {
                     System.err.println("IO error while accepting connection: ");
                     ioe.printStackTrace();
                 }
-                else{
+                else {
                     System.err.println("Closing match server on port " + port);
                 }
             }
@@ -159,12 +159,6 @@ public class MatchServer implements Server, Runnable {
     public void sendAll(Message message) {
         for (SocketConnection socketConnection : connectionMap.values()) {
             socketConnection.sendMessage(message);
-        }
-    }
-
-    public void sendAllExcept(String nickname, Message message) {
-        for (Map.Entry<String, SocketConnection> entry : connectionMap.entrySet()) {
-            if (!entry.getKey().equals(nickname)) entry.getValue().sendMessage(message);
         }
     }
 
