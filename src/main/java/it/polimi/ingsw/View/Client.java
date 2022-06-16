@@ -379,8 +379,11 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
-            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
     }
 
     /**
@@ -443,8 +446,11 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
-            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
     }
 
     //endregion
@@ -476,15 +482,12 @@ public class Client {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
             if(e instanceof SocketTimeoutException){
-                System.err.println("Connection timed out: " + e.getLocalizedMessage());
                 fatalError("Connection timed out.");
             }
             else if(e instanceof EOFException){
-                System.err.println("Someone disconnected.");
                 fatalError("Someone disconnected.");
             }
             else{
-                System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
                 fatalError("Unable to receive messages from server.");
             }
             return null;
