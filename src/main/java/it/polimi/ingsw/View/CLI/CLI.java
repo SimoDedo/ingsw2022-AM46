@@ -28,7 +28,7 @@ public class CLI implements UI {
     private final LinkedHashSet<Command> infoCommandList;
     private final LinkedHashSet<Command> gameCommandList;
 
-    private HashMap<Color, String> colorMapping; //TODO: consider moving in ANSI COLOR class as static method
+    private HashMap<Color, String> colorMapping;
 
     private final Object lock;
     private boolean serverResponse;
@@ -66,6 +66,9 @@ public class CLI implements UI {
         this.game = game;
     }
 
+    /**
+     * Starts the main game loop. It is started on a separate thread so that method returns.
+     */
     @Override
     public void startGame(){
         gameStarted = true;
@@ -124,6 +127,9 @@ public class CLI implements UI {
         });
     }
 
+    /**
+     * Puts the thread ina sleep state while waiting to be woken up by a server resposnse.
+     */
     private void waitForServerResponse(){
         synchronized (lock){
             clearScreen();
@@ -141,6 +147,9 @@ public class CLI implements UI {
         }
     }
 
+    /**
+     * Wakes the main game thread if it was waiting for a server response.
+     */
     @Override
     public void notifyServerResponse(){
         if(this.gameStarted){
@@ -549,23 +558,8 @@ public class CLI implements UI {
 
 
     private void requestEndTurn(){
-        //TODO:Gives the option to purchase and activate a character right before ending the turn
-        // i don't think it's really needed, before ending the turn it's clear that you can use a character
         UserAction endTurnRequest = new EndTurnUserAction(nickname);
         client.sendUserAction(endTurnRequest);
-/*        displayMessage("Would you to play a character before ending your turn? y/n");
-
-
-        String endTurnSelection = "";
-        do {
-            try { endTurnSelection = parser.readLineFromSelection(new ArrayList<>(Arrays.asList("y", "n")));
-            } catch (HelpException e) { displayHelp("end-turn"); }
-        } while(endTurnSelection.equals(""));
-
-        if(endTurnSelection.equals("n")){
-            UserAction endTurnRequest = new EndTurnUserAction(nickname);
-            client.sendUserAction(endTurnRequest);
-        }*/
     }
 
     private void displayMessage(String message) {
@@ -707,7 +701,6 @@ public class CLI implements UI {
                     "typing 1 for the former and 2 for the latter.");
             case "character" -> displayMessage("Type the number corresponding to the ID of the character you " +
                     "would like to purchase.");
-            //TODO: character can be played at the end of turn??
             case "end-turn" -> displayMessage("Type \"y\" if you would like to end your turn, or \"n\" if you " +
                     "would like to purchase a character or use a character ability.");
         }

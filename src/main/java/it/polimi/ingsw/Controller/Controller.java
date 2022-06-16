@@ -503,7 +503,6 @@ public class Controller {
         catch (NoSuchElementException e){
             sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
             return;
-            //TODO: other exceptions should be thrown and handled
         }
         expectedUserAction.put(turnController.getCurrentPlayer(), UserActionType.END_TURN);
         sendUpdateToAllUsers(new Update(game, nickname, UserActionType.TAKE_FROM_CLOUD,
@@ -566,7 +565,6 @@ public class Controller {
             else{
                 sendErrorToUser(nickname, new IllegalSelectionError(e.getLocalizedMessage()));
             }
-            //TODO: other exceptions should be thrown and handled. done? to check
         }
         if(parameters.size() == 0 && game.getActiveCharacterMaxUses() == 1){
             sendUpdateToAllUsers(new Update(game, nickname, UserActionType.USE_ABILITY,
@@ -633,7 +631,7 @@ public class Controller {
      */
     private void lastRoundOperations(){
         game.setLastRound();
-        game.disableClouds(); //CHECKME: always to disable?
+        game.disableClouds();
         this.isLastRound = true;
     }
 

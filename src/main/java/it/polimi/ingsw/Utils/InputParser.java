@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Scanner;
 
+/**
+ * Input parser used by CLI to read user input and choose whether to accept it.
+ */
 public class InputParser {
 
     private final Scanner input;

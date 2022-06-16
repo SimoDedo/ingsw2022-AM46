@@ -516,6 +516,9 @@ public class Client {
         System.exit(-1);
     }
 
+    /**
+     * Resets the client state and restarts main loop.
+     */
     public void reset(){
         gameStarted = false;
         nickname = null;
@@ -524,6 +527,10 @@ public class Client {
         start();
     }
 
+    /**
+     * If the client isn't being reset, it disconnects from server and forwards an error to be displayed to the user.
+     * @param errorDescription the error to be displayed.
+     */
     public void fatalError(String errorDescription){
         if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
             disconnectFromServer();
@@ -533,10 +540,16 @@ public class Client {
         }
     }
 
+    /**
+     * Logs out client from server by sending a logout user action.
+     */
     private void logoutFromServer(){
         sendUserAction(new LogoutUserAction(nickname));
     }
 
+    /**
+     * Disconnects client from server.
+     */
     private void disconnectFromServer(){
         isToReset = true;
         stopPing();

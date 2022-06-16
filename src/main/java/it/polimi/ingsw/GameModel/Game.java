@@ -185,7 +185,7 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void moveStudentFromEntrance(String nickname, int studentID, int containerID) throws FullTableException {
         Player player = getPlayerByNickname(nickname);
-        Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present? to be tested if added
+        Student student = player.getStudentFromEntrance(studentID);
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID){
             if(!potentialTable.isFull()){
@@ -279,7 +279,7 @@ public class Game implements ObservableByClient, Serializable {
     /**
      * This method progresses the phase, going from planning to action and vice-versa.
      */
-    public void nextPhase(){//CHECKME: Could be "hidden" in determine action/planning order?
+    public void nextPhase(){
         turnManager.nextPhase();
     }
 
@@ -302,12 +302,6 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void disableClouds() {
         for (CloudTile c : clouds) c.removeAll();
-        //TODO: regole ambigue "se gli studenti non bastano non si pesca"; se finiscono gli studenti ma riempiono tutte
-        // le nuvole, i giocatori devono poter pescare dalle nuvole? in teoria è l'ultimo turno quindi non cambia,
-        // ma non so. Per ora non cambia tanto è il controller che chiama questo metodo.
-        // Inoltre, secondo il regolamento non si pesca solo nel caso in cui siano finiti gli studenti, ma non
-        // cambia nulla pescare o meno in qualunque caso. Possiamo disabilitarle sempre? Magari va chiesto
-
     }
 
     /**

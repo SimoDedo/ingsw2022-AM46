@@ -2,14 +2,18 @@ package it.polimi.ingsw.Network.Message.UserAction;
 
 import it.polimi.ingsw.Utils.Enum.UserActionType;
 
+/**
+ * User action sent when a user wants to play an assistant.
+ */
 public class PlayAssistantUserAction  extends UserAction{
 
+    /**
+     * The assistant chosen
+     */
     private final int assistantID;
 
     public PlayAssistantUserAction(String sender, int assistantID) throws IllegalArgumentException{
         super(sender, UserActionType.PLAY_ASSISTANT);
-        if(assistantID<1 || assistantID>10)
-            throw  new IllegalArgumentException("No assistant with  "+ assistantID +"exists");
         this.assistantID = assistantID;
     }
 

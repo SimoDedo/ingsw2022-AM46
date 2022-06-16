@@ -152,6 +152,7 @@ public class CharacterPane extends StackPane {
         ImageView charView = ((ImageView) this.lookup(("#charView")));
         if(isActive){
             this.currentEffect = Effects.activatedCharacterShadow;
+            charView.setEffect(currentEffect);
             if(usesLeft > 0){
                 this.usesLeft.setText(Integer.toString(usesLeft));
                 this.usesLeft.setVisible(true);
