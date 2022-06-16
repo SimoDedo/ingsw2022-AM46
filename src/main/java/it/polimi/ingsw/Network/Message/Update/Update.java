@@ -6,10 +6,13 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 /**
  * Main class that represent the server's response to a Client UserAction.
- * The state is sent in its entirety through the use of an interface which exposes only observer methods.
+ * The game state is sent in its entirety through the use of an interface which exposes only observer methods.
  */
 public class Update extends Message {
 
+    /**
+     * The current game state
+     */
     private final ObservableByClient game;
 
     /**

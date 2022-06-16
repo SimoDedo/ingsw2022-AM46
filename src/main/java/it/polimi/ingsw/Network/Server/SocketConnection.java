@@ -155,7 +155,7 @@ public class SocketConnection implements Runnable {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
-            outputStream.reset(); //FIXME: !!!!!!!! ERRORS!!!!!!!!!! maybe fixed with synchronizing
+            outputStream.reset();
         } catch (Exception e) { // what exceptions are thrown here?
             e.printStackTrace();
             handleClosing();

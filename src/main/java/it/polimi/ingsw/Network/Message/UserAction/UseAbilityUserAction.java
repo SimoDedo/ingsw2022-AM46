@@ -5,8 +5,14 @@ import it.polimi.ingsw.Utils.Enum.UserActionType;
 
 import java.util.List;
 
+/**
+ * User action sent when a user wants to use a character ability.
+ */
 public class UseAbilityUserAction extends UserAction{
 
+    /**
+     * The parameters requested by the active character that is being used.
+     */
     private final List<Integer> requestedParameters;
 
     public UseAbilityUserAction(String sender, List<Integer> requestedParameters) {
