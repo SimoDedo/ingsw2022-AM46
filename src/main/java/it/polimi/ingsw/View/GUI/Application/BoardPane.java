@@ -2,6 +2,8 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +17,7 @@ import javafx.util.Pair;
 
 import java.util.*;
 
-public class BoardPane extends StackPane {
+public class BoardPane extends StackPane implements ObservableGUI {
 
     private final int nickID;
 
@@ -59,13 +61,12 @@ public class BoardPane extends StackPane {
             else return 0;
         }
     };
-    private final GUIController controller;
+    private ObserverGUI observer;
 
     private int tableChosen;
     private int studentChosen;
 
-    public BoardPane(GUIController controller, int nickID, double boardHeight) {
-        this.controller = controller;
+    public BoardPane(int nickID, double boardHeight) {
         this.nickID = nickID;
         this.boardHeight = boardHeight;
         this.boardWidth = boardHeight * (3304.0 / 1413.0);
@@ -101,11 +102,16 @@ public class BoardPane extends StackPane {
         this.getChildren().add(mainGrid);
     }
 
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
+    }
+
     public void enableSelectTables() {
         for (Map.Entry<Color, StudentContainerPane> entry : tables.entrySet()) {
             entry.getValue().setOnMouseClicked(event -> {
                 setTableChosen(Integer.parseInt(entry.getValue().getId().substring("tablePane".length())));
-                controller.notifyTable();
+                observer.notifyTable();
             });
         }
     }
@@ -129,7 +135,7 @@ public class BoardPane extends StackPane {
         });
         tables.get(color).setOnMouseClicked(event -> {
             setTableChosen(Integer.parseInt(tables.get(color).getId().substring("tablePane".length())));
-            controller.notifyTable();
+            observer.notifyTable();
         });
     }
 
@@ -160,7 +166,7 @@ public class BoardPane extends StackPane {
             student.setEnabled();
             student.setCallback(event -> {
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudentEntrance();
+                observer.notifyStudentEntrance();
             });
         }
     }
@@ -183,7 +189,7 @@ public class BoardPane extends StackPane {
             student.setEnabled();
             student.setCallback(event -> {
                 this.setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudentDR();
+                observer.notifyStudentDR();
             });
         }
     }

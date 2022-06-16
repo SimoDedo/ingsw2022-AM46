@@ -42,7 +42,7 @@ public class IslandTilePane extends StackPane {
     private double currentStudSize;
     private int currentStudGridSize;
 
-    public IslandTilePane(GUIController controller, ArchipelagoPane archipelago, int index) {
+    public IslandTilePane(int index) {
         this.index = index;
         currentStudSize = StudentView.studentSize;
         currentStudGridSize = 4;

@@ -9,7 +9,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
-import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -21,7 +20,7 @@ import java.util.*;
 /**
  * Class for controlling the GUIController based on method calls from the client.
  */
-public class GUIController {
+public class GUIController implements ObserverGUI {
 
     private final GUI gui;
     private final GUIApplication guiApplication;
@@ -39,7 +38,7 @@ public class GUIController {
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
-        guiApplication.setController(this);
+        guiApplication.setObserver(this);
         this.characterParameters = new ArrayList<>();
     }
 
@@ -68,8 +67,8 @@ public class GUIController {
         });
     }
 
-
-    public void close() {
+    @Override
+    public void notifyClose() {
         gui.close();
     }
 
@@ -77,7 +76,8 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(guiApplication::switchToLogin);
     }
 
-    public void connectToIP() {
+    @Override
+    public void notifyIP() {
         gui.notifySetupInput();
     }
 
@@ -94,7 +94,8 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> ( (Button) guiApplication.lookup("connectButton")).setText("Connected successfully!"));
     }
 
-    public void connectWithNickname() {
+    @Override
+    public void notifyNickname() {
         gui.notifySetupInput();
     }
 
@@ -123,7 +124,8 @@ public class GUIController {
         });
     }
 
-    public void sendGameSettings() {
+    @Override
+    public void notifyGameSettings() {
         gui.notifySetupInput();
     }
 
@@ -182,7 +184,8 @@ public class GUIController {
         GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("colorChoice").setDisable(true));
     }
 
-    public void sendTowerColor() {
+    @Override
+    public void notifyTowerColor() {
         gui.notifySetupInput();
     }
 
@@ -191,7 +194,8 @@ public class GUIController {
         return TowerColor.valueOf(choice == null ? null : choice.toUpperCase());
     }
 
-    public void sendWizardType() {
+    @Override
+    public void notifyWizardType() {
         gui.notifySetupInput();
     }
 
@@ -560,6 +564,7 @@ public class GUIController {
     /**
      * Notifies gui that a card has been chosen. Used by assistant cards.
      */
+    @Override
     public void notifyAssistantCard() {
         if (nextUserAction == UserActionType.PLAY_ASSISTANT)
             gui.sendSelection(new PlayAssistantUserAction(nickname, getAssistantCardChosen()));
@@ -576,7 +581,7 @@ public class GUIController {
         return pane.getAssistantChosen();
     }
 
-
+    @Override
     public void notifyStudentEntrance(){
         if (!characterAbilityState) {
             disableEntrance();
@@ -590,6 +595,7 @@ public class GUIController {
         }
     }
 
+    @Override
     public void notifyStudentDR(){
         if (characterAbilityState) {
             characterParameters.add(getStudentBoard());
@@ -603,6 +609,7 @@ public class GUIController {
         return board.getStudentChosen();
     }
 
+    @Override
     public void notifyStudentChar(){
         if (characterAbilityState) {
             characterParameters.add(getStudentChar());
@@ -616,6 +623,7 @@ public class GUIController {
         return chars.getStudentChosen();
     }
 
+    @Override
     public void notifyCloud() {
         nextUserAction = null;
         gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
@@ -626,7 +634,7 @@ public class GUIController {
         return pane.getCloudChosen();
     }
 
-
+    @Override
     public void notifyIsland() {
         if (!characterAbilityState) {
             if (nextUserAction == UserActionType.MOVE_STUDENT) {
@@ -647,6 +655,7 @@ public class GUIController {
         return archipelagoPane.getIslandChosen();
     }
 
+    @Override
     public void notifyCharacter() {
         gui.sendSelection(new UseCharacterUserAction(nickname, getCharacterChosen()));
     }
@@ -656,7 +665,7 @@ public class GUIController {
         return pane.getCharacterChosen();
     }
 
-
+    @Override
     public void notifyTable() {
         if (!characterAbilityState) {
             gui.sendSelection(new MoveStudentUserAction(nickname, getStudentBoard(), getTableChosen()));
@@ -669,7 +678,7 @@ public class GUIController {
         return boardPane.getTableChosen();
     }
 
-
+    @Override
     public void notifyColorChar() {
         if (characterAbilityState) {
             characterParameters.add(getColorChar());
@@ -684,6 +693,7 @@ public class GUIController {
         return Arrays.stream(Color.values()).toList().indexOf(character.getColorChosen());
     }
 
+    @Override
     public void notifyAbility() {
         characterAbilityState = true;
         parseNextRequestParameter();
@@ -714,6 +724,7 @@ public class GUIController {
         }
     }
 
+    @Override
     public void notifyEndTurn() {
         nextUserAction = null;
         gui.sendSelection(new EndTurnUserAction(nickname));

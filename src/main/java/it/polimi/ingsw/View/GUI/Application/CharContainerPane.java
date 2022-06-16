@@ -1,7 +1,8 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
@@ -12,24 +13,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CharContainerPane extends HBox {
+public class CharContainerPane extends HBox implements ObservableGUI {
 
     static double charContainerHeight = 80.0, charContainerWidth = 300.0;
 
-    private final GUIController controller;
+    private ObserverGUI observer;
 
     private int characterChosen;
 
     private List<Integer> charIDs;
     private int studentChosen;
 
-    public CharContainerPane(GUIController controller) {
+    public CharContainerPane() {
         super(5.0);
-        this.controller = controller;
         this.setId("charContainerPane");
         this.setAlignment(Pos.CENTER);
         this.setPrefSize(charContainerWidth, charContainerHeight);
 
+    }
+
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
     }
 
     public void createCharacters(List<Integer> characters) {
@@ -58,7 +63,7 @@ public class CharContainerPane extends HBox {
             int charIndex = charID;
             characterPane.setOnMouseClicked(event -> {
                 setCharacterChosen(charIndex);
-                controller.notifyCharacter();
+                observer.notifyCharacter();
             });
         }
     }
@@ -98,7 +103,7 @@ public class CharContainerPane extends HBox {
         characterPane.currentEffect = Effects.activatedCharacterShadow;
         characterPane.setOnMouseEntered(e -> charImageView.setEffect(Effects.hoveringCharacterShadow));
         characterPane.setOnMouseExited(e -> charImageView.setEffect(Effects.activatedCharacterShadow));
-        characterPane.setOnMouseClicked(event -> controller.notifyAbility());
+        characterPane.setOnMouseClicked(event -> observer.notifyAbility());
     }
 
     public void enableSelectStudents() {
@@ -107,7 +112,7 @@ public class CharContainerPane extends HBox {
             student.setEnabled();
             student.setCallback(event -> {
                 setStudentChosen(Integer.parseInt(student.getId().substring("student".length())));
-                controller.notifyStudentChar();
+                observer.notifyStudentChar();
             });
         }
     }
@@ -148,7 +153,7 @@ public class CharContainerPane extends HBox {
                 });
                 colorPane.getChildren().get(entry.getValue()).setOnMouseClicked(event -> {
                     characterPane.setColor(entry.getKey());
-                    controller.notifyColorChar();
+                    observer.notifyColorChar();
                 });
             }
         }

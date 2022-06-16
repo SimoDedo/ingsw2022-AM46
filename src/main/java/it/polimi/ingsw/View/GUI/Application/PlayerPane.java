@@ -3,7 +3,8 @@ package it.polimi.ingsw.View.GUI.Application;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 import it.polimi.ingsw.Utils.Enum.WizardType;
-import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -21,9 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerPane extends GridPane {
+public class PlayerPane extends GridPane implements ObservableGUI {
 
-    private final GUIController controller;
+    private ObserverGUI observer;
 
     private final String nickname;
     private final int nickID;
@@ -39,8 +40,7 @@ public class PlayerPane extends GridPane {
     private final AssistantContainerPane assistantContainerPane;
 
 
-    public PlayerPane(GUIController controller, String nickname, int nickID, boolean isMainPlayer) {
-        this.controller = controller;
+    public PlayerPane(String nickname, int nickID, boolean isMainPlayer) {
         this.nickname = nickname;
         this.nickID = nickID;
         this.setId("playerPane" + nickID);
@@ -48,11 +48,17 @@ public class PlayerPane extends GridPane {
         this.setVgap(5.0);
         this.setAlignment(Pos.CENTER);
 
-        boardPane = new BoardPane(controller, nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
+        boardPane = new BoardPane(nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
         assistantContainerPane = new AssistantContainerPane(nickname, nickID,sizeBoardV / 2);
         // if (isMainPlayer) enableSelectAssistant();
         // else disableSelectAssistant();
+    }
+
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
+        boardPane.setObserver(observer);
     }
 
     public void setNickname(String nickname){
@@ -200,7 +206,7 @@ public class PlayerPane extends GridPane {
                 int assistantID = i;
                 assistant.setOnMouseClicked(event -> {
                     assistantContainerPane.setAssistantChosen(assistantID);
-                    controller.notifyAssistantCard();
+                    observer.notifyAssistantCard();
                 });
             }
         }

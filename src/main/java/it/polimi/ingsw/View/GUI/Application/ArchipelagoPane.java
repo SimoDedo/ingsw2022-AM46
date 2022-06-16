@@ -2,7 +2,8 @@ package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.animation.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
@@ -22,12 +23,12 @@ import java.util.*;
  * characters, the student bag and the coin heap all go here. All the aforementioned elements except for the islands
  * have their own container.
  */
-public class ArchipelagoPane extends AnchorPane {
+public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
 
     /**
-     * The controller class for this pane.
+     * The observer class for this pane.
      */
-    private final GUIController controller;
+    private ObserverGUI observer;
 
     /**
      * The HBox that contains the clouds.
@@ -43,6 +44,11 @@ public class ArchipelagoPane extends AnchorPane {
      * The HBox that contains the characters.
      */
     private final CharContainerPane charContainer;
+
+    /**
+     * The button to end the turn
+     */
+    private final Button endTurn;
 
     /**
      * The length of one side of this pane.
@@ -70,15 +76,13 @@ public class ArchipelagoPane extends AnchorPane {
     /**
      * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
      * number of players or game mode: 12 empty islands and empty containers for characters, clouds and bags.
-     * @param controller the controller class that will handle events inside this pane
      */
-    public ArchipelagoPane(GUIController controller) {
-        this.controller = controller;
+    public ArchipelagoPane() {
         this.setId("archipelagoPane");
         this.setPrefSize(archipelagoSide, archipelagoSide);
 
         for (int i = 0; i < 12; i++) {
-            IslandTilePane newIsland = new IslandTilePane(controller, this, i);
+            IslandTilePane newIsland = new IslandTilePane(i);
             newIsland.setId("islandTilePane" + i);
             this.getChildren().add(newIsland);
             newIsland.relocate(
@@ -88,12 +92,12 @@ public class ArchipelagoPane extends AnchorPane {
         }
 
         // character container pane goes here
-        charContainer = new CharContainerPane(controller);
+        charContainer = new CharContainerPane();
         this.getChildren().add(charContainer);
         charContainer.relocate(centerPos - 90.0, centerPos + 50.0);
 
         // cloud hbox goes here
-        cloudContainer = new CloudContainerPane(controller);
+        cloudContainer = new CloudContainerPane();
         this.getChildren().add(cloudContainer);
         cloudContainer.relocate(centerPos - 160.0, centerPos + 360.0);
 
@@ -103,13 +107,20 @@ public class ArchipelagoPane extends AnchorPane {
         bagContainer.relocate(centerPos - 15.0, centerPos - 30.0);
 
         // end turn button goes here
-        Button endTurn = new Button("End turn");
+        endTurn = new Button("End turn");
         endTurn.setId("endButton");
         endTurn.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 13));
-        endTurn.setOnAction(event -> controller.notifyEndTurn());
         this.getChildren().add(endTurn);
 
         endTurn.relocate(centerPos + 24, centerPos + 175.0);
+    }
+
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
+        this.charContainer.setObserver(observer);
+        this.cloudContainer.setObserver(observer);
+        endTurn.setOnAction(event -> observer.notifyEndTurn());
     }
 
     /**
@@ -312,7 +323,7 @@ public class ArchipelagoPane extends AnchorPane {
             island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
             island.setOnMouseClicked(event -> {
                 setIslandChosen(islandID);
-                controller.notifyIsland();
+                observer.notifyIsland();
             });
         }
     }
@@ -329,7 +340,7 @@ public class ArchipelagoPane extends AnchorPane {
                 island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
                 island.setOnMouseClicked(event -> {
                     setIslandChosen(islandID);
-                    controller.notifyIsland();
+                    observer.notifyIsland();
                 });
             }
         }

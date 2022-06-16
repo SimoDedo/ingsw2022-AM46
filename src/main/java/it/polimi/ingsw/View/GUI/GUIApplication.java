@@ -9,8 +9,6 @@ import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,7 +25,6 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -36,7 +33,7 @@ import java.util.concurrent.Executor;
  * Class for creating the GUIController and displaying it to the user, showing changes in the game based on
  * method calls from the GUIController class.
  */
-public class GUIApplication extends Application {
+public class GUIApplication extends Application implements ObservableGUI{
 
     private static GUIApplication instance;
 
@@ -44,7 +41,7 @@ public class GUIApplication extends Application {
 
     private Stage stage;
 
-    private GUIController controller;
+    private ObserverGUI observer;
 
     public GUIApplication() {
         instance = this;
@@ -81,8 +78,9 @@ public class GUIApplication extends Application {
         return instance;
     }
 
-    public void setController(GUIController controller) {
-        this.controller = controller;
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
     }
 
     @Override
@@ -166,14 +164,14 @@ public class GUIApplication extends Application {
         portField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 if (portField.getText().equals("")) portField.setText("4646");
-                controller.connectToIP();
+                observer.notifyIP();
             }
         });
         ipPane.add(portField, 1, 1);
 
         Button connectButton = new Button("Connect");
         connectButton.setId("connectButton");
-        connectButton.setOnMouseClicked(mouseEvent -> controller.connectToIP());
+        connectButton.setOnMouseClicked(mouseEvent -> observer.notifyIP());
         ipPane.add(connectButton, 1, 2);
 
         Label nickLabel = new Label("Nickname");
@@ -185,7 +183,7 @@ public class GUIApplication extends Application {
         nickField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 if ( ! ((TextField) (lookup("nickField"))).getText().equals("") ) {
-                    controller.connectWithNickname();
+                    observer.notifyNickname();
                 }
             }
         });
@@ -194,7 +192,7 @@ public class GUIApplication extends Application {
         Button nickButton = new Button("Login");
         nickButton.setOnMouseClicked(mouseEvent -> {
             if ( ! ((TextField) (lookup("nickField"))).getText().equals("") ) {
-                controller.connectWithNickname();
+                observer.notifyNickname();
             }
         });
         nickPane.add(nickButton, 1, 4);
@@ -253,9 +251,9 @@ public class GUIApplication extends Application {
 
         Button gameSettingsButton = new Button("Confirm game setup");
         gameSettingsButton.setId("gameSettingsButton");
-        gameSettingsButton.setOnMouseClicked(mouseEvent -> controller.sendGameSettings());
+        gameSettingsButton.setOnMouseClicked(mouseEvent -> observer.notifyGameSettings());
         gameSettingsButton.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER) controller.sendGameSettings();
+            if (keyEvent.getCode() == KeyCode.ENTER) observer.notifyGameSettings();
         });
         gameSettingsPane.add(gameSettingsButton, 1, 2);
 
@@ -285,13 +283,13 @@ public class GUIApplication extends Application {
         Button towerWizardButton = new Button("Confirm choices");
         towerWizardButton.setId("towerWizardButton");
         towerWizardButton.setOnMouseClicked(mouseEvent -> {
-            controller.sendTowerColor();
-            controller.sendWizardType();
+            observer.notifyTowerColor();
+            observer.notifyWizardType();
         });
         towerWizardButton.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                controller.sendTowerColor();
-                controller.sendWizardType();
+                observer.notifyTowerColor();
+                observer.notifyWizardType();
             }
         });
         towerWizardPane.add(towerWizardButton, 1, 2);
@@ -335,11 +333,13 @@ public class GUIApplication extends Application {
         mainGrid.setVgap(10.0);
 
         // turn order box and log
-        mainGrid.add(new TurnOrderPane(controller), 0, 0);
+        mainGrid.add(new TurnOrderPane(), 0, 0);
         mainGrid.add(new Log(), 1, 0);
 
         // archipelago
-        mainGrid.add(new ArchipelagoPane(controller), 0, 1);
+        ArchipelagoPane archipelagoPane = new ArchipelagoPane();
+        archipelagoPane.setObserver(observer);
+        mainGrid.add(archipelagoPane, 0, 1);
 
         /*
         debug button for merge animation
@@ -364,7 +364,8 @@ public class GUIApplication extends Application {
             Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer) {
 
         VBox players = (VBox) this.lookup("players");
-        PlayerPane player = new PlayerPane(controller, nickname, nickID,isMainPlayer);
+        PlayerPane player = new PlayerPane(nickname, nickID,isMainPlayer);
+        player.setObserver(observer);
         player.setNickname(nickname);
         player.createBoard(entranceID, tablesIDs, towerColor, numOfTowers);
         player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer, wizardType);
@@ -414,7 +415,7 @@ public class GUIApplication extends Application {
             if (result.equals(ButtonType.NO)) windowEvent.consume();
             else {
                 Platform.exit();
-                controller.close();
+                observer.notifyClose();
             }
         });
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -538,9 +539,6 @@ public class GUIApplication extends Application {
         stage.setTitle("Eriantys AM46: Game");
         fadeIn(getContent(mainScene));
 
-    }
-
-    private void addOnKeyPressedToMain(EventHandler<? super KeyEvent> value){
     }
 
     public void disableAll(){

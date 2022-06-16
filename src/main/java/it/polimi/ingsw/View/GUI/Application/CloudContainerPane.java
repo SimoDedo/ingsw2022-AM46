@@ -1,7 +1,8 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CloudContainerPane extends HBox {
+public class CloudContainerPane extends HBox implements ObservableGUI {
 
-    private final GUIController controller;
+    private ObserverGUI observer;
 
     static double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
 
@@ -19,13 +20,17 @@ public class CloudContainerPane extends HBox {
 
     private List<Integer> cloudsIDs;
 
-    public CloudContainerPane(GUIController controller) {
+    public CloudContainerPane() {
         super(5.0);
-        this.controller = controller;
         this.setId("cloudContainerPane");
         this.setAlignment(Pos.CENTER);
         this.setPrefSize(cloudContainerWidth, cloudContainerHeight);
         this.setMaxSize(cloudContainerWidth, cloudContainerHeight);
+    }
+
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
     }
 
     /**
@@ -65,7 +70,7 @@ public class CloudContainerPane extends HBox {
             int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
                 setCloudChosen(finalCloudID);
-                controller.notifyCloud();
+                observer.notifyCloud();
             });
         }
     }
