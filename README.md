@@ -52,11 +52,18 @@ The project will include:
 ---
 
 # Installation
-WIP
+An installation is still not available, but will be made available in the future with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html). For now you can fetch the latest cross-platform JAR from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases).
+Download the JAR and place it in the desired folder.
 ## Requirements
-WIP
+The application requires:
+- [Java](https://www.java.com/it/) (obviously). You can [download]([https://www.java.com/it/download/](https://www.oracle.com/java/technologies/downloads/#java17)) (Windows, MacOS) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
+- a graphical interface if you don't have one. On WSL, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
 ## Run
-WIP
+Double-click on the JAR or `java -jar Eriantys-vX.X.X.jar` in a shell (where X.X.X is the downloaded JAR's version) to start the GUI.
+Use the parameters `--server` to start the server, or `--cli` to start the CLI.
+
+[Here](https://asciinema.org/a/ahsKxDUVGFGZ4TVQjqK50JV2p) is a quick demonstration of the CLI running in a WSL shell.
+![eriantys-cli-demo](https://user-images.githubusercontent.com/24454017/174342092-f52432a4-c22b-4faf-a2bc-b8e31ef8694c.gif)
 
 ---
 
