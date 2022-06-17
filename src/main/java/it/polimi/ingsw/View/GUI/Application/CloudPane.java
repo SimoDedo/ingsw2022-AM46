@@ -13,13 +13,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * This class represents the cloud inside the cloud container.
+ */
 public class CloudPane extends StackPane {
 
+    /**
+     * The height and width of the cloud.
+     */
     public static double cloudSize = 100.0;
 
+    /**
+     * The StudentContainerPane on this cloud.
+     */
     private StudentContainerPane studentPane;
+
+    /**
+     * A list containing the "coordinates" (column and row) of the free spots in the cloud's student pane.
+     */
     private List<Pair<Integer, Integer>> freeStudSpots;
 
+    /**
+     * Constructor for the class. Sets ID, alignment, size and image.
+     */
     public CloudPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(cloudSize, cloudSize);
@@ -35,6 +51,10 @@ public class CloudPane extends StackPane {
         this.setPickOnBounds(false);
     }
 
+    /**
+     * Creates the cloud with the given ID. Sets size, alignment and student space.
+     * @param ID the ID of the cloud to create
+     */
     public void createCloud(int ID){
         studentPane = new StudentContainerPane("cloudStudentsPane", ID,
                 cloudSize*0.95, cloudSize*0.95, 100, 3, 3, 25.0, 25.0, 0.0);
@@ -50,6 +70,10 @@ public class CloudPane extends StackPane {
         }
     }
 
+    /**
+     * Updates the cloud with a map of the students present on it.
+     * @param newStuds a map with the ID of the students present on the cloud and their respective color
+     */
     public void updateCloud(HashMap<Integer, Color> newStuds){
         if(newStuds.isEmpty() && ! studentPane.getChildren().isEmpty()){
             studentPane.getChildren().clear();
@@ -70,25 +94,4 @@ public class CloudPane extends StackPane {
         }
     }
 
-    public void setEnabled() {
-
-    }
-
-    public void setDisabled() {
-
-    }
-
-    public void debugStud(){
-        for (int i = 0; i < 3; i++) {
-            StudentView studentView = new StudentView(i, "student", "yellow", StudentView.studentSize);
-            studentView.setEnabled();
-            int finalI = i;
-            studentView.setCallback(mouseEvent -> {
-                System.out.println("TEST " + finalI);
-                studentView.setDisabled();
-            });
-            studentPane.add(studentView, i, i);
-            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
-        }
-    }
 }

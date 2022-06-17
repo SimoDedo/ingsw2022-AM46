@@ -379,8 +379,11 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
-            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
     }
 
     /**
@@ -443,8 +446,11 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null)
-            UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
     }
 
     //endregion
@@ -476,15 +482,12 @@ public class Client {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
             if(e instanceof SocketTimeoutException){
-                System.err.println("Connection timed out: " + e.getLocalizedMessage());
                 fatalError("Connection timed out.");
             }
             else if(e instanceof EOFException){
-                System.err.println("Someone disconnected.");
                 fatalError("Someone disconnected.");
             }
             else{
-                System.err.println("Unable to receive messages from server: " + e.getLocalizedMessage());
                 fatalError("Unable to receive messages from server.");
             }
             return null;
@@ -513,6 +516,9 @@ public class Client {
         System.exit(-1);
     }
 
+    /**
+     * Resets the client state and restarts main loop.
+     */
     public void reset(){
         gameStarted = false;
         nickname = null;
@@ -521,6 +527,10 @@ public class Client {
         start();
     }
 
+    /**
+     * If the client isn't being reset, it disconnects from server and forwards an error to be displayed to the user.
+     * @param errorDescription the error to be displayed.
+     */
     public void fatalError(String errorDescription){
         if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
             disconnectFromServer();
@@ -530,10 +540,16 @@ public class Client {
         }
     }
 
+    /**
+     * Logs out client from server by sending a logout user action.
+     */
     private void logoutFromServer(){
         sendUserAction(new LogoutUserAction(nickname));
     }
 
+    /**
+     * Disconnects client from server.
+     */
     private void disconnectFromServer(){
         isToReset = true;
         stopPing();

@@ -185,7 +185,7 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void moveStudentFromEntrance(String nickname, int studentID, int containerID) throws FullTableException {
         Player player = getPlayerByNickname(nickname);
-        Student student = player.getStudentFromEntrance(studentID); //todo: will have to throw exception if not present? to be tested if added
+        Student student = player.getStudentFromEntrance(studentID);
         Table potentialTable = player.getTable(student.getColor());
         if (potentialTable.getID() == containerID){
             if(!potentialTable.isFull()){
@@ -279,7 +279,7 @@ public class Game implements ObservableByClient, Serializable {
     /**
      * This method progresses the phase, going from planning to action and vice-versa.
      */
-    public void nextPhase(){//CHECKME: Could be "hidden" in determine action/planning order?
+    public void nextPhase(){
         turnManager.nextPhase();
     }
 
@@ -302,12 +302,6 @@ public class Game implements ObservableByClient, Serializable {
      */
     public void disableClouds() {
         for (CloudTile c : clouds) c.removeAll();
-        //TODO: regole ambigue "se gli studenti non bastano non si pesca"; se finiscono gli studenti ma riempiono tutte
-        // le nuvole, i giocatori devono poter pescare dalle nuvole? in teoria è l'ultimo turno quindi non cambia,
-        // ma non so. Per ora non cambia tanto è il controller che chiama questo metodo.
-        // Inoltre, secondo il regolamento non si pesca solo nel caso in cui siano finiti gli studenti, ma non
-        // cambia nulla pescare o meno in qualunque caso. Possiamo disabilitarle sempre? Magari va chiesto
-
     }
 
     /**
@@ -377,6 +371,7 @@ public class Game implements ObservableByClient, Serializable {
          * @return the player currently executing their planning/action turn, null if firstRoundOrder
          * hasn't been determined yet
          */
+        @Override
         public String getCurrentPlayer() {
             return turnManager.getCurrentPlayer() == null ? null : turnManager.getCurrentPlayer().getNickname();
         } // could be useful to controller
@@ -385,6 +380,7 @@ public class Game implements ObservableByClient, Serializable {
          * Getter for the nickname of connected players
          * @return a list with the nickname of connected players
          */
+        @Override
         public List<String> getPlayers(){
             List<String> nicknames = new ArrayList<>();
             for(Player player : players)
@@ -396,6 +392,7 @@ public class Game implements ObservableByClient, Serializable {
          * Getter for the teams
          * @return a hashmap with a nickname as key and the tower color as value
          */
+        @Override
         public HashMap<String, TowerColor> getPlayerTeams(){
             HashMap<String, TowerColor> teams = new HashMap<>();
             for(Player player : players)
@@ -407,6 +404,7 @@ public class Game implements ObservableByClient, Serializable {
          * Getter for the wizards chosen
          * @return a hashmap with a nickname as key and the wizard as value
          */
+        @Override
         public HashMap<String, WizardType> getPlayerWizard(){
             HashMap<String, WizardType> wizards = new HashMap<>();
             for(Player player : players)
@@ -418,6 +416,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns current player order
          * @return a list of nicknames ordered
          */
+        @Override
         public List<String> getPlayerOrder(){
             return  turnManager.getCurrentOrder();
         }
@@ -441,6 +440,7 @@ public class Game implements ObservableByClient, Serializable {
              * If no order has been established yet, it will return an empty LinkedHashMap.
              * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played.
              */
+        @Override
         public  LinkedHashMap<String, Integer> getCardsPlayedThisRound(){
             LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
             for(String nickname : turnManager.getCurrentOrder()){
@@ -456,6 +456,7 @@ public class Game implements ObservableByClient, Serializable {
          * If no order has been established yet, it will return an empty LinkedHashMap.
          * @return A LinkedHashMap containing the nickname of the Player and the ID of the card played
          */
+        @Override
         public  LinkedHashMap<String, Integer> getCardsPlayedLastRound(){
             LinkedHashMap<String, Integer> result = new LinkedHashMap<>();
             for(String nickname : turnManager.getCurrentOrder()){
@@ -469,6 +470,7 @@ public class Game implements ObservableByClient, Serializable {
          * Method to observe the current phase of the game. Needed to let know the controller which order to calculate.
          * @return the current phase.
          */
+        @Override
         public Phase getCurrentPhase(){
                 return turnManager.getCurrentPhase();
             }
@@ -477,6 +479,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns the tower colors selectable
          * @return the tower colors selectable
          */
+        @Override
         public List<TowerColor> getAvailableTowerColors(){
             List<TowerColor> availableTowerColors = new ArrayList<>(Arrays.stream(TowerColor.values()).toList());
             availableTowerColors.remove(TowerColor.NEUTRAL);
@@ -493,6 +496,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns the wizards selectable
          * @return the wizards selectable
          */
+        @Override
         public List<WizardType> getAvailableWizards(){
             List<WizardType> availableWizardTypes = new ArrayList<>(Arrays.stream(WizardType.values()).toList());
             for (Player player : players)
@@ -504,6 +508,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns how many towers are left to be placed for each team
          * @return a hashmap with tower color as key and the number of towers left as key
          */
+        @Override
         public HashMap<TowerColor, Integer> getTowersLeft(){
             HashMap<TowerColor, Integer> towersLeft = new HashMap<>();
             for (Player player : players){
@@ -517,6 +522,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns the team that has won the game.
          * @return the towerColor of the team who has won the game
          */
+        @Override
         public TowerColor getWinner(){
             return winner;
         }
@@ -526,6 +532,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns a list of cards that weren't yet played (thus to be shown to the player)
          * @return a list of cards IDs
          */
+        @Override
         public List<Integer> getCardsLeft(String nickname){
             return  players.getByNickname(nickname).getCardsLeft();
         }
@@ -535,6 +542,7 @@ public class Game implements ObservableByClient, Serializable {
          * @param nickname the player to query
          * @return the ID of the entrance of a player, or -1 if the nickname doesn't exist
          */
+        @Override
         public int getEntranceID(String nickname){
             Player p = players.getByNickname(nickname);
             if(p != null)
@@ -547,6 +555,7 @@ public class Game implements ObservableByClient, Serializable {
          * Method to observe all the students in the entrance and their color
          * @return HashMap with the student ID as key and its color as object
          */
+        @Override
         public HashMap<Integer, Color> getEntranceStudentsIDs(String nickname){
             return players.getByNickname(nickname).getEntranceStudentsIDs();
         }
@@ -555,6 +564,7 @@ public class Game implements ObservableByClient, Serializable {
          * Method to get all the table IDs and their color
          * @return an HashMap with the table color as key and the Table ID as object
          */
+        @Override
         public HashMap<Color, Integer> getTableIDs(String nickname){
             return players.getByNickname(nickname).getTableIDs();
         }
@@ -564,6 +574,7 @@ public class Game implements ObservableByClient, Serializable {
          * @param color The color of the table
          * @return List with the student IDs in the requested table
          */
+        @Override
         public List<Integer> getTableStudentsIDs(String nickname, Color color){
             return players.getByNickname(nickname).getTableStudentsIDs(color);
         }
@@ -573,6 +584,7 @@ public class Game implements ObservableByClient, Serializable {
          * @param nickname the nickname of the player to check
          * @return the amount of towers contained in the TowerSpace
          */
+        @Override
         public int getTowersLeft(String nickname){
             return players.getByNickname(nickname).getTowersLeft();
         }
@@ -589,6 +601,7 @@ public class Game implements ObservableByClient, Serializable {
                 return  result;
             }
 
+        @Override
         public int getTableCoinsLeft(String nickname, Color color){
             return getPlayerByNickname(nickname).getCoinsLeft(color);
         }
@@ -598,6 +611,7 @@ public class Game implements ObservableByClient, Serializable {
          * Method to observe which Professor is owned by who
          * @return An HashMap with the color of the professor as Key and its owner as Object (null if no player owns it)
          */
+        @Override
         public HashMap<Color, String> getProfessorsOwner(){
             return  professorSet.getProfessorsOwner();
         }
@@ -607,6 +621,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns a list containing all the IDs of CloudTiles
          * @return a list containing all the IDs of CloudTiles
          */
+        @Override
         public List<Integer> getCloudIDs(){
             List<Integer> cloudIDs = new ArrayList<>();
             for(CloudTile cloudTile : clouds){
@@ -621,6 +636,7 @@ public class Game implements ObservableByClient, Serializable {
      * @return an HashMap with the Student IDs as Key and their color as Object
      * @throws IllegalArgumentException thrown when the CloudTileID doesn't match any existing cloud
      */
+    @Override
     public HashMap<Integer, Color> getCloudStudentsIDs(int cloudTileID) throws IllegalArgumentException{
         for(CloudTile cloudTile : clouds){
             if(cloudTile.getID() == cloudTileID)
@@ -634,6 +650,7 @@ public class Game implements ObservableByClient, Serializable {
          * Method to observe how many students are left in the abg
          * @return the number of students left in the bag
          */
+        @Override
         public int getBagStudentsLeft(){//Probably not needed
             return  bag.getPawnIDs().size();
         }
@@ -643,6 +660,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns all students contained in all islands with their color
          * @return An HashMap with StudentID as key and Color as value
          */
+        @Override
         public HashMap<Integer, Color> getArchipelagoStudentIDs(){
             return archipelago.getStudentIDs();
         }
@@ -651,6 +669,7 @@ public class Game implements ObservableByClient, Serializable {
          * Searches all IslandTiles to find which students each contains
          * @return A HashMap containing as Key the ID of the IslandTile, as object a list of StudentIDs
          */
+        @Override
         public HashMap<Integer, List<Integer>> getIslandTilesStudentsIDs(){
             return archipelago.getIslandTilesStudentsIDs();
         }
@@ -659,6 +678,7 @@ public class Game implements ObservableByClient, Serializable {
          * For each IslandGroup finds the IDs of its IslandTiles
          * @return An HashMap with key the (current) index of the IslandGroup and a list of its IslandTiles IDs
          */
+        @Override
         public HashMap<Integer, List<Integer>> getIslandTilesIDs(){
             return  archipelago.getIslandTilesIDs();
         }
@@ -676,6 +696,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns the IslandTile ID of the IslandTile which contains MotherNature
          * @return the IslandTile ID of the IslandTile which contains MotherNature
          */
+        @Override
         public int getMotherNatureIslandTileID(){
             return archipelago.getMotherNatureIslandTileID();
         }
@@ -685,6 +706,7 @@ public class Game implements ObservableByClient, Serializable {
         * The color is null when no Team holds the IslandGroup
         * @return an HashMap containing the indexes of the IslandGroup as key and the TowerColor as Key
         */
+        @Override
         public HashMap<Integer, TowerColor> getIslandGroupsOwners(){
         return archipelago.getIslandGroupsOwner();
     }
@@ -693,6 +715,7 @@ public class Game implements ObservableByClient, Serializable {
          * Returns the IslandGroups indexes along with the number of NoEntryTiles each contains
          * @return The IslandGroups indexes along with the number of NoEntryTiles each contains
          */
+        @Override
         public HashMap<Integer, Integer> getNoEntryTilesArchipelago(){
             return archipelago.getNoEntryTiles();
         }

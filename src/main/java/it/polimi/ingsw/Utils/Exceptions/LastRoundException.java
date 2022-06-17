@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Utils.Exceptions;
 
 /**
- * Exception thrown to the controller when either the last student was drawn or any player played his last assistant
+ * Exception thrown when the current turn being played will be the last.
  */
 public class LastRoundException extends RuntimeException{
     public LastRoundException(){

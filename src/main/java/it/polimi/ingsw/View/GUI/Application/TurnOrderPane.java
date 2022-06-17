@@ -17,7 +17,7 @@ import java.util.List;
 public class TurnOrderPane extends HBox {
 
 
-    public TurnOrderPane(GUIController guiController) {
+    public TurnOrderPane() {
         super(15.0);
         this.setId("turnOrderPane");
         this.setAlignment(Pos.CENTER);

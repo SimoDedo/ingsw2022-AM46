@@ -1,7 +1,8 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import it.polimi.ingsw.View.GUI.GUIController;
+import it.polimi.ingsw.View.GUI.ObservableGUI;
+import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
@@ -9,23 +10,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CloudContainerPane extends HBox {
+/**
+ * This class contains the cloud panes of the game.
+ */
+public class CloudContainerPane extends HBox implements ObservableGUI {
 
-    private final GUIController controller;
+    private ObserverGUI observer;
 
-    static double cloudContainerHeight = CloudPane.cloudSize, cloudContainerWidth = CloudPane.cloudSize*4.5;
+    /**
+     * The height of the cloud container. It is equal to the height of a cloud.
+     */
+    static double cloudContainerHeight = CloudPane.cloudSize;
 
+    /**
+     * The width of the cloud container. It is greater than the width of four clouds.
+     */
+    static double cloudContainerWidth = CloudPane.cloudSize*4.5;
+
+    /**
+     * The ID of the chosen cloud.
+     */
     private int cloudChosen;
 
+    /**
+     * The ID of the clouds in this container.
+     */
     private List<Integer> cloudsIDs;
 
-    public CloudContainerPane(GUIController controller) {
+    /**
+     * Constructor for the class. Sets the container's ID, alignment and size.
+     */
+    public CloudContainerPane() {
         super(5.0);
-        this.controller = controller;
         this.setId("cloudContainerPane");
         this.setAlignment(Pos.CENTER);
         this.setPrefSize(cloudContainerWidth, cloudContainerHeight);
         this.setMaxSize(cloudContainerWidth, cloudContainerHeight);
+    }
+
+    @Override
+    public void setObserver(ObserverGUI observer) {
+        this.observer = observer;
     }
 
     /**
@@ -44,18 +69,34 @@ public class CloudContainerPane extends HBox {
         }
     }
 
-    public void updateCloud(Integer cloud, HashMap<Integer, Color> studs){
-        ((CloudPane) this.lookup("#cloudPane" + cloud)).updateCloud(studs);
+    /**
+     * Updates a cloud with the given ID with an updated list of students on it.
+     * @param cloudID the ID of the cloud to update
+     * @param studs a map with the student IDs and their respective color
+     */
+    public void updateCloud(Integer cloudID, HashMap<Integer, Color> studs){
+        ((CloudPane) this.lookup("#cloudPane" + cloudID)).updateCloud(studs);
     }
 
+    /**
+     * Setter for the cloud chosen.
+     * @param cloudID the ID of the chosen cloud
+     */
     public void setCloudChosen(int cloudID) {
         this.cloudChosen = cloudID;
     }
 
+    /**
+     * Getter for the cloud chosen.
+     * @return the ID of the chosen cloud
+     */
     public int getCloudChosen() {
         return cloudChosen;
     }
 
+    /**
+     * Enables the selection of any cloud in this container.
+     */
     public void enableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
@@ -65,11 +106,14 @@ public class CloudContainerPane extends HBox {
             int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
                 setCloudChosen(finalCloudID);
-                controller.notifyCloud();
+                observer.notifyCloud();
             });
         }
     }
 
+    /**
+     * Disables the selection of any cloud in this container.
+     */
     public void disableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
@@ -81,11 +125,4 @@ public class CloudContainerPane extends HBox {
         }
     }
 
-    public void debugStud() {
-        for (Integer cloudID : cloudsIDs) {
-            CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
-            if (cloudPane != null)
-                cloudPane.debugStud();
-        }
-    }
 }

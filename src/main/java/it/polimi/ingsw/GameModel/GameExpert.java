@@ -173,6 +173,7 @@ public class GameExpert extends Game {
          * method to observe number of coins left in the bag.
          * @return the number of coins of the given player
          */
+        @Override
         public int getCoinsLeft(){
             return coinBag.getNumOfCoins();
         }
@@ -182,6 +183,7 @@ public class GameExpert extends Game {
          * @param nickname the player to check
          * @return the number of coins of the given player
          */
+        @Override
         public int getCoins(String nickname){
             return players.getByNickname(nickname).getCoins();
         }
@@ -190,6 +192,7 @@ public class GameExpert extends Game {
          * Method to observe which characters were created for this game.
          * @return a list of the created character IDs.
          */
+        @Override
         public List<Integer> getDrawnCharacterIDs(){
             List<Integer> charactersIDs = new ArrayList<>();
             for (int i = 1; i < 13; i++)
@@ -202,6 +205,7 @@ public class GameExpert extends Game {
          * Getter for the ActiveCharacter ID.
          * @return the ActiveCharacter ID. -1 if no character is active.
          */
+        @Override
         public int getActiveCharacterID(){
             return characterManager.getActiveCharacterID();
         }
@@ -210,6 +214,7 @@ public class GameExpert extends Game {
          * Return the maximum number of times the ability of the active character can be used.
          * @return the maximum number of times the ability of the active character can be used.
          */
+        @Override
         public int getActiveCharacterMaxUses(){
             return characterManager.getActiveCharacterMaxUses();
         }
@@ -218,6 +223,7 @@ public class GameExpert extends Game {
          * Returns the number of times the ability of the active character can still be used.
          * @return the number of times the ability of the active character can still be used.
          */
+        @Override
         public int getActiveCharacterUsesLeft(){
             return characterManager.getActiveCharacterUsesLeft();
         }
@@ -228,6 +234,7 @@ public class GameExpert extends Game {
          * @return a hash map containing the ID of the students as key and their color as value.
          * If no students are contained, the map will be empty
          */
+        @Override
         public HashMap<Integer, Color> getCharacterStudents(int ID){
             if(! characterManager.getCurrentCharacterIDs().contains(ID))
                 return new HashMap<>();
@@ -240,6 +247,7 @@ public class GameExpert extends Game {
          * @param ID the ID of the character requested
          * @return the cost
          */
+        @Override
         public int getCharacterCost(int ID){
             return characterManager.getCharacterCost(ID);
         }
@@ -249,6 +257,7 @@ public class GameExpert extends Game {
          * @param ID the character to check
          * @return true if the given character is overcharged.
          */
+        @Override
         public boolean getCharacterOvercharge(int ID){
             return characterManager.getCharacterOvercharge(ID);
         }
@@ -267,7 +276,7 @@ public class GameExpert extends Game {
          * @return the current requested parameters for the active character
          */
         @Override
-            public List<RequestParameter> getCurrentRequestParameters() {
+        public List<RequestParameter> getCurrentRequestParameters() {
                 return new ArrayList<>(characterManager.getCurrentRequestParameters());
         }
 

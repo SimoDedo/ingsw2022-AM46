@@ -3,6 +3,9 @@ package it.polimi.ingsw.View.GUI.Application;
 import javafx.scene.effect.*;
 import javafx.scene.paint.Color;
 
+/**
+ * Utility class that stores various pre-built effects (e.g. drop shadows and glows) for the GUI elements.
+ */
 public class Effects {
 
     public static final Effect disabledAssistantShadow = new DropShadow(PlayerPane.sizeBoardV/15, Color.DIMGREY);

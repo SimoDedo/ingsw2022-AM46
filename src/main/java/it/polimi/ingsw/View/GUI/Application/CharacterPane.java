@@ -21,28 +21,71 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * This class contains a character card: its image, its StudentContainerPane space, its no-entry tile space and its color
+ * selection pane space.
+ */
 public class CharacterPane extends StackPane {
 
-    public static double charHeight = 100.0, charWidth = charHeight/2;
+    /**
+     * The height of a character card.
+     */
+    public static double charHeight = 100.0;
 
+    /**
+     * The width of a character card.
+     */
+    public static double charWidth = charHeight/2;
+
+    /**
+     * The StudentContainerPane on this character.
+     */
     private StudentContainerPane studentPane;
 
+    /**
+     * The no-entry tile image on this character (optionally visible).
+     */
     private ImageView noEntryTile;
 
+    /**
+     * The no-entry tile counter.
+     */
     private Text noEntryTileText;
 
+    /**
+     * The ColorSelectionPane on this character (optionally visible).
+     */
     private ColorSelectionPane colorSelectionPane;
 
+    /**
+     * The coin overcharge image.
+     */
     private final ImageView coinOvercharge;
 
+    /**
+     * The number of uses left.
+     */
     private final Text usesLeft;
 
+    /**
+     * A list containing the "coordinates" (column and row) of the free spots in the character's student pane.
+     */
     private List<Pair<Integer, Integer>> freeStudSpots;
 
+    /**
+     * The color chosen by the user.
+     */
     private Color colorChosen;
 
+    /**
+     * The current effect applied to this character image.
+     */
     protected Effect currentEffect;
 
+    /**
+     * Constructor for the class. Sets it as disabled and creates the coin overcharge and the uses left, setting them to
+     * invisible.
+     */
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
@@ -82,6 +125,10 @@ public class CharacterPane extends StackPane {
         this.setPickOnBounds(false);
     }
 
+    /**
+     * Creates the character with the given ID. Creates the student pane and the color selection pane.
+     * @param charID the character ID
+     */
     public void createCharacter(int charID) {
         studentPane = new StudentContainerPane("characterStudentPane", charID,
                 charWidth, charHeight, 100, 3, 3, 10.0, 25.0, 0.0);
@@ -122,6 +169,10 @@ public class CharacterPane extends StackPane {
         StackPane.setAlignment(colorSelectionPane, Pos.CENTER);
     }
 
+    /**
+     * Sets the character image with the given ID.
+     * @param charID the ID of the character of which to retrieve the image
+     */
     public void setCharacterImage(int charID) {
         ImageView charView = (ImageView) this.lookup("#charView");
         Image newChar = new Image("/chars/char" + charID + ".png", 200, 200, true, true);
@@ -133,6 +184,14 @@ public class CharacterPane extends StackPane {
         charView.setCache(true);
     }
 
+    /**
+     * Updates a character with all the needed updated information.
+     * @param isActive true if the character is active, false otherwise
+     * @param usesLeft the number of uses left
+     * @param newStuds a map containing the student IDs and their respective color
+     * @param numOfNoEntryTiles the number of no-entry tiles on this character
+     * @param isOvercharged true if the character is overcharged (it costs one additional coin), false otherwise
+     */
     public void updateCharacter(boolean isActive, int usesLeft,HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
         //Update students
         removeOldStuds(newStuds);
@@ -152,6 +211,7 @@ public class CharacterPane extends StackPane {
         ImageView charView = ((ImageView) this.lookup(("#charView")));
         if(isActive){
             this.currentEffect = Effects.activatedCharacterShadow;
+            charView.setEffect(currentEffect);
             if(usesLeft > 0){
                 this.usesLeft.setText(Integer.toString(usesLeft));
                 this.usesLeft.setVisible(true);
@@ -166,6 +226,10 @@ public class CharacterPane extends StackPane {
 
     }
 
+    /**
+     * Removes students from the character that aren't present on the card anymore.
+     * @param newStuds an updated map with the student IDs and their respective color
+     */
     private void removeOldStuds(HashMap<Integer, Color> newStuds){
         List<Node> oldStuds = new ArrayList<>(studentPane.getChildren());
         List<String> studsNow = newStuds.keySet().stream().map(id -> "student" + id).toList();
@@ -180,6 +244,10 @@ public class CharacterPane extends StackPane {
         }
     }
 
+    /**
+     * Adds students to the character that weren't present on the card but are now.
+     * @param newStuds an updated map with the student IDs and their respective color
+     */
     private void addNewStuds(HashMap<Integer, Color> newStuds){
         List<Node> oldStuds = studentPane.getChildren();
         List<String> studsBeforeIDs = oldStuds.stream().map(Node::getId).toList();
@@ -194,29 +262,28 @@ public class CharacterPane extends StackPane {
         }
     }
 
+    /**
+     * Getter for the students ImageViews on this character.
+     * @return a list of student ImageViews
+     */
     public List<StudentView> getStudents() {
         return studentPane.getStudents();
     }
 
+    /**
+     * Setter for the color chosen.
+     * @param color the chosen color
+     */
     public void setColor(Color color) {
         colorChosen = color;
     }
 
+    /**
+     * Getter for the color chosen.
+     * @return the chosen color
+     */
     public Color getColorChosen() {
         return colorChosen;
     }
 
-    public void debugStud(){
-        for (int i = 0; i < 3; i++) {
-            StudentView studentView = new StudentView(i, "student", "pink", StudentView.studentSize);
-            studentView.setEnabled();
-            int finalI = i;
-            studentView.setCallback(mouseEvent -> {
-                System.out.println("TEST " + finalI);
-                studentView.setDisabled();
-            });
-            studentPane.add(studentView, i, i);
-            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
-        }
-    }
 }
