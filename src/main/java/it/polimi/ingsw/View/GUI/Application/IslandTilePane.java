@@ -23,14 +23,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IslandTilePane extends StackPane {
 
-    boolean partyMode = false;
+    public static boolean partyMode = false;
     int index;
 
-    static double islandTileSize = 120.0, shrinkConstant = 0.80, modifierSize = 25.0, studentSize = 15.0;
+    static double islandTileSize = 120.0;
+    static double shrinkConstant = 0.80;
 
     private TowerColor towerColor;
 
-    private Point2D forwardMergePoint, backMergePoint;
+    private Point2D forwardMergePoint;
+    private Point2D backMergePoint;
 
     private final GridPane islandModifiersPane;
     private final ImageView motherNature;
@@ -47,8 +49,10 @@ public class IslandTilePane extends StackPane {
         currentStudSize = StudentView.studentSize;
         currentStudGridSize = 4;
 
-        Image islandTileBackground = new Image("/world/islandtile" + ThreadLocalRandom.current().nextInt(1, partyMode ? 5 : 4) + ".png",
-        300, 300, true, true);
+        Image islandTileBackground = new Image("/world/islandtile"
+                + (partyMode ? ThreadLocalRandom.current().nextInt(1, 5) : (index%3+1))
+                + ".png", 300, 300, true, true);
+
         ImageView imageView = new ImageView(islandTileBackground);
         imageView.setId("islandView");
         imageView.setEffect(Effects.disabledIslandShadow);
@@ -247,17 +251,4 @@ public class IslandTilePane extends StackPane {
         return new Point2D(localToParent(0,0).getX() + islandTileSize / 2, localToParent(0,0).getY() + islandTileSize / 2);
     }
 
-    public void debugStud(){
-        for (int i = 0; i < 4; i++) {
-            StudentView studentView = new StudentView(i, "student", "blue", StudentView.studentSize);
-            studentView.setEnabled();
-            int finalI = i;
-            studentView.setCallback(mouseEvent -> {
-                System.out.println("TEST " + finalI);
-                studentView.setDisabled();
-            });
-            studentPane.add(studentView, i, i);
-            StudentContainerPane.setHalignment(studentView, HPos.CENTER);
-        }
-    }
 }

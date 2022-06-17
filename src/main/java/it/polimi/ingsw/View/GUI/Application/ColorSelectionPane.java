@@ -8,14 +8,26 @@ import javafx.scene.layout.VBox;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class serves as a pane with which to select a color out of the available color
+ */
 public class ColorSelectionPane extends VBox {
 
+    /**
+     * The size of the color button.
+     */
     public static double colorSize = 17.0;
 
+    /**
+     * The order in which colors are displayed, from top to bottom.
+     */
     public static Map<Color, Integer> colorOrder;
 
+    /**
+     * Constructor for the class. It creates the color buttons and sets itself to invisible.
+     * @param charID the ID of the character that owns this color selection pane
+     */
     public ColorSelectionPane(int charID) {
-        //this.setPadding(new Insets(5.0, 5.0, 5.0, 5.0));
         this.setId("char" + charID + "ColorPane");
         this.setVisible(false);
         this.setSpacing(2.5);

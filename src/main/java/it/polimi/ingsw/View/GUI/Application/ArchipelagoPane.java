@@ -66,12 +66,25 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
      */
     private List<Integer> islandsIDs;
 
+    /**
+     * A map for storing the index of each island group and of the island tiles inside them.
+     */
     private HashMap<Integer, List<Integer>> islandConfiguration;
+
+    /**
+     * The current move power of mother nature.
+     */
     private int movePower;
+
+    /**
+     * The index of the island group that mother nature is currently on.
+     */
     private int islandGroupMN;
 
+    /**
+     * The island chosen by the user through clicking.
+     */
     private int islandChosen;
-    private int studentChosen;
 
     /**
      * Constructor for the archipelago. It creates all the elements which are ubiquitous to every match regardless of the
@@ -314,6 +327,9 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Enables the selection of any island in the archipelago.
+     */
     public void enableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
@@ -328,6 +344,9 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Enables the selection of any island that is reachable by mother nature.
+     */
     public void enableSelectIslandReachable() {
         for (int i = 1; i <= movePower; i++) {
             int group = islandGroupMN + i < islandConfiguration.size() ?
@@ -346,6 +365,9 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selection of any island in the archipelago.
+     */
     public void disableSelectIsland() {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
@@ -358,20 +380,20 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Setter for the island chosen.
+     * @param islandID the ID of the chosen island
+     */
     public void setIslandChosen(int islandID) {
         this.islandChosen = islandID;
     }
 
+    /**
+     * Getter for the island chosen.
+     * @return the ID of the chosen island
+     */
     public int getIslandChosen() {
         return islandChosen;
-    }
-
-    public void setStudentChosen(int studentID) {
-        this.studentChosen = studentID;
-    }
-
-    public int getStudentChosen() {
-        return studentChosen;
     }
 
     /**
@@ -499,18 +521,6 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
                 new KeyFrame(new Duration(1000), new KeyValue(opacity, 1.0))
         );
         fadeIn.play();
-    }
-
-    /**
-     * Debug function that displays some sample students on each island tile, cloud and character.
-     */
-    public void debugStud() {
-        for (int i = 0; i < 12; i++) {
-            IslandTilePane islandTilePane = (IslandTilePane) this.lookup("#islandTilePane" + i);
-            islandTilePane.debugStud();
-        }
-        cloudContainer.debugStud();
-        charContainer.debugStud();
     }
 
 }

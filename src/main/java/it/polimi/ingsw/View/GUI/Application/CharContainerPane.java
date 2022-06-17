@@ -13,17 +13,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class contains the character cards (with their respective information).
+ */
 public class CharContainerPane extends HBox implements ObservableGUI {
 
-    static double charContainerHeight = 80.0, charContainerWidth = 300.0;
+    /**
+     * The height of this pane.
+     */
+    static double charContainerHeight = 80.0;
+
+    /**
+     * The width of this pane.
+     */
+    static double charContainerWidth = 300.0;
 
     private ObserverGUI observer;
 
+    /**
+     * The ID of the chosen character.
+     */
     private int characterChosen;
 
+    /**
+     * A list containing the ID of the characters available on the board.
+     */
     private List<Integer> charIDs;
+
+    /**
+     * The ID of the chosen student.
+     */
     private int studentChosen;
 
+    /**
+     * Constructor for the class. Sets its ID, size and alignment.
+     */
     public CharContainerPane() {
         super(5.0);
         this.setId("charContainerPane");
@@ -37,6 +61,10 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         this.observer = observer;
     }
 
+    /**
+     * Creates the given number of characters with their respective ID.
+     * @param characters a list containing the ID of the characters to add to this pane
+     */
     public void createCharacters(List<Integer> characters) {
         this.charIDs = new ArrayList<>();
         for (int i = 0; i < characters.size(); i++) {
@@ -48,10 +76,22 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         }
     }
 
+    /**
+     * Updates the character with the given ID with all the needed updated information.
+     * @param ID the ID of the character to update
+     * @param isActive true if the character is active, false otherwise
+     * @param usesLeft the number of uses left
+     * @param newStuds a map containing the student IDs and their respective color
+     * @param numOfNoEntryTiles the number of no-entry tiles on this character
+     * @param isOvercharged true if the character is overcharged (it costs one additional coin), false otherwise
+     */
     public void updateCharacter(int ID, boolean isActive, int usesLeft,HashMap<Integer, Color> newStuds, int numOfNoEntryTiles, boolean isOvercharged){
         ((CharacterPane)this.lookup("#characterPane" + ID)).updateCharacter(isActive, usesLeft,newStuds, numOfNoEntryTiles, isOvercharged);
     }
 
+    /**
+     * Enables the selection of any character in this pane.
+     */
     public void enableSelectCharacter() {
         for (Integer charID : charIDs) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
@@ -68,14 +108,25 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         }
     }
 
+    /**
+     * Setter for the character chosen.
+     * @param charIndex the ID of the chosen character
+     */
     public void setCharacterChosen(int charIndex) {
         this.characterChosen = charIndex;
     }
 
+    /**
+     * Getter for the character chosen.
+     * @return the ID of the chosen character
+     */
     public int getCharacterChosen() {
         return characterChosen;
     }
 
+    /**
+     * Disables the selection of any character.
+     */
     public void disableSelectCharacter() {
         if(charIDs != null){
             for (Integer charID : charIDs) {
@@ -89,12 +140,14 @@ public class CharContainerPane extends HBox implements ObservableGUI {
                     charImageView.setEffect(characterPane.currentEffect);
                 characterPane.setOnMouseEntered(e -> {});
                 characterPane.setOnMouseExited(e -> {});
-                characterPane.setOnMouseClicked(event -> {
-                });
+                characterPane.setOnMouseClicked(event -> {});
             }
         }
     }
 
+    /**
+     * Enables the activation of a character (starting its ability).
+     */
     public void enableActivateCharacter() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
         ImageView charImageView = (ImageView) characterPane.lookup("#charView");
@@ -106,6 +159,9 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         characterPane.setOnMouseClicked(event -> observer.notifyAbility());
     }
 
+    /**
+     * Enables the selection of students on any character.
+     */
     public void enableSelectStudents() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
         for (StudentView student : characterPane.getStudents()) {
@@ -117,27 +173,43 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selection of students on any character.
+     */
     public void disableSelectStudents() {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
         for (StudentView student : characterPane.getStudents()) {
             student.setDisabled();
-            student.setCallback(event -> {
-            });
+            student.setCallback(event -> {});
         }
     }
 
+    /**
+     * Setter for the student chosen.
+     * @param studentID the ID of the chosen student
+     */
     public void setStudentChosen(int studentID) {
         this.studentChosen = studentID;
     }
 
+    /**
+     * Getter for the student chosen.
+     * @return the ID of the chosen student
+     */
     public int getStudentChosen() {
         return studentChosen;
     }
 
+    /**
+     * Disables the activation of any character.
+     */
     public void disableActivateCharacter() {
         disableSelectCharacter();
     }
 
+    /**
+     * Enables the selection of a color from the active character's color selection pane.
+     */
     public void enableSelectColor() {
         if(characterChosen > 0 && characterChosen< 13) {
             ColorSelectionPane colorPane = (ColorSelectionPane) this.lookup("#char" + characterChosen + "ColorPane");
@@ -159,6 +231,9 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selection of a color from the active character's color selection pane.
+     */
     public void disableSelectColor() {
         if(characterChosen > 0 && characterChosen< 13){
             ColorSelectionPane colorPane = (ColorSelectionPane) this.lookup("#char" + characterChosen + "ColorPane");
@@ -167,17 +242,9 @@ public class CharContainerPane extends HBox implements ObservableGUI {
                 node.setEffect(Effects.disabledStudentShadow);
                 node.setOnMouseEntered(event -> {});
                 node.setOnMouseExited(event -> {});
-                node.setOnMouseClicked(event -> {
-                });
+                node.setOnMouseClicked(event -> {});
             }
         }
     }
 
-    public void debugStud(){
-        for (Integer charID : charIDs) {
-            CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
-            if (characterPane != null)
-                characterPane.debugStud();
-        }
-    }
 }

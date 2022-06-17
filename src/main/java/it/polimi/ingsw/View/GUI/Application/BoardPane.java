@@ -1,7 +1,7 @@
 package it.polimi.ingsw.View.GUI.Application;
 
+import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
-import it.polimi.ingsw.View.GUI.GUIController;
 import it.polimi.ingsw.View.GUI.ObservableGUI;
 import it.polimi.ingsw.View.GUI.ObserverGUI;
 import javafx.geometry.HPos;
@@ -11,47 +11,121 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import it.polimi.ingsw.Utils.Enum.Color;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 
 import java.util.*;
 
+/**
+ * This class represents the player's board. It contains the entrance, the dining room with the professor space, and the
+ * tower space,
+ */
 public class BoardPane extends StackPane implements ObservableGUI {
 
+    /**
+     * An integer representing the position of the user in the players' list.
+     */
     private final int nickID;
 
+    /**
+     * The height of the player's board.
+     */
     private final double boardHeight;
+
+    /**
+     * The width of the player's board.
+     */
     private final double boardWidth;
+
+    /**
+     * The percentage of width that the entrance occupies compared to the whole board.
+     */
     private final double entrancePct = (500.0/3304.0) * 100;
+
+    /**
+     * The percentage of width that the dining room occupies compared to the whole board.
+     */
     private final double diningRoomPct = ((2270.0 - 500.0) /3304.0) * 100;
+
+    /**
+     * The percentage of width that the professor space occupies compared to the whole board.
+     */
     private final double professorPct = ((2560.0 - 2270.0) / 3304.0) * 100;
+
+    /**
+     * The percentage of width that the tower space occupies compared to the whole board.
+     */
     private final double towerPct = ((3304.0 - 2560.0) / 3304.0) * 100;
 
+
+    /**
+     * The grid on which to place the entrance, dining room and tower space.
+     */
     private final GridPane mainGrid;
 
+    /**
+     * The entrance space.
+     */
     private StudentContainerPane entrance;
 
+    /**
+     * A list containing the "coordinates" (column and row) of the free spots in the entrance space.
+     */
     private List<Pair<Integer, Integer> > freeEntranceSpots;
 
+    /**
+     * The dining room space, with the four tables but without the professors table.
+     */
     private GridPane diningRoom;
 
+    /**
+     * A map representing the color associated with each table.
+     */
     private HashMap<Color, StudentContainerPane> tables;
 
+    /**
+     * A map containing the shadow effect on the tables.
+     */
     private HashMap<Color, StackPane> shadowedTablePanes;
 
+    /**
+     * A map representing the order in which the tables are displayed, from top to bottom.
+     */
     private final HashMap<Color, Integer> tableOrder;
 
+    /**
+     * A list containing the "coordinates" (column and row) of the free spots in the dining room.
+     */
     private List<Pair<Integer, Integer>> freeDRSpots;
 
+    /**
+     * The professors table space.
+     */
     private GridPane professors;
 
+    /**
+     * The tower space.
+     */
     private GridPane towerSpace;
 
+    /**
+     * The color associated with this player board (and its owner/its owner's team).
+     */
     private TowerColor towerColor;
 
+    /**
+     * The number of towers on this board.
+     */
     private int numOfTowers;
 
+    /**
+     * Comparator function for determining the first available spot in a free spots list. Between two spots, it will favor
+     * the one that is closer to the top. If they are both on the same row it will favor the one that is closer to the left.
+     * Comparing all spots in a space thus means that they should be filled from left to right and from top to bottom.
+     */
     private final Comparator<Pair<Integer, Integer>> compareGridSpot = (p, p2) -> {
         if(p.getValue() < p2.getValue()) return -1;
         else if (p.getValue() > p2.getValue()) return 1;
@@ -61,11 +135,28 @@ public class BoardPane extends StackPane implements ObservableGUI {
             else return 0;
         }
     };
+
+    /**
+     * The observer of this board.
+     */
     private ObserverGUI observer;
 
+    /**
+     * The table chosen by the user through clicking.
+     */
     private int tableChosen;
+
+    /**
+     * The student chosen by the user through clicking.
+     */
     private int studentChosen;
 
+    /**
+     * Constructor for the class. It creates the grid with the right spacing between elements, and the image of the board
+     * underneath.
+     * @param nickID the index of the PlayerPane that has this BoardPane
+     * @param boardHeight the height of the board
+     */
     public BoardPane(int nickID, double boardHeight) {
         this.nickID = nickID;
         this.boardHeight = boardHeight;
@@ -107,6 +198,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         this.observer = observer;
     }
 
+    /**
+     * Enables the selection of tables.
+     */
     public void enableSelectTables() {
         for (Map.Entry<Color, StudentContainerPane> entry : tables.entrySet()) {
             entry.getValue().setOnMouseClicked(event -> {
@@ -116,6 +210,10 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Enables the selection of a specific table of the given color.
+     * @param color the color of the table to make selectable
+     */
     public void enableSelectTables(Color color) {
         shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
         shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.16); " +
@@ -139,6 +237,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         });
     }
 
+    /**
+     * Disables the selection of all tables.
+     */
     public void disableSelectTables() {
         for (StudentContainerPane table : tables.values()) {
             table.setOnMouseExited(null);
@@ -152,14 +253,25 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Setter for the table chosen.
+     * @param tableID the ID of the chosen table
+     */
     public void setTableChosen(int tableID) {
         this.tableChosen = tableID;
     }
 
+    /**
+     * Getter for the table chosen.
+     * @return the ID of the chosen table
+     */
     public int getTableChosen() {
         return tableChosen;
     }
 
+    /**
+     * Enables the selection of students in the entrance space.
+     */
     public void enableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();
         for (StudentView student : entranceStudents) {
@@ -171,6 +283,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selectipn of students in the entrance space.
+     */
     public void disableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();
         for (StudentView student : entranceStudents) {
@@ -180,6 +295,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Enables the selection of students in the dining room space.
+     */
     public void enableSelectStudentsDR() {
         List<StudentView> DRStudents = new ArrayList<>();
         for (StudentContainerPane table : tables.values()) {
@@ -194,6 +312,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selection of students in the dining room space.
+     */
     public void disableSelectStudentsDR() {
         List<StudentView> DRStudents = new ArrayList<>();
         for (StudentContainerPane table : tables.values()) {
@@ -206,14 +327,32 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Setter for the student chosen.
+     * @param studentID the ID of the chosen student
+     */
     public void setStudentChosen(int studentID) {
         this.studentChosen = studentID;
     }
 
+    /**
+     * Getter for the student chosen.
+     * @return the ID of the chosen student
+     */
     public int getStudentChosen() {
         return studentChosen;
     }
 
+    /**
+     * Utility function for creating a GridPane with the given dimensions and size constraints.
+     * @param toCreate the GridPane to set up
+     * @param widthPct the percentage of the board's width that this GridPane will occupy
+     * @param rows the number of rows
+     * @param columns the number of columns
+     * @param paddingHPct the left and right padding, as percentage of the board's width
+     * @param paddingVPct the top and bottom padding, as percentage of the board's height
+     * @param paddingExtraRightPct an additional extra padding on the right, needed for certain grids
+     */
     private void createGrid(GridPane toCreate, double widthPct, int rows, int columns, double paddingHPct,
                             double paddingVPct, double paddingExtraRightPct){
         toCreate.setAlignment(Pos.CENTER);
@@ -232,6 +371,10 @@ public class BoardPane extends StackPane implements ObservableGUI {
 
     }
 
+    /**
+     * Creates the entrance space with the given StudentContainerPane ID.
+     * @param entranceID the ID of the entrance space
+     */
     public void createEntrance(int entranceID){
         entrance = new StudentContainerPane("entrancePane", entranceID,
                 boardWidth, boardHeight, entrancePct, 5, 2, 10.0, 5.0, 15.0);
@@ -242,6 +385,10 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Creates the dining room space with the given StudentContainerPane IDs.
+     * @param tableIDs a hashmap of the StudentContainerPane ID associated with each table color
+     */
     public void createDiningRoom(HashMap<Color, Integer> tableIDs){
         diningRoom = new GridPane();
         createGrid(diningRoom, diningRoomPct, 5, 1, 5.0, 7.7, 0.0);
@@ -274,6 +421,9 @@ public class BoardPane extends StackPane implements ObservableGUI {
         freeDRSpots.sort(compareGridSpot);
     }
 
+    /**
+     * Creates the professors space.
+     */
     public void createProfessors(){
         professors = new GridPane();
         professors.setId("professorPane" + nickID);
@@ -281,7 +431,10 @@ public class BoardPane extends StackPane implements ObservableGUI {
         mainGrid.add(professors,2,0);
     }
 
-    public void createTowerSpace(TowerColor towerColor, int number){
+    /**
+     * Creates the tower space.
+     */
+    public void createTowerSpace(TowerColor towerColor) {
         this.towerColor = towerColor;
         towerSpace = new GridPane();
         towerSpace.setId("towerSpacePane" + nickID);
@@ -289,12 +442,21 @@ public class BoardPane extends StackPane implements ObservableGUI {
         mainGrid.add(towerSpace, 3, 0);
     }
 
+    /**
+     * Updates the entrance space with the updated students. It is equivalent to calling removeOldStudentsFromEntrance and
+     * addNewStudentsToEntrance
+     * @param students a hashmap with the student IDs and their respective color
+     */
     public void updateEntrance(HashMap<Integer, Color> students){
-        removeOldStudentFromEntrance(students);
+        removeOldStudentsFromEntrance(students);
         addNewStudentsToEntrance(students);
     }
 
-    private  void removeOldStudentFromEntrance(HashMap<Integer, Color> students){
+    /**
+     * Method for removing from the entrance those students that are not present in the given updated list of students.
+     * @param students a hashmap with the student IDs and their respective color
+     */
+    private  void removeOldStudentsFromEntrance(HashMap<Integer, Color> students){
         List<Node> studsBefore = new ArrayList<>(entrance.getChildren());
         List<String> studsNow = students.keySet().stream().map(id -> "student" + id).toList();
         for(Node studBefore : studsBefore){
@@ -309,6 +471,11 @@ public class BoardPane extends StackPane implements ObservableGUI {
         freeEntranceSpots.sort(compareGridSpot);
     }
 
+    /**
+     * Method for adding to the entrance those students that weren't present before, but are present in the updated list
+     * of students.
+     * @param students a hashmap with the student IDs and their respective color
+     */
     private void addNewStudentsToEntrance(HashMap<Integer, Color> students){
         List<Node> studsBefore = entrance.getChildren();
         List<String> studsBeforeIDs = studsBefore.stream().map(Node::getId).toList();
@@ -323,12 +490,24 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Updates the table of the given color with an updated list of students sitting on it. It is equivalent to calling
+     * removeOldStudentsFromTable and addNewStudentsToTable.
+     * @param tableColor the color of the table to update
+     * @param students a list of the student IDs on that table
+     */
     public void updateTable(Color tableColor, List<Integer> students){
-        removeOldStudentFromTable(tableColor, students);
+        removeOldStudentsFromTable(tableColor, students);
         addNewStudentsToTable(tableColor, students);
     }
 
-    private  void removeOldStudentFromTable(Color tableColor, List<Integer> students){
+    /**
+     * Method for removing from the table of the given color those students that are not present in the given updated list
+     * of students.
+     * @param tableColor the color of the table to update
+     * @param students a list of the student IDs on that table
+     */
+    private  void removeOldStudentsFromTable(Color tableColor, List<Integer> students){
         List<Node> studsBefore = new ArrayList<>(tables.get(tableColor).getChildren());
         List<String> studsNow = students.stream().map(id -> "student" + id).toList();
         for(Node studBefore : studsBefore){
@@ -343,6 +522,12 @@ public class BoardPane extends StackPane implements ObservableGUI {
         freeDRSpots.sort(compareGridSpot);
     }
 
+    /**
+     * Method for adding to the table of the given color those students that weren't present before, but are in the updated
+     * list of students.
+     * @param tableColor the color of the table to update
+     * @param students a list of the student IDs on that table
+     */
     private void addNewStudentsToTable(Color tableColor, List<Integer> students){
         List<Pair<Integer,Integer>> freeTableSpots =
                 new ArrayList<>(freeDRSpots.stream().filter(spot -> spot.getValue().equals(tableOrder.get(tableColor))).toList());
@@ -360,7 +545,11 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
-    public void updateProfessors(List<Color> newProfessorsOwned){ //This isn't optimized like others, but now I have no will (also it's at max 5 pngs to reload I don't : care)
+    /**
+     * Updates the professor space with an updated list of the owned professors.
+     * @param newProfessorsOwned a list of the colors of the professors present on this board
+     */
+    public void updateProfessors(List<Color> newProfessorsOwned){
         professors.getChildren().clear();
         for(Color profColor : newProfessorsOwned){
             PawnView prof = new PawnView(0, "professor", profColor.toString().toLowerCase(), StudentView.studentSize);
@@ -369,6 +558,10 @@ public class BoardPane extends StackPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Updates the tower space with the new number of towers owned.
+     * @param newNumOfTowers the number of towers present on this board
+     */
     public void updateTowers(int newNumOfTowers){
         if(newNumOfTowers < numOfTowers){
             towerSpace.getChildren().clear();
@@ -388,44 +581,4 @@ public class BoardPane extends StackPane implements ObservableGUI {
         this.numOfTowers = newNumOfTowers;
     }
 
-    public void debugPawn(){
-        debugStudE();
-        debugStudDR();
-        debugP();
-        debugT();
-    }
-
-    private void debugStudE(){
-        for (int i = 0; i < 9; i++) {
-            StudentView studentView = new StudentView(0, "student", "green", StudentView.studentSize);
-            entrance.add(studentView, i % 2, i / 2);
-            GridPane.setHalignment(studentView, HPos.CENTER);
-        }
-    }
-
-    private void debugStudDR(){
-        for(Color color : Color.values()){
-            for (int i = 0; i < 10; i++) {
-                StudentView studentView = new StudentView(0, "student", color.toString().toLowerCase(), StudentView.studentSize);
-                tables.get(color).add(studentView, i, 0);
-                GridPane.setHalignment(studentView, HPos.CENTER);
-            }
-        }
-    }
-
-    private void debugP(){
-        for(Color color : Color.values()){
-            PawnView prof = new PawnView(0, "professor", color.toString().toLowerCase(), StudentView.studentSize);
-            professors.add(prof, 0, tableOrder.get(color));
-            GridPane.setHalignment(prof, HPos.CENTER);
-        }
-    }
-
-    private void debugT(){
-        for (int i = 0; i < 8; i++) {
-            PawnView tower = new PawnView(0, "tower", "black", PawnView.pawnSize);
-            towerSpace.add(tower, i % 2, i / 2);
-            GridPane.setHalignment(tower, HPos.CENTER);
-        }
-    }
 }
