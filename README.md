@@ -56,7 +56,7 @@ An installation is still not available, but will be made available in the future
 Download the JAR and place it in the desired folder.
 ## Requirements
 The application requires:
-- [Java](https://www.java.com/it/) (obviously). You can [download]([https://www.java.com/it/download/](https://www.oracle.com/java/technologies/downloads/#java17)) (Windows, MacOS) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
+- [Java](https://www.java.com/it/) (obviously). You can [download](https://www.oracle.com/java/technologies/downloads/#java17) (Windows, MacOS) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
 - a graphical interface if you don't have one. On WSL, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
 ## Run
 Double-click on the JAR or `java -jar Eriantys-vX.X.X.jar` in a shell (where X.X.X is the downloaded JAR's version) to start the GUI.
