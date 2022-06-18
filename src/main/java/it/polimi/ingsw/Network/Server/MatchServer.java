@@ -139,8 +139,8 @@ public class MatchServer implements Server, Runnable {
     }
 
     /**
-     * Method that adds a Map.Entry<InetAddress, String> to this server, containing the IP and nickname
-     * of a client that is trying to connect (and has the right to) to the server. The server will
+     * Method that adds a Map.Entry to this server, containing the IP (as an InetAddress) and nickname (as String)
+     * of a client that is trying to connect (and is allowed to) to the server. The server will
      * refuse all incoming connections that it wasn't "awaiting", since it only allows connections from
      * clients that have previously connected to the lobby server.
      *
