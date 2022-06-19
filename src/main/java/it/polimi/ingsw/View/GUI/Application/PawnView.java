@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 
 public class PawnView extends ImageView {
 
-    public static double pawnSize = 25.0;
+    public static final double pawnSize = 25.0;
 
     public PawnView(int id, String pawnType, String color, double size) {
         this.setId(pawnType + id);

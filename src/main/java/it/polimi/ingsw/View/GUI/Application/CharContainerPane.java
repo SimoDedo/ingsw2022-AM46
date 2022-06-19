@@ -21,12 +21,12 @@ public class CharContainerPane extends HBox implements ObservableGUI {
     /**
      * The height of this pane.
      */
-    static double charContainerHeight = 80.0;
+    static final double charContainerHeight = 80.0;
 
     /**
      * The width of this pane.
      */
-    static double charContainerWidth = 300.0;
+    static final double charContainerWidth = 300.0;
 
     private ObserverGUI observer;
 

@@ -11,8 +11,6 @@ import java.util.List;
  */
 public class NoEntryCharacter extends AbstractCharacter {
 
-    private List<RequestParameter> requestParameters;
-
     private int noEntryTiles;
     private final int maxNoEntryTiles;
 

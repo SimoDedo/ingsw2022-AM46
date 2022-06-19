@@ -364,6 +364,8 @@ public class Controller {
      * Starts the actual game. Sends the first update expecting a PlayAssistantUserAction.
      */
     private void startGame(){
+        if (server == null) System.out.println("Starting game");
+        else System.out.println("Starting match on port " + server.getPort());
         turnController.startGame();
         gameStarted = true;
 
@@ -601,8 +603,8 @@ public class Controller {
      * Otherwise, progresses to next phase and refills the clouds, then sends an update.
      * The first user of the planning phase is expected to play an assistant.
      * If this is the last turn to be played, performs last round operations.
-     * @param lastPlayerToAct the player who had taken the last user action.
-     * @param lastUserActionTaken the user action that ended the round.
+     * @param lastPlayerToAct the player who has taken the last user action
+     * @param lastUserActionTaken the user action that ended the round (usually always END_TURN)
      */
     private void endOfRoundOperations(String lastPlayerToAct, UserActionType lastUserActionTaken){
         try { //perform end of round operations
@@ -641,7 +643,7 @@ public class Controller {
      */
     private void gameOverOperations(){
         expectedUserAction.clear();
-        TowerColor winner = game.determineWinner();
+        game.determineWinner();
         sendUpdateToAllUsers(new Update(game, null, null,
                 null, UserActionType.END_GAME, "Winner has been determined, end game"));
     }

@@ -33,7 +33,7 @@ public class SocketConnection implements Runnable {
     private String nickname;
 
     private boolean active = true;
-    private boolean loggedIn = true;
+    private boolean loggedIn;
 
     public SocketConnection(Socket clientSocket, Server server) {
         loggedIn = true;

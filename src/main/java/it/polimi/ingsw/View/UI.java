@@ -58,16 +58,16 @@ public interface UI {
     void requestGameSettings();
 
     /**
-     * Requests the user to choose a tower color
+     * Requests the user to choose a tower color.
      * Then, sends it to the server.
-     * @param game
+     * @param game the game used to retrieve the new tower colors left from.
      */
     void requestTowerColor(ObservableByClient game);
 
     /**
-     * Requests the user to choose a tower color
+     * Requests the user to choose a wizard type.
      * Then, sends it to the server.
-     * @param game
+     * @param game the game used to retrieve the new wizard types left from.
      */
     void requestWizard(ObservableByClient game);
 

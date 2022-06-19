@@ -10,7 +10,7 @@ public class LoginUserAction extends UserAction{
     /**
      * The nickname chosen by the user
      */
-    String nickname;
+    final String nickname;
 
     public LoginUserAction(String sender) throws IllegalArgumentException{
         super(sender, UserActionType.LOGIN);

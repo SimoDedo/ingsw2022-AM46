@@ -141,7 +141,7 @@ public class Client {
     }
 
     /**
-     * Tries to login by sending a login user action with chosen username.
+     * Tries to log in by sending a login user action with chosen username.
      */
     private void tryLobbyLogin(){
         LoginUserAction login;
@@ -477,7 +477,7 @@ public class Client {
      * @return the message received from the server, if converted successfully
      */
     private Message receiveMessage(){
-        Object message = null;
+        Object message;
         try {
             message = inObj.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -534,9 +534,7 @@ public class Client {
     public void fatalError(String errorDescription){
         if(! isToReset){ //Ignores connection errors that try to reset client since client is already being reset
             disconnectFromServer();
-            infoQueue.execute(() -> {
-                UI.displayError(errorDescription, true);
-            });
+            infoQueue.execute(() -> UI.displayError(errorDescription, true));
         }
     }
 

@@ -20,12 +20,12 @@ public class CloudContainerPane extends HBox implements ObservableGUI {
     /**
      * The height of the cloud container. It is equal to the height of a cloud.
      */
-    static double cloudContainerHeight = CloudPane.cloudSize;
+    static final double cloudContainerHeight = CloudPane.cloudSize;
 
     /**
      * The width of the cloud container. It is greater than the width of four clouds.
      */
-    static double cloudContainerWidth = CloudPane.cloudSize*4.5;
+    static final double cloudContainerWidth = CloudPane.cloudSize*4.5;
 
     /**
      * The ID of the chosen cloud.

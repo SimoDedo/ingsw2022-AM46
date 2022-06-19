@@ -158,7 +158,7 @@ public class GUIController implements ObserverGUI {
     }
 
     public void updateTowerWizard(List<TowerColor> towerColors, List<WizardType> wizards){
-        // called when there's an update in the game and I'm still waiting for it to start
+        // called when there's an update in the game and the server is still waiting for it to start
         // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
         // or something like that. and then set defaults:
         List<String> tc = towerColors.stream()
@@ -237,12 +237,12 @@ public class GUIController implements ObserverGUI {
         GUIApplication.runLaterExecutor.execute(() -> {
             //Draws players
             guiApplication.createPlayer(game.getGameMode(), nickname, nickMap.get(nickname),game.getEntranceID(nickname),
-                    game.getTableIDs(nickname), game.getPlayerTeams().get(nickname), game.getTowersLeft(nickname),
+                    game.getTableIDs(nickname), game.getPlayerTeams().get(nickname),
                     game.getPlayersWizardType().get(nickname),true);
             for(String other : game.getPlayers()){
                 if(! other.equals(nickname)){
                     guiApplication.createPlayer(game.getGameMode(), other, nickMap.get(other),game.getEntranceID(other),
-                            game.getTableIDs(other), game.getPlayerTeams().get(other), game.getTowersLeft(other),
+                            game.getTableIDs(other), game.getPlayerTeams().get(other),
                             game.getPlayersWizardType().get(other), false);
                 }
             }

@@ -102,7 +102,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
     private List<Pair<Integer, Integer>> freeDRSpots;
 
     /**
-     * The professors table space.
+     * The professors' table space.
      */
     private GridPane professors;
 
@@ -284,7 +284,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
     }
 
     /**
-     * Disables the selectipn of students in the entrance space.
+     * Disables the selection of students in the entrance space.
      */
     public void disableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();

@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 
 public class StudentView extends PawnView {
 
-    public static double studentSize = 15.0;
+    public static final double studentSize = 15.0;
 
     private final String color;
 

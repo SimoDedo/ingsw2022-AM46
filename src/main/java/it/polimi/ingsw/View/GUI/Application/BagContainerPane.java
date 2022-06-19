@@ -11,12 +11,12 @@ public class BagContainerPane extends HBox {
     /**
      * The height of the bag container. It is set to be equal to the height of each bag.
      */
-    static double bagContainerHeight = BagPane.bagSize;
+    static final double bagContainerHeight = BagPane.bagSize;
 
     /**
      * The width of the bag container. It is set to be greater than the width of two bags.
      */
-    static double bagContainerWidth = BagPane.bagSize*2.5;
+    static final double bagContainerWidth = BagPane.bagSize*2.5;
 
     /**
      * Constructor for the class. It sets the right size and alignment and creates the students bag.

@@ -51,8 +51,6 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         boardPane = new BoardPane(nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
         assistantContainerPane = new AssistantContainerPane(nickID,sizeBoardV / 2);
-        // if (isMainPlayer) enableSelectAssistant();
-        // else disableSelectAssistant();
     }
 
     @Override
@@ -68,7 +66,7 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         this.getChildren().add(0, nickPane);
     }
 
-    public void createBoard(int entranceID, HashMap<Color, Integer> tableIDs, TowerColor towerColor, int numOfTowers){
+    public void createBoard(int entranceID, HashMap<Color, Integer> tableIDs, TowerColor towerColor){
         boardPane.createEntrance(entranceID);
         boardPane.createDiningRoom(tableIDs);
         boardPane.createProfessors();

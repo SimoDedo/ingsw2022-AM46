@@ -34,24 +34,24 @@ public class IslandTilePane extends StackPane {
      * Boolean that activates/deactivates the party mode. When in party mode, island tiles have one additional skin and
      * are randomly rotated.
      */
-    public static boolean partyMode = false;
+    public static final boolean partyMode = false;
 
     /**
      * The index of this tile inside the archipelago.
      */
-    int index;
+    final int index;
 
     /**
      * The height and width of the tile.
      */
-    static double islandTileSize = 120.0;
+    static final double islandTileSize = 120.0;
 
     /**
      * A constant that defines the position of the merge points relative to the true edges of the image of the tile. A
      * lower constant means the tiles get closer when merging. A constant of 1 means the merge points are at the furthest
      * distance from the center (i.e. they're the edges of a hexagon inscribed inside the tile's square).
      */
-    static double shrinkConstant = 0.85;
+    static final double shrinkConstant = 0.85;
 
     /**
      * The color of the tower on this tile (null if there is none).
@@ -59,7 +59,7 @@ public class IslandTilePane extends StackPane {
     private TowerColor towerColor;
 
     /**
-     * The merge point used for the merging animation when this tile merges "fprwards", i.e. with the tile that is in front
+     * The merge point used for the merging animation when this tile merges "forwards", i.e. with the tile that is in front
      * of it clockwise.
      */
     private Point2D forwardMergePoint;
@@ -91,7 +91,7 @@ public class IslandTilePane extends StackPane {
     private final Text noEntryTileText;
 
     /**
-     * The box that contains the island modifiers pane and the students pane.
+     * The box that contains the island modifiers pane and the students' pane.
      */
     private final VBox gridContainer;
 

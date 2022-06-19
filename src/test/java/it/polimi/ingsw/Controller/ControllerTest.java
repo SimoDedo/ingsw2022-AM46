@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.GameModel.Game;
 import it.polimi.ingsw.GameModel.ObservableByClient;
 import it.polimi.ingsw.Network.Message.UserAction.*;
 import it.polimi.ingsw.Utils.Enum.GameMode;

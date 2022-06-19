@@ -314,12 +314,6 @@ public class GUIApplication extends Application implements ObservableGUI{
 
     public void createMainScene() {
         VBox root = new VBox();
-//        root.setBackground(new Background(new BackgroundImage(
-//                new Image("/general/bg6_unfocused.png"),
-//                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-//                BackgroundPosition.DEFAULT,
-//                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
-//        )));
         root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
 
@@ -369,13 +363,13 @@ public class GUIApplication extends Application implements ObservableGUI{
     }
 
     public void createPlayer(GameMode gameMode, String nickname, int nickID , int entranceID, HashMap<Color,
-            Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer) {
+            Integer> tablesIDs, TowerColor towerColor, WizardType wizardType, boolean isMainPlayer) {
 
         VBox players = (VBox) this.lookup("players");
         PlayerPane player = new PlayerPane(nickname, nickID,isMainPlayer);
         player.setObserver(observer);
         player.setNickname(nickname);
-        player.createBoard(entranceID, tablesIDs, towerColor, numOfTowers);
+        player.createBoard(entranceID, tablesIDs, towerColor);
         player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer, wizardType);
         player.createAssistantContainerPane(isMainPlayer);
         players.getChildren().add(0, player);

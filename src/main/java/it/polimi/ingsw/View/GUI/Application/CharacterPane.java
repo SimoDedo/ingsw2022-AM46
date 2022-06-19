@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -30,12 +29,12 @@ public class CharacterPane extends StackPane {
     /**
      * The height of a character card.
      */
-    public static double charHeight = 100.0;
+    public static final double charHeight = 100.0;
 
     /**
      * The width of a character card.
      */
-    public static double charWidth = charHeight/2;
+    public static final double charWidth = charHeight/2;
 
     /**
      * The StudentContainerPane on this character.

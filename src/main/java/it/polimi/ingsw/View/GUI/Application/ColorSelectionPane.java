@@ -16,7 +16,7 @@ public class ColorSelectionPane extends VBox {
     /**
      * The size of the color button.
      */
-    public static double colorSize = 17.0;
+    public static final double colorSize = 17.0;
 
     /**
      * The order in which colors are displayed, from top to bottom.
