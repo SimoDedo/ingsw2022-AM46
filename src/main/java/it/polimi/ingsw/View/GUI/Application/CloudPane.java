@@ -46,6 +46,7 @@ public class CloudPane extends StackPane {
         cloudView.setSmooth(true);
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
+        this.setEffect(Effects.disabledCloudEffect);
 
         this.setPickOnBounds(false);
     }
@@ -86,7 +87,7 @@ public class CloudPane extends StackPane {
         else if(! newStuds.isEmpty() && studentPane.getChildren().isEmpty()){
             for(Integer stud : newStuds.keySet()){
                 int rand = ThreadLocalRandom.current().nextInt(0, freeStudSpots.size());
-                studentPane.add(new StudentView(stud, "student", newStuds.get(stud).toString().toLowerCase(), StudentView.studentSize),
+                studentPane.add(new StudentView(stud, newStuds.get(stud).toString().toLowerCase(), StudentView.studentSize),
                         freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());
                 freeStudSpots.remove(rand);
             }

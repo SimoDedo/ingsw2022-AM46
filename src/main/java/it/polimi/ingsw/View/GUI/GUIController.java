@@ -18,23 +18,52 @@ import javafx.util.Duration;
 import java.util.*;
 
 /**
- * Class for controlling the GUIController based on method calls from the client.
+ * Class that offers methods to modify and query the GUI (enabling/disabling, getting and updating).
  */
 public class GUIController implements ObserverGUI {
 
+    /**
+     * The GUI associated with this controller.
+     */
     private final GUI gui;
+    /**
+     * The GUIApplication actually controlled by this class.
+     */
     private final GUIApplication guiApplication;
+    /**
+     * The nickname of the player associated with this GUI.
+     */
     private String nickname;
+    /**
+     * Map to assign a numeric ID to each player.
+     */
     private HashMap<String, Integer> nickMap;
 
     private final boolean useBridges = false;
 
+    /**
+     * The next user action that is expected of the player in order to progress the game.
+     * Used to save the current state and retrieved to return to that state once an ability was used.
+     */
     private UserActionType nextUserAction;
 
+    /**
+     * True if an ability was requested and is now being used.
+     */
     private boolean characterAbilityState = false;
+    /**
+     * The parameters requested by the active character.
+     */
     private List<RequestParameter> requestParameters;
+    /**
+     * The parameters selected to use the activated character's ability.
+     */
     private final List<Integer> characterParameters;
 
+    /**
+     * The constructor for the GUIController
+     * @param gui the GUI associated with this controller.
+     */
     public GUIController(GUI gui) {
         this.gui = gui;
         guiApplication = GUIApplication.getInstance();
@@ -42,24 +71,37 @@ public class GUIController implements ObserverGUI {
         this.characterParameters = new ArrayList<>();
     }
 
+    /**
+     * Sets the nickname of the player associated with this GUI.
+     * @param nickname the nickname of the player associated with this GUI.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * Displays an error that occurred to the user though an alert box.
+     * @param errorDescription the error to display.
+     * @param isGameEnding true if said error causes the game to stop.
+     */
     public void displayError(String errorDescription, boolean isGameEnding) {
         GUIApplication.runLaterExecutor.execute(() -> {
             Alert errorDialog = new Alert(Alert.AlertType.ERROR);
             Stage stage = (Stage) errorDialog.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("/general/icon.png"));
-            errorDialog.setTitle("Error");
-            errorDialog.setHeaderText("Wrong action!");
-            errorDialog.setContentText(errorDescription + ". Please choose another move!");
+            errorDialog.setTitle(isGameEnding ?"Fatal error" : "Error");
+            errorDialog.setHeaderText(isGameEnding ? "An error has occurred!" : "Wrong action!");
+            errorDialog.setContentText(errorDescription +(isGameEnding ? "" : ". Please choose another move!"));
             errorDialog.showAndWait();
             if(isGameEnding)
                 endGame();
         });
     }
 
+    /**
+     * Displays given information to the user though an alert box.
+     * @param info the information to be displayed.
+     */
     public void displayInfo(String info) {
         GUIApplication.runLaterExecutor.execute(() -> {
             if (guiApplication.lookup("log") != null)
@@ -72,6 +114,9 @@ public class GUIController implements ObserverGUI {
         gui.close();
     }
 
+    /**
+     * Switches the current scene to the login scene.
+     */
     public void switchToLogin(){
         GUIApplication.runLaterExecutor.execute(guiApplication::switchToLogin);
     }
@@ -81,6 +126,10 @@ public class GUIController implements ObserverGUI {
         gui.notifySetupInput();
     }
 
+    /**
+     * Returns the IP chosen in the GUI.
+     * @return the IP chosen in the GUI.
+     */
     public Map<String, String> getIPChosen(){
         Map<String, String> map = new HashMap<>();
         map.put("IP",( (TextField) guiApplication.lookup("ipField")).getText() );
@@ -88,6 +137,9 @@ public class GUIController implements ObserverGUI {
         return map;
     }
 
+    /**
+     * Method called when the connection to the server was successful. Enables the nickname pane.
+     */
     public void connectToIPSuccessful() {
         GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("ipPane").setDisable(true));
         GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("nickPane").setDisable(false));
@@ -99,14 +151,24 @@ public class GUIController implements ObserverGUI {
         gui.notifySetupInput();
     }
 
+    /**
+     * Returns the nickname chosen in the GUI.
+     * @return the nickname chosen in the GUI.
+     */
     public String getNicknameChosen(){
         return ( (TextField) guiApplication.lookup("nickField")).getText();
     }
 
+    /**
+     * Method called when the login with nickname was successful. Switches the scene to the game setup scene.
+     */
     public void connectWithNicknameSuccessful() {
         GUIApplication.runLaterExecutor.execute(guiApplication::switchToGameSetup);
     }
 
+    /**
+     * Enables the selection of the game settings on the game setup scene.
+     */
     public void enableGameSettings() {
         GUIApplication.runLaterExecutor.execute(() -> {
             VBox root = (VBox) guiApplication.lookup("gameSetupRoot");
@@ -129,11 +191,20 @@ public class GUIController implements ObserverGUI {
         gui.notifySetupInput();
     }
 
+    /**
+     * Returns the number of players chosen in the GUI.
+     * @return the number of players chosen in the GUI.
+     */
     public int getNumOfPlayerChosen(){
         String numChoice = ( (ChoiceBox<String>) guiApplication.lookup("numChoice")).getValue();
         return Integer.parseInt(numChoice);
     }
 
+
+    /**
+     * Returns the game mode chosen in the GUI.
+     * @return the game mode chosen in the GUI.
+     */
     public GameMode getGameModeChosen(){
         String gameMode = ( (ChoiceBox<String>) guiApplication.lookup("gameModeChoice")).getValue();
         if("STANDARD".equalsIgnoreCase(gameMode))
@@ -141,6 +212,9 @@ public class GUIController implements ObserverGUI {
         return GameMode.valueOf(gameMode.toUpperCase());
     }
 
+    /**
+     * Shows the game mode chosen for this game.
+     */
     public void showGameMode(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             ( (ChoiceBox<String>) guiApplication.lookup("numChoice")).setValue(String.valueOf(game.getNumOfPlayers()));
@@ -149,7 +223,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
-    public void showTowerWizard() {
+    /**
+     * Enables the selection of a tower color and a wizard type.
+     */
+    public void enableTowerWizard() {
         GUIApplication.runLaterExecutor.execute(() -> {
             guiApplication.lookup("gameSettingsPane").setDisable(true);
             guiApplication.lookup("towerWizardPane").setDisable(false);
@@ -157,6 +234,11 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates the list of available tower colors and wizards.
+     * @param towerColors the available tower colors.
+     * @param wizards the available wizards.
+     */
     public void updateTowerWizard(List<TowerColor> towerColors, List<WizardType> wizards){
         // called when there's an update in the game and the server is still waiting for it to start
         // ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getItems().setAll(updatedGame.getTowerColors());
@@ -180,6 +262,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Method called when the tower color choice was successful. disables the pane.
+     */
     public void towerColorSuccessful(){
         GUIApplication.runLaterExecutor.execute(() -> guiApplication.lookup("colorChoice").setDisable(true));
     }
@@ -189,6 +274,10 @@ public class GUIController implements ObserverGUI {
         gui.notifySetupInput();
     }
 
+    /**
+     * Returns the tower color chosen in the GUI.
+     * @return the tower color chosen in the GUI.
+     */
     public TowerColor getTowerColorChosen(){
         String choice = ( (ChoiceBox<String>) guiApplication.lookup("colorChoice") ).getValue();
         return TowerColor.valueOf(choice == null ? null : choice.toUpperCase());
@@ -199,11 +288,18 @@ public class GUIController implements ObserverGUI {
         gui.notifySetupInput();
     }
 
+    /**
+     * Returns the wizard type chosen in the GUI.
+     * @return the wizard type chosen in the GUI.
+     */
     public WizardType getWizardChosen(){
         String choice = ( (ChoiceBox<String>) guiApplication.lookup("wizardChoice") ).getValue();
         return WizardType.valueOf(choice.toUpperCase());
     }
 
+    /**
+     * Disables the tower and wizard panes and displays a message to signal that user has to wait for others to start.
+     */
     public void waitForStart(){
         GUIApplication.runLaterExecutor.execute(() -> {
             guiApplication.lookup("towerWizardPane").setDisable(true);
@@ -226,10 +322,18 @@ public class GUIController implements ObserverGUI {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Starts the game by switching the scene to the main scene.
+     */
     public void startGame() {
         GUIApplication.runLaterExecutor.execute(guiApplication::switchToMain);
     }
 
+    /**
+     * Draws all game components on the GUI.
+     * @param game The ObservableByClient which holds all data about the current game.
+     * @param nickname The player associated with this GUI.
+     */
     public void initialDraw(ObservableByClient game, String nickname) {
         nickMap = new HashMap<>();
         for(String nick : game.getPlayers())
@@ -278,16 +382,30 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates the turn order banner.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updateTurnOrder(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> ((TurnOrderPane)guiApplication.lookup("turnOrderPane"))
                 .updateTurnOrderPane(game.getCurrentPhase(), game.getCurrentPlayer(), game.getPlayerOrder()));
     }
 
+    /**
+     * Updates the assistants in a player's hand.
+     * @param player The player to update.
+     * @param assistantUsed The assistant currently played.
+     * @param assistantsLeft The assistants left in his hand.
+     */
     public void updateAssistants(String player, Integer assistantUsed, List<Integer> assistantsLeft){
         GUIApplication.runLaterExecutor.execute(() -> ((PlayerPane)guiApplication.lookup("playerPane" + nickMap.get(player)))
                 .updateAssistants(assistantUsed, assistantsLeft));
     }
 
+    /**
+     * Updates the board of each player.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updatePlayerBoards(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             for(String player : game.getPlayers()){
@@ -305,6 +423,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates the clouds.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updateCloud(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
@@ -315,6 +437,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates all info related to the archipelago and its islands.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updateArchipelago(ObservableByClient game) {
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
@@ -350,6 +476,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates the character state and contents.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updateCharacters(ObservableByClient game){
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
@@ -360,12 +490,19 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Updates the parameters requested by the character.
+     * @param game The ObservableByClient which holds all data about the current game.
+     */
     public void updateCharacterRequest(ObservableByClient game){
         this.requestParameters = game.getCurrentRequestParameters();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Enables this player's assistant to be played.
+     */
     public void enableAssistants() {
         nextUserAction = UserActionType.PLAY_ASSISTANT;
         GUIApplication.runLaterExecutor.execute(() -> {
@@ -374,6 +511,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables this player's assistants.
+     */
     public void disableAssistants() {
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
@@ -381,13 +521,20 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables students in this player's entrance to be selected.
+     */
     public void enableEntrance(){
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
             playerPane.enableSelectStudentsEntrance();
         });
     }
-
+    /**
+     * Enables students in this player's entrance to be selected, while specifying the next action (i.e. the action
+     * that requires the student to be selected).
+     * @param nextUserAction the next action to be taken.
+     */
     public void enableEntrance(UserActionType nextUserAction){
         this.nextUserAction = nextUserAction;
         GUIApplication.runLaterExecutor.execute(() -> {
@@ -396,20 +543,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
-    public void enableDRStudents(){
-        GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
-            playerPane.enableSelectStudentsDR();
-        });
-    }
-
-    public void disableDRStudents(){
-        GUIApplication.runLaterExecutor.execute(() -> {
-            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
-            playerPane.disableSelectStudentsDR();
-        });
-    }
-
+    /**
+     * Disables students in this player's entrance.
+     */
     public void disableEntrance(){
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
@@ -417,6 +553,29 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables students in this player's dining room to be selected.
+     */
+    public void enableDRStudents(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
+            playerPane.enableSelectStudentsDR();
+        });
+    }
+
+    /**
+     * Disables students in this player's dining room.
+     */
+    public void disableDRStudents(){
+        GUIApplication.runLaterExecutor.execute(() -> {
+            PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
+            playerPane.disableSelectStudentsDR();
+        });
+    }
+
+    /**
+     * Enables all islands to be selected.
+     */
     public void enableIslands() {
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
@@ -424,6 +583,11 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables only islands that can actually be selected, while specifying the next action (i.e. the action
+     * that requires the island to be selected).
+     * @param nextUserAction the next action to be taken.
+     */
     public void enableIslands(UserActionType nextUserAction) {
         this.nextUserAction = nextUserAction;
         GUIApplication.runLaterExecutor.execute(() -> {
@@ -435,6 +599,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables all islands.
+     */
     public void disableIslands() {
         GUIApplication.runLaterExecutor.execute(() -> {
             ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
@@ -442,6 +609,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables clouds to be selected, while implicitly specifying the next action (i.e. the action
+     * that requires the cloud to be selected). It is always the take from cloud user action.
+     */
     public void enableClouds() {
         nextUserAction = UserActionType.TAKE_FROM_CLOUD;
         GUIApplication.runLaterExecutor.execute(() -> {
@@ -450,6 +621,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables clouds.
+     */
     public void disableClouds() {
         GUIApplication.runLaterExecutor.execute(() -> {
             CloudContainerPane cloudContainerPane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
@@ -457,6 +631,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables all of this player's tables to be selected.
+     */
     public void enableTables() {
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
@@ -464,6 +641,10 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables this player's table of the specified color to be selected.
+     * @param color The color of the table to enable.
+     */
     public void enableTables(Color color) {
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
@@ -471,6 +652,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables all of this player's table.
+     */
     public void disableTables() {
         GUIApplication.runLaterExecutor.execute(() -> {
             PlayerPane playerPane = ((PlayerPane) guiApplication.lookup("playerPane" + nickMap.get(nickname)));
@@ -478,6 +662,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables all characters to be selected.
+     */
     public void enableCharacters(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -485,6 +672,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables all characters.
+     */
     public void disableCharacters(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -492,6 +682,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables the active character to be selected to activate its ability.
+     */
     public void enableCharacterAbility(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -499,6 +692,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables the active character.
+     */
     public void disableCharacterAbility(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -506,6 +702,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables students on the active character to be selected.
+     */
     public void enableStudentChar(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -513,6 +712,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables students on the active character.
+     */
     public void disableStudentChar(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -520,6 +722,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables the color selection panel to let a color be selected.
+     */
     public void enableColorChar(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -527,6 +732,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables the color selection panel.
+     */
     public void disableColorChar(){
         GUIApplication.runLaterExecutor.execute(() -> {
             CharContainerPane charContainerPane = (CharContainerPane) guiApplication.lookup("charContainerPane");
@@ -534,6 +742,9 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Enables the end turn button to be clicked.
+     */
     public void enableEndTurn(){
         nextUserAction = UserActionType.END_TURN;
         GUIApplication.runLaterExecutor.execute(() -> {
@@ -542,12 +753,20 @@ public class GUIController implements ObserverGUI {
         });
     }
 
+    /**
+     * Disables the end turn button.
+     */
     public void disableEndTurn(){
         GUIApplication.runLaterExecutor.execute(() -> {
             Button endTurn = (Button) guiApplication.lookup("endButton");
             endTurn.setVisible(false);
         });
     }
+
+    /**
+     * Enables the last action that was active before activating a character ability. It uses the next user action
+     * saved to recover the previous state.
+     */
     public void enableLast(){
         if(nextUserAction != null){
             switch (nextUserAction){
@@ -559,11 +778,27 @@ public class GUIController implements ObserverGUI {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Enables all elements that were temporarily disabled.
+     * This method doesn't enable each element individually but uses a global enabler;
+     * this means that only elements that were originally individually enabled will be actually selectable.
+     */
+    public void reEnableAll(){
+        guiApplication.reEnableGlobal();
+    }
 
     /**
-     * Notifies gui that a card has been chosen. Used by assistant cards.
+     * Temporarily disables all elements.
+     * This method doesn't disable each element individually but uses a global disabler;
+     * this means that previously enabled elements are disabled at a global level, but when all
+     * elements are globally enabled the previously enabled elements will be selectable.
      */
+    public void disableAllTemporary(){
+        guiApplication.disableGlobal();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     @Override
     public void notifyAssistantCard() {
         if (nextUserAction == UserActionType.PLAY_ASSISTANT)
@@ -573,8 +808,8 @@ public class GUIController implements ObserverGUI {
     }
 
     /**
-     * Finds the player's assistant card pane and retrieves the ID of the selected card. Used by gui.
-     *
+     * Retrieves the assistant card chosen by the player by querying the GUI.
+     * @return The assistant card chosen.
      */
     public int getAssistantCardChosen() {
         AssistantContainerPane pane = (AssistantContainerPane) guiApplication.lookup("assistantContainerPane" + nickMap.get(nickname));
@@ -604,6 +839,10 @@ public class GUIController implements ObserverGUI {
         }
     }
 
+    /**
+     * Retrieves the student chosen by the player in the board by querying the GUI.
+     * @return The student chosen in the board.
+     */
     public int getStudentBoard(){
         BoardPane board = ((BoardPane) guiApplication.lookup("boardPane" + nickMap.get(nickname)));
         return board.getStudentChosen();
@@ -618,6 +857,10 @@ public class GUIController implements ObserverGUI {
         }
     }
 
+    /**
+     * Retrieves the student chosen by the player in the active character by querying the GUI.
+     * @return The student chosen by the player in the active character.
+     */
     public int getStudentChar() {
         CharContainerPane chars = (CharContainerPane) guiApplication.lookup("charContainerPane");
         return chars.getStudentChosen();
@@ -629,6 +872,10 @@ public class GUIController implements ObserverGUI {
         gui.sendSelection(new TakeFromCloudUserAction(nickname, getCloudChosen()));
     }
 
+    /**
+     * Retrieves the cloud chosen by the player by querying the GUI.
+     * @return The cloud chosen by the player.
+     */
     public int getCloudChosen() {
         CloudContainerPane pane = (CloudContainerPane) guiApplication.lookup("cloudContainerPane");
         return pane.getCloudChosen();
@@ -650,6 +897,10 @@ public class GUIController implements ObserverGUI {
         }
     }
 
+    /**
+     * Retrieves the island chosen by the player by querying the GUI.
+     * @return The island chosen by the player.
+     */
     public int getIslandChosen() {
         ArchipelagoPane archipelagoPane = (ArchipelagoPane) guiApplication.lookup("archipelagoPane");
         return archipelagoPane.getIslandChosen();
@@ -660,6 +911,10 @@ public class GUIController implements ObserverGUI {
         gui.sendSelection(new UseCharacterUserAction(nickname, getCharacterChosen()));
     }
 
+    /**
+     * Retrieves the character chosen by the player by querying the GUI.
+     * @return The character chosen by the player.
+     */
     public int getCharacterChosen() {
         CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
         return pane.getCharacterChosen();
@@ -673,6 +928,10 @@ public class GUIController implements ObserverGUI {
             System.out.println("Error in notifyTable: character ability already true");
     }
 
+    /**
+     * Retrieves the table chosen by the player by querying the GUI.
+     * @return The table chosen by the player.
+     */
     public int getTableChosen() {
         BoardPane boardPane = (BoardPane) guiApplication.lookup("boardPane" + nickMap.get(nickname));
         return boardPane.getTableChosen();
@@ -687,6 +946,10 @@ public class GUIController implements ObserverGUI {
         }
     }
 
+    /**
+     * Retrieves the color chosen by the player in the active character by querying the GUI.
+     * @return The color chosen by the player in the active character.
+     */
     public int getColorChar() {
         CharContainerPane pane = (CharContainerPane) guiApplication.lookup("charContainerPane");
         CharacterPane character = (CharacterPane) pane.lookup("#characterPane" + pane.getCharacterChosen());
@@ -699,6 +962,11 @@ public class GUIController implements ObserverGUI {
         parseNextRequestParameter();
     }
 
+    /**
+     * Parses the next request parameters, if present, by disabling everything an enabling only the elements
+     * needed to satisfy the next parameter.
+     * If no parameter is left, all the parameters collected so far get sent, then they are reset.
+     */
     private void parseNextRequestParameter(){
         disableCharacterAbility();
         disableClouds();
@@ -730,14 +998,12 @@ public class GUIController implements ObserverGUI {
         gui.sendSelection(new EndTurnUserAction(nickname));
     }
 
-    public void disableAll(){
-        guiApplication.disableAll();
-    }
-
-    public void enableAll(){
-        guiApplication.enableAll();
-    }
-
+    /**
+     * Displays the winners of the game through an alert.
+     * @param winner The winning team.
+     * @param winners The winning players.
+     * @param losers The losing players.
+     */
     public void displayWinners(TowerColor winner, List<String> winners, List<String> losers){
         String title;
         StringBuilder toPrint = new StringBuilder();
@@ -769,14 +1035,17 @@ public class GUIController implements ObserverGUI {
         });
     }
 
-    public void endGame(){
+    /**
+     * Shows an alert then ends the game and resets the GUI and client.
+     */
+    private void endGame(){
         GUIApplication.runLaterExecutor.execute(() -> {
             Alert endGameDialogue = new Alert(Alert.AlertType.INFORMATION);
             Stage stage = (Stage) endGameDialogue.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("/general/icon.png"));
-            endGameDialogue.setTitle("End");
-            endGameDialogue.setHeaderText("The end");
-            endGameDialogue.setContentText("end.");
+            endGameDialogue.setTitle("Game ended");
+            endGameDialogue.setHeaderText("The game has ended!");
+            endGameDialogue.setContentText("You will now be redirected to the login screen.");
             endGameDialogue.showAndWait();
             guiApplication.createLoginScene();
             guiApplication.createGameSetupScene();

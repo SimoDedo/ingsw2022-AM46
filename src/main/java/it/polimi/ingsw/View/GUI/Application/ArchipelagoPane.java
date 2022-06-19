@@ -27,7 +27,7 @@ import java.util.*;
 public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
 
     /**
-     * The observer class for this pane.
+     * The observer of this GUI element.
      */
     private ObserverGUI observer;
 
@@ -341,9 +341,9 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
             ImageView islandView = (ImageView) island.lookup("#islandView");
-            islandView.setEffect(Effects.enabledIslandShadow);
-            island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandShadow));
-            island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
+            islandView.setEffect(Effects.enabledIslandEffect);
+            island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandEffect));
+            island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandEffect));
             island.setOnMouseClicked(event -> {
                 setIslandChosen(islandID);
                 observer.notifyIsland();
@@ -361,9 +361,9 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
             for (Integer islandID : islandConfiguration.get(group)){
                 IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
                 ImageView islandView = (ImageView) island.lookup("#islandView");
-                islandView.setEffect(Effects.enabledIslandShadow);
-                island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandShadow));
-                island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandShadow));
+                islandView.setEffect(Effects.enabledIslandEffect);
+                island.setOnMouseEntered(e -> islandView.setEffect(Effects.hoveringIslandEffect));
+                island.setOnMouseExited(e -> islandView.setEffect(Effects.enabledIslandEffect));
                 island.setOnMouseClicked(event -> {
                     setIslandChosen(islandID);
                     observer.notifyIsland();
@@ -379,7 +379,7 @@ public class ArchipelagoPane extends AnchorPane implements ObservableGUI {
         for (int islandID : islandsIDs) {
             IslandTilePane island = (IslandTilePane) this.lookup("#islandTilePane" + islandID);
             ImageView islandView = (ImageView) island.lookup("#islandView");
-            islandView.setEffect(Effects.disabledIslandShadow);
+            islandView.setEffect(Effects.disabledIslandEffect);
             island.setOnMouseEntered(e ->{});
             island.setOnMouseExited(e ->{});
             island.setOnMouseClicked(event -> {

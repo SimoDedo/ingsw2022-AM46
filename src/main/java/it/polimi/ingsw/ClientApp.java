@@ -10,6 +10,7 @@ import java.util.List;
  * To see possible parameters, look at @see {@link it.polimi.ingsw.App}
  */
 public class ClientApp {
+
     public static void main(String[] args){
         String UI;
         List<String> argsList = Arrays.stream(args).toList();

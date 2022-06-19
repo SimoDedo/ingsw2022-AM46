@@ -131,7 +131,7 @@ public class IslandTilePane extends StackPane {
 
         ImageView imageView = new ImageView(islandTileBackground);
         imageView.setId("islandView");
-        imageView.setEffect(Effects.disabledIslandShadow);
+        imageView.setEffect(Effects.disabledIslandEffect);
         imageView.setRotate(60 * (partyMode ? ThreadLocalRandom.current().nextInt(6) : 0));
         imageView.setPreserveRatio(true);
         imageView.setFitHeight(islandTileSize);
@@ -248,7 +248,7 @@ public class IslandTilePane extends StackPane {
         for (Integer stud : newStudents){
             if(! studsBeforeID.contains("student" + stud)){
                 int rand = new Random().nextInt(freeStudSpots.size());
-                studentPane.add(new StudentView(stud, "student", studColor.get(stud).toString().toLowerCase(), currentStudSize),
+                studentPane.add(new StudentView(stud, studColor.get(stud).toString().toLowerCase(), currentStudSize),
                         freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());
                 freeStudSpots.remove(rand);
                 if(freeStudSpots.size() == 0){
@@ -277,7 +277,7 @@ public class IslandTilePane extends StackPane {
                 Pair<Integer, Integer> spot = new Pair<>(GridPane.getColumnIndex(stud), GridPane.getRowIndex(stud));
                 studentPane.getChildren().remove(stud);
                 newStudGrid.add(
-                        new StudentView(Integer.parseInt(stud.getId().substring("student".length())) ,"student",
+                        new StudentView(Integer.parseInt(stud.getId().substring("student".length())),
                                 ((StudentView) stud).getColor(),currentStudSize),
                         spot.getKey(), spot.getValue()
                 );

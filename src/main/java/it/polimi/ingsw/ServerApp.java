@@ -7,6 +7,7 @@ import it.polimi.ingsw.Network.Server.LobbyServer;
  * To see possible parameters, look at @see {@link it.polimi.ingsw.App}
  */
 public class ServerApp {
+
     public static void main(String[] args){
         LobbyServer server = new LobbyServer();
         server.startServer();

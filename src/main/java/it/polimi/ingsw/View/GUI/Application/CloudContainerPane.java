@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class CloudContainerPane extends HBox implements ObservableGUI {
 
+    /**
+     * The observer of this GUI element.
+     */
     private ObserverGUI observer;
 
     /**
@@ -100,9 +103,9 @@ public class CloudContainerPane extends HBox implements ObservableGUI {
     public void enableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
-            cloudPane.setEffect(Effects.enabledCloudShadow);
-            cloudPane.setOnMouseEntered(e -> cloudPane.setEffect(Effects.hoveringCloudShadow));
-            cloudPane.setOnMouseExited(e -> cloudPane.setEffect(Effects.enabledCloudShadow));
+            cloudPane.setEffect(Effects.enabledCloudEffect);
+            cloudPane.setOnMouseEntered(e -> cloudPane.setEffect(Effects.hoveringCloudEffect));
+            cloudPane.setOnMouseExited(e -> cloudPane.setEffect(Effects.enabledCloudEffect));
             int finalCloudID = cloudID;
             cloudPane.setOnMouseClicked(event -> {
                 setCloudChosen(finalCloudID);
@@ -117,7 +120,7 @@ public class CloudContainerPane extends HBox implements ObservableGUI {
     public void disableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
-            cloudPane.setEffect(Effects.disabledCloudShadow);
+            cloudPane.setEffect(Effects.disabledCloudEffect);
             cloudPane.setOnMouseEntered(e ->{});
             cloudPane.setOnMouseExited(e ->{});
             cloudPane.setOnMouseClicked(event -> {

@@ -88,7 +88,7 @@ public class CharacterPane extends StackPane {
     public CharacterPane() {
         this.setAlignment(Pos.CENTER);
         this.setMaxSize(charWidth, charHeight);
-        currentEffect = Effects.disabledCharacterShadow;
+        currentEffect = Effects.disabledCharacterEffect;
 
         Image character = new Image("/chars/char_back.png");
         ImageView charView = new ImageView(character);
@@ -209,7 +209,7 @@ public class CharacterPane extends StackPane {
         coinOvercharge.setVisible(isOvercharged);
         ImageView charView = ((ImageView) this.lookup(("#charView")));
         if(isActive){
-            this.currentEffect = Effects.activatedCharacterShadow;
+            this.currentEffect = Effects.activatedCharacterEffect;
             charView.setEffect(currentEffect);
             if(usesLeft > 0){
                 this.usesLeft.setText(Integer.toString(usesLeft));
@@ -219,7 +219,7 @@ public class CharacterPane extends StackPane {
                 this.usesLeft.setVisible(false);
         }
         else {
-            this.currentEffect = Effects.disabledCharacterShadow;
+            this.currentEffect = Effects.disabledCharacterEffect;
             this.usesLeft.setVisible(false);
         }
 
@@ -254,7 +254,7 @@ public class CharacterPane extends StackPane {
             if(! studsBeforeIDs.contains("student" + stud.getKey())){
                 int rand = ThreadLocalRandom.current().nextInt(freeStudSpots.size());
                 Pair<Integer, Integer> freeSpot = freeStudSpots.get(rand);
-                studentPane.add(new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize),
+                studentPane.add(new StudentView(stud.getKey(), stud.getValue().toString().toLowerCase(),StudentView.studentSize),
                         freeSpot.getKey(), freeSpot.getValue());
                 freeStudSpots.remove(rand);
             }
