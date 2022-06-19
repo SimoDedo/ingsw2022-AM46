@@ -43,7 +43,8 @@ public class Log extends VBox {
         for (int i = 0; i < numOfLines; i++) {
             Label label = new Label();
             label.setId("logLabel" + i);
-            label.setStyle("-fx-font-size: 11;");
+            if (i == numOfLines - 1) label.setStyle("-fx-font-size: 12;");
+            else label.setStyle("-fx-font-size: 11;");
 
             labelList.add(i, label);
             timelineList.add(i, new Timeline());
