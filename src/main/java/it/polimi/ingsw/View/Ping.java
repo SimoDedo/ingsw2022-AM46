@@ -11,8 +11,14 @@ public class Ping implements Runnable{
 
     private int sentNotReceived;
 
+    /**
+     * Boolean that represents whether this ping is running
+     */
     private boolean isActive;
 
+    /**
+     * The client used to send the ping.
+     */
     private final Client client;
 
     public Ping(Client client){
@@ -20,6 +26,9 @@ public class Ping implements Runnable{
         sentNotReceived = 0;
     }
 
+    /**
+     * Starts the ping loop. Every tot milliseconds a ping user action gets sent.
+     */
     @Override
     public void run() {
         isActive = true;
@@ -34,10 +43,16 @@ public class Ping implements Runnable{
         }
     }
 
+    /**
+     * Used to register a ping sent.
+     */
     private void sent(){
         sentNotReceived++;
     }
 
+    /**
+     * Used to register a ping received.
+     */
     public void  received(){
         sentNotReceived--;
     }

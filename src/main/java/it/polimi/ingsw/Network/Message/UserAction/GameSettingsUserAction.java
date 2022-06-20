@@ -16,7 +16,7 @@ public class GameSettingsUserAction extends UserAction{
     /**
      * The game mode chosen.
      */
-    GameMode gameMode;
+    final GameMode gameMode;
 
 
     public GameSettingsUserAction(String sender, int numOfPlayers, GameMode gameMode){

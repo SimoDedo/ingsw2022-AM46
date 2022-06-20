@@ -23,7 +23,7 @@ public class BagPane extends StackPane {
     /**
      * The height and width of the bag.
      */
-    public static double bagSize = 60.0;
+    public static final double bagSize = 60.0;
 
     /**
      * Constructor for the class. Sets the right size, applies effects and creates the counter on top of the image.

@@ -174,10 +174,6 @@ public class IslandGroup implements Serializable {
             return islandTiles.size();
     }
 
-    public List<IslandTile> getIslandTiles() {
-        return islandTiles;
-    }
-
     /**
      * Returns the number of no entry tiles on the IslandGroup
      * @return The number of no entry tiles on the IslandGroup

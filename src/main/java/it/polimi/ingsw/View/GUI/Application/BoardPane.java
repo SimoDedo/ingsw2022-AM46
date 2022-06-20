@@ -102,7 +102,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
     private List<Pair<Integer, Integer>> freeDRSpots;
 
     /**
-     * The professors table space.
+     * The professors' table space.
      */
     private GridPane professors;
 
@@ -137,7 +137,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
     };
 
     /**
-     * The observer of this board.
+     * The observer of this GUI element.
      */
     private ObserverGUI observer;
 
@@ -215,7 +215,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
      * @param color the color of the table to make selectable
      */
     public void enableSelectTables(Color color) {
-        shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
+        shadowedTablePanes.get(color).setEffect(Effects.enabledTableEffect);
         shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.16); " +
                 "-fx-background-insets: 0; " +
                 "-fx-background-radius: 0; ");
@@ -223,13 +223,13 @@ public class BoardPane extends StackPane implements ObservableGUI {
             shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.27); " +
                     "-fx-background-insets: 0; " +
                     "-fx-background-radius: 0; ");
-            shadowedTablePanes.get(color).setEffect(Effects.hoveringTableGlow);
+            shadowedTablePanes.get(color).setEffect(Effects.hoveringTableEffect);
         });
         tables.get(color).setOnMouseExited(e -> {
             shadowedTablePanes.get(color).setStyle("-fx-background-color: rgba(113,215,178,0.16); " +
                     "-fx-background-insets: 0; " +
                     "-fx-background-radius: 0; ");
-            shadowedTablePanes.get(color).setEffect(Effects.enabledTableGlow);
+            shadowedTablePanes.get(color).setEffect(Effects.enabledTableEffect);
         });
         tables.get(color).setOnMouseClicked(event -> {
             setTableChosen(Integer.parseInt(tables.get(color).getId().substring("tablePane".length())));
@@ -248,7 +248,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
             });
         }
         for (StackPane shadowedPane : shadowedTablePanes.values()) {
-            shadowedPane.setEffect(Effects.disabledTableGLow);
+            shadowedPane.setEffect(Effects.disabledTableEffect);
             shadowedPane.setStyle(null);
         }
     }
@@ -284,7 +284,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
     }
 
     /**
-     * Disables the selectipn of students in the entrance space.
+     * Disables the selection of students in the entrance space.
      */
     public void disableSelectStudentsEntrance() {
         List<StudentView> entranceStudents = entrance.getStudents();
@@ -399,7 +399,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
 
         for (Color color : Color.values()){
             StackPane shadowedPane = new StackPane();
-            shadowedPane.setEffect(Effects.disabledTableGLow);
+            shadowedPane.setEffect(Effects.disabledTableEffect);
             shadowedTablePanes.put(color, shadowedPane);
             StudentContainerPane table = new StudentContainerPane("tablePane", tableIDs.get(color),
                     boardWidth, boardHeight, diningRoomPct, 1, 10, 0, 0, 0);
@@ -482,7 +482,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
         for (Map.Entry<Integer, Color> stud : students.entrySet()){
             if(! studsBeforeIDs.contains("student" + stud.getKey())){
                 Pair<Integer, Integer> freeSpot = freeEntranceSpots.get(0);
-                StudentView studToAdd = new StudentView(stud.getKey(), "student", stud.getValue().toString().toLowerCase(),StudentView.studentSize);
+                StudentView studToAdd = new StudentView(stud.getKey(), stud.getValue().toString().toLowerCase(),StudentView.studentSize);
                 entrance.add(studToAdd, freeSpot.getKey(), freeSpot.getValue());
                 freeEntranceSpots.remove(freeSpot);
                 GridPane.setHalignment(studToAdd, HPos.CENTER);
@@ -536,7 +536,7 @@ public class BoardPane extends StackPane implements ObservableGUI {
         for (Integer stud : students){
             if(! studsBeforeIDs.contains("student" + stud)){
                 Pair<Integer, Integer> freeSpot = freeTableSpots.get(0);
-                StudentView studToAdd = new StudentView(stud, "student", tableColor.toString().toLowerCase(),StudentView.studentSize);
+                StudentView studToAdd = new StudentView(stud, tableColor.toString().toLowerCase(),StudentView.studentSize);
                 tables.get(tableColor).add(studToAdd, freeSpot.getKey(), 0);
                 freeTableSpots.remove(freeSpot);
                 freeDRSpots.remove(freeSpot);

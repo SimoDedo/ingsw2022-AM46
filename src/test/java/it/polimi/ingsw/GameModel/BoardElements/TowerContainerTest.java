@@ -17,11 +17,4 @@ class TowerContainerTest {
         assertThrows(IllegalArgumentException.class, () -> towerSpace.placePawn(tower), "tower was added even if container was full");
     }
 
-    /**
-     * Tests that removePawn actually removes pawns inside container. It checks by counting the pawns before and after removal
-     */
-    @Test
-    void removePawn() {
-    }
-
 }

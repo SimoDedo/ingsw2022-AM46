@@ -32,27 +32,52 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * Class for creating the GUIController and displaying it to the user, showing changes in the game based on
- * method calls from the GUIController class.
+ * Class for creating the GUI application and displaying it to the user. Its state is modified by the GUI controller.
+ * It implements the singleton design pattern meaning that only one can exist at a time.
  */
 public class GUIApplication extends Application implements ObservableGUI{
 
+    /**
+     * The static instance of this GUI.
+     */
     private static GUIApplication instance;
 
+    /**
+     * The main scenes of the GUI.
+     */
     private Scene loginScene, gameSetupScene, mainScene;
 
+    /**
+     * The log for all actions taken.
+     */
     private Log log;
 
+    /**
+     * The main stage of the GUI.
+     */
     private Stage stage;
 
+    /**
+     * The observer of this GUI element.
+     */
     private ObserverGUI observer;
 
+    /**
+     * Constructor of the GUI application.
+     */
     public GUIApplication() {
         instance = this;
     }
 
+    /**
+     * Executor service that runs the given runnable in the run later method of the Platform
+     */
     public final static Executor runLaterExecutor = Platform::runLater;
 
+    /**
+     * Main method to retrieve the instance of the GUI Application.
+     * @return The instance of the GUI Application.
+     */
     public static GUIApplication getInstance() {
         /*
         CountDownLatch latch = new CountDownLatch(1);
@@ -205,6 +230,9 @@ public class GUIApplication extends Application implements ObservableGUI{
         loginScene = new Scene(root);
     }
 
+    /**
+     * Creates the game setup scene, i.e. the screen where the user can select the game mode, tower color and wizard.
+     */
     public void createGameSetupScene() {
         VBox root = new VBox();
         root.setId("gameSetupRoot");
@@ -312,14 +340,11 @@ public class GUIApplication extends Application implements ObservableGUI{
         gameSetupScene = new Scene(root);
     }
 
+    /**
+     * Creates the main scene of the game, i.e. the screen where the user can play the game.
+     */
     public void createMainScene() {
         VBox root = new VBox();
-//        root.setBackground(new Background(new BackgroundImage(
-//                new Image("/general/bg6_unfocused.png"),
-//                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-//                BackgroundPosition.DEFAULT,
-//                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true)
-//        )));
         root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
 
@@ -368,19 +393,39 @@ public class GUIApplication extends Application implements ObservableGUI{
         mainScene = new Scene(root);
     }
 
+    /**
+     * Creates a player by creating its player pane and all of its elements.
+     * @param gameMode The game mode of the current game.
+     * @param nickname The nickname of the player to which belongs the board.
+     * @param nickID The numeric ID associated with this nickname.
+     * @param entranceID The ID of the player's entrance
+     * @param tablesIDs The IDs of the player's tables.
+     * @param towerColor The tower color of the player.
+     * @param wizardType The wizard type of the player.
+     * @param isMainPlayer True if this player is the player playing on this GUI.
+     */
     public void createPlayer(GameMode gameMode, String nickname, int nickID , int entranceID, HashMap<Color,
-            Integer> tablesIDs, TowerColor towerColor, int numOfTowers, WizardType wizardType, boolean isMainPlayer) {
+            Integer> tablesIDs, TowerColor towerColor, WizardType wizardType, boolean isMainPlayer) {
 
         VBox players = (VBox) this.lookup("players");
         PlayerPane player = new PlayerPane(nickname, nickID,isMainPlayer);
         player.setObserver(observer);
         player.setNickname(nickname);
-        player.createBoard(entranceID, tablesIDs, towerColor, numOfTowers);
+        player.createBoard(entranceID, tablesIDs, towerColor);
         player.createDiscardCoin(gameMode.equals(GameMode.EXPERT), isMainPlayer, wizardType);
         player.createAssistantContainerPane(isMainPlayer);
         players.getChildren().add(0, player);
     }
 
+    /**
+     * Creates the archipelago pane and all of its elements (islands, characters, bags and clouds).
+     * @param numOfPlayers The number of players playing this game.
+     * @param gameMode The game mode of this game.
+     * @param islandIDs The IDs of the island tiles.
+     * @param cloudIDs The IDs of the clouds.
+     * @param characterIDs The IDs of the characters
+     * @param motherNatureIsland The island containing mother nature.
+     */
     public void createArchipelago(int numOfPlayers, GameMode gameMode,List<Integer> islandIDs, List<Integer> cloudIDs,
                                   List<Integer> characterIDs, int motherNatureIsland){
         ArchipelagoPane archipelagoPane = ((ArchipelagoPane) this.lookup("archipelagoPane"));
@@ -395,12 +440,12 @@ public class GUIApplication extends Application implements ObservableGUI{
                 if (e.getCode() == KeyCode.H && ! characterDetailPane.isActive()) {
                     characterDetailPane.setVisible(true);
                     characterDetailPane.setActive(true);
-                    disableAll();
+                    disableGlobal();
                 }
                 else if((e.getCode() == KeyCode.H || e.getCode() == KeyCode.ESCAPE) && characterDetailPane.isActive()){
                     characterDetailPane.setVisible(false);
                     characterDetailPane.setActive(false);
-                    enableAll();
+                    reEnableGlobal();
                 }
 
             });
@@ -413,6 +458,9 @@ public class GUIApplication extends Application implements ObservableGUI{
         }
     }
 
+    /**
+     * Setups the stage of the APPLICATION.
+     */
     public void setupStage() {
         stage.setMaximized(true);
         stage.setTitle("Eriantys AM46");
@@ -433,6 +481,11 @@ public class GUIApplication extends Application implements ObservableGUI{
         });
     }
 
+    /**
+     * Setups the scene by adding elements to the root.
+     * @param root The root of the scene.
+     * @return an AnchorPane now nested in the root.
+     */
     private AnchorPane setupScene(VBox root) {
         root.setPrefSize(stage.getWidth(), stage.getHeight());
         root.setStyle("-fx-font-size: 14pt");
@@ -449,8 +502,8 @@ public class GUIApplication extends Application implements ObservableGUI{
             aboutDialog.setContentText("""
                     Online implementation of the tabletop game Eriantys produced by Cranio Creations.
                     Made by group AM46: Pietro Beghetto, Simone de Donato, Gregorio Dimaglie.
-                    Version: v0.9.4
-                    Date: 31/05/2022""");
+                    Version: v0.9.6
+                    Date: 18/06/2022""");
             aboutDialog.showAndWait();
         });
         helpMenu.getItems().add(about);
@@ -462,6 +515,10 @@ public class GUIApplication extends Application implements ObservableGUI{
         return anchorPane;
     }
 
+    /**
+     * Setups a grid so that it is correctly placed and sized.
+     * @param grid The grid to set up.
+     */
     private void setupGrid(GridPane grid) {
         ColumnConstraints labelColumn = new ColumnConstraints();
         labelColumn.setHalignment(HPos.RIGHT);
@@ -478,6 +535,10 @@ public class GUIApplication extends Application implements ObservableGUI{
         grid.setVgap(50.0);
     }
 
+    /**
+     * Setups a scrolling background to the given anchor pane.
+     * @param anchorPane The anchor pane that needs a scrolling background.
+     */
     public void setupScrollingBackground(AnchorPane anchorPane) {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         double bgWidth = screenBounds.getWidth();
@@ -503,14 +564,30 @@ public class GUIApplication extends Application implements ObservableGUI{
         parTrans.play();
     }
 
+    /**
+     * Looks for any node within the scene graph based on the specified ID.
+     * If more than one node matches the specified ID, this function returns the first of them.
+     * If no nodes are found with this ID, then null is returned.
+     * @param id The ID of the object to look.
+     * @return The object found, null if none matched the ID.
+     */
     public Node lookup(String id) {
         return stage.getScene().lookup("#" + id);
     }
 
+    /**
+     * Returns the main content pane of a scene.
+     * @param scene The scene in which to look for.
+     * @return The main content pane of a scene.
+     */
     public Node getContent(Scene scene) {
         return scene.lookup("#mainContentPane");
     }
 
+    /**
+     * Applies a fade in animation to a node.
+     * @param node The node to fade in.
+     */
     public void fadeIn(Node node) {
         DoubleProperty opacity = node.opacityProperty();
         Timeline fadeIn = new Timeline(
@@ -520,6 +597,10 @@ public class GUIApplication extends Application implements ObservableGUI{
         fadeIn.play();
     }
 
+    /**
+     * Applies a fade out animation to a node.
+     * @param node The node to fade out.
+     */
     public void fadeOut(Node node) {
         DoubleProperty opacity = node.opacityProperty();
         Timeline fadeOut = new Timeline(
@@ -529,12 +610,18 @@ public class GUIApplication extends Application implements ObservableGUI{
         fadeOut.play();
     }
 
+    /**
+     * Switches the scene to the login scene.
+     */
     public void switchToLogin() {
         stage.setScene(loginScene);
         stage.show();
         stage.setTitle("Eriantys AM46: Login");
     }
 
+    /**
+     * Switches the scene to the game setup scene.
+     */
     public void switchToGameSetup() {
         stage.setScene(gameSetupScene);
         stage.show();
@@ -542,6 +629,9 @@ public class GUIApplication extends Application implements ObservableGUI{
         fadeIn(getContent(gameSetupScene));
     }
 
+    /**
+     * Switches the scene to the main playing scene.
+     */
     public void switchToMain() {
         stage.setScene(mainScene);
         ((GridPane) this.lookup("mainGrid")).add(log, 1, 0);
@@ -551,12 +641,23 @@ public class GUIApplication extends Application implements ObservableGUI{
 
     }
 
-    public void disableAll(){
+    /**
+     * Disables the main content pane.
+     * This method doesn't disable each element individually but instead disables the main content pane;
+     * this means that previously enabled elements contained in the pane will still be enabled after calling
+     * enableGlobal.
+     */
+    public void disableGlobal(){
         this.lookup("mainContentPane").setDisable(true);
     }
 
-
-    public void enableAll(){
+    /**
+     * Enables the main content pane.
+     * This method doesn't enable each element individually but instead enables the main content pane;
+     * this means that only elements that were originally enabled will be enabled after this method returns,
+     * while all other elements will remain disabled.
+     */
+    public void reEnableGlobal(){
         this.lookup("mainContentPane").setDisable(false);
     }
 }

@@ -22,24 +22,67 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class contains most of the game elements that pertain to a player. The board, discard pane, coin stack and
+ * assistants are all contained here.
+ */
 public class PlayerPane extends GridPane implements ObservableGUI {
 
+    /**
+     * The observer of this GUI element.
+     */
     private ObserverGUI observer;
 
+    /**
+     * The nickname of the player owning this board
+     */
     private final String nickname;
+    /**
+     * The ID connected to the nickname of the player owning this board.
+     */
     private final int nickID;
 
+    /**
+     * The size of the board
+     */
     public final static double sizeBoardV = 170.0;
+    /**
+     * Specifies how much smaller should other player's boards be when compared to the main board.
+     */
     private final double resizeFactor = 0.85;
+    /**
+     * Size of the discard pane.
+     */
     private double sizeDiscard = 80.0;
+    /**
+     * Size of the coin stack.
+     */
     private double sizeCoin = 30.0;
 
+    /**
+     * The board pane of this player
+     */
     private final BoardPane boardPane;
+    /**
+     * A container for the discard pane and the coin stack.
+     */
     private final VBox discardCoinPane;
+    /**
+     * The image of the wizard chosen by this player.
+     */
     private ImageView wizardView;
+    /**
+     * The container of all assistants cards
+     */
     private final AssistantContainerPane assistantContainerPane;
 
 
+    /**
+     * Constructor of the player pane.
+     * @param nickname the nickname of this player.
+     * @param nickID the ID associated to this nickname.
+     * @param isMainPlayer true if this player pane should be bigger (since it's the main player), false otherwise.
+     */
     public PlayerPane(String nickname, int nickID, boolean isMainPlayer) {
         this.nickname = nickname;
         this.nickID = nickID;
@@ -51,8 +94,6 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         boardPane = new BoardPane(nickID, isMainPlayer ? sizeBoardV : sizeBoardV*resizeFactor);
         discardCoinPane = new VBox();
         assistantContainerPane = new AssistantContainerPane(nickID,sizeBoardV / 2);
-        // if (isMainPlayer) enableSelectAssistant();
-        // else disableSelectAssistant();
     }
 
     @Override
@@ -61,6 +102,10 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         boardPane.setObserver(observer);
     }
 
+    /**
+     * Sets the nickname of the player to be visible.
+     * @param nickname the nickname to display.
+     */
     public void setNickname(String nickname){
         Text nickPane = new Text("   " + nickname);
         nickPane.setId("nickPane" + nickname);
@@ -68,7 +113,13 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         this.getChildren().add(0, nickPane);
     }
 
-    public void createBoard(int entranceID, HashMap<Color, Integer> tableIDs, TowerColor towerColor, int numOfTowers){
+    /**
+     * Creates the board associated to this player using the data sent by the server.
+     * @param entranceID The ID of this player's entrance.
+     * @param tableIDs The IDs of this player's tables.
+     * @param towerColor The tower color chosen by this player.
+     */
+    public void createBoard(int entranceID, HashMap<Color, Integer> tableIDs, TowerColor towerColor){
         boardPane.createEntrance(entranceID);
         boardPane.createDiningRoom(tableIDs);
         boardPane.createProfessors();
@@ -76,6 +127,12 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         this.add(boardPane, 0, 1);
     }
 
+    /**
+     * Creates the discard pile and the coin stack.
+     * @param withCoins True if the coin stack should be created, false otherwise.
+     * @param isMainPlayer True if this is the main player, false otherwise.
+     * @param wizardType The wizard type chosen by this player.
+     */
     public void createDiscardCoin(boolean withCoins, boolean isMainPlayer, WizardType wizardType){
         //Create discard and coin pane
         sizeDiscard = isMainPlayer ? sizeDiscard : sizeDiscard * resizeFactor;
@@ -117,6 +174,10 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         this.add(discardCoinPane, 1, 1);
     }
 
+    /**
+     * Creates the container with the assistants.
+     * @param isMainPlayer True if this is the main player, false otherwise.
+     */
     public void createAssistantContainerPane(boolean isMainPlayer){
         if(! isMainPlayer){
             assistantContainerPane.resizeAssistant(resizeFactor);
@@ -143,56 +204,102 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Updates the entrance adding and removing students according to the new contents given.
+     * @param students The students that are now contained in this player's entrance.
+     */
     public void updateEntrance(HashMap<Integer, Color> students){
         boardPane.updateEntrance(students);
     }
 
+    /**
+     * Updates the dining room adding and removing students according to the new contents given.
+     * @param color The color of the table to update.
+     * @param studs The students that are now contained in this player's table of the given color.
+     */
     public void updateDiningRoom(Color color, List<Integer> studs){
         boardPane.updateTable(color, studs);
     }
 
+    /**
+     * Updates the professors owned by this player.
+     * @param professors The professor colors and their owners.
+     */
     public void updateProfessors(HashMap<Color, String> professors){
         List<Color> profColor = professors.entrySet().stream().filter(e -> nickname.equals(e.getValue())).map(Map.Entry::getKey).toList();
         boardPane.updateProfessors(profColor);
     }
 
+    /**
+     * Updates the towers remaining in this player's tower space.
+     * @param newNumOfTowers The number of towers remaining in the tower space.
+     */
     public void updateTowers(int newNumOfTowers){
         boardPane.updateTowers(newNumOfTowers);
     }
 
+    /**
+     * Updates the number of coins that this player owns.
+     * @param coins The number of coins that this player owns.
+     */
     public void updateCoins(int coins){
         if(this.lookup("#coinsPane" + nickID) != null)
             ((Text)this.lookup("#coinsPane" + nickID)).setText(String.valueOf(coins));
     }
 
+    /**
+     * Enables the selection of students in the entrance.
+     */
     public void enableSelectStudentsEntrance() {
         boardPane.enableSelectStudentsEntrance();
     }
 
+    /**
+     * Disables the selection of students in the entrance.
+     */
     public void disableSelectStudentsEntrance() {
         boardPane.disableSelectStudentsEntrance();
     }
 
+    /**
+     * Enables the selection of students in the dining room.
+     */
     public void enableSelectStudentsDR() {
         boardPane.enableSelectStudentsDR();
     }
 
+    /**
+     * Disables the selection of students in the dining room.
+     */
     public void disableSelectStudentsDR() {
         boardPane.disableSelectStudentsDR();
     }
 
+    /**
+     * Enables the selection of all tables.
+     */
     public void enableSelectTables() {
         boardPane.enableSelectTables();
     }
 
+    /**
+     * Enables the selection of a single table.
+     * @param color The color of the table to activate.
+     */
     public void enableSelectTables(Color color) {
         boardPane.enableSelectTables(color);
     }
 
+    /**
+     * Disable the selection of all tables.
+     */
     public void disableSelectTables() {
         boardPane.disableSelectTables();
     }
 
+    /**
+     * Enables the selection of assistants.
+     */
     public void enableSelectAssistant(){
         Pane discard = (Pane) this.lookup("#discardPane"+nickID);
         List<String> ids = discard.getChildren().stream().map(Node::getId).toList();
@@ -201,8 +308,8 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         for(int i = 1; i < 11; i++){
             ImageView assistant = (ImageView) this.lookup("#assistant"+nickID+i);
             if(assistant != null && !ids.contains("assistant"+nickID+i)) {
-                assistant.setEffect(Effects.enabledAssistantShadow);
-                assistantContainerPane.setZoomOnAssistant(assistant, Effects.hoveringAssistantShadow, Effects.enabledAssistantShadow);
+                assistant.setEffect(Effects.enabledAssistantEffect);
+                assistantContainerPane.setZoomOnAssistant(assistant, Effects.hoveringAssistantEffect, Effects.enabledAssistantEffect);
                 int assistantID = i;
                 assistant.setOnMouseClicked(event -> {
                     assistantContainerPane.setAssistantChosen(assistantID);
@@ -212,13 +319,16 @@ public class PlayerPane extends GridPane implements ObservableGUI {
         }
     }
 
+    /**
+     * Disables the selection of assistants.
+     */
     public void disableSelectAssistant(){
         AssistantContainerPane assistantContainerPane = (AssistantContainerPane) this.lookup("#assistantContainerPane" + nickID);
         for(int i = 1; i < 11; i++){
             ImageView assistant = (ImageView) this.lookup("#assistant"+nickID+i);
             if(assistant != null) {
-                assistant.setEffect(Effects.disabledAssistantShadow);
-                assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantShadow, Effects.disabledAssistantShadow);
+                assistant.setEffect(Effects.disabledAssistantEffect);
+                assistantContainerPane.setZoomOnAssistant(assistant, Effects.disabledAssistantEffect, Effects.disabledAssistantEffect);
                 assistant.setOnMouseClicked(event -> {});
             }
         }

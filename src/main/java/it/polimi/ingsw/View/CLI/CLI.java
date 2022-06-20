@@ -75,7 +75,7 @@ public class CLI implements UI {
         operations.execute(() -> {
             boolean quit = false;
             while (!quit){
-                String commandString = "";
+                String commandString;
                 do {
                     try { commandString = parser.readLine();
                     } catch (HelpException e) {commandString = "help";} //Help is not directly displayed here to not interfere with loop
@@ -128,7 +128,7 @@ public class CLI implements UI {
     }
 
     /**
-     * Puts the thread ina sleep state while waiting to be woken up by a server resposnse.
+     * Puts the thread ina sleep state while waiting to be woken up by a server response.
      */
     private void waitForServerResponse(){
         synchronized (lock){

@@ -16,7 +16,7 @@ public class ColorSelectionPane extends VBox {
     /**
      * The size of the color button.
      */
-    public static double colorSize = 17.0;
+    public static final double colorSize = 17.0;
 
     /**
      * The order in which colors are displayed, from top to bottom.
@@ -40,7 +40,7 @@ public class ColorSelectionPane extends VBox {
             colorView.setId("char" + charID + "Color" + color.toString().toLowerCase());
             Image colorImage = new Image("/chars/color_" + color.toString().toLowerCase() + ".png");
             colorView.setImage(colorImage);
-            colorView.setEffect(Effects.disabledStudentShadow);
+            colorView.setEffect(Effects.disabledStudentEffect);
             colorView.setPreserveRatio(true);
             colorView.setFitHeight(colorSize);
             colorView.setSmooth(true);

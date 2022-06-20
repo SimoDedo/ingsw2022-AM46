@@ -28,11 +28,11 @@ import java.util.*;
  */
 public class Game implements ObservableByClient, Serializable {
 
-    protected Bag bag;
-    protected Archipelago archipelago = new Archipelago();
+    protected final Bag bag;
+    protected final Archipelago archipelago = new Archipelago();
     private final List<CloudTile> clouds = new ArrayList<>();
-    protected ProfessorSet professorSet = new ProfessorSet();
-    protected PlayerList players = new PlayerList();
+    protected final ProfessorSet professorSet = new ProfessorSet();
+    protected final PlayerList players = new PlayerList();
     private final TurnManager turnManager = new TurnManager();
 
     /**

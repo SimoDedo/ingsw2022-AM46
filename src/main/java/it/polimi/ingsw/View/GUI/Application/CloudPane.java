@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Color;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,7 +20,7 @@ public class CloudPane extends StackPane {
     /**
      * The height and width of the cloud.
      */
-    public static double cloudSize = 100.0;
+    public static final double cloudSize = 100.0;
 
     /**
      * The StudentContainerPane on this cloud.
@@ -47,6 +46,7 @@ public class CloudPane extends StackPane {
         cloudView.setSmooth(true);
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
+        this.setEffect(Effects.disabledCloudEffect);
 
         this.setPickOnBounds(false);
     }
@@ -87,7 +87,7 @@ public class CloudPane extends StackPane {
         else if(! newStuds.isEmpty() && studentPane.getChildren().isEmpty()){
             for(Integer stud : newStuds.keySet()){
                 int rand = ThreadLocalRandom.current().nextInt(0, freeStudSpots.size());
-                studentPane.add(new StudentView(stud, "student", newStuds.get(stud).toString().toLowerCase(), StudentView.studentSize),
+                studentPane.add(new StudentView(stud, newStuds.get(stud).toString().toLowerCase(), StudentView.studentSize),
                         freeStudSpots.get(rand).getKey(), freeStudSpots.get(rand).getValue());
                 freeStudSpots.remove(rand);
             }

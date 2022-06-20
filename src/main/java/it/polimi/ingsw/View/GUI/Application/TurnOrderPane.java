@@ -1,12 +1,8 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.Phase;
-import it.polimi.ingsw.View.GUI.GUIController;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -14,9 +10,15 @@ import javafx.scene.text.FontWeight;
 
 import java.util.List;
 
+/**
+ * Pane that displayed the current turn, player and player order.
+ */
 public class TurnOrderPane extends HBox {
 
 
+    /**
+     * Constructor for a turn order pane with dummy values.
+     */
     public TurnOrderPane() {
         super(15.0);
         this.setId("turnOrderPane");
@@ -27,6 +29,12 @@ public class TurnOrderPane extends HBox {
         this.getChildren().add(new Label("Player 4"));
     }
 
+    /**
+     * Updates the turn order pane according to the parameters given.
+     * @param currentPhase The phase currently being played.
+     * @param currentPlayer The player currently playing.
+     * @param order The current player order.
+     */
     public void updateTurnOrderPane(Phase currentPhase, String currentPlayer, List<String> order){
         this.getChildren().clear();
         String phaseFormatted = currentPhase.toString().charAt(0) + currentPhase.toString().substring(1).toLowerCase();

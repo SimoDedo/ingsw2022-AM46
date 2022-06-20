@@ -21,13 +21,16 @@ public class CharContainerPane extends HBox implements ObservableGUI {
     /**
      * The height of this pane.
      */
-    static double charContainerHeight = 80.0;
+    static final double charContainerHeight = 80.0;
 
     /**
      * The width of this pane.
      */
-    static double charContainerWidth = 300.0;
+    static final double charContainerWidth = 300.0;
 
+    /**
+     * The observer of this GUI element.
+     */
     private ObserverGUI observer;
 
     /**
@@ -96,10 +99,10 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         for (Integer charID : charIDs) {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
             ImageView charImageView = (ImageView) characterPane.lookup("#charView");
-            charImageView.setEffect(Effects.enabledCharacterShadow);
-            characterPane.currentEffect = Effects.enabledCharacterShadow;
-            characterPane.setOnMouseEntered(e -> charImageView.setEffect(Effects.hoveringCharacterShadow));
-            characterPane.setOnMouseExited(e -> charImageView.setEffect(Effects.enabledCharacterShadow));
+            charImageView.setEffect(Effects.enabledCharacterEffect);
+            characterPane.currentEffect = Effects.enabledCharacterEffect;
+            characterPane.setOnMouseEntered(e -> charImageView.setEffect(Effects.hoveringCharacterEffect));
+            characterPane.setOnMouseExited(e -> charImageView.setEffect(Effects.enabledCharacterEffect));
             int charIndex = charID;
             characterPane.setOnMouseClicked(event -> {
                 setCharacterChosen(charIndex);
@@ -132,9 +135,9 @@ public class CharContainerPane extends HBox implements ObservableGUI {
             for (Integer charID : charIDs) {
                 CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + charID);
                 ImageView charImageView = (ImageView) characterPane.lookup("#charView");
-                if(characterPane.currentEffect != Effects.activatedCharacterShadow){
-                    characterPane.currentEffect = Effects.disabledCharacterShadow;
-                    charImageView.setEffect(Effects.disabledCharacterShadow);
+                if(characterPane.currentEffect != Effects.activatedCharacterEffect){
+                    characterPane.currentEffect = Effects.disabledCharacterEffect;
+                    charImageView.setEffect(Effects.disabledCharacterEffect);
                 }
                 else
                     charImageView.setEffect(characterPane.currentEffect);
@@ -152,10 +155,10 @@ public class CharContainerPane extends HBox implements ObservableGUI {
         CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
         ImageView charImageView = (ImageView) characterPane.lookup("#charView");
 
-        charImageView.setEffect(Effects.activatedCharacterShadow);
-        characterPane.currentEffect = Effects.activatedCharacterShadow;
-        characterPane.setOnMouseEntered(e -> charImageView.setEffect(Effects.hoveringCharacterShadow));
-        characterPane.setOnMouseExited(e -> charImageView.setEffect(Effects.activatedCharacterShadow));
+        charImageView.setEffect(Effects.activatedCharacterEffect);
+        characterPane.currentEffect = Effects.activatedCharacterEffect;
+        characterPane.setOnMouseEntered(e -> charImageView.setEffect(Effects.hoveringCharacterEffect));
+        characterPane.setOnMouseExited(e -> charImageView.setEffect(Effects.activatedCharacterEffect));
         characterPane.setOnMouseClicked(event -> observer.notifyAbility());
     }
 
@@ -216,12 +219,12 @@ public class CharContainerPane extends HBox implements ObservableGUI {
             CharacterPane characterPane = (CharacterPane) this.lookup("#characterPane" + characterChosen);
             colorPane.setVisible(true);
             for (Map.Entry<Color, Integer> entry : ColorSelectionPane.colorOrder.entrySet()) {
-                colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentShadow);
+                colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentEffect);
                 colorPane.getChildren().get(entry.getValue()).setOnMouseEntered(event -> {
-                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.hoveringStudentShadow);
+                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.hoveringStudentEffect);
                 });
                 colorPane.getChildren().get(entry.getValue()).setOnMouseExited(event -> {
-                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentShadow);
+                    colorPane.getChildren().get(entry.getValue()).setEffect(Effects.enabledStudentEffect);
                 });
                 colorPane.getChildren().get(entry.getValue()).setOnMouseClicked(event -> {
                     characterPane.setColor(entry.getKey());
@@ -239,7 +242,7 @@ public class CharContainerPane extends HBox implements ObservableGUI {
             ColorSelectionPane colorPane = (ColorSelectionPane) this.lookup("#char" + characterChosen + "ColorPane");
             colorPane.setVisible(false);
             for (Node node : colorPane.getChildren()) {
-                node.setEffect(Effects.disabledStudentShadow);
+                node.setEffect(Effects.disabledStudentEffect);
                 node.setOnMouseEntered(event -> {});
                 node.setOnMouseExited(event -> {});
                 node.setOnMouseClicked(event -> {});

@@ -16,10 +16,6 @@ public class ServerLoginInfo extends Info {
         this.port = port;
     }
 
-    public InetAddress getIP() {
-        return IP;
-    }
-
     public int getPort() {
         return port;
     }

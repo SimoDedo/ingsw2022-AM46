@@ -77,8 +77,8 @@ public class AssistantContainerPane extends AnchorPane {
         imageViewAssistant.setPreserveRatio(true);
         imageViewAssistant.setFitHeight(assistantSize);
         imageViewAssistant.setId("assistant" + nickID + ID);
-        imageViewAssistant.setEffect(Effects.disabledAssistantShadow);
-        setZoomOnAssistant(imageViewAssistant, Effects.disabledStudentShadow, Effects.disabledAssistantShadow);
+        imageViewAssistant.setEffect(Effects.disabledAssistantEffect);
+        setZoomOnAssistant(imageViewAssistant, Effects.disabledStudentEffect, Effects.disabledAssistantEffect);
         assistantGrid.add(imageViewAssistant, (ID > 5 ? ID - 5 : ID), (ID > 5 ? 1 : 0));
     }
 

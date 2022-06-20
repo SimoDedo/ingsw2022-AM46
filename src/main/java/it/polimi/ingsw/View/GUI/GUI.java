@@ -20,19 +20,47 @@ import java.util.Map;
  */
 public class GUI implements UI {
 
+    /**
+     * The client associated with this GUI.
+     */
     private final Client client;
 
+    /**
+     * The nickname of the player using this GUI.
+     */
     private String nickname;
 
+    /**
+     * The controller of the GUI.
+     */
     private final GUIController guiController;
 
+    /**
+     * Lock used to synchronize and wait an input.
+     */
     private final Object waitInputLock;
+    /**
+     * True if the GUI is currently waiting on an input.
+     */
     private boolean waitingInput;
 
+    /**
+     * True if the GUI in being reset.
+     */
     private boolean resetting;
+    /**
+     * True if the user has logged in with a username.
+     */
     private boolean loggedIn;
+    /**
+     * True if the user has chosen a tower color.
+     */
     private boolean chosenTC;
 
+    /**
+     * Constructor of the GUI.
+     * @param client the client associated with this GUI.
+     */
     public GUI(Client client) {
         this.client = client;
         guiController = new GUIController(this);
@@ -45,10 +73,16 @@ public class GUI implements UI {
         resetting = false;
     }
 
+    /**
+     * Closes the Client.
+     */
     public void close() {
         client.close();
     }
 
+    /**
+     * Resets the GUI, then resets the client.
+     */
     public void reset(){
         resetting = true;
         nickname = null;
@@ -79,9 +113,13 @@ public class GUI implements UI {
             parseDisableCommand(command);
         for (Command command : toEnable)
             parseEnableCommand(command);
-        guiController.enableAll();
+        guiController.reEnableAll();
     }
 
+    /**
+     * It parses a given command enabling various GUI elements to be selected according to the command to enable.
+     * @param command the command to enable.
+     */
     private void parseEnableCommand(Command command){
         switch (command){
             case ASSISTANT -> guiController.enableAssistants();
@@ -101,6 +139,10 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * It parses a given command disabling all GUI elements associated with this command.
+     * @param command the command to disable.
+     */
     private void parseDisableCommand(Command command){
         switch (command){
             case ASSISTANT -> guiController.disableAssistants();
@@ -159,7 +201,7 @@ public class GUI implements UI {
             loggedIn = true;
         }
         guiController.showGameMode(game);
-        guiController.showTowerWizard();
+        guiController.enableTowerWizard();
         guiController.updateTowerWizard(game.getAvailableTowerColors(), game.getAvailableWizards());
         waitSetupInput();
         if(! resetting)
@@ -168,7 +210,7 @@ public class GUI implements UI {
 
     @Override
     public void requestWizard(ObservableByClient game) {
-        guiController.showTowerWizard();
+        guiController.enableTowerWizard();
         if(!chosenTC){
             chosenTC = true;
             guiController.towerColorSuccessful();
@@ -267,11 +309,19 @@ public class GUI implements UI {
         guiController.displayWinners(winner, winners, losers);
     }
 
+    /**
+     * Sends the user action given through the client. Then, disables all GUI elements to avoid errors.
+     * The elements will have to be enabled again when a server response has been received.
+     * @param userAction the user action to send.
+     */
     public void sendSelection(UserAction userAction){
-        guiController.disableAll();
+        guiController.disableAllTemporary();
         client.sendUserAction(userAction);
     }
 
+    /**
+     * Puts the GUI in a waiting state until awoken.
+     */
     private void waitSetupInput(){
         synchronized (waitInputLock){
             waitingInput = true;
@@ -286,6 +336,9 @@ public class GUI implements UI {
         }
     }
 
+    /**
+     * Awakes the GUI if it was waiting for a setup input.
+     */
     public void notifySetupInput(){
         synchronized (waitInputLock){
             waitingInput = false;

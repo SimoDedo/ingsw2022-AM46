@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public abstract class BoardPiece implements Serializable {
     /**
-     * Static attribute shared among all BoardPieces. Stores highest ID that hasn't been used yet
+     * Static attribute shared among all BoardPieces. Stores the highest ID that hasn't been used yet
      */
     private static int maxID = 0;
 
