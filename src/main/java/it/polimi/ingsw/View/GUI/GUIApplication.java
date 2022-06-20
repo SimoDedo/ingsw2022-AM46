@@ -503,7 +503,7 @@ public class GUIApplication extends Application implements ObservableGUI{
                     Online implementation of the tabletop game Eriantys produced by Cranio Creations.
                     Made by group AM46: Pietro Beghetto, Simone de Donato, Gregorio Dimaglie.
                     Version: v0.9.6
-                    Date: 18/06/2022""");
+                    Date: 20/06/2022""");
             aboutDialog.showAndWait();
         });
         helpMenu.getItems().add(about);

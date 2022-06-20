@@ -43,24 +43,31 @@ Made by:
 - IDE: [IntelliJ IDEA](https://www.jetbrains.com/idea/)
 - Build automation tool: [Maven 3.8.4](https://maven.apache.org/)
 - Unit testing: [JUnit 5](https://junit.org/junit5/)
+- UML diagrams: [IntelliJ IDEA](https://www.jetbrains.com/idea/) and [Astah UML](https://astah.net/products/astah-uml/)
 ### Specification
 The project will include:
 - initial and final **UML** diagrams
 - source code of the **implementation**: game rules, networking, CLI, GUI, additional specifications etc.
-- source code of the **unit tests**.
+- source code of the **unit tests**
+- a cross-platform **JAR** for executing the application as a server or as a CLI-based or GUI-based client
+- documentation for the **communication protocol** and for the two **peer reviews** related to this project.
 
 ---
 
 # Installation
-An installation is still not available, but will be made available in the future with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html). For now you can fetch the latest cross-platform JAR from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases).
+An installation procedure is still not available, but will be created in the future with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html).
+For now you can:
+- find the [final JAR](deliverables/JAR_final/Eriantys-v1.0.0.jar) in the deliverables folder, or
+- fetch the latest cross-platform JAR from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases).
+
 Download the JAR and place it in the desired folder.
 ## Requirements
 The application requires:
-- [Java](https://www.java.com/it/) (obviously). You can [download](https://www.oracle.com/java/technologies/downloads/#java17) (Windows, MacOS) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
-- a graphical interface if you don't have one. On WSL, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
+- [Java](https://www.java.com/it/) (obviously). You can [download](https://www.oracle.com/java/technologies/downloads/#java17) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
+- a graphical interface if you don't have one. On WSL for example, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
 ## Run
 Double-click on the JAR or `java -jar Eriantys-vX.X.X.jar` in a shell (where X.X.X is the downloaded JAR's version) to start the GUI.
-Use the parameters `--server` to start the server, or `--cli` to start the CLI.
+Use the parameters `--server` to start the server, `--cli` to start the CLI, or `--gui`/`--client` to start the GUI .
 
 [Here](https://asciinema.org/a/ahsKxDUVGFGZ4TVQjqK50JV2p) is a quick demonstration of the CLI running in a WSL shell.
 ![eriantys-cli-demo](https://user-images.githubusercontent.com/24454017/174342092-f52432a4-c22b-4faf-a2bc-b8e31ef8694c.gif)
@@ -80,7 +87,7 @@ Use the parameters `--server` to start the server, or `--cli` to start the CLI.
     - [x] Communication protocol diagram
   - [x] Complete UML diagram
   - [x] GUI design
-  - [ ] Final UML diagram, automatically generated from code
+  - [x] Final UML diagram, automatically generated from code
   
 - **Implementation**
   - [x] Game rules
@@ -101,7 +108,7 @@ Use the parameters `--server` to start the server, or `--cli` to start the CLI.
 
 - **Finalization**
   - [x] Polishing
-  - [ ] Publishing
+  - [x] Publishing
 
 ## Changelog
 + **0.1.0**: initial draft of the UML diagram of the Model
@@ -131,6 +138,8 @@ Use the parameters `--server` to start the server, or `--cli` to start the CLI.
   + **0.9.3**: GUI draft and login/setup screens
   + **0.9.4**: finished GUI
   + **0.9.5**: GUI polishing and bug fixes
+  + **0.9.6**: GUI additional features; added all necessary files to the deliverables folder
+<!-- + **1.0.0**: final version; rewrote document about the communication protocol. -->
 
 ---
 

@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>C:/Users/pb/IdeaProjects/ingsw2022-AM46/src/main/java/it/polimi/ingsw</OriginalElement>
+  <nodes>
+    <node x="3523.999999999999" y="2188.818181818183">it.polimi.ingsw.Utils.AnsiColors</node>
+    <node x="65.43956290433925" y="1006.7500000000045">it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy</node>
+    <node x="-537.1721375821671" y="1280.1033587485256">it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyStandard</node>
+    <node x="3865.4848215250286" y="89.0454545454561">it.polimi.ingsw.View.GUI.Application.AssistantContainerPane</node>
+    <node x="-667.0579978995775" y="-1044.999999999999">it.polimi.ingsw.GameModel.BoardElements.Professor</node>
+    <node x="-981.6007090107396" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Error.IllegalActionError</node>
+    <node x="-904.6721375821671" y="2169.0594096629443">it.polimi.ingsw.Network.Server.Server</node>
+    <node x="-1356.4876742557499" y="1243.1092749432023">it.polimi.ingsw.GameModel.GameConfig</node>
+    <node x="-1378.1721375821671" y="2166.8851476967648">it.polimi.ingsw.View.Client</node>
+    <node x="525.9718904905458" y="-1676.2499999999955">it.polimi.ingsw.GameModel.ObservableByClient</node>
+    <node x="93.93956290433925" y="-29.249999999995566">it.polimi.ingsw.GameModel.GameExpert</node>
+    <node x="-1589.380736710188" y="1243.1092749432023">it.polimi.ingsw.GameModel.GameFactory</node>
+    <node x="4582.484821525029" y="275.54545454545655">it.polimi.ingsw.View.GUI.Application.BagPane</node>
+    <node x="4208.484821525029" y="87.40909090909213">it.polimi.ingsw.View.GUI.Application.TurnOrderPane</node>
+    <node x="-442.6007090107387" y="3456.3137191253363">it.polimi.ingsw.Network.Message.UserAction.MoveStudentUserAction</node>
+    <node x="4830.984821525029" y="301.18181818181984">it.polimi.ingsw.View.Ping</node>
+    <node x="2675.999999999999" y="2874.5000000000036">it.polimi.ingsw.Utils.PlayerList</node>
+    <node x="1713.9848215250274" y="778.8571428571481">it.polimi.ingsw.View.CLI.WelcomeScreen</node>
+    <node x="2024.9999999999993" y="2325.090909090911">it.polimi.ingsw.Utils.Enum.CharactersDescription</node>
+    <node x="-1844.2737991646263" y="863.9425738483833">it.polimi.ingsw.GameModel.TurnManager</node>
+    <node x="4166.029821525029" y="-1400.1359999999986">it.polimi.ingsw.View.GUI.ObservableGUI</node>
+    <node x="-14.100709010738683" y="2863.7422905539065">it.polimi.ingsw.Network.Message.Message</node>
+    <node x="-590.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.Bag</node>
+    <node x="-605.9862359029021" y="863.9425738483833">it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategy</node>
+    <node x="2389.4545454545446" y="2948.545454545457">it.polimi.ingsw.ClientApp</node>
+    <node x="-1187.6007090107396" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.LoginUserAction</node>
+    <node x="-1309.6007090107396" y="3456.3137191253363">it.polimi.ingsw.Network.Message.UserAction.WizardUserAction</node>
+    <node x="525.9718904905458" y="-601.2499999999955">it.polimi.ingsw.GameModel.Game</node>
+    <node x="-869.6007090107396" y="3456.3137191253363">it.polimi.ingsw.Network.Message.UserAction.GameSettingsUserAction</node>
+    <node x="-423.7914465586491" y="88.77587275356427">it.polimi.ingsw.GameModel.Board.Player.DiningRoom</node>
+    <node x="-790.1007090107396" y="2998.313719125336">it.polimi.ingsw.Network.Message.Update.Update</node>
+    <node x="3704.4848215250286" y="-1220.4999999999986">it.polimi.ingsw.View.GUI.Application.PlayerPane</node>
+    <node x="4267.484821525029" y="340.22727272727434">it.polimi.ingsw.View.GUI.Application.ColorSelectionPane</node>
+    <node x="2303.999999999999" y="2177.818181818183">it.polimi.ingsw.Utils.Enum.RequestParameter</node>
+    <node x="-1844.2737991646263" y="88.77587275356427">it.polimi.ingsw.GameModel.Board.Player.Player</node>
+    <node x="4116.484821525029" y="-1220.4999999999986">it.polimi.ingsw.View.GUI.Application.ArchipelagoPane</node>
+    <node x="2589.999999999999" y="2188.818181818183">it.polimi.ingsw.Utils.InputParser</node>
+    <node x="2303.999999999999" y="2874.5000000000036">it.polimi.ingsw.ServerApp</node>
+    <node x="3216.4848215250286" y="-1220.6470588235281">it.polimi.ingsw.View.GUI.Application.CharContainerPane</node>
+    <node x="-1458.180841383034" y="1106.9425738483833">it.polimi.ingsw.GameModel.Characters.ConsumerSet</node>
+    <node x="4262.984821525029" y="179.81818181818335">it.polimi.ingsw.View.GUI.Application.CharacterDetailPane</node>
+    <node x="-1455.653211013132" y="577.479343110936">it.polimi.ingsw.GameModel.Board.Archipelago.NoEntryTilesSpace</node>
+    <node x="-724.6721375821671" y="1112.7500000000045">it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategy</node>
+    <node x="2654.999999999999" y="2380.18181818182">it.polimi.ingsw.Utils.Enum.TowerColor</node>
+    <node x="267.43956290433925" y="1280.6033587485258">it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard</node>
+    <node x="4567.484821525029" y="87.40909090909213">it.polimi.ingsw.View.GUI.Application.BagContainerPane</node>
+    <node x="-652.6007090107396" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Info.ServerLoginInfo</node>
+    <node x="-504.3114933244651" y="3053.313719125336">it.polimi.ingsw.Network.Message.Info.Info</node>
+    <node x="5067.484821525029" y="193.40909090909213">it.polimi.ingsw.View.GUI.Application.StudentView</node>
+    <node x="29.09811328593969" y="-594.2499999999991">it.polimi.ingsw.GameModel.Characters.StrategyCharacter</node>
+    <node x="-1844.2737991646263" y="1243.1092749432023">it.polimi.ingsw.GameModel.Characters.CharacterFactory</node>
+    <node x="5313.484821525029" y="-1220.4999999999986">it.polimi.ingsw.View.GUI.Application.CloudContainerPane</node>
+    <node x="-1136.5250787586374" y="1243.1092749432023">it.polimi.ingsw.GameModel.PlayerConfig</node>
+    <node x="-476.6007090107396" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Info.PingInfo</node>
+    <node x="-1157.0326228616377" y="88.77587275356427">it.polimi.ingsw.GameModel.Board.Archipelago.IslandGroup</node>
+    <node x="2970.999999999999" y="2188.818181818183">it.polimi.ingsw.Utils.Enum.UserActionType</node>
+    <node x="-1458.180841383034" y="863.9425738483833">it.polimi.ingsw.GameModel.Board.ProfessorSet</node>
+    <node x="-511.6007090107396" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.EndTurnUserAction</node>
+    <node x="2338.499999999999" y="2392.909090909092">it.polimi.ingsw.Utils.CommandString</node>
+    <node x="-1486.153211013132" y="88.77587275356427">it.polimi.ingsw.GameModel.Board.Player.PlayerBoard</node>
+    <node x="-210.60070901073868" y="3456.3137191253363">it.polimi.ingsw.Network.Message.UserAction.UseCharacterUserAction</node>
+    <node x="-313.6007090107387" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.UseAbilityUserAction</node>
+    <node x="-1321.416040543936" y="-1044.999999999999">it.polimi.ingsw.GameModel.BoardElements.PawnContainer</node>
+    <node x="-365.09276468186727" y="-750.7499999999991">it.polimi.ingsw.GameModel.Characters.AbstractCharacter</node>
+    <node x="-1543.0950618661154" y="-1044.999999999999">it.polimi.ingsw.GameModel.BoardElements.BoardPiece</node>
+    <node x="-912.1721375821671" y="1280.1033587485256">it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyC2</node>
+    <node x="-365.09276468186727" y="-1044.999999999999">it.polimi.ingsw.GameModel.Characters.Character</node>
+    <node x="1823.9999999999993" y="2936.0909090909126">it.polimi.ingsw.Utils.Exceptions.HelpException</node>
+    <node x="-932.0410405439361" y="-1274.999999999999">it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwnerMutable</node>
+    <node x="-1104.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile</node>
+    <node x="2654.999999999999" y="2571.545454545457">it.polimi.ingsw.Utils.Enum.WizardType</node>
+    <node x="-1187.6007090107396" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Error.IllegalSelectionError</node>
+    <node x="-59.60070901073868" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.PlayAssistantUserAction</node>
+    <node x="-387.9862359029021" y="969.9425738483833">it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyStandard</node>
+    <node x="-1227.0582819232468" y="-662.2499999999991">it.polimi.ingsw.GameModel.BoardElements.StudentContainer</node>
+    <node x="2474.90909090909" y="2874.5000000000036">it.polimi.ingsw.App</node>
+    <node x="-1117.6007090107396" y="3456.3137191253363">it.polimi.ingsw.Network.Message.UserAction.TakeFromCloudUserAction</node>
+    <node x="-874.4160405439361" y="-739.7499999999991">it.polimi.ingsw.GameModel.Characters.StudentMoverCharacter</node>
+    <node x="-1835.2737991646263" y="-549.9999999999991">it.polimi.ingsw.GameModel.BoardElements.TowerContainer</node>
+    <node x="2051.999999999999" y="2177.818181818183">it.polimi.ingsw.Utils.Enum.GameMode</node>
+    <node x="-63.60070901073868" y="3237.3137191253363">it.polimi.ingsw.Network.Message.UserAction.UserAction</node>
+    <node x="-397.7914465586491" y="344.75000000000455">it.polimi.ingsw.GameModel.Board.Player.Wizard</node>
+    <node x="2001.4848215250274" y="-976.8181818181805">it.polimi.ingsw.View.GUI.GUI</node>
+    <node x="-1017.3752188146609" y="3053.313719125336">it.polimi.ingsw.Network.Message.Error.Error</node>
+    <node x="-600.5410405439361" y="-1473.499999999999">it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwner</node>
+    <node x="275.1099824860985" y="2172.5669658785837">it.polimi.ingsw.Controller.Controller</node>
+    <node x="4659.484821525029" y="-1220.4999999999986">it.polimi.ingsw.View.GUI.GUIApplication</node>
+    <node x="5121.984821525029" y="87.40909090909213">it.polimi.ingsw.View.GUI.Application.PawnView</node>
+    <node x="1804.9999999999993" y="2177.818181818183">it.polimi.ingsw.Utils.Enum.Command</node>
+    <node x="-1844.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.Player.TowerSpace</node>
+    <node x="2979.4848215250286" y="89.0454545454561">it.polimi.ingsw.View.GUI.Application.IslandTilePane</node>
+    <node x="3243.999999999999" y="2189.818181818183">it.polimi.ingsw.View.GUI.Application.Effects</node>
+    <node x="-1006.6007090107396" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.MoveMotherNatureUserAction</node>
+    <node x="-732.6007090107396" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.TowerColorUserAction</node>
+    <node x="267.43956290433925" y="1124.2500000000045">it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC6</node>
+    <node x="3522.999999999999" y="2526.909090909092">it.polimi.ingsw.Utils.Enum.Color</node>
+    <node x="-136.56043709565984" y="1112.7500000000045">it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC8</node>
+    <node x="-898.5410405439361" y="-1484.499999999999">it.polimi.ingsw.GameModel.BoardElements.Student</node>
+    <node x="2391.4848215250277" y="-976.8181818181805">it.polimi.ingsw.View.GUI.GUIController</node>
+    <node x="-1020.0878836014417" y="863.9425738483833">it.polimi.ingsw.GameModel.Board.CoinBag</node>
+    <node x="-136.56043709565984" y="1280.6033587485258">it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC9</node>
+    <node x="-1649.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.CloudTile</node>
+    <node x="678.8372552133715" y="2177.7487840604026">it.polimi.ingsw.Controller.TurnController</node>
+    <node x="-793.6007090107396" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Error.LoginError</node>
+    <node x="2795.4848215250286" y="-1220.6470588235281">it.polimi.ingsw.View.GUI.Application.BoardPane</node>
+    <node x="-1440.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.Player.Entrance</node>
+    <node x="1611.4848215250274" y="-976.8181818181805">it.polimi.ingsw.View.CLI.CLI</node>
+    <node x="1804.9999999999993" y="2887.0000000000036">it.polimi.ingsw.Utils.Exceptions.GameOverException</node>
+    <node x="1804.9999999999993" y="2639.545454545457">it.polimi.ingsw.Utils.Enum.Phase</node>
+    <node x="-329.6721375821671" y="2375.3851476967648">it.polimi.ingsw.Network.Server.SocketConnection</node>
+    <node x="-828.9120347101434" y="88.77587275356427">it.polimi.ingsw.GameModel.Board.Archipelago.Archipelago</node>
+    <node x="-360.7914465586491" y="515.3406321008104">it.polimi.ingsw.GameModel.Board.Player.AssistantCard</node>
+    <node x="-343.9160405439361" y="-323.4999999999991">it.polimi.ingsw.GameModel.Characters.NoEntryCharacter</node>
+    <node x="-280.24626857508156" y="-1274.999999999999">it.polimi.ingsw.GameModel.BoardElements.Tower</node>
+    <node x="2029.4999999999993" y="2936.0909090909126">it.polimi.ingsw.Utils.Exceptions.FullTableException</node>
+    <node x="-633.6007090107396" y="3456.9728100344264">it.polimi.ingsw.Network.Message.UserAction.LogoutUserAction</node>
+    <node x="4784.484821525029" y="87.40909090909213">it.polimi.ingsw.View.GUI.Application.Log</node>
+    <node x="93.93956290433925" y="515.3406321008104">it.polimi.ingsw.GameModel.Characters.CharacterManager</node>
+    <node x="4278.484821525029" y="454.1363636363651">it.polimi.ingsw.View.GUI.Application.StudentContainerPane</node>
+    <node x="3881.4848215250286" y="376.0454545454561">it.polimi.ingsw.View.GUI.Application.CloudPane</node>
+    <node x="-1050.7370192217568" y="-1044.999999999999">it.polimi.ingsw.GameModel.BoardElements.PlaceAndRemoveStudent</node>
+    <node x="1806.4848215250277" y="-1413.6363636363621">it.polimi.ingsw.View.UI</node>
+    <node x="-823.2737991646263" y="-323.4999999999991">it.polimi.ingsw.GameModel.Board.Player.Table</node>
+    <node x="-349.6007090107387" y="3237.3137191253363">it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo</node>
+    <node x="-818.9949258198494" y="863.9425738483833">it.polimi.ingsw.GameModel.Board.Archipelago.MotherNature</node>
+    <node x="-702.1721375821671" y="2375.3851476967648">it.polimi.ingsw.Network.Server.LobbyServer</node>
+    <node x="2024.9999999999993" y="2887.0000000000036">it.polimi.ingsw.Utils.Exceptions.LastRoundException</node>
+    <node x="-823.9862359029021" y="969.9425738483833">it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyC4</node>
+    <node x="3397.4848215250286" y="89.0454545454561">it.polimi.ingsw.View.GUI.Application.CharacterPane</node>
+    <node x="2482.9848215250277" y="-1413.6363636363621">it.polimi.ingsw.View.GUI.ObserverGUI</node>
+    <node x="-1089.6721375821671" y="2375.3851476967648">it.polimi.ingsw.Network.Server.MatchServer</node>
+    <node x="-1360.6007090107396" y="3629.1319009435183">it.polimi.ingsw.Network.Message.UserAction.PingUserAction</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.PlayAssistantUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwner" target="it.polimi.ingsw.GameModel.BoardElements.BoardPiece" relationship="GENERALIZATION">
+      <point x="-49.792431764185494" y="23.83029063835761" />
+      <point x="-549.8334723081216" y="-1378.999999999999" />
+      <point x="-1475.0948631311658" y="-1378.999999999999" />
+      <point x="1.987349496630486E-4" y="-50.49957142857147" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Update.Update" target="it.polimi.ingsw.Network.Message.Message" relationship="GENERALIZATION">
+      <point x="0.0" y="-94.5" />
+      <point x="-678.6007090107396" y="2973.313719125336" />
+      <point x="44.89929098926132" y="2973.313719125336" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.WizardUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-1223.6007090107396" y="3392.8137191253363" />
+      <point x="44.89929098926132" y="3392.8137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" target="it.polimi.ingsw.GameModel.BoardElements.PlaceAndRemoveStudent" relationship="REALIZATION">
+      <point x="149.0003407467857" y="0.0" />
+      <point x="-900.8529411764612" y="-578.7499999999991" />
+      <point x="-900.8529411764612" y="-757.2499999999991" />
+      <point x="-901.7371612335919" y="-757.2499999999991" />
+      <point x="-1.420118351234123E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwnerMutable" target="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwner" relationship="GENERALIZATION">
+      <point x="128.00009936747483" y="0.0" />
+      <point x="-466.8384940129454" y="-1246.999999999999" />
+      <point x="-466.8384940129454" y="-1378.999999999999" />
+      <point x="-467.7867537319262" y="-1378.999999999999" />
+      <point x="32.25428681200992" y="23.83029063835761" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.TakeFromCloudUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-1003.6007090107396" y="3392.8137191253363" />
+      <point x="44.89929098926132" y="3392.8137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Server.LobbyServer" target="it.polimi.ingsw.Network.Server.Server" relationship="REALIZATION">
+      <point x="0.0" y="-216.0" />
+      <point x="-532.1721375821671" y="2345.4722786798548" />
+      <point x="-718.4221375821671" y="2345.4722786798548" />
+      <point x="16.25" y="61.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.CLI.CLI" target="it.polimi.ingsw.View.UI" relationship="REALIZATION">
+      <point x="0.0" y="-865.0" />
+      <point x="1796.4848215250274" y="-902.0454545454531" />
+      <point x="1796.4848215250277" y="-902.0454545454531" />
+      <point x="1796.4848215250277" y="-1023.6363636363623" />
+      <point x="1991.4848215250277" y="-1023.6363636363623" />
+      <point x="0.0" y="182.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.PawnContainer" target="it.polimi.ingsw.GameModel.BoardElements.BoardPiece" relationship="DEPENDENCY">
+      <point x="-92.5" y="0.0" />
+      <point x="-1475.0950618661154" y="-917.4999999999991" />
+      <point x="0.0" y="50.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Info.PingInfo" target="it.polimi.ingsw.Network.Message.Info.Info" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-437.811493324466" y="3237.3137191253363" />
+      <point x="-437.811493324466" y="3240.3137191253363" />
+      <point x="-438.1007090107396" y="3240.3137191253363" />
+      <point x="-0.28921568627447414" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyC2" target="it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategy" relationship="REALIZATION">
+      <point x="-7.4998316670080385" y="-51.00000000000364" />
+      <point x="-742.1719692491752" y="1254.103358748522" />
+      <point x="-534.1219692491759" y="1254.103358748522" />
+      <point x="13.050168332991234" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Error.LoginError" target="it.polimi.ingsw.Network.Message.Error.Error" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-733.1007090107396" y="3219.8137191253363" />
+      <point x="-933.3757090107392" y="3219.8137191253363" />
+      <point x="-4.901960783172399E-4" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Characters.StudentMoverCharacter" target="it.polimi.ingsw.GameModel.BoardElements.PlaceAndRemoveStudent" relationship="REALIZATION">
+      <point x="-176.99990063252517" y="0.0" />
+      <point x="-900.8529411764612" y="-578.7499999999991" />
+      <point x="-900.8529411764612" y="-584.7083191561746" />
+      <point x="-901.7371612335919" y="-584.7083191561746" />
+      <point x="-1.420118351234123E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyStandard" target="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy" relationship="REALIZATION">
+      <point x="4.786778190464247E-4" y="-39.00000000000364" />
+      <point x="459.4400415821583" y="1247.4292756671496" />
+      <point x="257.4400415821583" y="1247.4292756671496" />
+      <point x="4.786778190464247E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Characters.NoEntryCharacter" target="it.polimi.ingsw.GameModel.Characters.AbstractCharacter" relationship="GENERALIZATION">
+      <point x="9.93674748315243E-5" y="-84.0" />
+      <point x="-198.41594117646127" y="-618.7626955775834" />
+      <point x="-188.09276468186727" y="-618.7626955775834" />
+      <point x="-188.09276468186727" y="-715.9999999999991" />
+      <point x="-188.09294117646095" y="-715.9999999999991" />
+      <point x="-1.7649459368840326E-4" y="172.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Server.MatchServer" target="it.polimi.ingsw.Network.Server.Server" relationship="REALIZATION">
+      <point x="-3.75" y="-238.0" />
+      <point x="-915.9221375821671" y="2345.4722786798548" />
+      <point x="-718.4221375821671" y="2345.4722786798548" />
+      <point x="16.25" y="61.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Player.Table" target="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-84.0" />
+      <point x="-716.7739411764614" y="-369.9999999999991" />
+      <point x="-1078.057941176461" y="-369.9999999999991" />
+      <point x="3.407467856959556E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" target="it.polimi.ingsw.GameModel.BoardElements.PawnContainer" relationship="GENERALIZATION">
+      <point x="-148.9996592532143" y="0.0" />
+      <point x="-1250.3529411764612" y="-578.7499999999991" />
+      <point x="-21.436900632525067" y="127.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.Professor" target="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwnerMutable" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-28.0" />
+      <point x="-610.5581399114126" y="-1131.999999999999" />
+      <point x="-804.0409411764613" y="-1131.999999999999" />
+      <point x="9.93674748315243E-5" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.UserAction" target="it.polimi.ingsw.Network.Message.Message" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.CloudTile" target="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-62.0" />
+      <point x="-1554.7739411764614" y="-369.9999999999991" />
+      <point x="-1078.057941176461" y="-369.9999999999991" />
+      <point x="3.407467856959556E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.IslandTile" target="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-128.0" />
+      <point x="-973.7739411764614" y="-369.9999999999991" />
+      <point x="-1078.057941176461" y="-369.9999999999991" />
+      <point x="3.407467856959556E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Error.Error" target="it.polimi.ingsw.Network.Message.Message" relationship="GENERALIZATION">
+      <point x="-4.901960783172399E-4" y="-39.5" />
+      <point x="-933.3757090107392" y="2973.313719125336" />
+      <point x="44.89929098926132" y="2973.313719125336" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.TowerContainer" target="it.polimi.ingsw.GameModel.BoardElements.PawnContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-15.5" />
+      <point x="-1756.7739411764614" y="-578.7499999999991" />
+      <point x="-1250.3529411764612" y="-578.7499999999991" />
+      <point x="-21.436900632525067" y="127.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.TowerColorUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-632.1007090107396" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.GUIApplication" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.545454544313543E-4" y="-315.00036363636355" />
+      <point x="4976.485276070483" y="-1284.1363636363621" />
+      <point x="4247.5302760704835" y="-1284.1363636363621" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.ArchipelagoPane" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.545454544313543E-4" y="-392.00036363636355" />
+      <point x="4377.985276070483" y="-1284.1363636363621" />
+      <point x="4247.5302760704835" y="-1284.1363636363621" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Player.Entrance" target="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-72.5" />
+      <point x="-1282.2739411764614" y="-369.9999999999991" />
+      <point x="-1078.057941176461" y="-369.9999999999991" />
+      <point x="3.407467856959556E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC8" target="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy" relationship="REALIZATION">
+      <point x="4.786778190464247E-4" y="-50.50000000000364" />
+      <point x="55.44004158215921" y="1088.750000000001" />
+      <point x="257.4400415821583" y="1088.750000000001" />
+      <point x="4.786778190464247E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.LoginUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-1107.1007090107396" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Player.TowerSpace" target="it.polimi.ingsw.GameModel.BoardElements.TowerContainer" relationship="GENERALIZATION">
+      <point x="0.0" y="-72.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.GameSettingsUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-39.0" />
+      <point x="-761.6007090107396" y="3392.3137191253363" />
+      <point x="44.89929098926132" y="3392.3137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC9" target="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy" relationship="REALIZATION">
+      <point x="4.786778190464247E-4" y="-50.50000000000364" />
+      <point x="55.44004158215921" y="1247.1766793742652" />
+      <point x="257.4400415821583" y="1247.1766793742652" />
+      <point x="4.786778190464247E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategyC6" target="it.polimi.ingsw.GameModel.Board.Archipelago.ResolveStrategy.ResolveStrategy" relationship="REALIZATION">
+      <point x="4.786778190464247E-4" y="-39.00000000000364" />
+      <point x="459.4400415821583" y="1088.750000000001" />
+      <point x="257.4400415821583" y="1088.750000000001" />
+      <point x="4.786778190464247E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyStandard" target="it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategy" relationship="REALIZATION">
+      <point x="1.683329919615062E-4" y="-39.00000000000364" />
+      <point x="-179.98606756991012" y="945.9425738483797" />
+      <point x="-397.9860675699101" y="945.9425738483797" />
+      <point x="1.683329919615062E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.PlayerPane" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.545454544313543E-4" y="-337.00036363636355" />
+      <point x="3900.485276070483" y="-1284.1363636363621" />
+      <point x="4247.5302760704835" y="-1284.1363636363621" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Error.IllegalActionError" target="it.polimi.ingsw.Network.Message.Error.Error" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-933.3752188146609" y="3237.3137191253363" />
+      <point x="-933.3752188146609" y="3132.313719125336" />
+      <point x="-4.901960783172399E-4" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo" target="it.polimi.ingsw.Network.Message.Info.Info" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-253.60070901073868" y="3219.8137191253363" />
+      <point x="-438.1007090107396" y="3219.8137191253363" />
+      <point x="-0.28921568627447414" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Bag" target="it.polimi.ingsw.GameModel.BoardElements.StudentContainer" relationship="GENERALIZATION">
+      <point x="-1.420118351234123E-4" y="-61.0" />
+      <point x="-498.27394117646145" y="-369.9999999999991" />
+      <point x="-1078.057941176461" y="-369.9999999999991" />
+      <point x="3.407467856959556E-4" y="83.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.GUIController" target="it.polimi.ingsw.View.GUI.ObserverGUI" relationship="REALIZATION">
+      <point x="0.0" y="-1019.0" />
+      <point x="2583.4848215250277" y="-951.0681818181804" />
+      <point x="2583.4848215250277" y="-951.0681818181804" />
+      <point x="0.0" y="204.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.GUI" target="it.polimi.ingsw.View.UI" relationship="REALIZATION">
+      <point x="0.0" y="-337.0" />
+      <point x="2186.4848215250277" y="-1023.6363636363623" />
+      <point x="1991.4848215250277" y="-1023.6363636363623" />
+      <point x="0.0" y="182.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategyC4" target="it.polimi.ingsw.GameModel.Board.Archipelago.MoveMotherNatureStrategy.MoveMotherNatureStrategy" relationship="REALIZATION">
+      <point x="1.683329919615062E-4" y="-39.00000000000364" />
+      <point x="-615.9860675699101" y="945.9425738483797" />
+      <point x="-397.9860675699101" y="945.9425738483797" />
+      <point x="1.683329919615062E-4" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.MoveStudentUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-39.0" />
+      <point x="-336.6007090107387" y="3392.8137191253363" />
+      <point x="44.89929098926132" y="3392.8137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Info.ServerLoginInfo" target="it.polimi.ingsw.Network.Message.Info.Info" relationship="GENERALIZATION">
+      <point x="0.0" y="-50.5" />
+      <point x="-574.6007090107396" y="3219.8137191253363" />
+      <point x="-438.1007090107396" y="3219.8137191253363" />
+      <point x="-0.28921568627447414" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.BoardPane" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.545454544313543E-4" y="-491.00036363636355" />
+      <point x="2995.985276070483" y="-1282.3179999999986" />
+      <point x="4247.5302760704835" y="-1282.3179999999986" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Error.IllegalSelectionError" target="it.polimi.ingsw.Network.Message.Error.Error" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-1094.6007090107396" y="3219.8137191253363" />
+      <point x="-933.3757090107392" y="3219.8137191253363" />
+      <point x="-4.901960783172399E-4" y="39.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.CloudContainerPane" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.5454545397660695E-4" y="-117.00036363636355" />
+      <point x="5480.4852760704825" y="-1284.1363636363621" />
+      <point x="4247.5302760704835" y="-1284.1363636363621" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.Tower" target="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwner" relationship="GENERALIZATION">
+      <point x="-83.80744844939181" y="2.9748957551535113" />
+      <point x="-278.05371702447337" y="-1246.999999999999" />
+      <point x="-466.7611697497232" y="-1246.999999999999" />
+      <point x="33.27987079421291" y="19.727954709547816" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.Student" target="it.polimi.ingsw.GameModel.BoardElements.BoardPiece" relationship="GENERALIZATION">
+      <point x="9.93674748315243E-5" y="39.0" />
+      <point x="-759.5409411764613" y="-1378.999999999999" />
+      <point x="-1475.0948631311658" y="-1378.999999999999" />
+      <point x="1.987349496630486E-4" y="-50.49957142857147" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.BoardElements.PawnContainer" target="it.polimi.ingsw.GameModel.BoardElements.BoardPieceWithOwnerMutable" relationship="GENERALIZATION">
+      <point x="9.93674748315243E-5" y="-127.5" />
+      <point x="-1228.9159411764613" y="-1131.999999999999" />
+      <point x="-804.0409411764613" y="-1131.999999999999" />
+      <point x="9.93674748315243E-5" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.CharContainerPane" target="it.polimi.ingsw.View.GUI.ObservableGUI" relationship="REALIZATION">
+      <point x="4.545454544313543E-4" y="-194.00036363636355" />
+      <point x="3450.485276070483" y="-1282.3179999999986" />
+      <point x="4247.5302760704835" y="-1282.3179999999986" />
+      <point x="4.545454544313543E-4" y="27.999636363636455" />
+    </edge>
+    <edge source="it.polimi.ingsw.View.GUI.Application.StudentView" target="it.polimi.ingsw.View.GUI.Application.PawnView" relationship="GENERALIZATION">
+      <point x="0.0" y="-73.0" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Characters.StrategyCharacter" target="it.polimi.ingsw.GameModel.Characters.AbstractCharacter" relationship="GENERALIZATION">
+      <point x="2.5000993674748315" y="-15.5" />
+      <point x="116.59821265341452" y="-578.7499999999991" />
+      <point x="-188.09294117646095" y="-578.7499999999991" />
+      <point x="-1.7649459368840326E-4" y="172.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.Info.Info" target="it.polimi.ingsw.Network.Message.Message" relationship="GENERALIZATION">
+      <point x="-2.1568627380474936E-4" y="-39.5" />
+      <point x="-437.8117090107389" y="2973.313719125336" />
+      <point x="44.89929098926132" y="2973.313719125336" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Characters.StudentMoverCharacter" target="it.polimi.ingsw.GameModel.Characters.AbstractCharacter" relationship="GENERALIZATION">
+      <point x="177.00009936747483" y="0.0" />
+      <point x="-188.09294117646095" y="-578.7499999999991" />
+      <point x="-1.7649459368840326E-4" y="172.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.GameExpert" target="it.polimi.ingsw.GameModel.Game" relationship="GENERALIZATION">
+      <point x="0.0" y="-260.0" />
+      <point x="257.43956290433925" y="230.75000000000455" />
+      <point x="669.777443181958" y="230.75000000000455" />
+      <point x="-33.69444730858777" y="-87.72469133976017" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.PingUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-1284.1007090107396" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.LogoutUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-548.1007090107396" y="3392.8137191253363" />
+      <point x="44.89929098926132" y="3392.8137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.MoveMotherNatureUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-879.6007090107396" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategyStandard" target="it.polimi.ingsw.GameModel.Board.CheckAndMoveProfessorStrategy.CheckAndMoveProfessorStrategy" relationship="REALIZATION">
+      <point x="1.683329919615062E-4" y="-28.000000000003638" />
+      <point x="-359.67196924917516" y="1254.103358748522" />
+      <point x="-534.1219692491759" y="1254.103358748522" />
+      <point x="13.050168332991234" y="27.999999999996362" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.EndTurnUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-15.5" />
+      <point x="-422.6007090107396" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.UseCharacterUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-105.10070901073868" y="3392.8137191253363" />
+      <point x="44.89929098926132" y="3392.8137191253363" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Characters.AbstractCharacter" target="it.polimi.ingsw.GameModel.Characters.Character" relationship="REALIZATION">
+      <point x="0.0" y="-172.0" />
+      <point x="0.0" y="105.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.Network.Message.UserAction.UseAbilityUserAction" target="it.polimi.ingsw.Network.Message.UserAction.UserAction" relationship="GENERALIZATION">
+      <point x="0.0" y="-28.0" />
+      <point x="-196.60070901073868" y="3554.6319009435183" />
+      <point x="44.89929098926132" y="3554.6319009435183" />
+      <point x="0.0" y="28.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.GameModel.Game" target="it.polimi.ingsw.GameModel.ObservableByClient" relationship="REALIZATION">
+      <point x="0.0" y="-832.0" />
+      <point x="0.0" y="512.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.55" showDependencies="false" x="720.6620594906076" y="2716.9077534411745" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
