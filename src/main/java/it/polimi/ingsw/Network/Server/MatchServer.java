@@ -166,7 +166,11 @@ public class MatchServer implements Server, Runnable {
     public synchronized void parseAction(SocketConnection socketConnection, UserAction userAction) {
         if (userAction.getUserActionType() == UserActionType.LOGIN) {
             handleLogin(socketConnection, (LoginUserAction) userAction);
-        } else {
+        }
+        else  if(userAction.getUserActionType() == UserActionType.LOBBY_DISCONNECT){
+            lobbyServer.parseAction(socketConnection, userAction);
+        }
+        else {
             controller.receiveUserAction(userAction);
         }
     }

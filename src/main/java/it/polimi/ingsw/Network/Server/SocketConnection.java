@@ -33,6 +33,7 @@ public class SocketConnection implements Runnable {
     private String nickname;
 
     private boolean active = true;
+    private boolean readyToDisconnect = false;
     private boolean loggedIn;
 
     public SocketConnection(Socket clientSocket, Server server) {
@@ -117,17 +118,27 @@ public class SocketConnection implements Runnable {
     }
 
     /**
+     * Prepares the connection to handle the disconnection of a client.
+     * This means stopping any thread from writing to the socket since it will shortly be closed.
+     */
+    public synchronized void readyDisconnect(){
+        readyToDisconnect = true;
+    }
+
+    /**
      * Method for receiving an action from the client socket, that forwards it to the server that
      * owns this connection thread.
      */
-    public void receiveAction() {
+    private void receiveAction() {
         UserAction action;
         try {
             Object message = inputStream.readObject();
             action = (UserAction) message;
             serverAction.execute(()->{
-                if(action instanceof PingUserAction)
-                    sendMessage(new PingInfo());
+                if(action instanceof PingUserAction){
+                    if(isActive())
+                        sendMessage(new PingInfo());
+                }
                 else if(action instanceof LogoutUserAction)
                     handleLogout();
                 else{
@@ -152,13 +163,16 @@ public class SocketConnection implements Runnable {
      * @param message the Message object to send
      */
     public synchronized void sendMessage(Message message) {
-        try {
-            outputStream.writeObject(message);
-            outputStream.flush();
-            outputStream.reset();
-        } catch (Exception e) { // what exceptions are thrown here?
-            e.printStackTrace();
-            handleClosing();
+        if(isActive() && ! readyToDisconnect){
+            try {
+                outputStream.writeObject(message);
+                outputStream.flush();
+                outputStream.reset();
+            } catch (Exception e) { // what exceptions are thrown here?
+                e.printStackTrace();
+                System.out.println("Unable to write :" + message.getSender() + " " + message.getClass());
+                handleClosing();
+            }
         }
     }
 }

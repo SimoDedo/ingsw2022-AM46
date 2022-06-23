@@ -150,9 +150,10 @@ public class Client {
     }
 
     /**
-     * Disconnects user from server.
+     * Disconnects user from lobby server.
      */
     private void disconnectFromLobby(){
+        sendUserAction(new LobbyDisconnectUserAction(nickname));
         try {
             socket.close();
         } catch (IOException e) {
@@ -199,6 +200,7 @@ public class Client {
             error = ! pingExecutor.awaitTermination(50, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             error = true;
+            fatalError("Error occurred while shutting down ping: "+ e.getLocalizedMessage());
         }
         if (error){
             fatalError("Error occurred while shutting down ping.");
@@ -305,6 +307,12 @@ public class Client {
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
 
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
+
         List<Command> toDisable = new ArrayList<>();
         List<Command> toEnable = new ArrayList<>();
         switch (update.getNextUserAction()){
@@ -379,11 +387,7 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
-            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
-                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
-                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
-        }
+
     }
 
     /**
@@ -395,6 +399,12 @@ public class Client {
     private void displayInfo(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
+
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
         //Info will be a different colored text in CLI or a pop-up in GUI, parallel to asking for action.
         //Allows information about other players action while user is selecting (useful for parallel login)
         List<Command> toDisable = new ArrayList<>();
@@ -444,12 +454,6 @@ public class Client {
                 UI.displayWinners(update.getGame().getWinner(), winners, losers);
                 logoutFromServer();
             }
-        }
-
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
-            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
-                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
-                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
         }
     }
 

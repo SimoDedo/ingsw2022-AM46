@@ -91,7 +91,7 @@ public class GUIController implements ObserverGUI {
             stage.getIcons().add(new Image("/general/icon.png"));
             errorDialog.setTitle(isGameEnding ?"Fatal error" : "Error");
             errorDialog.setHeaderText(isGameEnding ? "An error has occurred!" : "Wrong action!");
-            errorDialog.setContentText(errorDescription +(isGameEnding ? "" : ". Please choose another move!"));
+            errorDialog.setContentText(errorDescription +(isGameEnding ? "" : " Please choose another move!"));
             errorDialog.showAndWait();
             if(isGameEnding)
                 endGame();
