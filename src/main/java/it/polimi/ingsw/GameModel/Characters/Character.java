@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
@@ -15,10 +16,12 @@ public interface Character {
      * Precedes a character's ability activation. The character sets its activator as its owner,
      * and returns a list of parameters it needs in order for its ability to activate. This list
      * will be picked up by the controller.
+     * It also removes the right amount of coins from the player and returns the right amount to the coin bag.
      * @param owner the player who activated this character
+     * @param bag The coin bag to which coins used will be returned
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    List<RequestParameter> useCharacter(Player owner) throws IllegalStateException;
+    List<RequestParameter> useCharacter(Player owner, CoinBag bag) throws IllegalStateException;
 
     /**
      * Method that executes the character's ability. It passes the list of parameters (in the form

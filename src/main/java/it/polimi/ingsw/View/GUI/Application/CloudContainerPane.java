@@ -98,19 +98,22 @@ public class CloudContainerPane extends HBox implements ObservableGUI {
     }
 
     /**
-     * Enables the selection of any cloud in this container.
+     * Enables the selection of any cloud that has students in this container.
      */
     public void enableSelectCloud() {
         for (Integer cloudID : cloudsIDs) {
             CloudPane cloudPane = (CloudPane) this.lookup("#cloudPane" + cloudID);
-            cloudPane.setEffect(Effects.enabledCloudEffect);
-            cloudPane.setOnMouseEntered(e -> cloudPane.setEffect(Effects.hoveringCloudEffect));
-            cloudPane.setOnMouseExited(e -> cloudPane.setEffect(Effects.enabledCloudEffect));
-            int finalCloudID = cloudID;
-            cloudPane.setOnMouseClicked(event -> {
-                setCloudChosen(finalCloudID);
-                observer.notifyCloud();
-            });
+            StudentContainerPane studentContainerPane = (StudentContainerPane) cloudPane.lookup("#cloudStudentsPane" + cloudID);
+            if(! studentContainerPane.getChildren().isEmpty()){
+                cloudPane.setEffect(Effects.enabledCloudEffect);
+                cloudPane.setOnMouseEntered(e -> cloudPane.setEffect(Effects.hoveringCloudEffect));
+                cloudPane.setOnMouseExited(e -> cloudPane.setEffect(Effects.enabledCloudEffect));
+                int finalCloudID = cloudID;
+                cloudPane.setOnMouseClicked(event -> {
+                    setCloudChosen(finalCloudID);
+                    observer.notifyCloud();
+                });
+            }
         }
     }
 

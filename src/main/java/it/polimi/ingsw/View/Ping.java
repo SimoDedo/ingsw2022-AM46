@@ -36,7 +36,7 @@ public class Ping implements Runnable{
             client.sendUserAction(new PingUserAction(""));
             sent();
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 isActive = false;
             }

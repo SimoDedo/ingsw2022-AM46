@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
@@ -40,12 +41,14 @@ public abstract class AbstractCharacter implements Character, Serializable {
      * If this is the first time the character is being used in the game, the cost is increased by
      * one. If the character requires a dining room student, it checks if at least one is present in the player's
      * dining room, otherwise throws an exception.
+     * It then removes the right amount of coins from the player and returns the right amount to the coin bag.
      * Finally, the method returns a list of parameters it needs in order for its ability to
      * activate, which will be picked up by the controller.
      * @param owner the player who activated this character
+     * @param bag The coin bag to which coins used will be returned
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player owner) throws  IllegalStateException, IllegalArgumentException{
+    public List<RequestParameter> useCharacter(Player owner, CoinBag bag) throws  IllegalStateException, IllegalArgumentException{
         if(requestParameters.contains(RequestParameter.STUDENT_DINING_ROOM)){
             int emptyTables = 0;
             for(Color color : Color.values()){
@@ -56,9 +59,11 @@ public abstract class AbstractCharacter implements Character, Serializable {
                 throw new IllegalStateException("This character requires at least one student to be in your Dining Room.");
         }
         owner.takeCoins(cost);
+        bag.addCoins(cost);
 
         this.owner = owner;
         if (isFirstUse) {
+            bag.removeCoin();
             isFirstUse = false;
             cost++;
         }

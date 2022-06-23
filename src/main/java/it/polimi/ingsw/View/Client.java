@@ -468,7 +468,7 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            fatalError("Unable to write to server.");
+            fatalError("Unable to write to server. " + userAction.getUserActionType());
         }
     }
 

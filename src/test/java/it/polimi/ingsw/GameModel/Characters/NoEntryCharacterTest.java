@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.Characters.CharacterFactory;
 import it.polimi.ingsw.GameModel.Characters.NoEntryCharacter;
@@ -54,13 +55,14 @@ class NoEntryCharacterTest {
     @Test
     void resetUseState() {
         CharacterFactory factory = new CharacterFactory();
+        CoinBag coinBag = new CoinBag(20);
         NoEntryCharacter char5 = (NoEntryCharacter) factory.create(5, new Bag());
         char5.removeNoEntryTile();
         Player test = new Player();
         test.awardCoin();
         test.awardCoin();
         test.awardCoin();
-        char5.useCharacter(test);
+        char5.useCharacter(test, coinBag);
         char5.resetUseState();
         assertEquals(char5.getNoEntryTiles(), 3); //no entry tiles unchanged
         assertNull(char5.getOwner());

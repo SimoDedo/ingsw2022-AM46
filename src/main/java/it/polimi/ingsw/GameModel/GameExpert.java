@@ -119,7 +119,7 @@ public class GameExpert extends Game {
      * @return a list of RequestParameters that will be needed by the game controller
      */
     public List<RequestParameter> useCharacter(String nickname, int ID) throws  IllegalStateException, IllegalArgumentException{
-        return characterManager.useCharacter(players.getByNickname(nickname), ID);
+        return characterManager.useCharacter(players.getByNickname(nickname), coinBag, ID);
     }
 
     /**
