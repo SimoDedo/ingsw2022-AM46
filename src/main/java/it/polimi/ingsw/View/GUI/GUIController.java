@@ -7,6 +7,7 @@ import it.polimi.ingsw.View.GUI.Application.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
@@ -1040,17 +1041,23 @@ public class GUIController implements ObserverGUI {
      */
     private void endGame(){
         GUIApplication.runLaterExecutor.execute(() -> {
-            Alert endGameDialogue = new Alert(Alert.AlertType.INFORMATION);
+            Alert endGameDialogue = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Do you want to play another match or close the game? Press OK to go back to the login screen, or Cancel to quit the game.",
+                    ButtonType.OK, ButtonType.CANCEL);
             Stage stage = (Stage) endGameDialogue.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("/general/icon.png"));
             endGameDialogue.setTitle("Game ended");
             endGameDialogue.setHeaderText("The game has ended!");
-            endGameDialogue.setContentText("You will now be redirected to the login screen.");
-            endGameDialogue.showAndWait();
-            guiApplication.createLoginScene();
-            guiApplication.createGameSetupScene();
-            guiApplication.createMainScene();
-            gui.reset();
+            ButtonType result = endGameDialogue.showAndWait().orElse(ButtonType.OK);
+            if (result.equals(ButtonType.OK)) {
+                guiApplication.createLoginScene();
+                guiApplication.createGameSetupScene();
+                guiApplication.createMainScene();
+                gui.reset();
+            } else {
+                Platform.exit();
+                notifyClose();
+            }
         });
     }
 
