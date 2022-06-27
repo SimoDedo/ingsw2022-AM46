@@ -114,13 +114,13 @@ public class LobbyServer implements Server {
         }
         else if(userAction.getUserActionType() == UserActionType.LOBBY_DISCONNECT){
             if(connections.contains(socketConnection)){
-                System.out.println("\"" + userAction.getSender() + "\" (" + socketConnection.getInetAddress() + ") disconnected from lobby.");
+                System.out.println("\"" + userAction.getSender() + "\" (" + socketConnection.getInetAddress() + ") disconnected from lobby, now awaited in match server." );
                 socketConnection.close();
                 connections.remove(socketConnection);
             }
         }
         else {
-            socketConnection.sendMessage(new LoginError("Sending user action to a lobby server; log in first!"));
+            socketConnection.sendMessage(new LoginError("Sending game user action to a lobby server; log in first!"));
         }
     }
 

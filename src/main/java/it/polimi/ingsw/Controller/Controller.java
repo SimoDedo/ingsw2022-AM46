@@ -365,7 +365,7 @@ public class Controller {
      */
     private void startGame(){
         if (server == null) System.out.println("Starting game");
-        else System.out.println("Starting match on port " + server.getPort());
+        else System.out.println("Starting match on port " + server.getPort() + ".");
         turnController.startGame();
         gameStarted = true;
 

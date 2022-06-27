@@ -1008,7 +1008,12 @@ public class GUIController implements ObserverGUI {
     public void displayWinners(TowerColor winner, List<String> winners, List<String> losers){
         String title;
         StringBuilder toPrint = new StringBuilder();
-        if(winners.contains(nickname)){
+        if(winner == TowerColor.NEUTRAL){
+            title = "Tie!";
+            toPrint.append("The game ended on a draw! There are no winners nor losers, just the feeling that you just " +
+                    "wasted an hour playing this game.");
+        }
+        else if(winners.contains(nickname)){
             title = "Winner!";
             toPrint.append("CONGRATULATIONS ");
             for(String player : winners){

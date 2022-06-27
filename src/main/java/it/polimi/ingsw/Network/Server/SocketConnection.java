@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network.Server;
 
+import it.polimi.ingsw.Network.Message.Error.DisconnectionError;
 import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
 import it.polimi.ingsw.Network.Message.Info.PingInfo;
 import it.polimi.ingsw.Network.Message.Message;
@@ -92,11 +93,19 @@ public class SocketConnection implements Runnable {
         server.handleLogout(nickname);
         loggedIn = false;
         sendMessage(new LogoutSuccessfulInfo());
+        setActive(false);
     }
 
-    private void handleClosing(){
-        if(server instanceof MatchServer && loggedIn)
+    /**
+     * Handles the disconnection of the user from this connection socket.
+     */
+    private void handleDisconnection(){
+        if(server instanceof MatchServer && loggedIn){
+            System.err.println("\"" + nickname + "\" (" + this.getInetAddress() +") unexpectedly disconnected.");
+            close();
+            ((MatchServer) server).sendAll(new DisconnectionError(nickname + " disconnected!"));
             closeMatch();
+        }
         else
             close();
     }
@@ -153,7 +162,8 @@ public class SocketConnection implements Runnable {
             });
         } catch (IOException | ClassNotFoundException e) {
             //e.printStackTrace();
-            handleClosing();
+            if(isActive())
+                handleDisconnection();
         }
     }
 
@@ -171,7 +181,7 @@ public class SocketConnection implements Runnable {
             } catch (Exception e) { // what exceptions are thrown here?
                 e.printStackTrace();
                 System.out.println("Unable to write :" + message.getSender() + " " + message.getClass());
-                handleClosing();
+                handleDisconnection();
             }
         }
     }

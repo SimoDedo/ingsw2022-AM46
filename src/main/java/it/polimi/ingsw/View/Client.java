@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Network.Message.Error.DisconnectionError;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
 import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
@@ -262,6 +263,9 @@ public class Client {
             disconnectFromLobby();
             connectToMatchServer(serverIP, ((ServerLoginInfo) message).getPort());
             startPing(); //Starts heartbeat with match server
+        }
+        else if(message instanceof DisconnectionError){
+            fatalError(message.toString());
         }
         else if (message instanceof Update){
             parseUpdate((Update) message);
