@@ -463,7 +463,7 @@ public class Client {
 
     /**
      * Sends a UserAction through the socket.
-     * @param userAction the UserAction to be sen.
+     * @param userAction the UserAction to be sent.
      */
     public synchronized void sendUserAction(UserAction userAction){
         try {

@@ -616,8 +616,8 @@ class GameTest {
     }
 
     /**
-     * Tests that method determine winner correctly returns winning player when three islands are formed.
-     * It also ensures that the GameOverException is thrown when the condition is met.
+     * Tests that method determine winner correctly returns winning player when two player have the same
+     * number of towers placed.
      * First 5 islands get 2 red students placed, next 3 get 2 blue ones and last 4 get 2 pink ones.
      * Each player gets a professor, and all islands are resolved so that only 3 groups remain.
      * The winner should be the player who owns the red professor.
@@ -648,6 +648,45 @@ class GameTest {
 
         assertEquals(TowerColor.BLACK, game.determineWinner(),
                 "In case of tie in towers placed, team with more professors win");
+    }
+
+    /**
+     * Tests that method determine winner correctly returns NEUTRAL when a tie occurs.
+     * Each player gets a professor, and places a tower. First only two players do, then all three. In both instances
+     * a tie occurs.
+     * The winner should be the player who owns the red professor.
+     */
+    @RepeatedTest(10)
+    void determineWinnerTie() throws GameOverException {
+        GameFactory gameFactory = new GameFactory();
+        Game game = gameFactory.create(2, GameMode.NORMAL);
+        game.createPlayer("Simo", TowerColor.BLACK);
+        game.createPlayer("Greg", TowerColor.WHITE);
+        game.createPlayer("Pietro", TowerColor.GREY);
+
+        game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(0).get(0));
+        game.archipelago.placeStudent(new Student(Color.RED, null), game.getIslandTilesIDs().get(0).get(0));
+        game.archipelago.placeStudent(new Student(Color.BLUE, null), game.getIslandTilesIDs().get(1).get(0));
+        game.archipelago.placeStudent(new Student(Color.BLUE, null), game.getIslandTilesIDs().get(1).get(0));
+        game.archipelago.placeStudent(new Student(Color.PINK, null), game.getIslandTilesIDs().get(2).get(0));
+        game.archipelago.placeStudent(new Student(Color.PINK, null), game.getIslandTilesIDs().get(2).get(0));
+
+
+        game.professorSet.setOwner(Color.RED, game.players.getByNickname("Simo"));
+        game.professorSet.setOwner(Color.BLUE, game.players.getByNickname("Greg"));
+
+
+        game.resolveIslandGroup(0);
+        game.resolveIslandGroup(1);
+
+        assertEquals(TowerColor.NEUTRAL, game.determineWinner(),
+                "No player wins when a tie between two occurs.");
+
+        game.professorSet.setOwner(Color.PINK, game.players.getByNickname("Pietro"));
+        game.resolveIslandGroup(2);
+
+        assertEquals(TowerColor.NEUTRAL,game.determineWinner(),
+                "No player wins when a tie between three occurs.");
     }
 
     //endregion

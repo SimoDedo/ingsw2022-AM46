@@ -135,10 +135,8 @@ public class GameExpert extends Game {
     }
 
     /**
-     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
-     * Determining the winner if this is the last round to be played
-     * Resetting the character used this round
-     * Resetting the strategies
+     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn).
+     * Along with the base method's operations, it also resets the character used this round and resets the strategies.
      */
     @Override
     public void endOfRoundOperations() throws GameOverException {
