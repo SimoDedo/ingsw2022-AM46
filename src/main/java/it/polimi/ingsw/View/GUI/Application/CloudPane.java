@@ -20,7 +20,7 @@ public class CloudPane extends StackPane {
     /**
      * The height and width of the cloud.
      */
-    public static final double cloudSize = 100.0;
+    public static final double cloudSize = 100;
 
     /**
      * The StudentContainerPane on this cloud.
@@ -42,7 +42,7 @@ public class CloudPane extends StackPane {
                 200, 200, true, true);
         ImageView cloudView = new ImageView(cloud);
         cloudView.setPreserveRatio(true);
-        cloudView.setFitHeight(75.0);
+        cloudView.setFitHeight(cloudSize*0.8);
         cloudView.setSmooth(true);
         cloudView.setCache(true);
         this.getChildren().add(cloudView);
@@ -57,7 +57,7 @@ public class CloudPane extends StackPane {
      */
     public void createCloud(int ID){
         studentPane = new StudentContainerPane("cloudStudentsPane", ID,
-                cloudSize*0.95, cloudSize*0.95, 100, 3, 3, 25.0, 25.0, 0.0);
+                cloudSize*0.75, cloudSize*0.75, 100, 3, 3, 20.0, 23.0, 0.0);
         studentPane.setAlignment(Pos.CENTER);
         studentPane.setVgap(2.0);
         studentPane.setHgap(2.0);
