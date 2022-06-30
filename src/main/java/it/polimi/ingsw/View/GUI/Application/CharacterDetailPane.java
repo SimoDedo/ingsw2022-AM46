@@ -79,7 +79,7 @@ public class CharacterDetailPane extends HBox {
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
         DropShadow effect = new DropShadow(size/10, Color.BLACK);
-        effect.setInput(new ColorAdjust(0, -0.1, -0.25,0));
+        effect.setInput(new ColorAdjust(0.0, -0.15, -0.00,-0.15));
         imageView.setEffect(effect);
         imageView.setFitWidth(size);
 
@@ -87,8 +87,8 @@ public class CharacterDetailPane extends HBox {
         desc.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 24.0));
         desc.setFill(Color.WHITE);
         desc.setStroke(Color.BLACK);
-        desc.setStrokeWidth(1.2);
-        //desc.setEffect(new DropShadow(5, Color.WHITE));
+        desc.setStrokeWidth(1.0);
+        desc.setEffect(new DropShadow(60.0, Color.DIMGREY));
         desc.setMouseTransparent(true);
         desc.setVisible(true);
         desc.setWrappingWidth(size - size/20.0);
