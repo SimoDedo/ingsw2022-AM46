@@ -1,7 +1,10 @@
 package it.polimi.ingsw.View.GUI.Application;
 
 import it.polimi.ingsw.Utils.Enum.CharactersDescription;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -75,15 +78,17 @@ public class CharacterDetailPane extends HBox {
         Image image = new Image("/chars/char"+ID+".png");
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
-        imageView.setEffect(new DropShadow(size/10, Color.BLACK));
+        DropShadow effect = new DropShadow(size/10, Color.BLACK);
+        effect.setInput(new ColorAdjust(0, -0.1, -0.25,0));
+        imageView.setEffect(effect);
         imageView.setFitWidth(size);
 
         Text desc = new Text(Arrays.stream(CharactersDescription.values()).toList().get(ID - 1).getDescription());
-        desc.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 20.0));
+        desc.setFont(Font.font("Eras Demi ITC", FontWeight.EXTRA_LIGHT, 24.0));
         desc.setFill(Color.WHITE);
         desc.setStroke(Color.BLACK);
-        desc.setStrokeWidth(0.8);
-        desc.setEffect(new DropShadow(15.0, Color.WHITE));
+        desc.setStrokeWidth(1.2);
+        //desc.setEffect(new DropShadow(5, Color.WHITE));
         desc.setMouseTransparent(true);
         desc.setVisible(true);
         desc.setWrappingWidth(size - size/20.0);
