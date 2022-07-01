@@ -59,6 +59,8 @@ The project includes:
 ### Quick run
 Download the [final JAR](deliverables/JAR_final/Eriantys-v1.0.0.jar), open a terminal and run `java -jar Eriantys-v1.0.0.jar` with parameters `--server`, `--cli` or `--gui`.
 
+**Important note**: terminals that do not support ANSI will not run the CLI properly.
+
 ---
 
 # Installation
@@ -71,7 +73,7 @@ You can:
 The JAR is cross-platform and has been tested on Windows, Ubuntu, MacOS and WSL. Download the JAR and place it in the desired folder.
 
 ## Installer
-Alternatively, you can install the application on Windows or Linux by downloading and executing the installer for your platform in the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases) (double click on Windows, `sudo dpkg -i` on Linux). An icon for the application will be automatically added to your desktop.
+Alternatively, you can install the application on Windows or Linux by downloading and executing the installer for your platform from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases) (double click on Windows, `sudo dpkg -i` on Linux). An icon for the application will be automatically added to your desktop.
 Note: if you have WSL, it'll still be added to your Windows Start section. If for some reason you can't find the icon, the executable should be in `/opt/eriantys-am46/bin/Eriantys-AM46`.
 The installer was made with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html).
 
@@ -83,6 +85,8 @@ The application requires:
 ## Run
 Double-click on the JAR or `java -jar Eriantys-vX.X.X.jar` in a shell (where X.X.X is the downloaded JAR's version) to start the GUI.
 Use the parameters `--server` to start the server, `--cli` to start the CLI, or `--gui`/`--client` to start the GUI.
+
+**Important note**: terminals that do not support ANSI will not run the CLI properly.
 
 [Here](https://asciinema.org/a/ahsKxDUVGFGZ4TVQjqK50JV2p) is a quick demonstration of the CLI running in a WSL shell.
 ![eriantys-cli-demo](https://user-images.githubusercontent.com/24454017/174342092-f52432a4-c22b-4faf-a2bc-b8e31ef8694c.gif)
