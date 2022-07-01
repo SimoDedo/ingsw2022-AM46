@@ -8,7 +8,10 @@ Online implementation of the tabletop game [Eriantys](https://craniointernationa
 - [Overview](#overview)
     + [Made with](#made-with)
     + [Specification](#specification)
+    + [Quick run](#quick-run)
 - [Installation](#installation)
+    + [JAR](#jar)
+    + [Installer](#installer)
     + [Requirements](#requirements)
     + [Run](#run)
 - [Active development](#active-development)
@@ -44,30 +47,42 @@ Made by:
 - Build automation tool: [Maven 3.8.4](https://maven.apache.org/)
 - Unit testing: [JUnit 5](https://junit.org/junit5/)
 - UML diagrams: [IntelliJ IDEA](https://www.jetbrains.com/idea/) and [Astah UML](https://astah.net/products/astah-uml/)
+
 ### Specification
-The project will include:
+The project includes:
 - initial and final **UML** diagrams
-- source code of the **implementation**: game rules, networking, CLI, GUI, additional specifications etc.
+- source code of the **implementation**: game rules, networking, CLI, GUI, additional specifications etc., complete with Javadocs
 - source code of the **unit tests**
 - a cross-platform **JAR** for executing the application as a server or as a CLI-based or GUI-based client
 - documentation for the **communication protocol** and for the two **peer reviews** related to this project.
 
+### Quick run
+Download the [final JAR](deliverables/JAR_final/Eriantys-v1.0.0.jar), open a terminal and run `java -jar Eriantys-v1.0.0.jar` with parameters `--server`, `--cli` or `--gui`.
+
 ---
 
 # Installation
-An installation procedure is still not available, but will be created in the future with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html).
-For now you can:
+You can run this application through a universal JAR or install it on your device with a platform-specific installer.
+
+## JAR
+You can:
 - find the [final JAR](deliverables/JAR_final/Eriantys-v1.0.0.jar) in the deliverables folder, or
 - fetch the latest cross-platform JAR from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases).
+The JAR is cross-platform and has been tested on Windows, Ubuntu, MacOS and WSL. Download the JAR and place it in the desired folder.
 
-Download the JAR and place it in the desired folder.
+## Installer
+Alternatively, you can install the application on Windows or Linux by downloading and executing the installer for your platform in the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases) (double click on Windows, `sudo dpkg -i` on Linux). An icon for the application will be automatically added to your desktop.
+Note: if you have WSL, it'll still be added to your Windows Start section. If for some reason you can't find the icon, the executable should be in `/opt/eriantys-am46/bin/Eriantys-AM46`.
+The installer was made with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html).
+
 ## Requirements
 The application requires:
-- [Java](https://www.java.com/it/) (obviously). You can [download](https://www.oracle.com/java/technologies/downloads/#java17) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
-- a graphical interface if you don't have one. On WSL for example, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
+- [Java](https://www.java.com/it/) 17 or higher. You can [download](https://www.oracle.com/java/technologies/downloads/#java17) and install version 17 of Java SE or higher. Alternatively you can `sudo apt install openjdk-17-jre` on Linux.
+- a graphical interface if you want to use the GUI. On WSL for example, you can `sudo apt install libgtk-3-0` (or `sudo apt install openjfx`) and then `export DISPLAY=:0` inside the shell where you'll run the JAR.
+
 ## Run
 Double-click on the JAR or `java -jar Eriantys-vX.X.X.jar` in a shell (where X.X.X is the downloaded JAR's version) to start the GUI.
-Use the parameters `--server` to start the server, `--cli` to start the CLI, or `--gui`/`--client` to start the GUI .
+Use the parameters `--server` to start the server, `--cli` to start the CLI, or `--gui`/`--client` to start the GUI.
 
 [Here](https://asciinema.org/a/ahsKxDUVGFGZ4TVQjqK50JV2p) is a quick demonstration of the CLI running in a WSL shell.
 ![eriantys-cli-demo](https://user-images.githubusercontent.com/24454017/174342092-f52432a4-c22b-4faf-a2bc-b8e31ef8694c.gif)
@@ -139,7 +154,7 @@ Use the parameters `--server` to start the server, `--cli` to start the CLI, or 
   + **0.9.4**: finished GUI
   + **0.9.5**: GUI polishing and bug fixes
   + **0.9.6**: GUI additional features; added all necessary files to the deliverables folder
-<!-- + **1.0.0**: final version; rewrote document about the communication protocol. -->
++ **1.0.0**: final version; rewrote document about the communication protocol.
 
 ---
 
