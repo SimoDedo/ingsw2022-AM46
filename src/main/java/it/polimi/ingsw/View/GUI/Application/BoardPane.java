@@ -8,6 +8,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -440,7 +441,13 @@ public class BoardPane extends StackPane implements ObservableGUI {
         towerSpace.setId("towerSpacePane" + nickID);
         createGrid(towerSpace, towerPct, 4, 2, 12, 10, 0);
         mainGrid.add(towerSpace, 3, 0);
+
+        PawnView tower = new PawnView(-1, "tower", towerColor.toString().toLowerCase(), PawnView.pawnSize / 1.4);
+        tower.setOpacity(0.7);
+        this.getChildren().add(tower);
+        StackPane.setAlignment(tower, Pos.BOTTOM_RIGHT);
     }
+
 
     /**
      * Updates the entrance space with the updated students. It is equivalent to calling removeOldStudentsFromEntrance and

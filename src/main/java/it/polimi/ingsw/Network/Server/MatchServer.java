@@ -155,12 +155,12 @@ public class MatchServer implements Server, Runnable {
         awaitingMap.put(nickname, IP);
     }
 
-    public void sendMessage(String nickname, Message message) {
+    public synchronized void sendMessage(String nickname, Message message) {
         SocketConnection socketConnection = connectionMap.get(nickname);
         socketConnection.sendMessage(message);
     }
 
-    public void sendAll(Message message) {
+    public synchronized void sendAll(Message message) {
         for (SocketConnection socketConnection : connectionMap.values()) {
             if(socketConnection.isActive())
                 socketConnection.sendMessage(message);
@@ -180,7 +180,7 @@ public class MatchServer implements Server, Runnable {
         }
     }
 
-    public void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction) {
+    public synchronized void handleLogin(SocketConnection socketConnection, LoginUserAction loginAction) {
         InetAddress IP = socketConnection.getInetAddress();
         String nickname = loginAction.getNickname();
         if (awaitingMap.containsKey(nickname) && awaitingMap.containsValue(IP) && awaitingMap.get(nickname).equals(IP)){
@@ -204,19 +204,19 @@ public class MatchServer implements Server, Runnable {
     }
 
     @Override
-    public void handleLogout(String nickname){
+    public synchronized void handleLogout(String nickname){
         System.out.println("\"" + nickname + "\" (" + connectionMap.get(nickname).getInetAddress() + ") logged out from match server on port " + port + ".");
         unregisterClient(nickname);
         if(connectionMap.isEmpty())
             close();
     }
 
-    public void registerClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
+    public synchronized void registerClient(InetAddress IP, String nickname, SocketConnection socketConnection) {
         connectionMap.put(nickname, socketConnection);
         lobbyServer.registerClient(nickname, IP);
     }
 
-    public void unregisterClient(String nickname) {
+    public synchronized void unregisterClient(String nickname) {
         connectionMap.remove(nickname);
         lobbyServer.handleLogout(nickname);
     }
