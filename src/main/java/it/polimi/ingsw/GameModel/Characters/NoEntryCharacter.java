@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GameModel.Characters;
 
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.Utils.Enum.RequestParameter;
 
@@ -23,13 +24,14 @@ public class NoEntryCharacter extends AbstractCharacter {
     /**
      * Along with the standard character activation, it checks that at least one no entry tile is left on the
      * @param owner the player who activated this character
+     * @param bag The coin bag to which coins used will be returned
      * @return a list of RequestParameters that will be needed by the game controller
      */
     @Override
-    public List<RequestParameter> useCharacter(Player owner) throws IllegalStateException{
+    public List<RequestParameter> useCharacter(Player owner, CoinBag bag) throws IllegalStateException{
         if(noEntryTiles == 0)
             throw  new IllegalStateException("There are no more no entry tiles left!");
-        return super.useCharacter(owner);
+        return super.useCharacter(owner, bag);
     }
 
     /**

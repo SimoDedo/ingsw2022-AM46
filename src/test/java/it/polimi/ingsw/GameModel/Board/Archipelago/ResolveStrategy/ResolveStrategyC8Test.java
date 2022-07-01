@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test resolve strategy for character 8
+ * Tests resolve strategy for character 8
  */
 class ResolveStrategyC8Test {
 

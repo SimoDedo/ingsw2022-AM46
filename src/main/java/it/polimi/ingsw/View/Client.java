@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Network.Message.Error.DisconnectionError;
 import it.polimi.ingsw.Network.Message.Error.Error;
 import it.polimi.ingsw.Network.Message.Error.LoginError;
 import it.polimi.ingsw.Network.Message.Info.LogoutSuccessfulInfo;
@@ -20,6 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class that models a client that connects to the server in order to play the game though the use of a UI.
+ */
 public class Client {
 
     private final String defaultServerIP;
@@ -150,9 +154,10 @@ public class Client {
     }
 
     /**
-     * Disconnects user from server.
+     * Disconnects user from lobby server.
      */
     private void disconnectFromLobby(){
+        sendUserAction(new LobbyDisconnectUserAction(nickname));
         try {
             socket.close();
         } catch (IOException e) {
@@ -199,6 +204,7 @@ public class Client {
             error = ! pingExecutor.awaitTermination(50, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             error = true;
+            fatalError("Error occurred while shutting down ping: "+ e.getLocalizedMessage());
         }
         if (error){
             fatalError("Error occurred while shutting down ping.");
@@ -261,6 +267,9 @@ public class Client {
             connectToMatchServer(serverIP, ((ServerLoginInfo) message).getPort());
             startPing(); //Starts heartbeat with match server
         }
+        else if(message instanceof DisconnectionError){
+            fatalError(message.toString());
+        }
         else if (message instanceof Update){
             parseUpdate((Update) message);
         }
@@ -304,6 +313,12 @@ public class Client {
     private void requestAction(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
+
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
 
         List<Command> toDisable = new ArrayList<>();
         List<Command> toEnable = new ArrayList<>();
@@ -379,11 +394,7 @@ public class Client {
             }
         }
 
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
-            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
-                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
-                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
-        }
+
     }
 
     /**
@@ -395,6 +406,12 @@ public class Client {
     private void displayInfo(Update update){
         if(update.getPlayerActionTaken() != null && update.getUserActionTaken()!= null)
             UI.displayInfo(update.getPlayerActionTaken() + " " + update.getUserActionTaken().getActionTakenDesc());
+
+        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
+            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
+                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
+                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
+        }
         //Info will be a different colored text in CLI or a pop-up in GUI, parallel to asking for action.
         //Allows information about other players action while user is selecting (useful for parallel login)
         List<Command> toDisable = new ArrayList<>();
@@ -445,12 +462,6 @@ public class Client {
                 logoutFromServer();
             }
         }
-
-        if(update.getActionTakingPlayer() != null && update.getNextUserAction()!= null){
-            if(update.getNextUserAction() != UserActionType.USE_ABILITY ||
-                    (update.getNextUserAction() == UserActionType.USE_ABILITY && update.getGame().getActiveCharacterUsesLeft() >0 ))
-                UI.displayInfo(update.getActionTakingPlayer() + " " + update.getNextUserAction().getActionToTake());
-        }
     }
 
     //endregion
@@ -459,7 +470,7 @@ public class Client {
 
     /**
      * Sends a UserAction through the socket.
-     * @param userAction the UserAction to be sen.
+     * @param userAction the UserAction to be sent.
      */
     public synchronized void sendUserAction(UserAction userAction){
         try {
@@ -468,7 +479,7 @@ public class Client {
             outObj.reset();
 
         } catch (IOException e) {
-            fatalError("Unable to write to server.");
+            fatalError("Unable to write to server. " + userAction.getUserActionType());
         }
     }
 

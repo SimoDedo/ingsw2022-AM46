@@ -5,6 +5,9 @@ import it.polimi.ingsw.Utils.Enum.Color;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for the BoardPiece class.
+ */
 class BoardPieceTest {
 
     /**

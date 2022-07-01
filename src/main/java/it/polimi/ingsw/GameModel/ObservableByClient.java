@@ -4,6 +4,10 @@ import it.polimi.ingsw.Utils.Enum.*;
 
 import java.util.*;
 
+/**
+ * Interface that is used by any object that can be observed by the client to draw and play the game.
+ * It defines many getter methods needed to observe the game state.
+ */
 public interface ObservableByClient {
 
     //region State observer methods

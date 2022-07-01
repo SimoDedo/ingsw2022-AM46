@@ -61,7 +61,7 @@ public class MatchServer implements Server, Runnable {
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Match Server now listening on port " + port);
+            System.out.println("Match Server now listening on port " + port + ".");
         } catch (IOException ioe) {
             System.err.println("Match server socket binding operation failed: ");
             ioe.printStackTrace();
@@ -72,7 +72,7 @@ public class MatchServer implements Server, Runnable {
             try {
                 tempSocket = serverSocket.accept();
                 SocketConnection newConnection = new SocketConnection(tempSocket, this);
-                System.out.println(newConnection.getInetAddress() + " connected to match server on port " + port);
+                System.out.println(newConnection.getInetAddress() + " connected to match server on port " + port + ".");
                 executor.execute(newConnection);
             } catch (IOException ioe) {
                 if (isActive()) {
@@ -80,7 +80,7 @@ public class MatchServer implements Server, Runnable {
                     ioe.printStackTrace();
                 }
                 else {
-                    System.err.println("Closing match server on port " + port);
+                    System.err.println("Closing match server on port " + port + ".");
                 }
             }
         }
@@ -117,6 +117,10 @@ public class MatchServer implements Server, Runnable {
         return port;
     }
 
+    /**
+     * Closes all connections with users connected with this match server, provided they are still active connections.
+     */
+    @Override
     public synchronized void close() {
         setActive(false);
         HashMap<String, SocketConnection> copy = new HashMap<>(connectionMap);
@@ -125,7 +129,7 @@ public class MatchServer implements Server, Runnable {
             String nickname = entry.getKey();
             if(connection.isActive()){
                 connection.close();
-                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname + "\" (" + connection.getInetAddress() +")");
+                System.err.println("Match server on port " + port + " closed connection with: \"" + nickname + "\" (" + connection.getInetAddress() +").");
             }
             unregisterClient(nickname);
         }
@@ -158,7 +162,8 @@ public class MatchServer implements Server, Runnable {
 
     public void sendAll(Message message) {
         for (SocketConnection socketConnection : connectionMap.values()) {
-            socketConnection.sendMessage(message);
+            if(socketConnection.isActive())
+                socketConnection.sendMessage(message);
         }
     }
 
@@ -166,7 +171,11 @@ public class MatchServer implements Server, Runnable {
     public synchronized void parseAction(SocketConnection socketConnection, UserAction userAction) {
         if (userAction.getUserActionType() == UserActionType.LOGIN) {
             handleLogin(socketConnection, (LoginUserAction) userAction);
-        } else {
+        }
+        else  if(userAction.getUserActionType() == UserActionType.LOBBY_DISCONNECT){
+            lobbyServer.parseAction(socketConnection, userAction);
+        }
+        else {
             controller.receiveUserAction(userAction);
         }
     }
@@ -176,7 +185,7 @@ public class MatchServer implements Server, Runnable {
         String nickname = loginAction.getNickname();
         if (awaitingMap.containsKey(nickname) && awaitingMap.containsValue(IP) && awaitingMap.get(nickname).equals(IP)){
             if (!isFull()) {
-                System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port);
+                System.out.println("\"" + nickname + "\" (" + IP + ") logged in match server on port " + port + ".");
                 registerClient(IP, nickname, socketConnection);
                 socketConnection.setNickname(nickname);
                 controller.loginHandle(nickname);
@@ -196,7 +205,7 @@ public class MatchServer implements Server, Runnable {
 
     @Override
     public void handleLogout(String nickname){
-        System.out.println("\"" + nickname + "\" (" + connectionMap.get(nickname).getInetAddress() + ") logged out from match server on port " + port);
+        System.out.println("\"" + nickname + "\" (" + connectionMap.get(nickname).getInetAddress() + ") logged out from match server on port " + port + ".");
         unregisterClient(nickname);
         if(connectionMap.isEmpty())
             close();

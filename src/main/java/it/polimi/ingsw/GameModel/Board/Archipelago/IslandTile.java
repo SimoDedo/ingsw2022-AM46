@@ -7,6 +7,9 @@ import it.polimi.ingsw.Utils.Enum.TowerColor;
 
 import java.util.List;
 
+/**
+ * Class that models a single island tile which can host mother nature, a tower and contain students.
+ */
 public class IslandTile extends StudentContainer {
     /**
      * Holds MotherNature if IslandTile is current holder, otherwise it's null

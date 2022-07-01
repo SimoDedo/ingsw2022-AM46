@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that models the entrance of a player board.
+ * Being a StudentContainer it can have students added or removed.
+ */
 public class Entrance extends StudentContainer {
 
     /**

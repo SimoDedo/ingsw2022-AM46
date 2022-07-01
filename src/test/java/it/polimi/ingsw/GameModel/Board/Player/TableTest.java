@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tests for the Table class.
+ */
 public class TableTest {
 
     /**

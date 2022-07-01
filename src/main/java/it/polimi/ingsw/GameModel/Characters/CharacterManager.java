@@ -74,15 +74,16 @@ public class CharacterManager  implements Serializable {
      * with the given ID. The method returns a list of parameters the user needs in order for its
      * ability to activate, which will be picked up by the controller.
      * @param player the player who activated this character
+     * @param bag The coin bag to which coins used will be returned
      * @param ID the ID of the character to use
      * @return a list of RequestParameters that will be needed by the game controller
      */
-    public List<RequestParameter> useCharacter(Player player, int ID) throws IllegalStateException, IllegalArgumentException {
+    public List<RequestParameter> useCharacter(Player player, CoinBag bag, int ID) throws IllegalStateException, IllegalArgumentException {
         for(Character character : characters) {
             if (character != null && character.wasUsedThisTurn())
                 throw new IllegalStateException("You can only use a character at a time");
         }
-        currentRequestParameters = characters.get(ID - 1).useCharacter(player); //This could throw exceptions
+        currentRequestParameters = characters.get(ID - 1).useCharacter(player, bag); //This could throw exceptions
         currentCharacter = characters.get(ID - 1);
         return currentRequestParameters;
     }

@@ -6,6 +6,7 @@ package it.polimi.ingsw.Utils.Enum;
  */
 public enum UserActionType {
     LOGIN,
+    LOBBY_DISCONNECT,
     GAME_SETTINGS("has chosen the game settings", "is choosing the game settings"),
     TOWER_COLOR("has chosen a tower color", "is choosing a tower color"),
     WIZARD("has chosen a wizard", "is choosing a wizard"),
@@ -18,7 +19,7 @@ public enum UserActionType {
     USE_ABILITY("has activated a character ability", "can activate a character ability"),
     END_TURN("has ended their turn", "can end their turn"),
     END_GAME,
-    DISCONNECT;
+    LOGOUT;
 
     private String actionTakenDesc;
     private String actionToTakeDesc;

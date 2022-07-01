@@ -12,6 +12,9 @@ import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Class that models a player with its tower color, player board and wizard (its deck).
+ */
 public class Player implements Serializable {
 
     private final String nickname;

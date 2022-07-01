@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GameModel.Characters;
 
 import it.polimi.ingsw.GameModel.Board.Bag;
+import it.polimi.ingsw.GameModel.Board.CoinBag;
 import it.polimi.ingsw.GameModel.Board.Player.Player;
 import it.polimi.ingsw.GameModel.BoardElements.Student;
 import it.polimi.ingsw.Utils.Enum.Color;
@@ -22,12 +23,13 @@ class StudentMoverCharacterTest {
     @Test
     void testUseAbility() {
         CharacterFactory factory = new CharacterFactory();
+        CoinBag coinBag = new CoinBag(20);
         StudentMoverCharacter char7 = (StudentMoverCharacter) factory.create(7, new Bag());
         Player test = new Player();
         test.awardCoin();
         test.awardCoin();
         test.awardCoin();
-        char7.useCharacter(test);
+        char7.useCharacter(test, coinBag);
         List<Integer> parameterList = new ArrayList<>();
         char7.useAbility((list) -> {}, parameterList);
         assertEquals(char7.getUsesLeft(), 2);
@@ -39,12 +41,13 @@ class StudentMoverCharacterTest {
     @Test
     void testResetUseState() {
         CharacterFactory factory = new CharacterFactory();
+        CoinBag coinBag = new CoinBag(20);
         StudentMoverCharacter char7 = (StudentMoverCharacter) factory.create(7, new Bag());
         Player test = new Player();
         test.awardCoin();
         test.awardCoin();
         test.awardCoin();
-        char7.useCharacter(test);
+        char7.useCharacter(test, coinBag);
         List<Integer> parameterList = new ArrayList<>();
         char7.useAbility((list) -> {}, parameterList);
         char7.resetUseState();

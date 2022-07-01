@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test strategy C4 for MoveMotherNature
+ * Tests strategy C4 for MoveMotherNature
  */
 class MoveMotherNatureStrategyC4Test {
 

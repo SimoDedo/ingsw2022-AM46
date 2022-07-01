@@ -2,6 +2,9 @@ package it.polimi.ingsw.GameModel.Board;
 
 import java.io.Serializable;
 
+/**
+ * Class that models a coin bag containing the coins left to be taken by players.
+ */
 public class CoinBag implements Serializable {
 
     private int coins;

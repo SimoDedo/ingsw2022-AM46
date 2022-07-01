@@ -312,9 +312,8 @@ public class Game implements ObservableByClient, Serializable {
     }
 
     /**
-     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn), such as:
-     * Determining the winner if this is the last round to be played
-     * Changing the Phase (?????)
+     * Method that performs operation each end of round (= when the last player has played his ActionPhase turn).
+     * It removes the cards played this round then checks if it's the last round.
      * @throws GameOverException if it is the last round
      */
     public void endOfRoundOperations() throws GameOverException {
@@ -327,20 +326,30 @@ public class Game implements ObservableByClient, Serializable {
     }
 
     /**
-     * Determines the winner of the game
-     * @return The TowerColor of the winning team
+     * Determines the winner of the game.
+     * @return The TowerColor of the winning team, NEUTRAL if the game ended on a tie.
      */
     public TowerColor determineWinner(){ //public: controller will ask for it when it receives GameOverException
         Player currentlyWinning = players.get(0);
+        boolean isDraw = false;
 
         for (Player player : players.getTowerHolders()) {
-            if (player.getTowersPlaced() > currentlyWinning.getTowersPlaced()) {
-                currentlyWinning = player;
-            } else if (player.getTowersPlaced() == currentlyWinning.getTowersPlaced()){
-                currentlyWinning = professorSet.determineStrongestPlayer(player, currentlyWinning); //TODO: what if same number of professors? maybe impossible, maybe better to check
+            if(player != currentlyWinning){
+                if (player.getTowersPlaced() > currentlyWinning.getTowersPlaced()) {
+                    currentlyWinning = player;
+                    isDraw = false;
+                } else if (player.getTowersPlaced() == currentlyWinning.getTowersPlaced()){
+                    Player moreProf = professorSet.determineStrongestPlayer(player, currentlyWinning);
+                    if(moreProf != null){
+                        currentlyWinning = moreProf;
+                        isDraw = false;
+                    }
+                    else
+                        isDraw = true;
+                }
             }
         }
-        winner = currentlyWinning.getTowerColor();
+        winner = isDraw ? TowerColor.NEUTRAL : currentlyWinning.getTowerColor();
         return winner;
     }
 

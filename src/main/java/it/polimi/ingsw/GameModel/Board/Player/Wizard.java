@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that models a deck of assistants of certain wizard type.
+ * It offers methods to observe the remaining cards and play them.
+ */
 public class Wizard implements Serializable {
 
     private final WizardType type;
@@ -48,7 +52,7 @@ public class Wizard implements Serializable {
 
     /**
      * Returns a list of cards that weren't yet played (thus to be shown to the player)
-     * @return a list of cards IDs
+     * @return a list of card IDs
      */
     public List<Integer> getCardsLeft(){
         List<Integer> cardsLeft = new ArrayList<>();

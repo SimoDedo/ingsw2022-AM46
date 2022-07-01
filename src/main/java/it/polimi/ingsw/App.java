@@ -8,7 +8,7 @@ import java.util.List;
  * It is used to start both the client and the server using different parameters.
  * When ran without parameters, a client GUI is started.
  * Parameters:
- * --gui : starts a client GUI
+ * --gui/--client : starts a client GUI
  * --cli : starts a client CLI
  * --server : starts a server
  */

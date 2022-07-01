@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that models the player board along with its entrance, dining room and towerspace.
+ */
 public class PlayerBoard implements Serializable {
     private TowerSpace towerSpace = null;
     private final Entrance entrance;

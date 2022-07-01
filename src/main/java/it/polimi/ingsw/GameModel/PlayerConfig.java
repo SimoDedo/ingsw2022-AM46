@@ -4,6 +4,9 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 
 import java.io.Serializable;
 
+/**
+ *  Class that contains parameters to configure player attributes correctly for the given number of players.
+ */
 public class PlayerConfig implements Serializable {
 
     private int maxTowers,

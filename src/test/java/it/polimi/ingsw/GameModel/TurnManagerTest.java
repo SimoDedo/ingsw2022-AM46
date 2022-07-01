@@ -11,7 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
+/**
+ * Tests for the TurnManager class.
+ */
 public class TurnManagerTest {
 
     /**

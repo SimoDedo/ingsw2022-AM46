@@ -68,10 +68,19 @@ public class ProfessorSet implements Serializable {
         return score;
     }
 
+    /**
+     * Determines the player who holds the most professors.
+     * @param player1 the first player to compare.
+     * @param player2 the second player to compare.
+     * @return the player who holds the most professors, null if both have the same number of professors.
+     */
     public Player determineStrongestPlayer(Player player1, Player player2) {
         if (getNumberOfProfessors(player1.getTowerColor()) > getNumberOfProfessors(player2.getTowerColor()))
             return player1;
-        else return player2;
+        else if(getNumberOfProfessors(player1.getTowerColor()) < getNumberOfProfessors(player2.getTowerColor()))
+            return player2;
+        else
+            return null;
     }
 
     public void checkAndMoveProfessor(PlayerList playerList, Color color) {

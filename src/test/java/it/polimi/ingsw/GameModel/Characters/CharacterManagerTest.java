@@ -67,7 +67,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>();
 
@@ -111,7 +111,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>();
 
@@ -157,7 +157,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>(); //unused for C2
 
@@ -196,7 +196,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         int islandTileDest = archipelago.getIslandTilesIDs().get(0).get(0); //IslandTile selected
         List<Integer> parameterList = new ArrayList<>();
@@ -237,7 +237,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         int islandTileDest = archipelago.getIslandTilesIDs().get(0).get(0); //IslandTile selected
         List<Integer> parameterList = new ArrayList<>();
@@ -284,7 +284,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet,coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>(); //unused for C4
 
@@ -321,7 +321,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         int islandTileDest = archipelago.getIslandTilesIDs().get(0).get(0);
         List<Integer> parameterList = new ArrayList<>();
@@ -333,7 +333,7 @@ class CharacterManagerTest {
                 "No entry tile should be placed");
         for (int i = 0; i < 3; i++) {
             manager.resetActiveCharacter();
-            manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+            manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
             manager.useAbility(parameterList);
         }
         assertEquals(4, archipelago.getNoEntryTiles().get(0),
@@ -378,7 +378,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>(); //unused for C6
 
@@ -417,7 +417,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>();
 
@@ -468,7 +468,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>(); //unused for C8
 
@@ -507,7 +507,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         List<Integer> parameterList = new ArrayList<>();
         parameterList.add(Arrays.stream(Color.values()).toList().indexOf(Color.RED));
@@ -551,9 +551,9 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        assertThrows(IllegalStateException.class,() -> manager.useCharacter(playerList.getByNickname("Simo"), testingCharID));
+        assertThrows(IllegalStateException.class,() -> manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID));
         playerList.getByNickname("Simo").addToDR(new Student(Color.RED, null)); //add a student to avoid error
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
 
 
@@ -619,7 +619,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
 
         List<Integer> parameterList = new ArrayList<>();
@@ -669,7 +669,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
 
         List<Integer> parameterList = new ArrayList<>();
@@ -723,7 +723,7 @@ class CharacterManagerTest {
         //Character creation and usage
         CharacterManager manager = new CharacterManager(archipelago, bag, playerList, professorSet, coinBag);
         manager.createCharacter(testingCharID, bag);
-        manager.useCharacter(playerList.getByNickname("Simo"), testingCharID);
+        manager.useCharacter(playerList.getByNickname("Simo"), coinBag, testingCharID);
 
         playerList.getByNickname("Simo").addToDR(new Student(Color.RED, null)); //Fill DN with students to then check if they were removed
         playerList.getByNickname("Simo").addToDR(new Student(Color.RED, null));

@@ -18,7 +18,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test archipelago class, focusing on State changing methods
+ * Tests archipelago class, focusing on State changing methods
  */
 class ArchipelagoTest {
 
