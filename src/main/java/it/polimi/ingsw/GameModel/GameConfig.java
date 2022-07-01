@@ -5,9 +5,7 @@ import it.polimi.ingsw.GameModel.Board.Bag;
 import java.io.Serializable;
 
 /**
- * Class that contains a few parameters to configure the game correctly for the given number of
- * players. Consider encapsulating PlayerConfig inside GameConfig, to pass a single
- * wrapper parameter from Game down to the GameBoard.
+ * Class that contains parameters to configure the game correctly for the given number of players.
  */
 public class GameConfig implements Serializable {
 

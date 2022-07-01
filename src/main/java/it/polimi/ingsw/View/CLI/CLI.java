@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Utils.AnsiColors.*;
 
+/**
+ * Class to manage the Command Line Interface.
+ */
 public class CLI implements UI {
     private final Client client;
     private String nickname;

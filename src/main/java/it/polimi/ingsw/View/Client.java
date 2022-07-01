@@ -21,6 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class that models a client that connects to the server in order to play the game though the use of a UI.
+ */
 public class Client {
 
     private final String defaultServerIP;

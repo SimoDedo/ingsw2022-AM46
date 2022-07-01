@@ -5,8 +5,9 @@ import it.polimi.ingsw.GameModel.BoardElements.StudentContainer;
 import it.polimi.ingsw.Utils.Enum.Color;
 import it.polimi.ingsw.Utils.Exceptions.FullTableException;
 
-
-
+/**
+ * Class that models a single table of a single color that can only host students of said color.
+ */
 public class Table extends StudentContainer {
     private final Boolean[] coins = {false, false, false};
     private final Color color;

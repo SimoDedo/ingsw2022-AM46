@@ -2,6 +2,9 @@ package it.polimi.ingsw.GameModel.Board.Player;
 
 import java.io.Serializable;
 
+/**
+ * Class that models an assistant.
+ */
 public class AssistantCard implements Serializable {
     final private int turnOrder, movePower, ID;
 

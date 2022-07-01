@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+/**
+ * Tests for the Bag class.
+ */
 public class BagTest{
 
     /**

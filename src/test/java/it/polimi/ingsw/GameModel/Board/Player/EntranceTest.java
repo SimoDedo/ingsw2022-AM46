@@ -7,7 +7,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Tests for the Entrance class.
+ */
 public class EntranceTest {
 
     /**

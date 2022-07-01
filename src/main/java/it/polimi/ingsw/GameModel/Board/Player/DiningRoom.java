@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
+/**
+ * Class that models the dining room of a player board.
+ * It is composed of various tables and can have students added or removed.
+ */
 public class DiningRoom implements Serializable {
     private final List<Table> tables;
 

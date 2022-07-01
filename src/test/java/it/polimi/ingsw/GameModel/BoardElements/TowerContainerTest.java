@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for the TowerContainer class.
+ */
 class TowerContainerTest {
     /**
      * Tests that placePawn doesn't place pawn if full (at creation TowerSpace is full)

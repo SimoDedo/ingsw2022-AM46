@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Tests for the Wizard class.
+ */
 public class WizardTest {
 
     /**

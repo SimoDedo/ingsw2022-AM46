@@ -3,6 +3,9 @@ import it.polimi.ingsw.GameModel.BoardElements.Tower;
 import it.polimi.ingsw.GameModel.BoardElements.TowerContainer;
 import it.polimi.ingsw.Utils.Enum.TowerColor;
 
+/**
+ * Class that models the tower space holding this player's towers left.
+ */
 public class TowerSpace extends TowerContainer {
 
     private final TowerColor color;
