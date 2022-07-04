@@ -41,12 +41,17 @@ Made by:
 
 🔴 = not present/drafting, 🟡 = in progress/implementing, 🟢 = completed/polishing
 
+**Full class coverage** for the game model.
+
+![image](https://user-images.githubusercontent.com/24454017/177184990-3202efed-3f16-42a2-9df1-21ab4cd0d096.png)
+
 ### Made with
 - Development kit: [JDK 17](https://www.oracle.com/java/technologies/downloads/)
 - IDE: [IntelliJ IDEA](https://www.jetbrains.com/idea/)
 - Build automation tool: [Maven 3.8.4](https://maven.apache.org/)
 - Unit testing: [JUnit 5](https://junit.org/junit5/)
 - UML diagrams: [IntelliJ IDEA](https://www.jetbrains.com/idea/) and [Astah UML](https://astah.net/products/astah-uml/)
+- Installable packages generator: [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html)
 
 ### Specification
 The project includes:
@@ -70,11 +75,14 @@ You can run this application through a universal JAR or install it on your devic
 You can:
 - find the [final JAR](deliverables/JAR_final/Eriantys-v1.0.0.jar) in the deliverables folder, or
 - fetch the latest cross-platform JAR from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases).
-The JAR is cross-platform and has been tested on Windows, Ubuntu, MacOS and WSL. Download the JAR and place it in the desired folder.
+
+The JAR has been tested on Windows, Ubuntu, MacOS and WSL. Download the JAR and place it in the desired folder.
 
 ## Installer
-Alternatively, you can install the application on Windows or Linux by downloading and executing the installer for your platform from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases) (double click on Windows, `sudo dpkg -i` on Linux). An icon for the application will be automatically added to your desktop.
+Alternatively, you can install the application on Windows or Debian-based Linux distributions by downloading and executing the installer for your platform from the [releases](https://github.com/SimoDedo/ingsw2022-AM46/releases) (double click on Windows, `sudo dpkg -i` on Debian-based Linux). An icon for the application will be automatically added to your desktop.
+
 Note: if you have WSL, it'll still be added to your Windows Start section. If for some reason you can't find the icon, the executable should be in `/opt/eriantys-am46/bin/Eriantys-AM46`.
+
 The installer was made with [jpackage](https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html).
 
 ## Requirements
