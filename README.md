@@ -3,6 +3,7 @@
 ![Eriantys banner](https://user-images.githubusercontent.com/71946484/168785428-4267d78b-f1a8-48ee-86a3-55e4e34056af.png "Eriantys title banner")
 
 Online implementation of the tabletop game [Eriantys](https://craniointernational.com/products/eriantys/) (Italian version [here](https://www.craniocreations.it/prodotto/eriantys/)), produced by [Cranio Creations](https://craniointernational.com/) (Italian website [here](https://www.craniocreations.it/)). Written in Java with the help of various tools.
+
 The project was awarded a score of **30 cum Laude/30**
 
 # Table of contents
