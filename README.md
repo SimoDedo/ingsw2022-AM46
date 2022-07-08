@@ -1,10 +1,11 @@
 # Eriantys
 ### Final project for the Software Engineering course at PoliMi AY 2022, curated by group AM46
-![Eriantys banner](https://user-images.githubusercontent.com/71946484/168785428-4267d78b-f1a8-48ee-86a3-55e4e34056af.png "Eriantys title banner")
+
+![Eriantys banner](https://user-images.githubusercontent.com/24454017/178065296-a47336a3-c72b-4f87-9c9c-c41cdd70aefd.png "Eriantys title banner")
 
 Online implementation of the tabletop game [Eriantys](https://craniointernational.com/products/eriantys/) (Italian version [here](https://www.craniocreations.it/prodotto/eriantys/)), produced by [Cranio Creations](https://craniointernational.com/) (Italian website [here](https://www.craniocreations.it/)). Written in Java with the help of various tools.
 
-The project was awarded a score of **30 cum Laude/30**
+The project was awarded a score of **30 cum laude/30**.
 
 # Table of contents
 - [Overview](#overview)
